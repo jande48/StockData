@@ -1,9 +1,11 @@
-import React, {useState, useEffect, StockData} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
+import '../App.css'
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
 import { List, Header, Form, Input, Button, Container, Icon, Menu } from "semantic-ui-react"
-
-
+import { scaleLinear } from 'd3-scale'
+import { max } from 'd3-array'
+import { select } from 'd3-selection'
 
 export const StockDataDateForm = () => {
 
@@ -12,6 +14,9 @@ export const StockDataDateForm = () => {
 	const [stockData, setStockData] = useState([]);
 	const [ticker, setTicker] = useState('AAPL');
 	const [activeItemDateMenu, setActiveItemDateMenu] = useState('');
+	const [fakeStockData, setFakeStockDate] = useState([5,10,1,3])
+	const [fakeSize, setFakeSize] = useState([500,500])
+	const chartNode = useRef(null);
 
 	function handleStartDateClick(date) {
 		if (date !== startDate) {
@@ -23,6 +28,7 @@ export const StockDataDateForm = () => {
 				setStockData(data);
 			})
 			)
+		createBarChart();
 	  }
 	
 	function handleDateClick(minusDays, name) {
@@ -37,6 +43,7 @@ export const StockDataDateForm = () => {
 				setStockData(data);
 			})
 			); 
+		createBarChart();
 	}
 
 	function handleEndDateClick(date) {
@@ -56,6 +63,7 @@ export const StockDataDateForm = () => {
 				setStockData(data);
 			})
 			)
+		createBarChart();
 	}
 
 
@@ -65,7 +73,38 @@ export const StockDataDateForm = () => {
 				setStockData(data);
 			})
 			)
+		createBarChart();
 	}
+
+
+	function createBarChart() {
+		const node = chartNode.current
+		const dataMax = max(fakeStockData)
+		const yScale = scaleLinear()
+		   .domain([0, dataMax])
+		   .range([0, fakeSize[1]])
+
+		select(node)
+			.selectAll('rect')
+			.data(fakeStockData)
+			.enter()
+			.append('rect')
+		
+		select(node)
+			.selectAll('rect')
+			.data(fakeStockData)
+			.exit()
+			.remove()
+		
+		select(node)
+			.selectAll('rect')
+			.data(fakeStockData)
+			.style('fill', '#fe9922')
+			.attr('x', (d,i) => i * 25)
+			.attr('y', d => fakeSize[1] - yScale(d))
+			.attr('height', d => yScale(d))
+			.attr('width', 25)
+	 }
 
 	return (
 		<div>
@@ -153,6 +192,11 @@ export const StockDataDateForm = () => {
 					)
 				})}
         	</List>
+			<div>
+			<svg ref={chartNode}
+      			width={500} height={500}>
+      		</svg>
+			</div>
 		</div>
 		
 	);
