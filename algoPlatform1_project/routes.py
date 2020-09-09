@@ -61,7 +61,8 @@ def get_stock_data(ticker,StartYear,StartMonth,StartDay,EndYear,EndMonth,EndDay)
     start = datetime(StartYear,StartMonth,StartDay)
     end = datetime(EndYear,EndMonth,EndDay)
     Historical_Data2 = get_historical_data(ticker,start=start, end=end, token=IEX_api_key)
-    Historical_Data3 = pd.DataFrame(Historical_Data2)
+    # Historical_Data3 = pd.DataFrame(Historical_Data2)
+    # print(Historical_Data3)
     # HTTP_request = f'https://cloud.iexapis.com/stable/stock/market/batch?symbols={tickers}&types={endpoints}&range={data_range}&token={IEX_api_key}'
     # IEX_data = pd.read_jso
     # n(HTTP_request)
