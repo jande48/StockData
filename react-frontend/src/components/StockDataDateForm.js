@@ -3,20 +3,34 @@ import '../App.css'
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
 import { List, Header, Form, Input, Button, Container, Icon, Menu } from "semantic-ui-react"
-import { scaleLinear } from 'd3-scale'
+import { scaleLinear, scaleBand, scaleLog } from 'd3-scale'
 import { max } from 'd3-array'
 import { select } from 'd3-selection'
+import * as d3 from "d3";
+import { StockData } from './StockData';
 
 export const StockDataDateForm = () => {
 
 	const [startDate, setStartDate] = useState(new Date(2020,7,1,0,0,0,0));
 	const [endDate, setEndDate] = useState(new Date());
-	const [stockData, setStockData] = useState([]);
 	const [ticker, setTicker] = useState('AAPL');
 	const [activeItemDateMenu, setActiveItemDateMenu] = useState('');
+
+	const [stockData, setStockData] = useState([]);
+
 	const [fakeStockData, setFakeStockDate] = useState([5,10,1,3])
 	const [fakeSize, setFakeSize] = useState([500,500])
 	const chartNode = useRef(null);
+	const candleChartNode = useRef(null);
+
+
+	useEffect(() => {
+		if (stockData.length > 0) {
+			//createLineChart(stockData);
+			createCandleStickChart(stockData);
+		}
+	},[stockData])
+	//const d3 = require("d3");
 
 	function handleStartDateClick(date) {
 		if (date !== startDate) {
@@ -28,7 +42,6 @@ export const StockDataDateForm = () => {
 				setStockData(data);
 			})
 			)
-		createBarChart();
 	  }
 	
 	function handleDateClick(minusDays, name) {
@@ -43,7 +56,6 @@ export const StockDataDateForm = () => {
 				setStockData(data);
 			})
 			); 
-		createBarChart();
 	}
 
 	function handleEndDateClick(date) {
@@ -63,7 +75,6 @@ export const StockDataDateForm = () => {
 				setStockData(data);
 			})
 			)
-		createBarChart();
 	}
 
 
@@ -73,37 +84,129 @@ export const StockDataDateForm = () => {
 				setStockData(data);
 			})
 			)
-		createBarChart();
 	}
 
+	function createLineChart(data) {
+		// https://observablehq.com/@d3/line-chart
+		const svg = select(candleChartNode.current);
+		svg.selectAll("g").remove()
+		const height = 350;
+		const width = 700;
+		const margin = ({top: 20, right: 30, bottom: 30, left: 40})
 
-	function createBarChart() {
-		const node = chartNode.current
-		const dataMax = max(fakeStockData)
-		const yScale = scaleLinear()
-		   .domain([0, dataMax])
-		   .range([0, fakeSize[1]])
+		const parseDate = d3.utcParse("%Y-%m-%d")
+		const yAxis = g => g
+			.attr("transform", `translate(${margin.left},0)`)
+			.call(d3.axisLeft(y))
+			.call(g => g.select(".domain").remove())
+			.call(g => g.select(".tick:last-of-type text").clone()
+				.attr("x", 3)
+				.attr("text-anchor", "start")
+				.attr("font-weight", "bold"))
+				//.text(data.y))
+		
+		const xAxis = g => g
+			.attr("transform", `translate(0,${height - margin.bottom})`)
+			.call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0))
 
-		select(node)
-			.selectAll('rect')
-			.data(fakeStockData)
-			.enter()
-			.append('rect')
+		const y = d3.scaleLinear()
+			.domain([0, d3.max(data, d => d.close)]).nice()
+			.range([height - margin.bottom, margin.top])
+
+		const x = d3.scaleUtc()
+			.domain(d3.extent(data, d => parseDate(d.date)))
+			.range([margin.left, width - margin.right])
 		
-		select(node)
-			.selectAll('rect')
-			.data(fakeStockData)
-			.exit()
-			.remove()
-		
-		select(node)
-			.selectAll('rect')
-			.data(fakeStockData)
-			.style('fill', '#fe9922')
-			.attr('x', (d,i) => i * 25)
-			.attr('y', d => fakeSize[1] - yScale(d))
-			.attr('height', d => yScale(d))
-			.attr('width', 25)
+		const line = d3.line()
+			.defined(d => !isNaN(d.close))
+			.x(d => x(parseDate(d.date)))
+			.y(d => y(d.close))
+
+		svg.append("g")
+			.call(xAxis);
+	  
+		svg.append("g")
+			.call(yAxis);
+	  
+		svg.append("path")
+			.datum(data)
+			.attr("fill", "none")
+			.attr("stroke", "steelblue")
+			.attr("stroke-width", 1.5)
+			.attr("stroke-linejoin", "round")
+			.attr("stroke-linecap", "round")
+			.attr("d", line);
+	  
+		return svg.node();
+	}
+
+	function createCandleStickChart(data) {
+		// https://observablehq.com/d/8974f775c6a0ae5d
+
+		const svg = select(candleChartNode.current);
+		svg.selectAll("g").remove()
+		const height = 350;
+		const width = 700;
+		const margin = ({top: 20, right: 30, bottom: 30, left: 40})
+		const parseDate = d3.utcParse("%Y-%m-%d")
+		const x = scaleBand()
+    		.domain(d3.utcDay
+        		.range(parseDate(data[0].date), +parseDate(data[data.length - 1].date) + 1)
+        		.filter(d => d.getUTCDay() !== 0 && d.getUTCDay() !== 6))
+    		.range([margin.left, width - margin.right])
+    		.padding(0.2)
+
+		const y = scaleLog()
+			.domain([d3.min(data, d => d.low), d3.max(data, d => d.high)])
+			.rangeRound([height - margin.bottom, margin.top])
+
+		const xAxis = g => g
+			.attr("transform", `translate(0,${height - margin.bottom})`)
+			.call(d3.axisBottom(x)
+				.tickValues(d3.utcMonday
+					.every(width > 720 ? 1 : 2)
+					.range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
+				.tickFormat(d3.utcFormat("%-m/%-d")))
+			.call(g => g.select(".domain").remove())
+
+		const yAxis = g => g
+			.attr("transform", `translate(${margin.left},0)`)
+			.call(d3.axisLeft(y)
+				.tickFormat(d3.format("$~f"))
+				.tickValues(d3.scaleLinear().domain(y.domain()).ticks()))
+			.call(g => g.selectAll(".tick line").clone()
+				.attr("stroke-opacity", 0.2)
+				.attr("x2", width - margin.left - margin.right))
+			.call(g => g.select(".domain").remove())
+
+		svg.attr("viewBox", [0, 0, width, height])
+  
+		svg.append("g")
+			.call(xAxis);
+	
+		svg.append("g")
+			.call(yAxis);
+	
+		const g = svg.append("g")
+			.attr("stroke-linecap", "round")
+			.attr("stroke", "black")
+			.selectAll("g")
+			.data(data)
+			.join("g")
+			.attr("transform", data => `translate(${x(parseDate(data.date))},0)`);
+	
+		g.append("line")
+			.attr("y1", d => y(d.low))
+			.attr("y2", d => y(d.high));
+	
+		g.append("line")
+			.attr("y1", d => y(d.open))
+			.attr("y2", d => y(d.close))
+			.attr("stroke-width", x.bandwidth())
+			.attr("stroke", d => d.open > d.close ? d3.schemeSet1[0]
+				: d.close > d.open ? d3.schemeSet1[2]
+				: d3.schemeSet1[8]);
+		return svg.node();
 	 }
 
 	return (
@@ -128,7 +231,7 @@ export const StockDataDateForm = () => {
 				<Menu.Item
 				name='5d'
 				active={activeItemDateMenu === '5d'}
-				onClick={() => handleDateClick(5, '5d')}
+				onClick={() => handleDateClick(8, '5d')}
 				>
 				5 d
 				</Menu.Item>
@@ -179,11 +282,11 @@ export const StockDataDateForm = () => {
 				scrollableMonthYearDropdown />
 				</Menu.Item>
 			</Menu>
-			<List>
+			{/* <List>
 				{Object.keys(stockData).map(function(key,index) {
 					return(
 						<List.Item key={stockData[key].close}>
-							<Header>Date: {key}</Header>
+							<Header>Date: {stockData[key].date}</Header>
 							<p>Open: {stockData[key].open}</p>
 							<p>High: {stockData[key].high}</p>
 							<p>Low: {stockData[key].low}</p>
@@ -191,12 +294,12 @@ export const StockDataDateForm = () => {
 						</List.Item>
 					)
 				})}
-        	</List>
-			<div>
-			<svg ref={chartNode}
-      			width={500} height={500}>
-      		</svg>
-			</div>
+        	</List> */}
+			<React.Fragment>
+				<svg ref={candleChartNode}></svg>
+			</React.Fragment>
+			
+			
 		</div>
 		
 	);

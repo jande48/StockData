@@ -61,10 +61,47 @@ def get_stock_data(ticker,StartYear,StartMonth,StartDay,EndYear,EndMonth,EndDay)
     start = datetime(StartYear,StartMonth,StartDay)
     end = datetime(EndYear,EndMonth,EndDay)
     Historical_Data2 = get_historical_data(ticker,start=start, end=end, token=IEX_api_key)
+    
+    def flatten_json2(stockData):
+        out = []
+        for i in stockData:
+            out2 = {}
+            out2['date']=i
+            for j in stockData[i]:
+                out2[j] = stockData[i][j]
+            out.append(out2) 
+        return out
+
+    def flatten_json(y):
+        out = {}
+
+        def flatten(x, name='date'):
+            if type(x) is dict:
+                for a in x:
+                    flatten(x[a], name + a + '_')
+            elif type(x) is list:
+                i = 0
+                for a in x:
+                    flatten(a, name + str(i) + '_')
+                    i += 1
+            else:
+                out[name[:-1]] = x
+
+        flatten(y)
+        return out
+
+    Historical_Data3 = flatten_json(Historical_Data2)
+    Historical_Data4 = flatten_json2(Historical_Data2)
+    #print(Historical_Data2)
+    #print(Historical_Data3)
+    #print(json.dumps(Historical_Data4))
     # Historical_Data3 = pd.DataFrame(Historical_Data2)
     # print(Historical_Data3)
     # HTTP_request = f'https://cloud.iexapis.com/stable/stock/market/batch?symbols={tickers}&types={endpoints}&range={data_range}&token={IEX_api_key}'
     # IEX_data = pd.read_jso
     # n(HTTP_request)
     # print(Historical_Data2)
-    return (Historical_Data2) #Historical_Data3.to_json(orient="split")
+    return (json.dumps(Historical_Data4)) #Historical_Data3.to_json(orient="split")
+
+
+
