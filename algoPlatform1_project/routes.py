@@ -60,9 +60,9 @@ def get_stock_data(ticker,StartYear,StartMonth,StartDay,EndYear,EndMonth,EndDay)
 
     start = datetime(StartYear,StartMonth,StartDay)
     end = datetime(EndYear,EndMonth,EndDay)
-    Historical_Data2 = get_historical_data(ticker,start=start, end=end, token=IEX_api_key)
-    
-    def flatten_json2(stockData):
+    historicalData = get_historical_data(ticker,start=start, end=end, token=IEX_api_key)
+
+    def flatten_json(stockData):
         out = []
         for i in stockData:
             out2 = {}
@@ -72,27 +72,8 @@ def get_stock_data(ticker,StartYear,StartMonth,StartDay,EndYear,EndMonth,EndDay)
             out.append(out2) 
         return out
 
-    def flatten_json(y):
-        out = {}
-
-        def flatten(x, name='date'):
-            if type(x) is dict:
-                for a in x:
-                    flatten(x[a], name + a + '_')
-            elif type(x) is list:
-                i = 0
-                for a in x:
-                    flatten(a, name + str(i) + '_')
-                    i += 1
-            else:
-                out[name[:-1]] = x
-
-        flatten(y)
-        return out
-
-    Historical_Data3 = flatten_json(Historical_Data2)
-    Historical_Data4 = flatten_json2(Historical_Data2)
-    #print(Historical_Data2)
+    Historical_Data = flatten_json(historicalData)
+    print(Historical_Data)
     #print(Historical_Data3)
     #print(json.dumps(Historical_Data4))
     # Historical_Data3 = pd.DataFrame(Historical_Data2)
@@ -101,7 +82,40 @@ def get_stock_data(ticker,StartYear,StartMonth,StartDay,EndYear,EndMonth,EndDay)
     # IEX_data = pd.read_jso
     # n(HTTP_request)
     # print(Historical_Data2)
-    return (json.dumps(Historical_Data4)) #Historical_Data3.to_json(orient="split")
+    return (json.dumps(Historical_Data)) #Historical_Data3.to_json(orient="split")
 
 
 
+@app.route("/get_financial_data/<ticker>", methods=['GET'])
+def get_fianancial_data(ticker):
+
+    stock = Stock(ticker, token=IEX_api_key)
+    financials = stock.get_financials()
+    # print(earnings)
+
+    # def divideByMillion(financialParameter,newFinancials):
+    #     newFinancials[0][financialParameter] = newFinancials[0][financialParameter]/1000000
+
+    # financialParameters = ('grossProfit','operatingRevenue','totalRevenue','totalAssets','totalLiabilities','totalCash','netIncome','cashFlow','totalDebt','shortTermDebt','longTermDebt')
+
+    financials[0]['grossProfit'] = financials[0]['grossProfit']/1000000
+    financials[0]['operatingRevenue'] = financials[0]['operatingRevenue']/1000000
+    financials[0]['totalRevenue'] = financials[0]['totalRevenue']/1000000
+    financials[0]['totalAssets'] = financials[0]['totalAssets']/1000000
+    financials[0]['totalLiabilities'] = financials[0]['totalLiabilities']/1000000
+    financials[0]['totalCash'] = financials[0]['totalCash']/1000000
+    financials[0]['netIncome'] = financials[0]['researchAndDevelopment']/1000000
+    financials[0]['cashFlow'] = financials[0]['cashFlow']/1000000
+    financials[0]['totalDebt'] = financials[0]['totalDebt']/1000000
+    financials[0]['shortTermDebt'] = financials[0]['shortTermDebt']/1000000
+    financials[0]['longTermDebt'] = financials[0]['longTermDebt']/1000000
+    return (json.dumps(financials))
+
+
+
+@app.route("/get_earnings_data/<ticker>", methods=['GET'])
+def get_earnings_data(ticker):
+    stock = Stock(ticker, token=IEX_api_key)
+    earnings = stock.get_earnings(last=4)
+    print(earnings)
+    return(json.dumps(earnings))

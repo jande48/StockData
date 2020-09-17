@@ -2,8 +2,8 @@ import React, {useState, useEffect, useRef} from 'react';
 import '../App.css'
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
-import { List, Header, Form, Input, Button, Container, Icon, Menu } from "semantic-ui-react"
-import { scaleLinear, scaleBand, scaleLog } from 'd3-scale'
+import { List, Header, Form, Input, Button, Container, Icon, Menu, Segment, Accordion } from "semantic-ui-react"
+import { scaleLinear, scaleBand, scalePoint } from 'd3-scale'
 import { max } from 'd3-array'
 import { select } from 'd3-selection'
 import * as d3 from "d3";
@@ -14,35 +14,61 @@ export const StockDataDateForm = () => {
 	const [startDate, setStartDate] = useState(new Date(2020,7,1,0,0,0,0));
 	const [endDate, setEndDate] = useState(new Date());
 	const [ticker, setTicker] = useState('AAPL');
+	const [financials, setFinancials] = useState([])
+	const [earnings, setEarnings] = useState([])
 	const [activeItemDateMenu, setActiveItemDateMenu] = useState('');
-
+	const [activeFinancialsMenuItem, setActiveFinancialsMenuItem] = useState()
+	const [activeEarningsMenuItem, setActiveEarningsMenuItem] = useState()
 	const [stockData, setStockData] = useState([]);
 
 	const [fakeStockData, setFakeStockDate] = useState([5,10,1,3])
 	const [fakeSize, setFakeSize] = useState([500,500])
 	const chartNode = useRef(null);
 	const candleChartNode = useRef(null);
+	const earningsChartNode = useRef(null);
 
 
 	useEffect(() => {
 		if (stockData.length > 0) {
 			//createLineChart(stockData);
+			console.log(stockData)
 			createCandleStickChart(stockData);
+			console.log(earnings)
+			createEarningsChart(earnings)
 		}
 	},[stockData])
-	//const d3 = require("d3");
+
+	function getAndSetStockData(stockTicker,theStartDate,theEndDate) {
+		fetch("/get_stock_data/"+stockTicker+"/"+theStartDate.getFullYear()+"/"+(theStartDate.getMonth()+1)+"/"+theStartDate.getDate()+"/"+theEndDate.getFullYear()+"/"+(theEndDate.getMonth()+1)+"/"+theEndDate.getDate()).then(response => 
+			response.json().then(data => {
+				setStockData(data);
+			})
+		)
+	}
+
+	function getAndSetFinancials(stockTicker) {
+		fetch("/get_financial_data/"+stockTicker).then(response => 
+			response.json().then(data => {
+				setFinancials(data)
+			}))
+	}
+
+	function getAndSetEarnings(stockTicker) {
+		fetch("/get_earnings_data/"+stockTicker).then(response => 
+			response.json().then(data => {
+				setEarnings(data)
+			}))
+	}
 
 	function handleStartDateClick(date) {
 		if (date !== startDate) {
 			setStartDate(date)
+			
 		}
-
-		fetch("/get_stock_data/"+ticker+"/"+date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate()+"/"+endDate.getFullYear()+"/"+(endDate.getMonth()+1)+"/"+endDate.getDate()).then(response => 
-			response.json().then(data => {
-				setStockData(data);
-			})
-			)
-	  }
+		getAndSetStockData(ticker,date,endDate)
+		getAndSetFinancials(ticker);
+		getAndSetEarnings(ticker);
+	}
 	
 	function handleDateClick(minusDays, name) {
 		setActiveItemDateMenu(name)
@@ -51,94 +77,86 @@ export const StockDataDateForm = () => {
 		var dateOffset = (24*60*60*1000) * minusDays; //5 days
 		var newDate = currentDate.setTime(currentDate.getTime() - dateOffset);
 		setStartDate(currentDate);
-		fetch("/get_stock_data/"+ticker+"/"+currentDate.getFullYear()+"/"+(currentDate.getMonth()+1)+"/"+currentDate.getDate()+"/"+endDate.getFullYear()+"/"+(endDate.getMonth()+1)+"/"+endDate.getDate()).then(response => 
-			response.json().then(data => {
-				setStockData(data);
-			})
-			); 
+		getAndSetStockData(ticker,currentDate,endDate) 
+		getAndSetFinancials(ticker);
+		getAndSetEarnings(ticker);
 	}
 
 	function handleEndDateClick(date) {
 		setEndDate(date)
-		fetch("/get_stock_data/"+ticker+"/"+startDate.getFullYear()+"/"+(startDate.getMonth()+1)+"/"+startDate.getDate()+"/"+date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate()).then(response => 
-			response.json().then(data => {
-				// var newJSON = (data) => {
-				// 	Object.keys(data).map(function(key,index) {
-				// 			newJSON["date"]=key;
-				// 			newJSON["open"]=data[key].open;
-				// 			newJSON["high"]=data[key].high;
-				// 			newJSON["low"]=data[key].low;
-				// 			newJSON["close"].data[key].close;
-				// 		};
-				
-				// console.log(newJSON);
-				setStockData(data);
-			})
-			)
-	}
+		getAndSetStockData(ticker,startDate,date) 
+		getAndSetFinancials(ticker);
+		getAndSetEarnings(ticker);
 
+	}
 
 	function handleTickerFormSubmit() {
-		fetch("/get_stock_data/"+ticker+"/"+startDate.getFullYear()+"/"+(startDate.getMonth()+1)+"/"+startDate.getDate()+"/"+endDate.getFullYear()+"/"+(endDate.getMonth()+1)+"/"+endDate.getDate()).then(response => 
-			response.json().then(data => {
-				setStockData(data);
-			})
-			)
+		getAndSetStockData(ticker,startDate,endDate) 
+		getAndSetFinancials(ticker);
+		getAndSetEarnings(ticker);
 	}
 
-	function createLineChart(data) {
-		// https://observablehq.com/@d3/line-chart
-		const svg = select(candleChartNode.current);
-		svg.selectAll("g").remove()
-		const height = 350;
-		const width = 700;
-		const margin = ({top: 20, right: 30, bottom: 30, left: 40})
-
-		const parseDate = d3.utcParse("%Y-%m-%d")
-		const yAxis = g => g
-			.attr("transform", `translate(${margin.left},0)`)
-			.call(d3.axisLeft(y))
-			.call(g => g.select(".domain").remove())
-			.call(g => g.select(".tick:last-of-type text").clone()
-				.attr("x", 3)
-				.attr("text-anchor", "start")
-				.attr("font-weight", "bold"))
-				//.text(data.y))
+	// function handleFinancialsMenuItemClick(e, titleProps) {
+	// 	const { index } = titleProps
+	// 	const { activeIndex } = activeFinancialsMenuItem
+	// 	const newIndex = activeIndex === index ? -1 : index
+	// 	setActiveFinancialsMenuItem(newIndex)
 		
-		const xAxis = g => g
-			.attr("transform", `translate(0,${height - margin.bottom})`)
-			.call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0))
+	//   }
 
-		const y = d3.scaleLinear()
-			.domain([0, d3.max(data, d => d.close)]).nice()
-			.range([height - margin.bottom, margin.top])
+	// function createLineChart(data) {
+	// 	// https://observablehq.com/@d3/line-chart
+	// 	const svg = select(candleChartNode.current);
+	// 	svg.selectAll("g").remove()
+	// 	const height = 350;
+	// 	const width = 700;
+	// 	const margin = ({top: 20, right: 30, bottom: 30, left: 40})
 
-		const x = d3.scaleUtc()
-			.domain(d3.extent(data, d => parseDate(d.date)))
-			.range([margin.left, width - margin.right])
+	// 	const parseDate = d3.utcParse("%Y-%m-%d")
+	// 	const yAxis = g => g
+	// 		.attr("transform", `translate(${margin.left},0)`)
+	// 		.call(d3.axisLeft(y))
+	// 		.call(g => g.select(".domain").remove())
+	// 		.call(g => g.select(".tick:last-of-type text").clone()
+	// 			.attr("x", 3)
+	// 			.attr("text-anchor", "start")
+	// 			.attr("font-weight", "bold"))
+	// 			//.text(data.y))
 		
-		const line = d3.line()
-			.defined(d => !isNaN(d.close))
-			.x(d => x(parseDate(d.date)))
-			.y(d => y(d.close))
+	// 	const xAxis = g => g
+	// 		.attr("transform", `translate(0,${height - margin.bottom})`)
+	// 		.call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0))
 
-		svg.append("g")
-			.call(xAxis);
+	// 	const y = d3.scaleLinear()
+	// 		.domain([0, d3.max(data, d => d.close)]).nice()
+	// 		.range([height - margin.bottom, margin.top])
+
+	// 	const x = d3.scaleUtc()
+	// 		.domain(d3.extent(data, d => parseDate(d.date)))
+	// 		.range([margin.left, width - margin.right])
+		
+	// 	const line = d3.line()
+	// 		.defined(d => !isNaN(d.close))
+	// 		.x(d => x(parseDate(d.date)))
+	// 		.y(d => y(d.close))
+
+	// 	svg.append("g")
+	// 		.call(xAxis);
 	  
-		svg.append("g")
-			.call(yAxis);
+	// 	svg.append("g")
+	// 		.call(yAxis);
 	  
-		svg.append("path")
-			.datum(data)
-			.attr("fill", "none")
-			.attr("stroke", "steelblue")
-			.attr("stroke-width", 1.5)
-			.attr("stroke-linejoin", "round")
-			.attr("stroke-linecap", "round")
-			.attr("d", line);
+	// 	svg.append("path")
+	// 		.datum(data)
+	// 		.attr("fill", "none")
+	// 		.attr("stroke", "steelblue")
+	// 		.attr("stroke-width", 1.5)
+	// 		.attr("stroke-linejoin", "round")
+	// 		.attr("stroke-linecap", "round")
+	// 		.attr("d", line);
 	  
-		return svg.node();
-	}
+	// 	return svg.node();
+	// }
 
 	function createCandleStickChart(data) {
 		// https://observablehq.com/d/8974f775c6a0ae5d
@@ -156,7 +174,7 @@ export const StockDataDateForm = () => {
     		.range([margin.left, width - margin.right])
     		.padding(0.2)
 
-		const y = scaleLog()
+		const y = scaleLinear()
 			.domain([d3.min(data, d => d.low), d3.max(data, d => d.high)])
 			.rangeRound([height - margin.bottom, margin.top])
 
@@ -175,7 +193,7 @@ export const StockDataDateForm = () => {
 				.tickFormat(d3.format("$~f"))
 				.tickValues(d3.scaleLinear().domain(y.domain()).ticks()))
 			.call(g => g.selectAll(".tick line").clone()
-				.attr("stroke-opacity", 0.2)
+				.attr("stroke-opacity", 0)
 				.attr("x2", width - margin.left - margin.right))
 			.call(g => g.select(".domain").remove())
 
@@ -187,6 +205,7 @@ export const StockDataDateForm = () => {
 		svg.append("g")
 			.call(yAxis);
 	
+
 		const g = svg.append("g")
 			.attr("stroke-linecap", "round")
 			.attr("stroke", "black")
@@ -209,6 +228,141 @@ export const StockDataDateForm = () => {
 		return svg.node();
 	 }
 
+
+	 function createEarningsChart(data) {
+		// https://observablehq.com/d/8974f775c6a0ae5d
+
+		const svg = select(earningsChartNode.current);
+		svg.selectAll("g").remove()
+		const height = 350;
+		const width = 700;
+		const margin = ({top: 20, right: 30, bottom: 50, left: 40})
+		const parseDate = d3.utcParse("%Y-%m-%d")
+		// const x = scaleBand()
+    	// 	.domain(d3.utcDay
+        // 		.range(parseDate(data[0].EPSReportDate), +parseDate(data[data.length - 1].EPSReportDate) + 1)
+        // 		.filter(d => d.getUTCDay() !== 0 && d.getUTCDay() !== 6))
+    	// 	.range([margin.left, width - margin.right])
+		// 	.padding(0.2)
+		//  const temp = [data[0].fiscalPeriod,data[1].fiscalPeriod,data[2].fiscalPeriod,data[3].fiscalPeriod]
+		const x = scalePoint()
+			.domain([data[0].fiscalPeriod,data[1].fiscalPeriod,data[2].fiscalPeriod,data[3].fiscalPeriod])
+			.range([(margin.right+margin.right+margin.right),(width-margin.left-margin.left)])
+
+		
+
+		const minEPS = d3.min(data, d => d.actualEPS)
+		const minConsensus = d3.min(data, d => d.consensusEPS)
+		const maxEPS = d3.max(data, d => d.actualEPS)
+		const maxConsensus = d3.max(data, d => d.consensusEPS)
+		const y = scaleLinear()
+			.domain([d3.min([minEPS,minConsensus]), d3.max([maxEPS,maxConsensus])])
+			.rangeRound([height-margin.bottom, margin.top])
+
+		
+		const xAxis = g => g
+			.attr("transform", `translate(0,${height - margin.bottom})`)
+			.call(d3.axisBottom(x))
+			.select(".domain").remove()
+			.call(g => g.select(".domain").remove())
+
+		const yAxis = g => g
+			.attr("transform", `translate(${margin.left},0)`)
+			.call(d3.axisLeft(y)
+				.tickFormat(d3.format("$~f"))
+				.tickValues(d3.scaleLinear().domain(y.domain()).ticks()))
+			.call(g => g.selectAll(".tick line").clone()
+				.attr("stroke-opacity", 0)
+				.attr("x2", width - margin.left - margin.right))
+			.call(g => g.select(".domain").remove())
+
+		svg.attr("viewBox", [0, 0, width, height])
+  
+		svg.append("g")
+			.call(yAxis);
+
+		svg.append("g")
+			.attr("transform", `translate(0,${height - (margin.bottom-20)})`)
+			.call(d3.axisBottom(x))
+			.select(".domain").remove()
+		
+		// svg.append("g")
+		// 	.attr("transform",`translate(0,${height})`)
+		// 	.call(d3.axisBottom(x))
+		// 	.select(".domain").remove()
+			
+		// svg.selectAll(".circlesAnalyst")
+		// 	.data(data)
+		// 	.enter()
+		// 	.append("circle")
+		// 		.attr('class','circlesAnalyst')
+		// 		.attr("cx",d => x(d.fiscalPeriod))
+		// 		.attr("cy",d => y(d.consensusEPS))
+		// 		.attr("r",15)
+		// 		.style("fill", "#94FF8C");
+
+		svg.selectAll(".circles")
+			.data(data)
+			.enter()
+			.append("circle")
+				.attr('class','circles')
+				.attr("cx",d => x(d.fiscalPeriod))
+				.attr("cy",d => y(d.consensusEPS))
+				.attr("r",15)
+				.style("fill", "#94FF8C");
+			
+		svg.selectAll(".circlesAnalyst")
+			.data(data)
+			.enter()
+			.append("circle")
+				.attr('class','circlesAnalyst')
+				.attr("cx",d => x(d.fiscalPeriod))
+				.attr("cy",d => y(d.actualEPS))
+				.attr("r",15)
+				.style("fill", "#11E402");
+
+		
+		// const xAxis = d3.axisBottom(x)
+		// let xAxisG =svg.selectAll('g').data(null)
+		// xAxisG.call(xAxis)
+		// svg.append("circle")
+		// 	.attr("cx",x(data[0].fiscalPeriod))
+		// 	.attr("cy",y(data[0].actualEPS))
+		// 	.attr("r",8)
+
+		// svg.append("cir")
+		// const g = svg.append("g")
+		// 	.selectAll("g")
+		// 	.data(data)
+		// 	.join("g")
+		// 	//.attr("transform", data => `translate(${x(parseDate(data.EPSReportDate))},0)`);
+	
+
+		// g.append("circle")			
+		// 	.attr("cx", d => x(d.EPSReportDate))
+		// 	.attr("cy", d => y(d.actualEPS))
+
+		return svg.node();
+	 }
+	// if (stockData.length === 0 ) {
+	// 	setActiveItemDateMenu('1m')
+		
+	// 	var currentDate = new Date();
+	// 	var dateOffset = (24*60*60*1000) * 30; 
+	// 	var newDate = currentDate.setTime(currentDate.getTime() - dateOffset);
+	// 	var theEndDate = new Date();
+	// 	fetch("/get_stock_data/AAPL/"+currentDate.getFullYear()+"/"+(currentDate.getMonth()+1)+"/"+currentDate.getDate()+"/"+theEndDate.getFullYear()+"/"+(theEndDate.getMonth()+1)+"/"+theEndDate.getDate()).then(response => 
+	// 		response.json().then(data => {
+	// 			console.log(data)
+	// 			createCandleStickChart(data)
+	// 			setStockData(data);
+	// 		})
+	// 	)
+
+		
+	// 	createCandleStickChart(stockData)
+	// }
+	// console.log(earnings)
 	return (
 		<div>
 			<Menu>
@@ -298,7 +452,60 @@ export const StockDataDateForm = () => {
 			<React.Fragment>
 				<svg ref={candleChartNode}></svg>
 			</React.Fragment>
-			
+			<Accordion>
+
+				<Accordion.Title
+					onClick={() => {
+						setActiveEarningsMenuItem(!activeEarningsMenuItem)
+					}}
+				>
+					<h3>Earnings {activeEarningsMenuItem ? "-" : "+"}</h3>
+				</Accordion.Title>
+				<Accordion.Content active={activeEarningsMenuItem}>
+					<React.Fragment>
+						<svg ref={earningsChartNode}></svg>
+					</React.Fragment>
+				</Accordion.Content>
+
+
+				<Accordion.Title
+					onClick={() => {
+						setActiveFinancialsMenuItem(!activeFinancialsMenuItem)
+					}}
+				>
+					<h3>Financials {activeFinancialsMenuItem ? "-" : "+"}</h3>
+				</Accordion.Title>
+				<Accordion.Content active={activeFinancialsMenuItem}>{Object.keys(financials).map(function(key,index) {
+						if (financials.length > 0) {
+						return(
+						<Segment.Group>
+							<Segment.Group horizontal>
+								<Segment>Gross Profit (M$): {financials[key].grossProfit}</Segment>
+								<Segment>Operating Revenue (M$): {financials[key].operatingRevenue}</Segment>
+								<Segment>Total Revenue (M$): {financials[key].totalRevenue}</Segment>
+							</Segment.Group>
+							<Segment.Group horizontal>
+								<Segment>Total Assets (M$): {financials[key].totalAssets}</Segment>
+								<Segment>Total Liabilities (M$): {financials[key].totalLiabilities}</Segment>
+								<Segment>Total Cash (M$): {financials[key].totalCash}</Segment>
+							</Segment.Group>
+							<Segment.Group horizontal>
+								<Segment>Net Income (M$): {financials[key].netIncome}</Segment>
+								<Segment>Research and Development (M$): {financials[key].researchAndDevelopment}</Segment>
+								<Segment>Cash Flow (M$): {financials[key].cashFlow}</Segment>
+							</Segment.Group>
+							<Segment.Group horizontal>
+								<Segment>Total Debt (M$): {financials[key].totalDebt}</Segment>
+								<Segment>Short Term Debt (M$): {financials[key].shortTermDebt}</Segment>
+								<Segment>Long Term Debt (M$): {financials[key].longTermDebt}</Segment>
+							</Segment.Group>
+						</Segment.Group>
+					)}}
+					)}
+				</Accordion.Content>
+				
+			</Accordion>
+
 			
 		</div>
 		
@@ -306,6 +513,84 @@ export const StockDataDateForm = () => {
 } 
    
 
+			
+{/* 
+			<Accordion>
+				<Accordion.Title
+          			active={activeFinancialsMenuItem === 0}
+          			index={0}
+          			onClick={handleFinancialsMenuItemClick(e)}
+        			>
+				
+				<Icon name='dropdown' />
+				Financials
+				</Accordion.Title>
+				<Accordion.Content active={activeFinancialsMenuItem === 0}>
+					{Object.keys(financials).map(function(key,index) {
+						if (financials.length > 0) {
+						return(
+						<Segment.Group>
+							<Segment.Group horizontal>
+								<Segment>Gross Profit (M$): {financials[key].grossProfit}</Segment>
+								<Segment>Operating Revenue (M$): {financials[key].operatingRevenue}</Segment>
+								<Segment>Total Revenue (M$): {financials[key].totalRevenue}</Segment>
+							</Segment.Group>
+							<Segment.Group horizontal>
+								<Segment>Total Assets (M$): {financials[key].totalAssets}</Segment>
+								<Segment>Total Liabilities (M$): {financials[key].totalLiabilities}</Segment>
+								<Segment>Total Cash (M$): {financials[key].totalCash}</Segment>
+							</Segment.Group>
+						</Segment.Group>
+					)}}
+					)}
+				</Accordion.Content>
+
+				<Accordion.Title
+          			active={activeFinancialsMenuItem === 1}
+          			index={0}
+          			onClick={handleFinancialsMenuItemClick()}
+        		>
+          			<Icon name='dropdown' />
+          				What kinds of dogs are there?
+        		</Accordion.Title>
+        		<Accordion.Content active={activeFinancialsMenuItem === 1}>
+          			<p>
+					There are many breeds of dogs. Each breed varies in size and
+					temperament. Owners often select a breed of dog that they find to be
+					compatible with their own lifestyle and desires from a companion.
+					</p>
+        		</Accordion.Content>
+			</Accordion> */}
+
+			{/* <Tab menu={{ pointing: true }} panes={comapnyFinancepanes(financials)} /> */}
+
+{/* 
+					// <Segment.Group>
+					// 	<Segment>{ticker.toUpperCase()} Earnings and Financials as of {financials[key].reportDate}</Segment>
+					// 	<Segment.Group horizontal>
+					// 		<Segment>Gross Profit (M$): {financials[key].grossProfit}</Segment>
+					// 		<Segment>Operating Revenue (M$): {financials[key].operatingRevenue}</Segment>
+					// 		<Segment>Total Revenue (M$): {financials[key].totalRevenue}</Segment>
+					// 	</Segment.Group>
+					// 	<Segment.Group horizontal>
+					// 		<Segment>Total Assets (M$): {financials[key].totalAssets}</Segment>
+					// 		<Segment>Total Liabilities (M$): {financials[key].totalLiabilities}</Segment>
+					// 		<Segment>Total Cash (M$): {financials[key].totalCash}</Segment>
+					// 	</Segment.Group>
+						
+					// </Segment.Group> */}
+			
+{/* 
+			{function() {
+				if (Object.keys(financials).length !== 0) {
+					return(
+						<Segment.Group>
+							<Segment>Gross Profit: {financials[0].grossProfit}</Segment>
+							<Segment>Operating Revenue: {financials[0].operatingRevenue}</Segment>
+						</Segment.Group>
+					)
+				}
+			} }			 */}
 
 {/* <p> Start Date: </p>
 			<DatePicker 
@@ -367,3 +652,41 @@ export const StockDataDateForm = () => {
 					</Form.Button>
 				</Form.Group> */}
 
+
+				
+	// const comapnyFinancepanes = (financialsData) => {
+	// 	if (financialsData.length != 0) {
+	// 		{Object.keys(financialsData).map(function(key,index){
+	// 			return(
+	// 				[
+	// 					{
+	// 					  menuItem: 'Earning',
+	// 					  render: () => <Tab.Pane attached={false}>
+	// 							  <Segment.Group>
+	// 								<Segment>{ticker.toUpperCase()} Earnings and Financials as of {financialsData[key].reportDate}</Segment>
+	// 								<Segment.Group horizontal>
+	// 									<Segment>Gross Profit (M$): {financialsData[key].grossProfit}</Segment>
+	// 									<Segment>Operating Revenue (M$): {financialsData[key].operatingRevenue}</Segment>
+	// 									<Segment>Total Revenue (M$): {financialsData[key].totalRevenue}</Segment>
+	// 								</Segment.Group>
+	// 								<Segment.Group horizontal>
+	// 									<Segment>Total Assets (M$): {financialsData[key].totalAssets}</Segment>
+	// 									<Segment>Total Liabilities (M$): {financialsData[key].totalLiabilities}</Segment>
+	// 									<Segment>Total Cash (M$): {financialsData[key].totalCash}</Segment>
+	// 								</Segment.Group>
+										
+	// 							</Segment.Group>
+	// 					  </Tab.Pane>,
+	// 					},
+	// 					{
+	// 					  menuItem: 'Finances',
+	// 					  render: () => <Tab.Pane attached={false}>Tab 2 Content</Tab.Pane>,
+	// 					},
+	// 					{
+	// 					  menuItem: 'Tab 3',
+	// 					  render: () => <Tab.Pane attached={false}>Tab 3 Content</Tab.Pane>,
+	// 					},
+	// 				  ]
+	// 			)})};
+	// 	}
+	// }
