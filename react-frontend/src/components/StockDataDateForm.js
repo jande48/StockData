@@ -26,6 +26,7 @@ export const StockDataDateForm = () => {
 	const chartNode = useRef(null);
 	const candleChartNode = useRef(null);
 	const earningsChartNode = useRef(null);
+	const showVolumeNode = useRef(null);
 
 
 	useEffect(() => {
@@ -33,6 +34,10 @@ export const StockDataDateForm = () => {
 			//createLineChart(stockData);
 			console.log(stockData)
 			createCandleStickChart(stockData);
+			createVolumeBarChart(stockData);
+			
+		}
+		if (earnings.length > 0) {
 			console.log(earnings)
 			createEarningsChart(earnings)
 		}
@@ -158,6 +163,7 @@ export const StockDataDateForm = () => {
 	// 	return svg.node();
 	// }
 
+
 	function createCandleStickChart(data) {
 		// https://observablehq.com/d/8974f775c6a0ae5d
 
@@ -165,7 +171,8 @@ export const StockDataDateForm = () => {
 		svg.selectAll("g").remove()
 		const height = 350;
 		const width = 700;
-		const margin = ({top: 20, right: 30, bottom: 30, left: 40})
+		//const margin = ({top: 20, right: 30, bottom: 30, left: 80})
+		const margin = ({top: 50, right: 30, bottom: 50, left: 40})
 		const parseDate = d3.utcParse("%Y-%m-%d")
 		const x = scaleBand()
     		.domain(d3.utcDay
@@ -174,6 +181,7 @@ export const StockDataDateForm = () => {
     		.range([margin.left, width - margin.right])
     		.padding(0.2)
 
+		
 		const y = scaleLinear()
 			.domain([d3.min(data, d => d.low), d3.max(data, d => d.high)])
 			.rangeRound([height - margin.bottom, margin.top])
@@ -182,10 +190,11 @@ export const StockDataDateForm = () => {
 			.attr("transform", `translate(0,${height - margin.bottom})`)
 			.call(d3.axisBottom(x)
 				.tickValues(d3.utcMonday
-					.every(width > 720 ? 1 : 2)
+					.every(data.length > 2 ? (data.length > 15 ? 4 : 2) : 1)
 					.range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
 				.tickFormat(d3.utcFormat("%-m/%-d")))
 			.call(g => g.select(".domain").remove())
+		
 
 		const yAxis = g => g
 			.attr("transform", `translate(${margin.left},0)`)
@@ -201,7 +210,7 @@ export const StockDataDateForm = () => {
   
 		svg.append("g")
 			.call(xAxis);
-	
+			
 		svg.append("g")
 			.call(yAxis);
 	
@@ -212,7 +221,7 @@ export const StockDataDateForm = () => {
 			.selectAll("g")
 			.data(data)
 			.join("g")
-			.attr("transform", data => `translate(${x(parseDate(data.date))},0)`);
+			.attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
 	
 		g.append("line")
 			.attr("y1", d => y(d.low))
@@ -228,122 +237,329 @@ export const StockDataDateForm = () => {
 		return svg.node();
 	 }
 
-
-	 function createEarningsChart(data) {
-		// https://observablehq.com/d/8974f775c6a0ae5d
-
-		const svg = select(earningsChartNode.current);
+	function createVolumeBarChart(data) {
+		const svg = select(showVolumeNode.current);
 		svg.selectAll("g").remove()
-		const height = 350;
-		const width = 700;
-		const margin = ({top: 20, right: 30, bottom: 50, left: 40})
+		const margin = ({top: 30, right: 30, bottom: 50, left: 40})
 		const parseDate = d3.utcParse("%Y-%m-%d")
-		// const x = scaleBand()
-    	// 	.domain(d3.utcDay
-        // 		.range(parseDate(data[0].EPSReportDate), +parseDate(data[data.length - 1].EPSReportDate) + 1)
-        // 		.filter(d => d.getUTCDay() !== 0 && d.getUTCDay() !== 6))
-    	// 	.range([margin.left, width - margin.right])
-		// 	.padding(0.2)
-		//  const temp = [data[0].fiscalPeriod,data[1].fiscalPeriod,data[2].fiscalPeriod,data[3].fiscalPeriod]
-		const x = scalePoint()
-			.domain([data[0].fiscalPeriod,data[1].fiscalPeriod,data[2].fiscalPeriod,data[3].fiscalPeriod])
-			.range([(margin.right+margin.right+margin.right),(width-margin.left-margin.left)])
+		const height = 150;
+		const width = 700;
+		svg.attr("viewBox", [0, 0, width, height])
+		const innerWidth = width - margin.left - margin.right;
+		const innerHeight = height - margin.top - margin.bottom;
+
+		const x = scaleBand()
+    		.domain(d3.utcDay
+        		.range(parseDate(data[0].date), +parseDate(data[data.length - 1].date) + 1)
+        		.filter(d => d.getUTCDay() !== 0 && d.getUTCDay() !== 6))
+    		.range([margin.left, width - margin.right])
+    		.padding(0.2)
 
 		
-
-		const minEPS = d3.min(data, d => d.actualEPS)
-		const minConsensus = d3.min(data, d => d.consensusEPS)
-		const maxEPS = d3.max(data, d => d.actualEPS)
-		const maxConsensus = d3.max(data, d => d.consensusEPS)
 		const y = scaleLinear()
-			.domain([d3.min([minEPS,minConsensus]), d3.max([maxEPS,maxConsensus])])
-			.rangeRound([height-margin.bottom, margin.top])
+			.domain([d3.min(data, d => d.volume), d3.max(data, d => d.volume)])
+			.rangeRound([height - margin.bottom,margin.top,])
 
-		
 		const xAxis = g => g
 			.attr("transform", `translate(0,${height - margin.bottom})`)
-			.call(d3.axisBottom(x))
-			.select(".domain").remove()
+			.call(d3.axisBottom(x)
+				.tickValues(d3.utcMonday
+					.every(data.length > 2 ? (data.length > 15 ? 4 : 2) : 1)
+					.range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
+				.tickFormat(d3.utcFormat("%-m/%-d")))
 			.call(g => g.select(".domain").remove())
+		
 
 		const yAxis = g => g
 			.attr("transform", `translate(${margin.left},0)`)
-			.call(d3.axisLeft(y)
-				.tickFormat(d3.format("$~f"))
-				.tickValues(d3.scaleLinear().domain(y.domain()).ticks()))
+			.call(d3.axisLeft(y))
+				//.tickFormat(d3.format("")))
+				//.tickValues(d3.scaleLinear().domain(y.domain()).ticks()))
 			.call(g => g.selectAll(".tick line").clone()
 				.attr("stroke-opacity", 0)
 				.attr("x2", width - margin.left - margin.right))
 			.call(g => g.select(".domain").remove())
-
-		svg.attr("viewBox", [0, 0, width, height])
   
+		svg.append("g")
+			.call(xAxis);
+			
 		svg.append("g")
 			.call(yAxis);
 
-		svg.append("g")
-			.attr("transform", `translate(0,${height - (margin.bottom-20)})`)
-			.call(d3.axisBottom(x))
-			.select(".domain").remove()
-		
-		// svg.append("g")
-		// 	.attr("transform",`translate(0,${height})`)
-		// 	.call(d3.axisBottom(x))
-		// 	.select(".domain").remove()
-			
-		// svg.selectAll(".circlesAnalyst")
-		// 	.data(data)
-		// 	.enter()
-		// 	.append("circle")
-		// 		.attr('class','circlesAnalyst')
-		// 		.attr("cx",d => x(d.fiscalPeriod))
-		// 		.attr("cy",d => y(d.consensusEPS))
-		// 		.attr("r",15)
-		// 		.style("fill", "#94FF8C");
-
-		svg.selectAll(".circles")
+		const g = svg.append("g")
+			// .attr("stroke", "black")
+			.selectAll("g")
 			.data(data)
-			.enter()
-			.append("circle")
-				.attr('class','circles')
-				.attr("cx",d => x(d.fiscalPeriod))
-				.attr("cy",d => y(d.consensusEPS))
-				.attr("r",15)
-				.style("fill", "#94FF8C");
-			
-		svg.selectAll(".circlesAnalyst")
-			.data(data)
-			.enter()
-			.append("circle")
-				.attr('class','circlesAnalyst')
-				.attr("cx",d => x(d.fiscalPeriod))
-				.attr("cy",d => y(d.actualEPS))
-				.attr("r",15)
-				.style("fill", "#11E402");
+			.join("g")
+			.attr("transform", data => `translate(${x(parseDate(data.date))},0)`);
 
-		
-		// const xAxis = d3.axisBottom(x)
-		// let xAxisG =svg.selectAll('g').data(null)
-		// xAxisG.call(xAxis)
-		// svg.append("circle")
-		// 	.attr("cx",x(data[0].fiscalPeriod))
-		// 	.attr("cy",y(data[0].actualEPS))
-		// 	.attr("r",8)
-
-		// svg.append("cir")
-		// const g = svg.append("g")
-		// 	.selectAll("g")
-		// 	.data(data)
-		// 	.join("g")
-		// 	//.attr("transform", data => `translate(${x(parseDate(data.EPSReportDate))},0)`);
-	
-
-		// g.append("circle")			
-		// 	.attr("cx", d => x(d.EPSReportDate))
-		// 	.attr("cy", d => y(d.actualEPS))
+		g.append("rect")
+			.attr('width', d=>x.bandwidth())
+			.attr('height',d=>y(d.volume))
+			.attr("fill", d => d.open > d.close ? d3.schemeSet1[0]
+				: d.close > d.open ? d3.schemeSet1[2]
+				: d3.schemeSet1[8]);
+		// //	.attr('y',d=> (y(d.volume) - `${height - margin.bottom}`));
+		// g.append("rect")
+		// 	.attr('y', d=>y(d.volume))
+		// 	.attr('width', d=>x.bandwidth())
+		// 	.attr('height',d=>x(parseDate(d.date)));
 
 		return svg.node();
-	 }
+	}
+
+
+	function createEarningsChart(data) {
+		// https://www.youtube.com/watch?v=UDDGcgxficY 
+		// stopped video at 3:41
+		const svg = select(earningsChartNode.current);
+		svg.selectAll("g").remove()
+		// const height = 350;
+		// const width = 700;
+		const margin = ({top: 30, right: 30, bottom: 50, left: 40})
+		const parseDate = d3.utcParse("%Y-%m-%d")
+
+		// const xValue = d => d.fiscalPeriod;
+		// const yValue = d => d.actualEPS;
+		const xLabel = 'Fiscal Period';
+		const yLabel = 'Earnings Per Share'
+		const width = 700;
+		const height = 350;
+		svg.attr("viewBox", [0, 0, width, height])
+		const innerWidth = width - margin.left - margin.right;
+		const innerHeight = height - margin.top - margin.bottom;
+
+		const yScale = scaleLinear()
+			.domain([d3.min(data,d => Math.min(d.consensusEPS,d.actualEPS)),d3.max(data,d => Math.max(d.consensusEPS,d.actualEPS))])
+			.range([innerHeight,0])
+
+		const yAxis = d3.axisLeft(yScale)
+
+		const xScale = scaleBand()
+			.domain(data.map(d => d.fiscalPeriod))
+			.range([0,innerWidth])
+			
+		
+		const xAxis = d3.axisBottom(xScale);
+
+		const g = svg.append('g')
+			.attr('transform',`translate(${margin.left},${margin.top})`);
+
+		g.append('g').call(d3.axisLeft(yScale))
+			.select(".domain").remove();
+		g.append('g').call(d3.axisBottom(xScale))
+			.attr('transform',`translate(0,${innerHeight})`)
+			.select(".domain").remove();
+
+		g.selectAll('circle')
+			.data(data)
+			.enter()
+			.append('circle')
+				.attr('cx', d => ((xScale.bandwidth()/2)+xScale(d.fiscalPeriod)))
+				.attr('cy', d => yScale(d.consensusEPS))
+				.attr('r',30)
+				.attr('fill','green')
+				.attr('width', xScale.bandwidth())
+			
+		// g.append('circle')
+		// 		.attr('cx', d => ((xScale.bandwidth()/2)+xScale(d.fiscalPeriod)))
+		// 		.attr('cy', d => yScale(d.actualEPS))
+		// 		.attr('r',30)
+		// 		.attr('fill','#50eb79')
+		// 		.attr('width', xScale.bandwidth());
+		
+			
+		// const g = svg.append('g')
+		// 	.attr('transform',`translate(${margin.left},${margin.top})`);
+		// const xAxisG = g.append('g')
+		// 	.attr('transform',`translate(0,${innerHeight})`);
+		// const yAxisG = g.append('g');
+
+		// xAxisG.append('text')
+		// 	.attr('class','axis-label')
+		// 	.attr('x', innerWidth/2)
+		// 	.attr('y',90)
+		// 	.text(xLabel);
+		
+		// yAxisG.append('text')
+		// 	.attr('class','axis-label')
+		// 	.attr('x', innerHeight / 2)
+		// 	.attr('y',-100)
+		// 	.attr('transform',`rotate(-90)`)
+		// 	.style('text-anchor','middle')
+		// 	.text(yLabel);
+		
+		// const xScale = scalePoint();
+		// const yScale = scaleLinear();
+
+		// const xAxis = d3.axisBottom()
+		// 	.scale(xScale)
+		// 	.tickPadding(15)
+		// 	.tickSize(-innerHeight)
+		// 	.domain(data.map(xValue))
+		// 	.range([0, innerWidth]);
+
+		// const yTicks = 4;
+		// const yAxis = d3.axisLeft()
+		// 	.scale(yScale)
+		// 	.ticks(yTicks)
+		// 	.tickPadding(15)
+		// 	.tickFormat(d3.format('.0s'))
+		// 	.tickSize(-innerWidth)
+		// 	.domain(d3.extent(data,yValue))
+		// 	.range([innerHeight,0])
+		// 	.nice(yTicks)
+
+		// // const g = svg.append("g")
+		// // 	.data(data)
+		// // 	.enter()
+		
+		
+		// 	// xScale
+		// 	// 	.domain(data.map(xValue))
+		// 	// 	.range([0, innerWidth]);
+		// 	// yScale
+		// 	// 	.domain(d3.extent(data,yValue))
+		// 	// 	.range([innerHeight,0])
+		// 	// 	.nice(yTicks)
+
+		// g.selectAll('circle')
+		// 	.data(data)
+		// 	.enter()
+		// 	.append('circle')
+		// 	.attr('cx', d => xScale(xValue(d)))
+		// 	.attr('cy', d => yScale(yValue(d)))
+		// 	.attr('fill','black')
+		// 	.attr('fill-opacity', 0.6)
+		// 	.attr('r',8)
+			
+		// xAxisG.call(xAxis);
+		// yAxisG.call(yAxis);
+		
+		return svg.node();
+
+	}
+
+	//  function createEarningsChart(data) {
+	// 	// https://observablehq.com/d/8974f775c6a0ae5d
+
+	// 	const svg = select(earningsChartNode.current);
+	// 	svg.selectAll("g").remove()
+	// 	const height = 350;
+	// 	const width = 700;
+	// 	const margin = ({top: 20, right: 30, bottom: 50, left: 40})
+	// 	const parseDate = d3.utcParse("%Y-%m-%d")
+	// 	// const x = scaleBand()
+    // 	// 	.domain(d3.utcDay
+    //     // 		.range(parseDate(data[0].EPSReportDate), +parseDate(data[data.length - 1].EPSReportDate) + 1)
+    //     // 		.filter(d => d.getUTCDay() !== 0 && d.getUTCDay() !== 6))
+    // 	// 	.range([margin.left, width - margin.right])
+	// 	// 	.padding(0.2)
+	// 	console.log(data)
+	// 	console.log(earnings)
+	// 	const temp1 = {earnings}[0].fiscalPeriod
+	// 	const temp2 = {earnings}[1].fiscalPeriod
+	// 	const temp3 = {earnings}[2].fiscalPeriod
+	// 	const temp4 = {earnings}[3].fiscalPeriod
+	// 	const x = scalePoint()
+	// 		.domain([temp1,temp2,temp3,temp4])
+	// 		.range([(margin.right+margin.right+margin.right),(width-margin.left-margin.left)])
+
+		
+
+	// 	const minEPS = d3.min(data, d => d.actualEPS)
+	// 	const minConsensus = d3.min(data, d => d.consensusEPS)
+	// 	const maxEPS = d3.max(data, d => d.actualEPS)
+	// 	const maxConsensus = d3.max(data, d => d.consensusEPS)
+	// 	const y = scaleLinear()
+	// 		.domain([d3.min([minEPS,minConsensus]), d3.max([maxEPS,maxConsensus])])
+	// 		.rangeRound([height-margin.bottom, margin.top])
+
+		
+	// 	const xAxis = g => g
+	// 		.attr("transform", `translate(0,${height - margin.bottom})`)
+	// 		.call(d3.axisBottom(x))
+	// 		.select(".domain").remove()
+	// 		.call(g => g.select(".domain").remove())
+
+	// 	const yAxis = g => g
+	// 		.attr("transform", `translate(${margin.left},0)`)
+	// 		.call(d3.axisLeft(y)
+	// 			.tickFormat(d3.format("$~f"))
+	// 			.tickValues(d3.scaleLinear().domain(y.domain()).ticks()))
+	// 		.call(g => g.selectAll(".tick line").clone()
+	// 			.attr("stroke-opacity", 0)
+	// 			.attr("x2", width - margin.left - margin.right))
+	// 		.call(g => g.select(".domain").remove())
+
+	// 	svg.attr("viewBox", [0, 0, width, height])
+  
+	// 	svg.append("g")
+	// 		.call(yAxis);
+
+	// 	svg.append("g")
+	// 		.attr("transform", `translate(0,${height - (margin.bottom-20)})`)
+	// 		.call(d3.axisBottom(x))
+	// 		.select(".domain").remove()
+		
+	// 	// svg.append("g")
+	// 	// 	.attr("transform",`translate(0,${height})`)
+	// 	// 	.call(d3.axisBottom(x))
+	// 	// 	.select(".domain").remove()
+			
+	// 	// svg.selectAll(".circlesAnalyst")
+	// 	// 	.data(data)
+	// 	// 	.enter()
+	// 	// 	.append("circle")
+	// 	// 		.attr('class','circlesAnalyst')
+	// 	// 		.attr("cx",d => x(d.fiscalPeriod))
+	// 	// 		.attr("cy",d => y(d.consensusEPS))
+	// 	// 		.attr("r",15)
+	// 	// 		.style("fill", "#94FF8C");
+
+	// 	// svg.selectAll(".circles")
+	// 	// 	.data(data)
+	// 	// 	.enter()
+	// 	// 	.append("circle")
+	// 	// 		.attr('class','circles')
+	// 	// 		.attr("cx",d => x(d.fiscalPeriod))
+	// 	// 		.attr("cy",d => y(d.consensusEPS))
+	// 	// 		.attr("r",15)
+	// 	// 		.style("fill", "#94FF8C");
+			
+	// 	// svg.selectAll(".circlesAnalyst")
+	// 	// 	.data(data)
+	// 	// 	.enter()
+	// 	// 	.append("circle")
+	// 	// 		.attr('class','circlesAnalyst')
+	// 	// 		.attr("cx",d => x(d.fiscalPeriod))
+	// 	// 		.attr("cy",d => y(d.actualEPS))
+	// 	// 		.attr("r",15)
+	// 	// 		.style("fill", "#11E402");
+
+		
+	// 	// const xAxis = d3.axisBottom(x)
+	// 	// let xAxisG =svg.selectAll('g').data(null)
+	// 	// xAxisG.call(xAxis)
+	// 	// svg.append("circle")
+	// 	// 	.attr("cx",x(data[0].fiscalPeriod))
+	// 	// 	.attr("cy",y(data[0].actualEPS))
+	// 	// 	.attr("r",8)
+
+	// 	// svg.append("cir")
+	// 	// const g = svg.append("g")
+	// 	// 	.selectAll("g")
+	// 	// 	.data(data)
+	// 	// 	.join("g")
+	// 	// 	//.attr("transform", data => `translate(${x(parseDate(data.EPSReportDate))},0)`);
+	
+
+	// 	// g.append("circle")			
+	// 	// 	.attr("cx", d => x(d.EPSReportDate))
+	// 	// 	.attr("cy", d => y(d.actualEPS))
+
+	// 	return svg.node();
+	//  }
 	// if (stockData.length === 0 ) {
 	// 	setActiveItemDateMenu('1m')
 		
@@ -451,6 +667,9 @@ export const StockDataDateForm = () => {
         	</List> */}
 			<React.Fragment>
 				<svg ref={candleChartNode}></svg>
+			</React.Fragment>
+			<React.Fragment>
+				<svg ref={showVolumeNode}></svg>
 			</React.Fragment>
 			<Accordion>
 

@@ -38,12 +38,12 @@ def create_algo():
     #pk_e698977b9d214b95b1465af95ba1fdb9 
     HTTP_request = f'https://cloud.iexapis.com/stable/stock/market/batch?symbols={tickers}&types={endpoints}&range={data_range}&token={IEX_api_key}'
     IEX_data = pd.read_json(HTTP_request)
-    print(IEX_data)
+    #print(IEX_data)
     IEX_data_head = IEX_data.tail()
     #df_temp = pd.read_json('https://cloud.iexapis.com/stable/stock/aapl/batch?types=quote,news,chart&range=1m&last=10?token='+IEX_api_key+'')
     #df_temp = pd.read_json('https://cloud.iexapis.com/stable/stock/'+sym+'/chart/1d?token='+IEX_api_key+'')
     #df_temp_head = df_temp.head()
-    return render_template('create_algo.html',head=IEX_data_head)
+    return render_template('old_index.html',head=IEX_data_head)
 
 
 @app.route("/get_stock_data/<ticker>/<int:StartYear>/<int:StartMonth>/<int:StartDay>/<int:EndYear>/<int:EndMonth>/<int:EndDay>", methods=['GET'])
@@ -73,7 +73,7 @@ def get_stock_data(ticker,StartYear,StartMonth,StartDay,EndYear,EndMonth,EndDay)
         return out
 
     Historical_Data = flatten_json(historicalData)
-    print(Historical_Data)
+    # print(Historical_Data)
     #print(Historical_Data3)
     #print(json.dumps(Historical_Data4))
     # Historical_Data3 = pd.DataFrame(Historical_Data2)
@@ -117,5 +117,7 @@ def get_fianancial_data(ticker):
 def get_earnings_data(ticker):
     stock = Stock(ticker, token=IEX_api_key)
     earnings = stock.get_earnings(last=4)
+    # print(earnings)
+    company = stock.get_company()
     print(earnings)
     return(json.dumps(earnings))
