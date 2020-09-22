@@ -2,9 +2,15 @@
 <html lang="en">
 
   <head>
-    <meta charset="utf-8" />
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{url_for('static',filename='bower_components/semantic/dist/semantic.min.css')}}">
+    <script src="{{url_for('static',filename='bower_components/semantic/dist/semantic.min.js')}}"></script>
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
 
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
@@ -13,6 +19,12 @@
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    
+    {% if title %}
+        <title>Stock Data - {{ title }}</title>
+    {% else %}
+        <title>Stock Data</title>
+    {% endif %}
     <!--
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -31,16 +43,18 @@ https://templatemo.com/tm-535-softy-pinko
 -->
 
     <!-- Additional CSS Files -->
-    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css">
-
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/font-awesome.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/templatemo-softy-pinko.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/main.css')}}">
+    <!-- <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../static/css/font-awesome.css">
-
     <link rel="stylesheet" href="../static/css/templatemo-softy-pinko.css">
-
+    <link rel="stylesheet" href="../static/css/main.css"> -->
     </head>
     
-    <body>
-    
+    <body style="margin-top: 0px;">
+
     <!-- ***** Preloader Start ***** -->
     <div id="preloader">
         <div class="jumper">
@@ -60,18 +74,24 @@ https://templatemo.com/tm-535-softy-pinko
                     <nav class="main-nav">
                         <!-- ***** Logo Start ***** -->
                         <a href="#" class="logo">
-                            <img src="../static/images/AlgoDIY_logo2.jpg" alt="Softy Pinko"/>
+                            <img src="../static/images/AlgoDIY_logo2.jpg" alt="Stock Data"/>
                         </a>
                         <!-- ***** Logo End ***** -->
                         <!-- ***** Menu Start ***** -->
                         <ul class="nav">
                             <li><a href="#welcome" class="active">Home</a></li>
-                            <li><a href="{{ url_for('my_index') }}">Create Algo</a></li>
-                            <li><a href="#work-process">Work Process</a></li>
-                            <li><a href="#testimonials">Testimonials</a></li>
+                            <li><a href="{{ url_for('home') }}">Create Algo</a></li>
                             <li><a href="#pricing-plans">Pricing Tables</a></li>
-                            <li><a href="#blog">Blog Entries</a></li>
-                            <li><a href="#contact-us">Contact Us</a></li>
+                            <li><a href="{{url_for('fourm')}}">Fourm</a></li>
+                            {% if current_user.is_authenticated %}
+                                <li><a href="{{url_for('new_post')}}">New Post</a></li>
+                                <li><a href="{{url_for('account')}}">Account</a></li>
+                                <li><a href="{{url_for('logout')}}">Logout</a></li>
+                            {% else %}
+                                <li><a href="{{url_for('login')}}">Login</a></li>
+                                <li><a href="{{url_for('register')}}">Sign Up</a></li>
+                            {% endif %}
+                                <li><a href="#contact-us">Contact Us</a></li>
                         </ul>
                         <a class='menu-trigger'>
                             <span>Menu</span>
@@ -84,8 +104,41 @@ https://templatemo.com/tm-535-softy-pinko
     </header>
     <!-- ***** Header Area End ***** -->
 
+    <!-- <div class="ui sidebar left inverted menu" data-example-default>
+        <a href="#" class="item">Monday</a>
+        <a href="#" class="item">Tuesday</a>
+        <a href="#" class="item">Wednesday</a>
+        <a href="#" class="item">Thursday</a>
+        <a href="#" class="item">Friday</a>
+    
+    </div> -->
+        
+        <div class="container"  style="margin-top: 140px;">
+            <!-- <br><br><br><br>
+            <h2 style="margin-top: 100;" class="ui header medium">Default Sidebar</h2>
+            <button class="ui button" data-example-target="data-example-default">Toggle Sidebar</button>
+             -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </div>
+
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        
+    </body>
     <!-- ***** Block Content Start ***** -->
-    {% block content %}{% endblock %}
+    
     <!-- ***** Block Content End ***** -->
     
     <!-- ***** Footer Start ***** -->
@@ -111,20 +164,25 @@ https://templatemo.com/tm-535-softy-pinko
     </footer>
     
     <!-- jQuery -->
-    <script src="../static/js/jquery-2.1.0.min.js"></script>
+    <script src="{{url_for('static',filename='js/jquery-2.1.0.min.js')}}"></script>
 
     <!-- Bootstrap -->
-    <script src="../static/js/popper.js"></script>
-    <script src="../static/js/bootstrap.min.js"></script>
+    <script src="{{url_for('static',filename='js/popper.js')}}"></script>
+    <script src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
 
     <!-- Plugins -->
-    <script src="../static/js/scrollreveal.min.js"></script>
-    <script src="../static/js/waypoints.min.js"></script>
-    <script src="../static/js/jquery.counterup.min.js"></script>
-    <script src="../static/js/imgfix.min.js"></script> 
+    <script src="{{url_for('static',filename='js/scrollreveal.min.js')}}"></script>
+    <script src="{{url_for('static',filename='js/waypoints.min.js')}}"></script>
+    <script src="{{url_for('static',filename='js/jquery.counterup.min.js')}}"></script>
+    <script src="{{url_for('static',filename='js/imgfix.min.js')}}"></script> 
     
     <!-- Global Init -->
-    <script src="../static/js/custom.js"></script>
-
+    <script src="{{url_for('static',filename='js/custom.js')}}"></script>
+    <script type="text/javascript">
+        $(['data-example-target']).on('click',function(){
+            var exampleTarget = $(this).data('example-target');
+            $('['+exampleTarget+']').sidebar('toggle');
+        })    
+    </script>
   </body>
 </html>
