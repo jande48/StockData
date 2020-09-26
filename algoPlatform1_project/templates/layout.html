@@ -80,16 +80,16 @@ https://templatemo.com/tm-535-softy-pinko
                         <!-- ***** Menu Start ***** -->
                         <ul class="nav">
                             <li><a href="#welcome" class="active">Home</a></li>
-                            <li><a href="{{ url_for('home') }}">Create Algo</a></li>
+                            <li><a href="{{ url_for('main.home') }}">Create Algo</a></li>
                             <li><a href="#pricing-plans">Pricing Tables</a></li>
-                            <li><a href="{{url_for('fourm')}}">Fourm</a></li>
+                            <li><a href="{{url_for('posts.fourm')}}">Fourm</a></li>
                             {% if current_user.is_authenticated %}
-                                <li><a href="{{url_for('new_post')}}">New Post</a></li>
-                                <li><a href="{{url_for('account')}}">Account</a></li>
-                                <li><a href="{{url_for('logout')}}">Logout</a></li>
+                                <li><a href="{{url_for('posts.new_post')}}">New Post</a></li>
+                                <li><a href="{{url_for('users.account')}}">Account</a></li>
+                                <li><a href="{{url_for('users.logout')}}">Logout</a></li>
                             {% else %}
-                                <li><a href="{{url_for('login')}}">Login</a></li>
-                                <li><a href="{{url_for('register')}}">Sign Up</a></li>
+                                <li><a href="{{url_for('users.login')}}">Login</a></li>
+                                <li><a href="{{url_for('users.register')}}">Sign Up</a></li>
                             {% endif %}
                                 <li><a href="#contact-us">Contact Us</a></li>
                         </ul>
