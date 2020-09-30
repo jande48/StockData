@@ -2,7 +2,7 @@ from datetime import datetime
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from algoPlatform1_project import db, login_manager, app
 from flask_login import UserMixin
-
+from sqlalchemy.dialects.postgresql import JSON
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -51,3 +51,7 @@ class Watchlist(db.Model):
 
     def __rept__(self):
         return f"Watchlist('{self.user_id}','{self.watchlist}')"
+
+class OHLC_JSONdata(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    AAPL = db.Column(JSON) 

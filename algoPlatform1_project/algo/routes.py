@@ -5,60 +5,46 @@ from datetime import datetime
 import pyEX as p
 import pandas as pd
 from iexfinance.stocks import get_historical_data, Stock
-from algoPlatform1_project.models import User, Post, Watchlist
+from algoPlatform1_project.models import User, Post, Watchlist, OHLC_JSONdata
 from flask_login import login_user, current_user, logout_user, login_required
 
 IEX_secret_api_key = os.environ.get('IEX_CLOUD_SECRET_API_KEY')
 IEX_api_key =  os.environ.get('IEX_CLOUD_API_KEY') 
 
-
 from flask import Blueprint
-
 algo = Blueprint('algo',__name__)
 
-
-
-@algo.route("/create_algo", methods=['GET'])
-def create_algo():
-    sym = "TSLA"  # This is not case-sensitive
-    # tickers = [
-    #         'MSFT',
-    #         'AAPL',
-    #         'AMZN',
-    #         'GOOG',
-    #         'FB'
-    #         ]
-    tickers = ['MSFT',
-               'AAPL']
-    tickers = ','.join(tickers)
-    endpoints = 'chart'
-    data_range = '1d'
-    #pk_e698977b9d214b95b1465af95ba1fdb9 
-    HTTP_request = f'https://cloud.iexapis.com/stable/stock/market/batch?symbols={tickers}&types={endpoints}&range={data_range}&token={IEX_api_key}'
-    IEX_data = pd.read_json(HTTP_request)
-    #print(IEX_data)
-    IEX_data_head = IEX_data.tail()
-    #df_temp = pd.read_json('https://cloud.iexapis.com/stable/stock/aapl/batch?types=quote,news,chart&range=1m&last=10?token='+IEX_api_key+'')
-    #df_temp = pd.read_json('https://cloud.iexapis.com/stable/stock/'+sym+'/chart/1d?token='+IEX_api_key+'')
-    #df_temp_head = df_temp.head()
-    return render_template('old_index.html',head=IEX_data_head)
-
+# @algo.route("/create_algo", methods=['GET'])
+# def create_algo():
+#     sym = "TSLA"  # This is not case-sensitive
+#     tickers = ['MSFT',
+#                'AAPL']
+#     tickers = ','.join(tickers)
+#     endpoints = 'chart'
+#     data_range = '1d' 
+#     HTTP_request = f'https://cloud.iexapis.com/stable/stock/market/batch?symbols={tickers}&types={endpoints}&range={data_range}&token={IEX_api_key}'
+#     IEX_data = pd.read_json(HTTP_request)
+#     IEX_data_head = IEX_data.tail()
+#     return render_template('old_index.html',head=IEX_data_head)
 
 @algo.route("/get_stock_data/<ticker>/<int:StartYear>/<int:StartMonth>/<int:StartDay>/<int:EndYear>/<int:EndMonth>/<int:EndDay>", methods=['GET'])
 def get_stock_data(ticker,StartYear,StartMonth,StartDay,EndYear,EndMonth,EndDay):
-    # tickers = ['MSFT',
-    #            'AAPL']
-    # tickers = ','.join(tickers)
-    # endpoints = 'chart'
-    # data_range = '1d'
-
-    #Historical_Data = jsonify(get_historical_data("AAPL", "20190617", close_only=True))
-    #a = Stock("AAPL", token=IEX_api_key)
-    # Historical_Data = a.get_price()
-
+    
     start = datetime(StartYear,StartMonth,StartDay)
     end = datetime(EndYear,EndMonth,EndDay)
-    historicalData = get_historical_data(ticker,start=start, end=end, token=IEX_api_key)
+
+    def getDBdata(start,end):
+        queriedData = OHLC_JSONdata.query.all()
+        out = []
+        trigger = False
+        for i in range(len(queriedData)):
+            if (int(queriedData[i].AAPL['date'][0:4]) == StartYear) and (int(queriedData[i].AAPL['date'][5:7]) == StartMonth) and (int(queriedData[i].AAPL['date'][8:]) == StartDay):
+                trigger = True
+            if (int(queriedData[i].AAPL['date'][0:4]) == EndYear) and (int(queriedData[i].AAPL['date'][5:7]) == EndMonth) and (int(queriedData[i].AAPL['date'][8:]) == EndDay):
+                trigger = False
+            if trigger:
+                out.append(queriedData[i].AAPL)
+        return out
 
     def flatten_json(stockData):
         out = []
@@ -69,18 +55,27 @@ def get_stock_data(ticker,StartYear,StartMonth,StartDay,EndYear,EndMonth,EndDay)
                 out2[j] = stockData[i][j]
             out.append(out2) 
         return out
+    
+    if ticker == 'AAPL':
+        Historical_Data = getDBdata(start,end)
+    else:
+        historicalData = get_historical_data(ticker,start=start, end=end, token=IEX_api_key)
+        Historical_Data = flatten_json(historicalData)
 
-    Historical_Data = flatten_json(historicalData)
-    # print(Historical_Data)
-    #print(Historical_Data3)
-    #print(json.dumps(Historical_Data4))
-    # Historical_Data3 = pd.DataFrame(Historical_Data2)
-    # print(Historical_Data3)
-    # HTTP_request = f'https://cloud.iexapis.com/stable/stock/market/batch?symbols={tickers}&types={endpoints}&range={data_range}&token={IEX_api_key}'
-    # IEX_data = pd.read_jso
-    # n(HTTP_request)
-    # print(Historical_Data2)
+    # This code initializes the database with 1 api call
+    # historicalData = get_historical_data(ticker,start=start, end=end, token=IEX_api_key)
+    # Historical_Data = flatten_json(historicalData)
+    #addData = initiallyCommitData(Historical_Data)
+
     return (json.dumps(Historical_Data)) #Historical_Data3.to_json(orient="split")
+
+def initiallyCommitData(data):
+    for i in range(len(data)):
+        addedData = OHLC_JSONdata(AAPL=data[i])
+        db.session.add(addedData)
+        db.session.commit()
+
+    
 
 
 
@@ -109,13 +104,10 @@ def get_fianancial_data(ticker):
     financials[0]['longTermDebt'] = financials[0]['longTermDebt']/1000000
     return (json.dumps(financials))
 
-
-
 @algo.route("/get_earnings_data/<ticker>", methods=['GET'])
 def get_earnings_data(ticker):
     stock = Stock(ticker, token=IEX_api_key)
     earnings = stock.get_earnings(last=4)
-    # print(earnings)
     company = stock.get_company()
-    print(earnings)
+    #print(earnings)
     return(json.dumps(earnings))

@@ -1,13 +1,12 @@
 
   
-from flask import render_template, url_for, flash, redirect, request, Blueprint, app
+from flask import render_template, url_for, flash, redirect, request, Blueprint
 from flask_login import login_user, current_user, logout_user, login_required
-from algoPlatform1_project import db, bcrypt
+from algoPlatform1_project import db, bcrypt, app
 from algoPlatform1_project.models import User, Post
 from algoPlatform1_project.users.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
                                    RequestResetForm, ResetPasswordForm)
 from algoPlatform1_project.users.utils import save_picture, send_reset_email
-
 from flask import Blueprint
 
 users = Blueprint('users',__name__)
