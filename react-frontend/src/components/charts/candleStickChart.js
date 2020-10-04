@@ -21,6 +21,7 @@ export function createCandleStickChart(data,candleChartNode) {
         .range([margin.left, width - margin.right])
         .padding(0.2)
 
+
     
     const y = scaleLinear()
         .domain([d3.min(data, d => d.low), d3.max(data, d => d.high)])
@@ -28,11 +29,13 @@ export function createCandleStickChart(data,candleChartNode) {
 
     const xAxis = g => g
         .attr("transform", `translate(0,${height - margin.bottom})`)
-        .call(d3.axisBottom(x)
-            .tickValues(d3.utcMonday
-                .every(data.length > 2 ? (data.length > 15 ? 4 : 2) : 1)
-                .range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
-            .tickFormat(d3.utcFormat("%-m/%-d")))
+        .call(d3.axisBottom(x))
+        //tickValues(x.domain().filter(function(d,i){ return !(i%10)})))
+            //.ticksValues(d3.utcDay))
+            // .tickValues(d3.utcMonday
+            //     //.every(data.length > 2 ? (data.length > 15 ? 4 : 2) : 1)
+            //     .range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
+            //.tickFormat(d3.utcFormat("%-m/%-d")))
         .call(g => g.select(".domain").remove())
     
 

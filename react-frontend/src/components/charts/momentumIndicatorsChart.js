@@ -15,23 +15,27 @@ import {
     curveLinear
   } from 'd3';
 
-export function createStockPriceLineChart(data,stockPriceLineChartNode) {
+
+
+  
+
+export function createMomentumIndicatorsChart(data,momentumIndicatorsChartNode,displayRSIcheckbox) {
+
     
-    const svg = select(stockPriceLineChartNode.current);
+    console.log(data)
+
+    const svg = select(momentumIndicatorsChartNode.current);
     svg.selectAll("g").remove()
 
-    const height = 350;
+    //console.log(displayRSIcheckbox)
+
+    const height = 150;
     const width = 700;
     //const margin = ({top: 20, right: 30, bottom: 30, left: 80})
-    //const formatSecond = d3.timeFormat(":%S")
-    function parseSec(date) {
-        return new Date(date * 1000);
-    }
-    const parseDate = d3.utcParse("%Y-%m-%d")
-    //new Date(secs * 1000);
+
     const margin = ({top: 50, right: 30, bottom: 50, left: 40})
-    //const parseDate = d3.utcParse("%s")// d3.utcParse("%a %b %d %Y %X %LZ")// d3.utcParse("%Y-%m-%d")
-    //console.log(parseDate((data[data.length - 1].date)) + 1)
+    const parseDate = d3.utcParse("%Y-%m-%d")
+    
     const x = scaleBand()
         .domain(d3.utcDay
             .range(parseDate(data[0].date), +parseDate(data[data.length - 1].date) + 1)
@@ -40,10 +44,8 @@ export function createStockPriceLineChart(data,stockPriceLineChartNode) {
         .padding(0.2)
 
     const y = scaleLinear()
-        .domain([d3.min(data, d => d.low), d3.max(data, d => d.high)])
+        .domain([d3.min(data, d => d.rsi), d3.max(data, d => d.rsi)])
         .rangeRound([height - margin.bottom, margin.top])
-
-    
 
     const xAxis = g => g
         .attr("transform", `translate(0,${height - margin.bottom})`)
@@ -53,12 +55,11 @@ export function createStockPriceLineChart(data,stockPriceLineChartNode) {
                 .range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
             .tickFormat(d3.utcFormat("%-m/%-d")))
         .call(g => g.select(".domain").remove())
-    
 
     const yAxis = g => g
         .attr("transform", `translate(${margin.left},0)`)
         .call(d3.axisLeft(y)
-            .tickFormat(d3.format("$~f"))
+            .tickFormat(d3.format("~f"))
             .tickValues(d3.scaleLinear().domain(y.domain()).ticks()))
         .call(g => g.selectAll(".tick line").clone()
             .attr("stroke-opacity", 0)
@@ -72,10 +73,10 @@ export function createStockPriceLineChart(data,stockPriceLineChartNode) {
         
     svg.append("g")
         .call(yAxis);
-    
+
     const g = svg.append("g")
         .attr("stroke-linecap", "round")
-        .attr("stroke", "black")
+        .attr("stroke", "red")
         .selectAll("g")
         .data(data)
         .join("g")
@@ -83,32 +84,29 @@ export function createStockPriceLineChart(data,stockPriceLineChartNode) {
 
     const lineGenerator = line()
         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-        .y(d => y(d.close))
+        .y(d => y(d.rsi))
         .curve(curveLinear);
 
-    g.append('path')
+    if (displayRSIcheckbox) {
+        g.append('path')
         .attr('class', 'line-path')
+        .attr("id", "rsi")
         .attr('d', lineGenerator(data))
         .attr('fill','none')
         .attr('stroke-width',5)
+    }else{
+        svg.selectAll("g").selectAll(".rsi").remove()
+    }
 
-    // const g2 = svg.append("g")
-    //     .attr("stroke-linecap", "round")
-    //     .attr("stroke", "red")
-    //     .selectAll("g")
-    //     .data(data)
-    //     .join("g")
-    //     // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-    
-    // const lineGenerator2 = line()
-    //     .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-    //     .y(d => y(d.rsi))
-    //     .curve(curveLinear);
-
-    // g2.append('path')
+    // g.append('path')
     //     .attr('class', 'line-path')
-    //     .attr('d', lineGenerator2(data))
+    //     .attr('d', lineGenerator(data))
     //     .attr('fill','none')
     //     .attr('stroke-width',5)
+
+    // svg.selectAll("g").remove()
+
+
     return svg.node();
+
 }

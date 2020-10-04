@@ -2,15 +2,19 @@ import React, {useState, useEffect, useRef} from 'react';
 import '../App.css'
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
-import { List, Header, Form, Input, Button, Container, Icon, Menu, Segment, Accordion } from "semantic-ui-react"
+import { List, Header, Form, Input, Button, Container, Icon, Menu, Segment, Accordion, Checkbox, Select } from "semantic-ui-react"
 import { createCandleStickChart } from './charts/candleStickChart.js'
 import { createVolumeBarChart } from './charts/volumeBarChart.js'
 import { createEarningsChart } from './charts/earningChart.js'
 import { createStockPriceLineChart } from './charts/stockPriceLineChart';
+import { createMomentumIndicatorsChart } from './charts/momentumIndicatorsChart'
 
 export const StockData = () => {
-
-	const [startDate, setStartDate] = useState(new Date(2020,7,1,0,0,0,0));
+	var currentDate = new Date();
+	var dateOffset = (24*60*60*1000) * 182; 
+	var newDate = currentDate.setTime(currentDate.getTime() - dateOffset);
+	
+	const [startDate, setStartDate] = useState(currentDate);
 	const [endDate, setEndDate] = useState(new Date());
 	const [ticker, setTicker] = useState('AAPL');
 	const [financials, setFinancials] = useState([])
@@ -18,32 +22,71 @@ export const StockData = () => {
 	const [activeItemDateMenu, setActiveItemDateMenu] = useState('');
 	const [activeFinancialsMenuItem, setActiveFinancialsMenuItem] = useState()
 	const [activeEarningsMenuItem, setActiveEarningsMenuItem] = useState()
+	const [activeMomentumMenuItem, setActiveMomentumMenuItem] = useState()
 	const [stockData, setStockData] = useState([]);
-
+	//getAndSetStockData(ticker,currentDate,endDate);
+	
+	const [displayRSIcheckbox, setDisplayRSIcheckbox] = useState(true)
+	const [NforRSI, setNforRSI] = useState(10)
+	// const [dataForRSI, setDataForRSI] = useState([])
+	// if (stockData.length > 0) {
+	// 	getAndSetRSIdata(stockData);
+	// 	console.log(dataForRSI)
+	// }
+	
 	const candleChartNode = useRef(null);
 	const earningsChartNode = useRef(null);
 	const showVolumeNode = useRef(null);
 	const stockPriceLineChartNode = useRef(null);
+	const momentumIndicatorsChartNode = useRef(null);
+
+	if (stockData.length < 1 && earnings.length < 1){
+		getAndSetStockData(ticker,startDate,endDate)
+		getAndSetEarnings(ticker)
+	}
+
 
 	useEffect(() => {
 		if (stockData.length > 0) {
-			//createLineChart(stockData);
-			//console.log(stockData)
-			//createCandleStickChart(stockData,candleChartNode);
 			createStockPriceLineChart(stockData,stockPriceLineChartNode);
 			createVolumeBarChart(stockData,showVolumeNode);
-			
+			createMomentumIndicatorsChartFunction(NforRSI)
 		}
+		// if (dataForRSI.length > 0) {
+		// 	createMomentumIndicatorsChartFunction(momentumIndicatorsChartNode,displayRSIcheckbox,NforRSI)
+		// }
 		if (earnings.length > 0) {
-			console.log(earnings)
+			//console.log(earnings)
 			createEarningsChart(earnings,earningsChartNode)
 		}
-	},[stockData])
+	},[stockData,displayRSIcheckbox,NforRSI])
+
+	// function getAndSetStockData(stockTicker,theStartDate,theEndDate) {
+	// 	fetch("/get_stock_data/"+stockTicker+"/"+theStartDate.getFullYear()+"/"+(theStartDate.getMonth()+1)+"/"+theStartDate.getDate()+"/"+theEndDate.getFullYear()+"/"+(theEndDate.getMonth()+1)+"/"+theEndDate.getDate()).then(response => 
+	// 		response.json().then(data => {
+	// 			setStockData(data);
+	// 		})
+	// 	)
+	// }
+	function convertDatesToString(initialDate) {
+		const convertedDate = String(initialDate.getFullYear())+"-"+String(initialDate.getMonth() + 1)+"-"+String(initialDate.getDate())
+		return convertedDate
+	}
 
 	function getAndSetStockData(stockTicker,theStartDate,theEndDate) {
-		fetch("/get_stock_data/"+stockTicker+"/"+theStartDate.getFullYear()+"/"+(theStartDate.getMonth()+1)+"/"+theStartDate.getDate()+"/"+theEndDate.getFullYear()+"/"+(theEndDate.getMonth()+1)+"/"+theEndDate.getDate()).then(response => 
+		// const startDateConvertedSecs = parseInt(theStartDate.getTime() / 1000);
+		// const endDateConvertedSecs = parseInt(theEndDate.getTime() / 1000);
+		const startDateConverted = convertDatesToString(theStartDate) // String(theStartDate.getFullYear())+"-"+String(theStartDate.getMonth() + 1)+"-"+String(theStartDate.getDate())
+		const endDateConverted = convertDatesToString(theEndDate) //String(theEndDate.getFullYear())+"-"+String(theEndDate.getMonth() + 1)+"-"+String(theEndDate.getDate())
+		fetch("/get_stock_data/"+stockTicker+"/"+startDateConverted+"/"+endDateConverted).then(response => 
 			response.json().then(data => {
+				if (stockData.length < 1) {
+					createStockPriceLineChart(data,stockPriceLineChartNode);
+					createVolumeBarChart(data,showVolumeNode);
+					createMomentumIndicatorsChartFunction();
+				}
 				setStockData(data);
+
 			})
 		)
 	}
@@ -58,6 +101,9 @@ export const StockData = () => {
 	function getAndSetEarnings(stockTicker) {
 		fetch("/get_earnings_data/"+stockTicker).then(response => 
 			response.json().then(data => {
+				if (earnings.length < 1) {
+					createEarningsChart(data,earningsChartNode)
+				}
 				setEarnings(data)
 			}))
 	}
@@ -76,7 +122,7 @@ export const StockData = () => {
 		setActiveItemDateMenu(name)
 		
 		var currentDate = new Date();
-		var dateOffset = (24*60*60*1000) * minusDays; //5 days
+		var dateOffset = (24*60*60*1000) * minusDays; 
 		var newDate = currentDate.setTime(currentDate.getTime() - dateOffset);
 		setStartDate(currentDate);
 		getAndSetStockData(ticker,currentDate,endDate) 
@@ -97,7 +143,91 @@ export const StockData = () => {
 		getAndSetFinancials(ticker);
 		getAndSetEarnings(ticker);
 	}
-	// console.log(earnings)
+
+	function createMomentumIndicatorsChartFunction(NforRSI) {
+		
+		const dataWithN = [...stockData,{'N':NforRSI}]
+		if (dataWithN.length > 1) {
+			
+			fetch('/calculate_RSI/', {
+				method: 'POST', // or 'PUT'
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(dataWithN),
+				})
+				.then(response => response.json())
+				.then(dataForRSIfromAPI => {
+					createMomentumIndicatorsChart(dataForRSIfromAPI,momentumIndicatorsChartNode,displayRSIcheckbox)
+					
+				// if (dataForRSI.length < 1) {
+				// 	createMomentumIndicatorsChart(dataForRSIfromAPI,momentumIndicatorsChartNode,displayRSIcheckbox,NforRSI)
+				// }
+				// setDataForRSI(dataForRSIfromAPI)
+				})
+				.catch((error) => {
+				console.error('Error:', error);
+				});
+		}
+		
+	}
+
+	// function getAndSetRSIdata(stockDataForRSI) {
+
+	// 	// Creating a XHR object 
+	// 	let xhr = new XMLHttpRequest(); 
+	// 	let url = '/calculate_RSI/'; 
+	
+	// 	// open a connection 
+	// 	xhr.open('POST', url, false); 
+	
+	// 	// Set the request header i.e. which type of content you are sending 
+	// 	xhr.setRequestHeader("Content-Type", "application/json"); 
+	
+	// 	// Create a state change callback 
+	// 	xhr.onload = function () { 
+	// 		if (xhr.readyState === 4 && xhr.status === 200) { 
+	
+	// 			// Print received data from server 
+	// 			const result = xhr.response; 
+	// 			setDataForRSI(result)
+			
+	// 		} 
+	// 	}; 
+	
+	// 	// Converting JSON data to string 
+	// 	const data = JSON.stringify(stockDataForRSI); 
+	// 	console.log(data)
+	// 	// Sending data with the request 
+	// 	xhr.send(data); 
+	// }
+	
+	const momentumNtradingDayOptions = [
+		{ key: 'two', text: '2', value: 2 },
+		{ key: 'three', text: '3', value: 3 },
+		{ key: 'four', text: '4', value: 4 },
+		{ key: 'five', text: '5', value: 5 },
+		{ key: 'six', text: '6', value: 6 },
+		{ key: 'seven', text: '7', value: 7 },
+		{ key: 'eight', text: '8', value: 8 },
+		{ key: 'nine', text: '9', value: 9 },
+		{ key: 'ten', text: '10', value: 10 },
+		{ key: 'eleven', text: '11', value: 11 },
+		{ key: 'twelve', text: '12', value: 12 },
+		{ key: 'thirteen', text: '13', value: 13 },
+		{ key: 'fourteen', text: '14', value: 14 },
+		{ key: 'fifteen', text: '15', value: 15 },
+		{ key: 'sixteen', text: '16', value: 16 },
+		{ key: 'seventeen', text: '17', value: 17 },
+		{ key: 'eighteen', text: '18', value: 18 },
+		{ key: 'ninteen', text: '19', value: 19 },
+		{ key: 'twenty', text: '20', value: 20 },
+	  ]
+	  
+	 
+	console.log(NforRSI)
+
+
 	return (
 		<div>
 			<Menu>
@@ -110,13 +240,12 @@ export const StockData = () => {
 						isClearable
 					/>
 					<Button animated primary onClick={handleTickerFormSubmit}>
-						<Button.Content visible>Add</Button.Content>
+						<Button.Content visible>Go!</Button.Content>
 						<Button.Content hidden>
 							<Icon name='arrow right' />
 						</Button.Content>
 					</Button>
 				</Form>
-			
 				<Menu.Item
 				name='5d'
 				active={activeItemDateMenu === '5d'}
@@ -124,7 +253,6 @@ export const StockData = () => {
 				>
 				5 d
 				</Menu.Item>
-
 				<Menu.Item
 				name='1m'
 				active={activeItemDateMenu === '1m'}
@@ -132,7 +260,6 @@ export const StockData = () => {
 				>
 				1 m
 				</Menu.Item>
-
 				<Menu.Item
 				name='6m'
 				active={activeItemDateMenu === '6m'}
@@ -171,27 +298,48 @@ export const StockData = () => {
 				scrollableMonthYearDropdown />
 				</Menu.Item>
 			</Menu>
-			{/* <List>
-				{Object.keys(stockData).map(function(key,index) {
-					return(
-						<List.Item key={stockData[key].close}>
-							<Header>Date: {stockData[key].date}</Header>
-							<p>Open: {stockData[key].open}</p>
-							<p>High: {stockData[key].high}</p>
-							<p>Low: {stockData[key].low}</p>
-							<p>Close: {stockData[key].close}</p>
-						</List.Item>
-					)
-				})}
-        	</List> */}
 			<React.Fragment>
 				<svg ref={stockPriceLineChartNode}></svg>
-				{/* <svg ref={candleChartNode}></svg> */}
+			</React.Fragment>
+			<React.Fragment>
+				<svg ref={momentumIndicatorsChartNode}></svg>
 			</React.Fragment>
 			<React.Fragment>
 				<svg ref={showVolumeNode}></svg>
 			</React.Fragment>
 			<Accordion>
+
+
+				<Accordion.Title
+					onClick={() => {
+						setActiveMomentumMenuItem(!activeMomentumMenuItem)
+					}}
+				>
+					<h3>Momentum Indicators {activeMomentumMenuItem ? "-" : "+"}</h3>
+				</Accordion.Title>
+				<Accordion.Content active={activeMomentumMenuItem}>
+					<React.Fragment>
+						<Checkbox defaultChecked onClick={() => {
+							setDisplayRSIcheckbox(!displayRSIcheckbox)
+							}} label="Relative Strength Index">
+						</Checkbox>
+						<Form.Field
+							control={Select}
+							options={momentumNtradingDayOptions}
+							label={{ children: 'over how many trading days?' }}
+							placeholder='10'
+							onChange ={(e,selectedOption) => {
+								console.log(selectedOption.value)
+								setNforRSI(selectedOption.value)
+								}}
+						/>
+					</React.Fragment>
+					{/* <Form.Group widths='equal'>
+						<Form.Field control={Checkbox} onClick={() => {
+							setDisplayRSIcheckbox(!displayRSIcheckbox)
+						}} label='Relative Strength Index'/>
+					</Form.Group> */}
+				</Accordion.Content>
 
 				<Accordion.Title
 					onClick={() => {

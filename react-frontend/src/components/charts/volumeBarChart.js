@@ -1,6 +1,6 @@
 import '../../App.css'
 import 'react-datepicker/dist/react-datepicker.css'
-import { scaleLinear, scaleBand, scalePoint } from 'd3-scale'
+import { scaleLinear, scaleBand, scalePoint, tickFormat } from 'd3-scale'
 import { select } from 'd3-selection'
 import * as d3 from "d3";
 
@@ -26,7 +26,7 @@ export function createVolumeBarChart(data,showVolumeNode) {
     const y = scaleLinear()
         .domain([0, d3.max(data, d => d.volume)])
         .rangeRound([0,innerHeight])
-    console.log(y.domain())
+    //console.log(y.domain())
     const xAxis = g => g
         .attr("transform", `translate(0,${height - margin.bottom})`)
         .call(d3.axisBottom(x)
@@ -39,12 +39,10 @@ export function createVolumeBarChart(data,showVolumeNode) {
 
     const yAxis = g => g
         .attr("transform", `translate(${margin.left},0)`)
-        .call(d3.axisLeft(y))
-            
-            //.tickFormat(d3.format("")))
-            //.tickValues(d3.scaleLinear().domain(y.domain()).ticks()))
-        .call(g => g.selectAll(".tick line").clone()
-            .attr("stroke-width", 0))
+        .call(d3.axisLeft(y).ticks(0))
+        //     .tickValues(d3.scaleLinear().domain(y.domain()).ticks()))
+        // .call(g => g.selectAll(".tick line").clone()
+        //     .attr("stroke-width", 0))
             //.attr("x2", width - margin.left - margin.right))
         .call(g => g.select(".domain").remove())
 
