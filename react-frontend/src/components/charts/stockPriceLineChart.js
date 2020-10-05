@@ -1,6 +1,7 @@
 import '../../App.css'
 import 'react-datepicker/dist/react-datepicker.css'
 import * as d3 from "d3"
+
 import {
     select,
     csv,
@@ -29,7 +30,7 @@ export function createStockPriceLineChart(data,stockPriceLineChartNode) {
     }
     const parseDate = d3.utcParse("%Y-%m-%d")
     //new Date(secs * 1000);
-    const margin = ({top: 50, right: 30, bottom: 50, left: 40})
+    const margin = ({top: 50, right: 30, bottom: 5, left: 40})
     //const parseDate = d3.utcParse("%s")// d3.utcParse("%a %b %d %Y %X %LZ")// d3.utcParse("%Y-%m-%d")
     //console.log(parseDate((data[data.length - 1].date)) + 1)
     const x = scaleBand()
@@ -90,7 +91,26 @@ export function createStockPriceLineChart(data,stockPriceLineChartNode) {
         .attr('class', 'line-path')
         .attr('d', lineGenerator(data))
         .attr('fill','none')
-        .attr('stroke-width',5)
+        .attr('stroke-width',3)
+        .attr('stroke-linecap','round')
+    //     .on('mouseover', function (d, i) {
+    //         let hoverOverString = 'Date: '+d.date.toString();//(Math.round((d.value / d.data.all) * 100)).toString() + '%';
+    //         tooltip.html(d)  
+    //             .style("left", (d3.event.pageX) + "px")     
+    //             .style("top", (d3.event.pageY - 28) + "px");
+            
+    //         div.html(hoverOverString)
+    //              .style("left", (10) + "px")
+    //              .style("top", (15) + "px");
+    //     })
+    //    .on('mouseout', function (d, i) {
+    //     d3.select(svg).transition()
+    //          .duration('50')
+    //          .attr('opacity', '1');
+    //     div.transition()
+    //          .duration('50')
+    //          .style("opacity", 0);
+    //     });
 
     // const g2 = svg.append("g")
     //     .attr("stroke-linecap", "round")

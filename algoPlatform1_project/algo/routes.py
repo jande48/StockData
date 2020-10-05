@@ -7,7 +7,7 @@ import pandas as pd
 from iexfinance.stocks import get_historical_data, Stock
 import ta
 from ta.volatility import BollingerBands
-from ta.momentum import RSIIndicator
+from ta.momentum import RSIIndicator, TSIIndicator, uo
 from algoPlatform1_project.models import User, Post, Watchlist, OHLC_JSONdata
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -119,8 +119,7 @@ def get_stock_data(ticker,startDate,endDate):
 
 
     df.fillna(0, inplace=True)
-    print('This is the Data Frame with RSI')
-    print(df)
+    
     # return (json.dumps(Historical_Data)) 
     return (json.dumps(df.to_dict('records')))
 
@@ -164,35 +163,67 @@ def get_earnings_data(ticker):
     stock = Stock(ticker, token=IEX_api_key)
     earnings = stock.get_earnings(last=4)
     company = stock.get_company()
-    #print(earnings)
     return(json.dumps(earnings))
 
 
-@algo.route("/calculate_RSI/", methods=['GET','POST'])
-def calculate_RSI():
-    # print(stockDataJSON)
+# @algo.route("/calculate_Momentum_Indicators_temp/", methods=['GET','POST'])
+# def calculate_Momentum_Indicators_temp():
+#     JSON_sent = request.get_json()   
+#     list_temp = JSON_sent
+#     print('\n\n\n This is the length of the list sent \n\n\n',len(list_temp))
+#     #[data,RSIparameters,TSIparameters,UOparameters] = list_temp
+#     print('\n\n\n This is the list sent \n\n\n', list_temp) 
+#     print('\n\n\n This is the RSI Parameters \n\n\n', list_temp[1])
+#     print('\n\n\n This is the TSI Parameters \n\n\n', list_temp[2])
+#     print('\n\n\n This is the UO Parameters \n\n\n', list_temp[3])
+
+@algo.route("/calculate_Momentum_Indicators/", methods=['GET','POST'])
+def calculate_Momentum_Indicators():
     
-    JSON_sent = request.get_json()    
-    df = pd.DataFrame(JSON_sent)
-    print('This the originatl df\n',df)
-    nForRSI = df.iloc[-1,:]
-    print('THis is n for RSI',nForRSI)
-    df.drop(df.tail(1).index,inplace=True)
-    # print('This is the df after ropping last row',df)
-    dfWithoutN = df.drop(columns=['N'])
-    # print('This is the df after dropping N column',dfWithoutN)
-    dfWithoutN = ta.utils.dropna(dfWithoutN)
-    #print('This is the df after dropping NA',dfWithoutN)
-    indicator_RSI = RSIIndicator(close=dfWithoutN["close"], n=nForRSI['N'])
-    #print('THis is the df after calculating RSI',dfWithoutN)
-    dfWithoutN['rsi'] = indicator_RSI.rsi()
-    #print('THis is the df after add rsi column',dfWithoutN)
-    dfWithoutN.fillna(0, inplace=True)
+    JSON_sent = request.get_json() 
+    df = pd.DataFrame(JSON_sent[0])
     
-    #print('THis is df after replaceing naa with o', dfWithoutN)
+    # RSI
+    nForRSI = JSON_sent[1]['N']
     
-    export_df = dfWithoutN.drop(columns=['open', 'high', 'low', 'close', 'volume'])
+    # TSI
+    TSIchecked = JSON_sent[2]['displayTSI']
+    TSIr = int(JSON_sent[2]['rTSI'])
+    TSIs = int(JSON_sent[2]['sTSI'])
+
+    # Ultimate Ossilator
+    # print('This is display uo \n',JSON_sent[3]['displayUO'])
+    UOchecked = JSON_sent[3]['displayUO']
+    sForUO = int(JSON_sent[3]['sForUO'])
+    mForUO = int(JSON_sent[3]['mForUO'])
+    lenForUO = int(JSON_sent[3]['lenForUO'])
+    wsForUO = float(JSON_sent[3]['wsForUO'])
+    wmForUO = float(JSON_sent[3]['wmForUO'])
+    wlForUO = float(JSON_sent[3]['wlForUO'])
+
+    print("\n\n\n THis si the UO data \n\n\n",JSON_sent[3])
+
+    indicator_RSI = RSIIndicator(close=df["close"], n=nForRSI)
+    df['rsi'] = indicator_RSI.rsi()
+    # print('\n\n\n This is DF adding RSI \n\n\n',df)
+
+    if TSIchecked:
+        print('\n\n TSI is working as a boolean \n\n')
+        indicator_TSI = TSIIndicator(close=df["close"], r=TSIr, s=TSIs)
+        df['tsi'] = indicator_TSI.tsi()
     
+    if UOchecked:
+        print('\n\n UO is working as a boolean \n\n')
+        indicator_UO = uo(high=df['high'],low=df['low'],close=df['close'],s=sForUO,m=mForUO,len=lenForUO,ws=wsForUO,wm=wmForUO,wl=wlForUO)
+        df['UO'] = indicator_UO
+        #print('\n\n\n This is the UO last object \n\n\n',df['UO'][(len(df['UO'])-1)][_uo])
+        # for property, value in vars(df['UO'][(len(df['UO'])-50)]).items():
+        #     print(property, ":", value)
+    #print('\n\n\n This is DF with Mom Para \n\n\n',df)
+    df.fillna(0, inplace=True)
+    #print('\n\n\n This is DF after dropping Mom Para \n\n\n',df)
+    export_df = df.drop(columns=['open', 'high', 'low', 'close', 'volume'])
+    print('The export df \n',export_df)
     return (json.dumps(export_df.to_dict('records')))
 
 

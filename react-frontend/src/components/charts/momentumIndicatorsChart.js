@@ -19,10 +19,10 @@ import {
 
   
 
-export function createMomentumIndicatorsChart(data,momentumIndicatorsChartNode,displayRSIcheckbox) {
+export function createMomentumIndicatorsChart(data,momentumIndicatorsChartNode,displayRSIcheckbox,displayTSIcheckbox,displayUOcheckbox) {
 
     
-    console.log(data)
+    //console.log(data)
 
     const svg = select(momentumIndicatorsChartNode.current);
     svg.selectAll("g").remove()
@@ -33,7 +33,7 @@ export function createMomentumIndicatorsChart(data,momentumIndicatorsChartNode,d
     const width = 700;
     //const margin = ({top: 20, right: 30, bottom: 30, left: 80})
 
-    const margin = ({top: 50, right: 30, bottom: 50, left: 40})
+    const margin = ({top: 5, right: 30, bottom: 50, left: 40})
     const parseDate = d3.utcParse("%Y-%m-%d")
     
     const x = scaleBand()
@@ -74,7 +74,7 @@ export function createMomentumIndicatorsChart(data,momentumIndicatorsChartNode,d
     svg.append("g")
         .call(yAxis);
 
-    const g = svg.append("g")
+    const gRSI = svg.append("g")
         .attr("stroke-linecap", "round")
         .attr("stroke", "red")
         .selectAll("g")
@@ -82,22 +82,70 @@ export function createMomentumIndicatorsChart(data,momentumIndicatorsChartNode,d
         .join("g")
         // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
 
-    const lineGenerator = line()
+    const lineGeneratorRSI = line()
         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
         .y(d => y(d.rsi))
         .curve(curveLinear);
 
     if (displayRSIcheckbox) {
-        g.append('path')
+        gRSI.append('path')
         .attr('class', 'line-path')
         .attr("id", "rsi")
-        .attr('d', lineGenerator(data))
+        .attr('d', lineGeneratorRSI(data))
         .attr('fill','none')
-        .attr('stroke-width',5)
+        .attr('stroke-width',3)
+        .attr('stroke-linecap','round')
     }else{
         svg.selectAll("g").selectAll(".rsi").remove()
     }
 
+    const gTSI = svg.append("g")
+        .attr("stroke-linecap", "round")
+        .attr("stroke", "blue")
+        .selectAll("g")
+        .data(data)
+        .join("g")
+
+    const lineGeneratorTSI = line()
+        .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
+        .y(d => y(d.tsi))
+        .curve(curveLinear);
+
+    if (displayTSIcheckbox) {
+        gTSI.append('path')
+        .attr('class', 'line-path')
+        .attr("id", "tsi")
+        .attr('d', lineGeneratorTSI(data))
+        .attr('fill','none')
+        .attr('stroke-width',3)
+        .attr('stroke-linecap','round')
+    }else{
+        svg.selectAll("g").selectAll(".tsi").remove()
+    }
+
+    const gUO = svg.append("g")
+        .attr("stroke-linecap", "round")
+        .attr("stroke", "green")
+        .selectAll("g")
+        .data(data)
+        .join("g")
+
+    const lineGeneratorUO = line()
+        .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
+        .y(d => y(d.UO))
+        .curve(curveLinear);
+
+    if (displayUOcheckbox) {
+        gUO.append('path')
+        .attr('class', 'line-path')
+        .attr("id", "uo")
+        .attr('d', lineGeneratorUO(data))
+        .attr('fill','none')
+        .attr('stroke-width',3)
+        .attr('stroke-linecap','round')
+    }else{
+        svg.selectAll("g").selectAll(".uo").remove()
+    }
     // g.append('path')
     //     .attr('class', 'line-path')
     //     .attr('d', lineGenerator(data))

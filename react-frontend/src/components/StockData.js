@@ -24,16 +24,24 @@ export const StockData = () => {
 	const [activeEarningsMenuItem, setActiveEarningsMenuItem] = useState()
 	const [activeMomentumMenuItem, setActiveMomentumMenuItem] = useState()
 	const [stockData, setStockData] = useState([]);
-	//getAndSetStockData(ticker,currentDate,endDate);
 	
 	const [displayRSIcheckbox, setDisplayRSIcheckbox] = useState(true)
 	const [NforRSI, setNforRSI] = useState(10)
-	// const [dataForRSI, setDataForRSI] = useState([])
-	// if (stockData.length > 0) {
-	// 	getAndSetRSIdata(stockData);
-	// 	console.log(dataForRSI)
-	// }
-	
+
+	const [displayTSIcheckbox, setDisplayTSIcheckbox] = useState(false)
+	const [rForTSI, setrForTSI] = useState(25)
+	const [sForTSI, setsForTSI] = useState(13)
+
+	const [displayUOcheckbox, setUOcheckbox] = useState(false)
+	const [sForUO, setsForUO] = useState(7)
+	const [mForUO, setmForUO] = useState(14)
+	const [lenForUO, setlenForUO] = useState(28)
+	const [wsForUO, setwsForUO] = useState(4)
+	const [wmForUO, setwmForUO] = useState(2)
+	const [wlForUO, setwlForUO] = useState(1)
+
+
+
 	const candleChartNode = useRef(null);
 	const earningsChartNode = useRef(null);
 	const showVolumeNode = useRef(null);
@@ -50,40 +58,32 @@ export const StockData = () => {
 		if (stockData.length > 0) {
 			createStockPriceLineChart(stockData,stockPriceLineChartNode);
 			createVolumeBarChart(stockData,showVolumeNode);
-			createMomentumIndicatorsChartFunction(NforRSI)
+			createMomentumIndicatorsChartFunction(stockData,momentumIndicatorsChartNode)
 		}
-		// if (dataForRSI.length > 0) {
-		// 	createMomentumIndicatorsChartFunction(momentumIndicatorsChartNode,displayRSIcheckbox,NforRSI)
-		// }
+
 		if (earnings.length > 0) {
 			//console.log(earnings)
 			createEarningsChart(earnings,earningsChartNode)
 		}
-	},[stockData,displayRSIcheckbox,NforRSI])
+	},[stockData,displayRSIcheckbox,NforRSI,displayTSIcheckbox,rForTSI,sForTSI,displayUOcheckbox,sForUO,mForUO,lenForUO,wsForUO,wmForUO,wlForUO])
 
-	// function getAndSetStockData(stockTicker,theStartDate,theEndDate) {
-	// 	fetch("/get_stock_data/"+stockTicker+"/"+theStartDate.getFullYear()+"/"+(theStartDate.getMonth()+1)+"/"+theStartDate.getDate()+"/"+theEndDate.getFullYear()+"/"+(theEndDate.getMonth()+1)+"/"+theEndDate.getDate()).then(response => 
-	// 		response.json().then(data => {
-	// 			setStockData(data);
-	// 		})
-	// 	)
-	// }
+
+
 	function convertDatesToString(initialDate) {
 		const convertedDate = String(initialDate.getFullYear())+"-"+String(initialDate.getMonth() + 1)+"-"+String(initialDate.getDate())
 		return convertedDate
 	}
 
 	function getAndSetStockData(stockTicker,theStartDate,theEndDate) {
-		// const startDateConvertedSecs = parseInt(theStartDate.getTime() / 1000);
-		// const endDateConvertedSecs = parseInt(theEndDate.getTime() / 1000);
-		const startDateConverted = convertDatesToString(theStartDate) // String(theStartDate.getFullYear())+"-"+String(theStartDate.getMonth() + 1)+"-"+String(theStartDate.getDate())
-		const endDateConverted = convertDatesToString(theEndDate) //String(theEndDate.getFullYear())+"-"+String(theEndDate.getMonth() + 1)+"-"+String(theEndDate.getDate())
+
+		const startDateConverted = convertDatesToString(theStartDate) 
+		const endDateConverted = convertDatesToString(theEndDate) 
 		fetch("/get_stock_data/"+stockTicker+"/"+startDateConverted+"/"+endDateConverted).then(response => 
 			response.json().then(data => {
 				if (stockData.length < 1) {
 					createStockPriceLineChart(data,stockPriceLineChartNode);
 					createVolumeBarChart(data,showVolumeNode);
-					createMomentumIndicatorsChartFunction();
+					createMomentumIndicatorsChartFunction(data,momentumIndicatorsChartNode);
 				}
 				setStockData(data);
 
@@ -144,65 +144,77 @@ export const StockData = () => {
 		getAndSetEarnings(ticker);
 	}
 
-	function createMomentumIndicatorsChartFunction(NforRSI) {
+	function createMomentumIndicatorsChartFunction(data,momentumIndicatorsChartNode) {
 		
-		const dataWithN = [...stockData,{'N':NforRSI}]
-		if (dataWithN.length > 1) {
-			
-			fetch('/calculate_RSI/', {
+		const RSIparameters = {'N':NforRSI}
+		const TSIparameters = {'displayTSI':displayTSIcheckbox,'rTSI':rForTSI,'sTSI':sForTSI}
+		const UOparameters = {'displayUO':displayUOcheckbox,'sForUO':sForUO,'mForUO':mForUO,'lenForUO':lenForUO,'wsForUO':wsForUO,'wmForUO':wmForUO,'wlForUO':wlForUO}
+		//const dataWithMomPara = [...data,UOparameters,RSIparameters,TSIparameters];
+		
+
+		if (data.length > 1){
+			fetch('/calculate_Momentum_Indicators/', {
 				method: 'POST', // or 'PUT'
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify(dataWithN),
+				body: JSON.stringify([data,RSIparameters,TSIparameters,UOparameters]),
 				})
 				.then(response => response.json())
-				.then(dataForRSIfromAPI => {
-					createMomentumIndicatorsChart(dataForRSIfromAPI,momentumIndicatorsChartNode,displayRSIcheckbox)
-					
-				// if (dataForRSI.length < 1) {
-				// 	createMomentumIndicatorsChart(dataForRSIfromAPI,momentumIndicatorsChartNode,displayRSIcheckbox,NforRSI)
-				// }
-				// setDataForRSI(dataForRSIfromAPI)
+				.then(dataForMomfromAPI => {
+					createMomentumIndicatorsChart(dataForMomfromAPI,momentumIndicatorsChartNode,displayRSIcheckbox,displayTSIcheckbox,displayUOcheckbox)
 				})
 				.catch((error) => {
 				console.error('Error:', error);
 				});
+		}else{
+			createMomentumIndicatorsChart(data,momentumIndicatorsChartNode,displayRSIcheckbox,displayTSIcheckbox,displayUOcheckbox)
 		}
+
+		// if (displayTSIcheckbox) {
+		// 	const dataWithsAndrForTSI = [...stockData,{'r':rForTSI},{'s':sForTSI}]
+		// 	if (dataWithsAndrForTSI > 1) {
+		// 		fetch('/calculate_TSI/', {
+		// 			method: 'POST', // or 'PUT'
+		// 			headers: {
+		// 				'Content-Type': 'application/json',
+		// 			},
+		// 			body: JSON.stringify(dataWithsAndrForTSI),
+		// 			})
+		// 			.then(response => response.json())
+		// 			.then(dataForTSIfromAPI => {
+		// 				createMomentumIndicatorsChart(dataForRSIfromAPI,momentumIndicatorsChartNode,displayRSIcheckbox,dataForTSIfromAPI,displayTSIcheckbox)
+		// 			})
+		// 			.catch((error) => {
+		// 			console.error('Error:', error);
+		// 			});
+
+		// 	}
+		// }
+
+		// const dataWithN = [...stockData,{'N':NforRSI}]
+		// if (dataWithN.length > 1) {
+			
+		// 	fetch('/calculate_RSI/', {
+		// 		method: 'POST', // or 'PUT'
+		// 		headers: {
+		// 			'Content-Type': 'application/json',
+		// 		},
+		// 		body: JSON.stringify(dataWithN),
+		// 		})
+		// 		.then(response => response.json())
+		// 		.then(dataForRSIfromAPI => {
+		// 			createMomentumIndicatorsChart(dataForRSIfromAPI,momentumIndicatorsChartNode,displayRSIcheckbox,displayTSIcheckbox)
+		// 		})
+		// 		.catch((error) => {
+		// 		console.error('Error:', error);
+		// 		});
+		//}
 		
 	}
 
-	// function getAndSetRSIdata(stockDataForRSI) {
-
-	// 	// Creating a XHR object 
-	// 	let xhr = new XMLHttpRequest(); 
-	// 	let url = '/calculate_RSI/'; 
-	
-	// 	// open a connection 
-	// 	xhr.open('POST', url, false); 
-	
-	// 	// Set the request header i.e. which type of content you are sending 
-	// 	xhr.setRequestHeader("Content-Type", "application/json"); 
-	
-	// 	// Create a state change callback 
-	// 	xhr.onload = function () { 
-	// 		if (xhr.readyState === 4 && xhr.status === 200) { 
-	
-	// 			// Print received data from server 
-	// 			const result = xhr.response; 
-	// 			setDataForRSI(result)
-			
-	// 		} 
-	// 	}; 
-	
-	// 	// Converting JSON data to string 
-	// 	const data = JSON.stringify(stockDataForRSI); 
-	// 	console.log(data)
-	// 	// Sending data with the request 
-	// 	xhr.send(data); 
-	// }
-	
 	const momentumNtradingDayOptions = [
+		{ key: 'one', text: '1', value: 1 },
 		{ key: 'two', text: '2', value: 2 },
 		{ key: 'three', text: '3', value: 3 },
 		{ key: 'four', text: '4', value: 4 },
@@ -222,6 +234,16 @@ export const StockData = () => {
 		{ key: 'eighteen', text: '18', value: 18 },
 		{ key: 'ninteen', text: '19', value: 19 },
 		{ key: 'twenty', text: '20', value: 20 },
+		{ key: 'twentyone', text: '21', value: 21 },
+		{ key: 'twentytwo', text: '22', value: 22 },
+		{ key: 'twentythree', text: '23', value: 23 },
+		{ key: 'twentyfour', text: '24', value: 24 },
+		{ key: 'twentyfive', text: '25', value: 25 },
+		{ key: 'twentysix', text: '26', value: 26 },
+		{ key: 'twentyseven', text: '27', value: 27 },
+		{ key: 'twentyeight', text: '28', value: 28 },
+		{ key: 'twentynine', text: '29', value: 29 },
+		{ key: 'thirty', text: '30', value: 30 }
 	  ]
 	  
 	 
@@ -334,11 +356,98 @@ export const StockData = () => {
 								}}
 						/>
 					</React.Fragment>
-					{/* <Form.Group widths='equal'>
-						<Form.Field control={Checkbox} onClick={() => {
-							setDisplayRSIcheckbox(!displayRSIcheckbox)
-						}} label='Relative Strength Index'/>
-					</Form.Group> */}
+					<React.Fragment>
+						<Checkbox onClick={() => {
+							setDisplayTSIcheckbox(!displayTSIcheckbox)
+							}} label="True Strength Index">
+						</Checkbox>
+						<Form.Field
+							control={Select}
+							options={momentumNtradingDayOptions}
+							label={{ children: 'EMA Smoothing Period (r)' }}
+							placeholder='25'
+							onChange ={(e,selectedOption) => {
+								console.log(selectedOption.value)
+								setrForTSI(selectedOption.value)
+								}}
+						/>
+						<Form.Field
+							control={Select}
+							options={momentumNtradingDayOptions}
+							label={{ children: 'EMA Smoothing Period for Smoothed Mom (s)' }}
+							placeholder='13'
+							onChange ={(e,selectedOption) => {
+								console.log(selectedOption.value)
+								setsForTSI(selectedOption.value)
+								}}
+						/>
+					</React.Fragment>
+					<React.Fragment>
+						<Checkbox onClick={() => {
+							setUOcheckbox(!displayUOcheckbox)
+							}} label="Ultimate Oscillator">
+						</Checkbox>
+						<Form.Field
+							control={Select}
+							options={momentumNtradingDayOptions}
+							label={{ children: 'Short Period (s)' }}
+							placeholder='7'
+							onChange ={(e,selectedOption) => {
+								console.log(selectedOption.value)
+								setsForUO(selectedOption.value)
+								}}
+						/>
+						<Form.Field
+							control={Select}
+							options={momentumNtradingDayOptions}
+							label={{ children: 'Medium Period (m)' }}
+							placeholder='14'
+							onChange ={(e,selectedOption) => {
+								console.log(selectedOption.value)
+								setmForUO(selectedOption.value)
+								}}
+						/>
+						<Form.Field
+							control={Select}
+							options={momentumNtradingDayOptions}
+							label={{ children: 'Long Period (l)' }}
+							placeholder='28'
+							onChange ={(e,selectedOption) => {
+								console.log(selectedOption.value)
+								setlenForUO(selectedOption.value)
+								}}
+						/>
+						<Form.Field
+							control={Select}
+							options={momentumNtradingDayOptions}
+							label={{ children: 'Weight of Short BP Average (ws)' }}
+							placeholder='4'
+							onChange ={(e,selectedOption) => {
+								console.log(selectedOption.value)
+								setwsForUO(selectedOption.value)
+								}}
+						/>
+						<Form.Field
+							control={Select}
+							options={momentumNtradingDayOptions}
+							label={{ children: 'Weight of Medium BP Average (wm)' }}
+							placeholder='2'
+							onChange ={(e,selectedOption) => {
+								console.log(selectedOption.value)
+								setwmForUO(selectedOption.value)
+								}}
+						/>
+						<Form.Field
+							control={Select}
+							options={momentumNtradingDayOptions}
+							label={{ children: 'Weight of Long BP Average (wl)' }}
+							placeholder='1'
+							onChange ={(e,selectedOption) => {
+								console.log(selectedOption.value)
+								setwlForUO(selectedOption.value)
+								}}
+						/>
+					</React.Fragment>
 				</Accordion.Content>
 
 				<Accordion.Title
