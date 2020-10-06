@@ -8,10 +8,10 @@ function App() {
 
   return (
     <div className="App">
-      <Container style={{marginTop: 40}}>
+      {/* <Container style={{marginTop: 40}}>
         <StockData />
-      </Container>
-      
+      </Container> */}
+      <StockData />
     </div>
   );
 }

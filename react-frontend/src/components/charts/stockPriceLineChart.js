@@ -30,7 +30,7 @@ export function createStockPriceLineChart(data,stockPriceLineChartNode) {
     }
     const parseDate = d3.utcParse("%Y-%m-%d")
     //new Date(secs * 1000);
-    const margin = ({top: 50, right: 30, bottom: 5, left: 40})
+    const margin = ({top: 10, right: 30, bottom: 5, left: 40})
     //const parseDate = d3.utcParse("%s")// d3.utcParse("%a %b %d %Y %X %LZ")// d3.utcParse("%Y-%m-%d")
     //console.log(parseDate((data[data.length - 1].date)) + 1)
     const x = scaleBand()
