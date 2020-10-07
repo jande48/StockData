@@ -44,9 +44,30 @@ export const StockData = () => {
 	const [lenForUO, setlenForUO] = useState(28)
 	const [wsForUO, setwsForUO] = useState(4)
 	const [wmForUO, setwmForUO] = useState(2)
-	const [wlForUO, setwlForUO] = useState(1)
+    const [wlForUO, setwlForUO] = useState(1)
+    
+    const [displayStochCheckbox, setDisplayStochCheckbox] = useState(false)
+    const [nForStoch, setNForStoch] = useState(14)
+    const [d_nForStoch, setd_nForStoch] = useState(3)
 
+    const [displayStochSignalCheckbox, setDisplayStochSignalCheckbox] = useState(false)
+    const [nForStochSignal, setNForStochSignal] = useState(14)
+    const [d_nForStochSignal, setd_nForStochSignal] = useState(3)
 
+    const [displayWR, setDisplayWR] = useState(false)
+    const [lbpForWR, setLBPForWR] = useState(14)
+
+    const [displayAO, setDisplayAO] = useState(false)
+    const [sForAO, setSForAO] = useState(5)
+    const [lenForAO, setLenForAO] = useState(34)
+
+    const [displayKama, setDisplayKama] = useState(false)
+    const [nForKama, setNForKama] = useState(10)
+    const [pow1ForKama, setPow1ForKama] = useState(2)
+    const [pow2ForKama, setPow2ForKama] = useState(30)
+
+    const [displayROC, setDisplayROC] = useState(false)
+    const [nForROC, setNForROC] = useState(12)
 
 	const candleChartNode = useRef(null);
 	const earningsChartNode = useRef(null);
@@ -71,7 +92,7 @@ export const StockData = () => {
 			//console.log(earnings)
 			createEarningsChart(earnings,earningsChartNode)
 		}
-	},[stockData,displayRSIcheckbox,NforRSI,displayTSIcheckbox,rForTSI,sForTSI,displayUOcheckbox,sForUO,mForUO,lenForUO,wsForUO,wmForUO,wlForUO])
+	},[stockData,displayRSIcheckbox,NforRSI,displayTSIcheckbox,rForTSI,sForTSI,displayUOcheckbox,sForUO,mForUO,lenForUO,wsForUO,wmForUO,wlForUO,displayStochCheckbox,nForStoch,d_nForStoch,,displayStochSignalCheckbox,nForStochSignal,d_nForStochSignal,displayWR,lbpForWR,displayAO,sForAO,lenForAO,displayKama,nForKama,pow1ForKama,pow2ForKama,displayROC,nForROC])
 
 
 
@@ -155,8 +176,12 @@ export const StockData = () => {
 		const RSIparameters = {'N':NforRSI}
 		const TSIparameters = {'displayTSI':displayTSIcheckbox,'rTSI':rForTSI,'sTSI':sForTSI}
 		const UOparameters = {'displayUO':displayUOcheckbox,'sForUO':sForUO,'mForUO':mForUO,'lenForUO':lenForUO,'wsForUO':wsForUO,'wmForUO':wmForUO,'wlForUO':wlForUO}
-		//const dataWithMomPara = [...data,UOparameters,RSIparameters,TSIparameters];
-		
+		const StochParameters = {'displayStoch':displayStochCheckbox,'nForStoch':nForStoch,'d_nForStoch':d_nForStoch}
+		const StochSignalParameters = {'displayStochSignal':displayStochSignalCheckbox,'nForStochSignal':nForStochSignal,'d_nForStochSignal':d_nForStochSignal}
+        const WRParameters = {'displayWR':displayWR,'lbpForWR':lbpForWR}
+        const AOParameters = {'displayAO':displayAO,'sForAO':sForAO,'lenForAO':lenForAO}
+        const KamaParameters = {'displayKama':displayKama,'nForKama':nForKama,'pow1ForKama':pow1ForKama,'pow2ForKama':pow2ForKama}
+        const ROCParameters = {'displayROC':displayROC,'nForROC':nForROC}
 
 		if (data.length > 1){
 			fetch('/calculate_Momentum_Indicators/', {
@@ -164,17 +189,17 @@ export const StockData = () => {
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify([data,RSIparameters,TSIparameters,UOparameters]),
+				body: JSON.stringify([data,RSIparameters,TSIparameters,UOparameters,StochParameters,StochSignalParameters,WRParameters,AOParameters,KamaParameters,ROCParameters]),
 				})
 				.then(response => response.json())
 				.then(dataForMomfromAPI => {
-					createMomentumIndicatorsChart(dataForMomfromAPI,momentumIndicatorsChartNode,displayRSIcheckbox,displayTSIcheckbox,displayUOcheckbox)
+					createMomentumIndicatorsChart(dataForMomfromAPI,momentumIndicatorsChartNode,displayRSIcheckbox,displayTSIcheckbox,displayUOcheckbox,displayStochCheckbox,displayStochSignalCheckbox,displayWR,displayAO,displayKama,displayROC)
 				})
 				.catch((error) => {
 				console.error('Error:', error);
 				});
 		}else{
-			createMomentumIndicatorsChart(data,momentumIndicatorsChartNode,displayRSIcheckbox,displayTSIcheckbox,displayUOcheckbox)
+			createMomentumIndicatorsChart(data,momentumIndicatorsChartNode,displayRSIcheckbox,displayTSIcheckbox,displayUOcheckbox,displayStochCheckbox,displayStochSignalCheckbox,displayWR,displayAO,displayKama,displayROC)
 		}
 
 		// if (displayTSIcheckbox) {
@@ -249,7 +274,12 @@ export const StockData = () => {
 		{ key: 'twentyseven', text: '27', value: 27 },
 		{ key: 'twentyeight', text: '28', value: 28 },
 		{ key: 'twentynine', text: '29', value: 29 },
-		{ key: 'thirty', text: '30', value: 30 }
+        { key: 'thirty', text: '30', value: 30 },
+        { key: 'thirtyone', text: '31', value: 31 },
+		{ key: 'thirtytwo', text: '32', value: 32 },
+		{ key: 'thirtythree', text: '33', value: 33 },
+		{ key: 'thirtyfour', text: '34', value: 34 },
+		{ key: 'thirtyfive', text: '35', value: 35 }
 	]
 	  
     
@@ -267,7 +297,6 @@ export const StockData = () => {
                 label={{ children: 'over how many trading days?' }}
                 placeholder='10'
                 onChange ={(e,selectedOption) => {
-                    console.log(selectedOption.value)
                     setNforRSI(selectedOption.value)
                     }}
             />
@@ -289,7 +318,6 @@ export const StockData = () => {
                     label={{ children: 'EMA Smoothing Period (r)' }}
                     placeholder='25'
                     onChange ={(e,selectedOption) => {
-                        console.log(selectedOption.value)
                         setrForTSI(selectedOption.value)
                         }}
                 />
@@ -299,7 +327,6 @@ export const StockData = () => {
                     label={{ children: 'EMA Smoothing Period for Smoothed Mom (s)' }}
                     placeholder='13'
                     onChange ={(e,selectedOption) => {
-                        console.log(selectedOption.value)
                         setsForTSI(selectedOption.value)
                         }}
                 />
@@ -321,7 +348,6 @@ export const StockData = () => {
                     label={{ children: 'Short Period (s)' }}
                     placeholder='7'
                     onChange ={(e,selectedOption) => {
-                        console.log(selectedOption.value)
                         setsForUO(selectedOption.value)
                         }}
                 />
@@ -331,7 +357,6 @@ export const StockData = () => {
                     label={{ children: 'Medium Period (m)' }}
                     placeholder='14'
                     onChange ={(e,selectedOption) => {
-                        console.log(selectedOption.value)
                         setmForUO(selectedOption.value)
                         }}
                 />
@@ -341,7 +366,6 @@ export const StockData = () => {
                     label={{ children: 'Long Period (l)' }}
                     placeholder='28'
                     onChange ={(e,selectedOption) => {
-                        console.log(selectedOption.value)
                         setlenForUO(selectedOption.value)
                         }}
                 />
@@ -351,7 +375,6 @@ export const StockData = () => {
                     label={{ children: 'Weight of Short BP Average (ws)' }}
                     placeholder='4'
                     onChange ={(e,selectedOption) => {
-                        console.log(selectedOption.value)
                         setwsForUO(selectedOption.value)
                         }}
                 />
@@ -361,7 +384,6 @@ export const StockData = () => {
                     label={{ children: 'Weight of Medium BP Average (wm)' }}
                     placeholder='2'
                     onChange ={(e,selectedOption) => {
-                        console.log(selectedOption.value)
                         setwmForUO(selectedOption.value)
                         }}
                 />
@@ -371,7 +393,6 @@ export const StockData = () => {
                     label={{ children: 'Weight of Long BP Average (wl)' }}
                     placeholder='1'
                     onChange ={(e,selectedOption) => {
-                        console.log(selectedOption.value)
                         setwlForUO(selectedOption.value)
                         }}
                 />
@@ -380,10 +401,184 @@ export const StockData = () => {
         
     )
 
+    const StochcontentPanel = (
+        <div class='content active'>
+            <React.Fragment>
+            <Checkbox onClick={() => {
+                setDisplayStochCheckbox(!displayStochCheckbox)
+                }} label="Stochastic Oscillator">
+            </Checkbox>
+            <Form.Field
+                control={Select}
+                options={momentumNtradingDayOptions}
+                label={{ children: 'over how many trading days?' }}
+                placeholder='14'
+                onChange ={(e,selectedOption) => {
+                    setNForStoch(selectedOption.value)
+                    }}
+            />
+            <Form.Field
+                control={Select}
+                options={momentumNtradingDayOptions}
+                label={{ children: 'simple moving average period' }}
+                placeholder='3'
+                onChange ={(e,selectedOption) => {
+                    setd_nForStoch(selectedOption.value)
+                }}
+            />
+            </React.Fragment>
+        </div>
+        
+    )                    
+
+    const StochSignalcontentPanel = (
+        <div class='content active'>
+            <React.Fragment>
+            <Checkbox onClick={() => {
+                setDisplayStochSignalCheckbox(!displayStochSignalCheckbox)
+                }} label="Stochastic Oscillator Signal">
+            </Checkbox>
+            <Form.Field
+                control={Select}
+                options={momentumNtradingDayOptions}
+                label={{ children: 'over how many trading days?' }}
+                placeholder='14'
+                onChange ={(e,selectedOption) => {
+                    setNForStochSignal(selectedOption.value)
+                    }}
+            />
+            <Form.Field
+                control={Select}
+                options={momentumNtradingDayOptions}
+                label={{ children: 'simple moving average period' }}
+                placeholder='3'
+                onChange ={(e,selectedOption) => {
+                    setd_nForStochSignal(selectedOption.value)
+                }}
+            />
+            </React.Fragment>
+        </div>
+        
+    )      
+    
+    
+    const WRcontentPanel = (
+        <div class='content active'>
+            <React.Fragment>
+            <Checkbox onClick={() => {
+                setDisplayWR(!displayWR)
+                }} label="Williams %R">
+            </Checkbox>
+            <Form.Field
+                control={Select}
+                options={momentumNtradingDayOptions}
+                label={{ children: 'Lookback Period' }}
+                placeholder='14'
+                onChange ={(e,selectedOption) => {
+                    setLBPForWR(selectedOption.value)
+                    }}
+            />
+            </React.Fragment>
+        </div>
+    )
+
+    const AOcontentPanel = (
+        <div class='content active'>
+            <React.Fragment>
+                <Checkbox onClick={() => {
+                    setDisplayAO(!displayAO)
+                    }} label="Awesome Oscillator">
+                </Checkbox>
+                <Form.Field
+                    control={Select}
+                    options={momentumNtradingDayOptions}
+                    label={{ children: 'Short Period (s)' }}
+                    placeholder='5'
+                    onChange ={(e,selectedOption) => {
+                        setSForAO(selectedOption.value)
+                        }}
+                />
+                <Form.Field
+                    control={Select}
+                    options={momentumNtradingDayOptions}
+                    label={{ children: 'Long Period (len)' }}
+                    placeholder='34'
+                    onChange ={(e,selectedOption) => {
+                        setLenForAO(selectedOption.value)
+                        }}
+                />
+            </React.Fragment>
+        </div> 
+    )
+
+    const KamacontentPanel = (
+        <div class='content active'>
+            <React.Fragment>
+                <Checkbox onClick={() => {
+                    setDisplayKama(!displayKama)
+                    }} label="Kaufman's Adaptive Moving Average (KAMA)">
+                </Checkbox>
+                <Form.Field
+                    control={Select}
+                    options={momentumNtradingDayOptions}
+                    label={{ children: 'number of periods for the efficiency ratio (n)' }}
+                    placeholder='10'
+                    onChange ={(e,selectedOption) => {
+                        setNForKama(selectedOption.value)
+                        }}
+                />
+                <Form.Field
+                    control={Select}
+                    options={momentumNtradingDayOptions}
+                    label={{ children: 'number of periods for the fastest EMA constant' }}
+                    placeholder='2'
+                    onChange ={(e,selectedOption) => {
+                        setPow1ForKama(selectedOption.value)
+                        }}
+                />
+                <Form.Field
+                    control={Select}
+                    options={momentumNtradingDayOptions}
+                    label={{ children: 'number of periods for the slowest EMA constant' }}
+                    placeholder='30'
+                    onChange ={(e,selectedOption) => {
+                        setPow2ForKama(selectedOption.value)
+                        }}
+                />
+            </React.Fragment>
+        </div> 
+    )
+
+    const ROCcontentPanel = (
+        <div class='content active'>
+            <React.Fragment>
+                <Checkbox onClick={() => {
+                    setDisplayROC(!displayROC)
+                    }} label="Rate of Change (ROC) Indicator">
+                </Checkbox>
+                <Form.Field
+                    control={Select}
+                    options={momentumNtradingDayOptions}
+                    label={{ children: 'number of periods (n)' }}
+                    placeholder='12'
+                    onChange ={(e,selectedOption) => {
+                        setNForROC(selectedOption.value)
+                        }}
+                />
+            </React.Fragment>
+        </div> 
+    )
+
     const level1MomentumMenuPanels = [
         { key: 'RSI', title: 'Relative Strength Index', content: RSIcontentPanel, index: 0 },
         { key: 'TSI', title: 'True Strength Index', content: TSIcontentPanel, index: 1 },
-        { key: 'UO', title: 'Ultimate Oscillator', content: UOcontentPanel, index: 2 }
+        { key: 'UO', title: 'Ultimate Oscillator', content: UOcontentPanel, index: 2 },
+        { key: 'Stoch', title: 'Stochastic Oscillator', content: StochcontentPanel, index: 3 },
+        { key: 'StochSignal', title: 'Stochastic Oscillator Signal', content: StochSignalcontentPanel, index: 4 },
+        { key: 'WR', title: 'Williams %R', content: WRcontentPanel, index: 5 },
+        { key: 'AO', title: 'Awesome Oscillator', content: AOcontentPanel, index: 6 },
+        { key: 'Kama', title: 'Kaufmans Adaptive Moving Average', content: KamacontentPanel, index: 7 },
+        { key: 'ROC', title: 'Rate-of-Change (ROC) indicator', content: ROCcontentPanel, index: 8 },
     ]
 
     // function handleMomentumItemClick(e,itemProps) {
@@ -395,7 +590,7 @@ export const StockData = () => {
 
     const Level1MomentumContent = (
             <div className="no-padding">
-              {/* <Accordion.Accordion panels={level1MomentumMenuPanels} onTitleClick={setActiveMomentumMenuItem(level1MomentumMenuPanels.index)} activeIndex={activeMomentumMenuItem} /> */}
+              {/* <Accordion.Accordion panels={level1MomentumMenuPanels} onTitleClick={handleMomentumItemClick(e,itemProps)} value={activeIndex} /> */}
               <Accordion.Accordion panels={level1MomentumMenuPanels} className='no-padding'/>
             </div>
         )
@@ -404,7 +599,7 @@ export const StockData = () => {
             { key: 'panel-1-Momentum', title: 'Momentum Indicators', content: { content: Level1MomentumContent } },
             //{ key: 'panel-2', title: 'Level 2', content: { content: Level2Content } },
         ]
-	console.log(NforRSI)
+	//console.log(NforRSI)
 
 
 	return (
@@ -497,18 +692,18 @@ export const StockData = () => {
                                 </Accordion.Title>
                                 <Accordion.Content active={activeMomentumMenuItem}>
                                     <React.Fragment>
-                                        <Accordion>
-                                            <Accordion.Title
-                                            onClick={() => {
-                                                setActiveRSIMenuItem(!activeRSIMenuItem)
-                                            }}
-                                            >
-                                            <Accordion.Content active={activeRSIMenuItem}>
-                                                <React.Fragment>
-                                                <Checkbox defaultChecked onClick={() => {
-                                                    setDisplayRSIcheckbox(!displayRSIcheckbox)
-                                                    }} label="Relative Strength Index">
-                                                </Checkbox>
+                                    <Accordion>
+                                        <Accordion.Title
+                                        onClick={() => {
+                                            setActiveRSIMenuItem(!activeRSIMenuItem)
+                                        }}
+                                        >
+                                        <Accordion.Content active={activeRSIMenuItem}>
+                                            <React.Fragment>
+                                            <Checkbox defaultChecked onClick={() => {
+                                                setDisplayRSIcheckbox(!displayRSIcheckbox)
+                                                }} label="Relative Strength Index">
+                                            </Checkbox>
                                                 <Form.Field
                                                     control={Select}
                                                     options={momentumNtradingDayOptions}
