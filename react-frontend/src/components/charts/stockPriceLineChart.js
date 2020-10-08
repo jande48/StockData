@@ -16,7 +16,7 @@ import {
     curveLinear
   } from 'd3';
 
-export function createStockPriceLineChart(data,stockPriceLineChartNode) {
+export function createStockPriceLineChart(data,stockPriceLineChartNode,displayPriceChart) {
     
     const svg = select(stockPriceLineChartNode.current);
     svg.selectAll("g").remove()
@@ -73,26 +73,54 @@ export function createStockPriceLineChart(data,stockPriceLineChartNode) {
         
     svg.append("g")
         .call(yAxis);
+    if (displayPriceChart) {
+        svg.selectAll("g").selectAll(".candleStick").remove()
+
+        const g = svg.append("g")
+            .attr("stroke-linecap", "round")
+            .attr("stroke", "black")
+            .selectAll("g")
+            .data(data)
+            .join("g")
+            // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
+
+        const lineGenerator = line()
+            .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
+            .y(d => y(d.close))
+            .curve(curveLinear);
+
+        g.append('path')
+            .attr('class', 'line-path')
+            .attr('d', lineGenerator(data))
+            .attr('id','lineChart')
+            .attr('fill','none')
+            .attr('stroke-width',3)
+            .attr('stroke-linecap','round')
+    }else{
+        svg.selectAll("g").selectAll(".lineChart").remove()
+
+        const g = svg.append("g")
+            .attr("stroke-linecap", "round")
+            .attr("stroke", "black")
+            .selectAll("g")
+            .data(data)
+            .join("g")
+            .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
+
+        g.append("line")
+            .attr("y1", d => y(d.low))
+            .attr("y2", d => y(d.high));
+
+        g.append("line")
+            .attr("y1", d => y(d.open))
+            .attr("y2", d => y(d.close))
+            .attr("id","candleStick")
+            .attr("stroke-width", x.bandwidth())
+            .attr("stroke", d => d.open > d.close ? d3.schemeSet1[0]
+                : d.close > d.open ? d3.schemeSet1[2]
+                : d3.schemeSet1[8]);
+    }
     
-    const g = svg.append("g")
-        .attr("stroke-linecap", "round")
-        .attr("stroke", "black")
-        .selectAll("g")
-        .data(data)
-        .join("g")
-        // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-
-    const lineGenerator = line()
-        .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-        .y(d => y(d.close))
-        .curve(curveLinear);
-
-    g.append('path')
-        .attr('class', 'line-path')
-        .attr('d', lineGenerator(data))
-        .attr('fill','none')
-        .attr('stroke-width',3)
-        .attr('stroke-linecap','round')
     //     .on('mouseover', function (d, i) {
     //         let hoverOverString = 'Date: '+d.date.toString();//(Math.round((d.value / d.data.all) * 100)).toString() + '%';
     //         tooltip.html(d)  

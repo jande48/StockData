@@ -3,7 +3,7 @@ import "semantic-ui-css/semantic.min.css"
 import '../App.css'
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
-import { List, Header, Form, Input, Button, Grid, Container, Sidebar, Icon, Menu, Segment, Accordion, Checkbox, Select } from "semantic-ui-react"
+import { List, Header, Form, Input, Button, Radio, Grid, Container, Sidebar, Icon, Menu, Segment, Accordion, Checkbox, Select } from "semantic-ui-react"
 import { createCandleStickChart } from './charts/candleStickChart.js'
 import { createVolumeBarChart } from './charts/volumeBarChart.js'
 import { createEarningsChart } from './charts/earningChart.js'
@@ -30,7 +30,7 @@ export const StockData = () => {
     
 
 	const [stockData, setStockData] = useState([]);
-	
+	const [displayPriceChart, setDisplayPriceChart] = useState(true)
 	const [displayRSIcheckbox, setDisplayRSIcheckbox] = useState(true)
 	const [NforRSI, setNforRSI] = useState(10)
 
@@ -83,7 +83,7 @@ export const StockData = () => {
 
 	useEffect(() => {
 		if (stockData.length > 0) {
-			createStockPriceLineChart(stockData,stockPriceLineChartNode);
+			createStockPriceLineChart(stockData,stockPriceLineChartNode,displayPriceChart);
 			createVolumeBarChart(stockData,showVolumeNode);
 			createMomentumIndicatorsChartFunction(stockData,momentumIndicatorsChartNode)
 		}
@@ -92,9 +92,9 @@ export const StockData = () => {
 			//console.log(earnings)
 			createEarningsChart(earnings,earningsChartNode)
 		}
-	},[stockData,displayRSIcheckbox,NforRSI,displayTSIcheckbox,rForTSI,sForTSI,displayUOcheckbox,sForUO,mForUO,lenForUO,wsForUO,wmForUO,wlForUO,displayStochCheckbox,nForStoch,d_nForStoch,,displayStochSignalCheckbox,nForStochSignal,d_nForStochSignal,displayWR,lbpForWR,displayAO,sForAO,lenForAO,displayKama,nForKama,pow1ForKama,pow2ForKama,displayROC,nForROC])
+	},[stockData,displayRSIcheckbox,NforRSI,displayTSIcheckbox,rForTSI,sForTSI,displayUOcheckbox,sForUO,mForUO,lenForUO,wsForUO,wmForUO,wlForUO,displayStochCheckbox,nForStoch,d_nForStoch,,displayStochSignalCheckbox,nForStochSignal,d_nForStochSignal,displayWR,lbpForWR,displayAO,sForAO,lenForAO,displayKama,nForKama,pow1ForKama,pow2ForKama,displayROC,nForROC,displayPriceChart])
 
-
+console.log(displayPriceChart)
 
 	function convertDatesToString(initialDate) {
 		const convertedDate = String(initialDate.getFullYear())+"-"+String(initialDate.getMonth() + 1)+"-"+String(initialDate.getDate())
@@ -108,7 +108,7 @@ export const StockData = () => {
 		fetch("/get_stock_data/"+stockTicker+"/"+startDateConverted+"/"+endDateConverted).then(response => 
 			response.json().then(data => {
 				if (stockData.length < 1) {
-					createStockPriceLineChart(data,stockPriceLineChartNode);
+					createStockPriceLineChart(data,stockPriceLineChartNode,displayPriceChart);
 					createVolumeBarChart(data,showVolumeNode);
 					createMomentumIndicatorsChartFunction(data,momentumIndicatorsChartNode);
 				}
@@ -170,6 +170,15 @@ export const StockData = () => {
 		getAndSetFinancials(ticker);
 		getAndSetEarnings(ticker);
 	}
+
+    const handlePriceClickLine = (event, {value}) => setDisplayPriceChart(true)
+    const handlePriceClickCandle = (event, {value}) => setDisplayPriceChart(false)
+    // function handlePriceChartClick() {
+    //     //(event, {value}) => setDisplayPriceChart(!{ value });
+    //     setDisplayPriceChart(!displayPriceChart)
+    //     console.log(!displayPriceChart)
+        
+    // }
 
 	function createMomentumIndicatorsChartFunction(data,momentumIndicatorsChartNode) {
 		
@@ -659,8 +668,8 @@ export const StockData = () => {
                                 </Menu>
                             </Segment>
                             <Segment>
-                                Custom
-                                <DatePicker 
+                                Custom Dates
+                                <br/>Start: <DatePicker 
                                 selected={startDate} 
                                 maxDate={new Date()} 
                                 onChange={date => handleStartDateClick(date)}
@@ -669,7 +678,7 @@ export const StockData = () => {
                                 showYearDropdown
                                 scrollableMonthYearDropdown />
                                 
-                                <DatePicker 
+                                <br/>  End:  <DatePicker 
                                 selected={endDate} 
                                 maxDate={new Date()}
                                 onChange={date => handleEndDateClick(date)}
@@ -677,7 +686,26 @@ export const StockData = () => {
                                 isClearable
                                 showYearDropdown
                                 scrollableMonthYearDropdown />
-
+                            <br/> 
+                            </Segment>
+                            <Segment>
+                                <Form>
+                                    <Form.Field>
+                                        {/* Line <Radio toggle value={displayPriceChart} checked={!displayPriceChart} onChange={handlePriceClick}/> Candle Stick */}
+                                        <Button toggle active={displayPriceChart} onClick={handlePriceClickLine}>
+                                            Line Chart
+                                        </Button>
+                                        <Button toggle active={!displayPriceChart} onClick={handlePriceClickCandle}>
+                                            Candlecd Stick
+                                        </Button>
+                                    </Form.Field>
+                                </Form>
+                            {/* <Button toggle active={displayPriceChart} onClick={setDisplayPriceChart(!displayPriceChart)}>
+                                Line Chart
+                            </Button>
+                            <Button toggle active={!displayPriceChart} onClick={setDisplayPriceChart(!displayPriceChart)}>
+                                Candle Stick
+                            </Button> */}
                             </Segment>
                         </Grid.Row>
                         <Grid.Row>
