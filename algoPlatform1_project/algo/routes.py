@@ -167,16 +167,22 @@ def get_earnings_data(ticker):
     return(json.dumps(earnings))
 
 
-# @algo.route("/calculate_Momentum_Indicators_temp/", methods=['GET','POST'])
-# def calculate_Momentum_Indicators_temp():
-#     JSON_sent = request.get_json()   
-#     list_temp = JSON_sent
-#     print('\n\n\n This is the length of the list sent \n\n\n',len(list_temp))
-#     #[data,RSIparameters,TSIparameters,UOparameters] = list_temp
-#     print('\n\n\n This is the list sent \n\n\n', list_temp) 
-#     print('\n\n\n This is the RSI Parameters \n\n\n', list_temp[1])
-#     print('\n\n\n This is the TSI Parameters \n\n\n', list_temp[2])
-#     print('\n\n\n This is the UO Parameters \n\n\n', list_temp[3])
+@algo.route("/calculate_Trend_Indicators/", methods=['GET','POST'])
+def calculate_Trend_Indicators():
+    JSON_sent = request.get_json() 
+    df = pd.DataFrame(JSON_sent[0])
+
+    # Exponential Moving Average (EMA)
+    EMAChecked = JSON_sent[1]['displayEMA']
+    nForEMA = JSON_sent[1]['nForEMA']
+
+    if EMAChecked:
+        indicator_ema = ema_indicator(close=df['close'],n=nForEMA)
+        df['ema'] = indicator_ema
+    
+    df.fillna(0, inplace=True)
+    #export_df = df.drop(columns=['open', 'high', 'low', 'close', 'volume'])
+    return (json.dumps(df.to_dict('records')))
 
 @algo.route("/calculate_Momentum_Indicators/", methods=['GET','POST'])
 def calculate_Momentum_Indicators():
@@ -230,6 +236,9 @@ def calculate_Momentum_Indicators():
     ROCChecked = JSON_sent[9]['displayROC']
     nForROC = JSON_sent[9]['nForROC']
 
+    
+
+
     indicator_RSI = RSIIndicator(close=df["close"], n=nForRSI)
     df['rsi'] = indicator_RSI.rsi()
     
@@ -265,7 +274,6 @@ def calculate_Momentum_Indicators():
     if ROCChecked:
         indicator_roc = roc(close=df['close'],n=nForRSI)
         df['roc'] = indicator_roc
-        
     
     df.fillna(0, inplace=True)
     export_df = df.drop(columns=['open', 'high', 'low', 'close', 'volume'])

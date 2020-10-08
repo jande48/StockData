@@ -16,7 +16,7 @@ import {
     curveLinear
   } from 'd3';
 
-export function createStockPriceLineChart(data,stockPriceLineChartNode,displayPriceChart) {
+export function createStockPriceLineChart(data,stockPriceLineChartNode,displayPriceChart,displayEMA) {
     
     const svg = select(stockPriceLineChartNode.current);
     svg.selectAll("g").remove()
@@ -119,6 +119,29 @@ export function createStockPriceLineChart(data,stockPriceLineChartNode,displayPr
             .attr("stroke", d => d.open > d.close ? d3.schemeSet1[0]
                 : d.close > d.open ? d3.schemeSet1[2]
                 : d3.schemeSet1[8]);
+    }
+
+    if (displayEMA) {
+        const gEMA = svg.append("g")
+            .attr("stroke-linecap", "round")
+            .attr("stroke", "blue")
+            .selectAll("g")
+            .data(data)
+            .join("g")
+            // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
+
+        const lineGeneratorEMA = line()
+            .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
+            .y(d => y(d.ema))
+            .curve(curveLinear);
+
+        gEMA.append('path')
+            .attr('class', 'line-path')
+            .attr('d', lineGeneratorEMA(data))
+            .attr('id','ema')
+            .attr('fill','none')
+            .attr('stroke-width',3)
+            .attr('stroke-linecap','round')
     }
     
     //     .on('mouseover', function (d, i) {

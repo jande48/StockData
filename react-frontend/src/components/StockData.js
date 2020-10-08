@@ -69,7 +69,9 @@ export const StockData = () => {
     const [displayROC, setDisplayROC] = useState(false)
     const [nForROC, setNForROC] = useState(12)
 
-	const candleChartNode = useRef(null);
+    const [displayEMA, setDisplayEMA] = useState(false)
+    const [nForEMA, setNForEMA] = useState(12)
+
 	const earningsChartNode = useRef(null);
 	const showVolumeNode = useRef(null);
 	const stockPriceLineChartNode = useRef(null);
@@ -83,8 +85,9 @@ export const StockData = () => {
 
 	useEffect(() => {
 		if (stockData.length > 0) {
-			createStockPriceLineChart(stockData,stockPriceLineChartNode,displayPriceChart);
-			createVolumeBarChart(stockData,showVolumeNode);
+			//createStockPriceLineChart(stockData,stockPriceLineChartNode,displayPriceChart);
+            createTrendIndicatorsChartFunction(stockData,stockPriceLineChartNode);
+            createVolumeBarChart(stockData,showVolumeNode);
 			createMomentumIndicatorsChartFunction(stockData,momentumIndicatorsChartNode)
 		}
 
@@ -92,9 +95,8 @@ export const StockData = () => {
 			//console.log(earnings)
 			createEarningsChart(earnings,earningsChartNode)
 		}
-	},[stockData,displayRSIcheckbox,NforRSI,displayTSIcheckbox,rForTSI,sForTSI,displayUOcheckbox,sForUO,mForUO,lenForUO,wsForUO,wmForUO,wlForUO,displayStochCheckbox,nForStoch,d_nForStoch,,displayStochSignalCheckbox,nForStochSignal,d_nForStochSignal,displayWR,lbpForWR,displayAO,sForAO,lenForAO,displayKama,nForKama,pow1ForKama,pow2ForKama,displayROC,nForROC,displayPriceChart])
+	},[stockData,displayRSIcheckbox,NforRSI,displayTSIcheckbox,rForTSI,sForTSI,displayUOcheckbox,sForUO,mForUO,lenForUO,wsForUO,wmForUO,wlForUO,displayStochCheckbox,nForStoch,d_nForStoch,,displayStochSignalCheckbox,nForStochSignal,d_nForStochSignal,displayWR,lbpForWR,displayAO,sForAO,lenForAO,displayKama,nForKama,pow1ForKama,pow2ForKama,displayROC,nForROC,displayPriceChart,displayEMA])
 
-console.log(displayPriceChart)
 
 	function convertDatesToString(initialDate) {
 		const convertedDate = String(initialDate.getFullYear())+"-"+String(initialDate.getMonth() + 1)+"-"+String(initialDate.getDate())
@@ -173,12 +175,30 @@ console.log(displayPriceChart)
 
     const handlePriceClickLine = (event, {value}) => setDisplayPriceChart(true)
     const handlePriceClickCandle = (event, {value}) => setDisplayPriceChart(false)
-    // function handlePriceChartClick() {
-    //     //(event, {value}) => setDisplayPriceChart(!{ value });
-    //     setDisplayPriceChart(!displayPriceChart)
-    //     console.log(!displayPriceChart)
-        
-    // }
+
+
+    function createTrendIndicatorsChartFunction(data, stockPriceLineChartNode) {
+        const EMAparameters = {'displayEMA':displayEMA,'nForEMA':nForEMA}
+
+        if (data.length > 1) {
+            fetch('/calculate_Trend_Indicators/', {
+				method: 'POST', // or 'PUT'
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify([data,EMAparameters]),
+				})
+				.then(response => response.json())
+				.then(dataForTrendfromAPI => {
+					createStockPriceLineChart(dataForTrendfromAPI,stockPriceLineChartNode,displayPriceChart,displayEMA)
+				})
+				.catch((error) => {
+				console.error('Error:', error);
+				});
+        }else{
+			createStockPriceLineChart(data,stockPriceLineChartNode,displayPriceChart,displayEMA);
+		}
+    }
 
 	function createMomentumIndicatorsChartFunction(data,momentumIndicatorsChartNode) {
 		
@@ -590,25 +610,48 @@ console.log(displayPriceChart)
         { key: 'ROC', title: 'Rate-of-Change (ROC) indicator', content: ROCcontentPanel, index: 8 },
     ]
 
-    // function handleMomentumItemClick(e,itemProps) {
-    //     const { index } = itemProps
-    //     const { activeIndex } = activeMomentumMenuItem
-    //     const newIndex = activeIndex === index ? -1 : index
-    //     setActiveMomentumMenuItem({ activeIndex: newIndex })
-    // }
-
     const Level1MomentumContent = (
-            <div className="no-padding">
-              {/* <Accordion.Accordion panels={level1MomentumMenuPanels} onTitleClick={handleMomentumItemClick(e,itemProps)} value={activeIndex} /> */}
-              <Accordion.Accordion panels={level1MomentumMenuPanels} className='no-padding'/>
-            </div>
-        )
+        <div className="no-padding">
+          {/* <Accordion.Accordion panels={level1MomentumMenuPanels} onTitleClick={handleMomentumItemClick(e,itemProps)} value={activeIndex} /> */}
+          <Accordion.Accordion panels={level1MomentumMenuPanels} className='no-padding'/>
+        </div>
+    )
+
+    const EMAcontentPanel = (
+        <div class='content active'>
+            <React.Fragment>
+            <Checkbox onClick={() => {
+                setDisplayEMA(!displayEMA)
+                }} label="Exponential Moving Average (EMA)">
+            </Checkbox>
+            <Form.Field
+                control={Select}
+                options={momentumNtradingDayOptions}
+                label={{ children: 'Lookback Period' }}
+                placeholder='12'
+                onChange ={(e,selectedOption) => {
+                    setNForEMA(selectedOption.value)
+                    }}
+            />
+            </React.Fragment>
+        </div>
+    )
+
+    const level1TrendMenuPanels = [
+        { key: 'RSI', title: 'Exponential Moving Average (EMA)', content: EMAcontentPanel, index: 0 },
+    ]
+    
+    const Level1TrendContent = (
+        <div className="no-padding">
+          <Accordion.Accordion panels={level1TrendMenuPanels} className='no-padding'/>
+        </div>
+    )
 
     const rootPanels = [
             { key: 'panel-1-Momentum', title: 'Momentum Indicators', content: { content: Level1MomentumContent } },
-            //{ key: 'panel-2', title: 'Level 2', content: { content: Level2Content } },
+            { key: 'panel-1-Trend', title: 'Trend Indicators', content: { content: Level1TrendContent } },
         ]
-	//console.log(NforRSI)
+
 
 
 	return (
