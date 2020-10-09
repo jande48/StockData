@@ -1,6 +1,8 @@
-.no-padding {
+.no-padding-border {
   padding: 0px !important;
   margin: 0px !important;
+  border-bottom: 0 none !important;
+  box-shadow: none;
 }
 
 .App {

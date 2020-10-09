@@ -3,7 +3,8 @@ import "semantic-ui-css/semantic.min.css"
 import '../App.css'
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
-import { List, Header, Form, Input, Button, Radio, Grid, Container, Sidebar, Icon, Menu, Segment, Accordion, Checkbox, Select } from "semantic-ui-react"
+import { List, Message, Header, Form, Input, Button, Radio, Grid, Container, Menu, Sidebar, Icon, Accordion, Segment,  Checkbox, Select } from "semantic-ui-react"
+import AccordionExampleMenu from './AccordionExampleMenu'
 import { createCandleStickChart } from './charts/candleStickChart.js'
 import { createVolumeBarChart } from './charts/volumeBarChart.js'
 import { createEarningsChart } from './charts/earningChart.js'
@@ -23,11 +24,11 @@ export const StockData = () => {
 	const [activeItemDateMenu, setActiveItemDateMenu] = useState('');
 	const [activeFinancialsMenuItem, setActiveFinancialsMenuItem] = useState()
 	const [activeEarningsMenuItem, setActiveEarningsMenuItem] = useState()
-    const [activeMomentumMenuItem, setActiveMomentumMenuItem] = useState()
-    const [activeRSIMenuItem, setActiveRSIMenuItem] = useState()
-    const [activeTSIMenuItem, setActiveTSIMenuItem] = useState()
-    const [activeUOMenuItem, setActiveUOMenuItem] = useState()
-    
+    // const [activeMomentumMenuItem, setActiveMomentumMenuItem] = useState()
+    // const [activeRSIMenuItem, setActiveRSIMenuItem] = useState()
+    // const [activeTSIMenuItem, setActiveTSIMenuItem] = useState()
+    // const [activeUOMenuItem, setActiveUOMenuItem] = useState()
+    const [activeAccodianMenuItem, setActiveAccordionMenuItem] = useState(0)
 
 	const [stockData, setStockData] = useState([]);
 	const [displayPriceChart, setDisplayPriceChart] = useState(true)
@@ -271,7 +272,8 @@ export const StockData = () => {
 		// 		});
 		//}
 		
-	}
+    }
+ 
 
 	const momentumNtradingDayOptions = [
 		{ key: 'one', text: '1', value: 1 },
@@ -314,7 +316,7 @@ export const StockData = () => {
     
 
     const RSIcontentPanel = (
-        <div class='content active'>
+        <div>
             <React.Fragment>
             <Checkbox defaultChecked onClick={() => {
                 setDisplayRSIcheckbox(!displayRSIcheckbox)
@@ -335,7 +337,7 @@ export const StockData = () => {
     )
 
     const TSIcontentPanel = (
-        <div class='content active'>
+        <div>
             <React.Fragment>
                 <Checkbox onClick={() => {
                     setDisplayTSIcheckbox(!displayTSIcheckbox)
@@ -586,6 +588,7 @@ export const StockData = () => {
                     }} label="Rate of Change (ROC) Indicator">
                 </Checkbox>
                 <Form.Field
+                    
                     control={Select}
                     options={momentumNtradingDayOptions}
                     label={{ children: 'number of periods (n)' }}
@@ -599,15 +602,15 @@ export const StockData = () => {
     )
 
     const level1MomentumMenuPanels = [
-        { key: 'RSI', title: 'Relative Strength Index', content: RSIcontentPanel, index: 0 },
-        { key: 'TSI', title: 'True Strength Index', content: TSIcontentPanel, index: 1 },
-        { key: 'UO', title: 'Ultimate Oscillator', content: UOcontentPanel, index: 2 },
-        { key: 'Stoch', title: 'Stochastic Oscillator', content: StochcontentPanel, index: 3 },
-        { key: 'StochSignal', title: 'Stochastic Oscillator Signal', content: StochSignalcontentPanel, index: 4 },
-        { key: 'WR', title: 'Williams %R', content: WRcontentPanel, index: 5 },
-        { key: 'AO', title: 'Awesome Oscillator', content: AOcontentPanel, index: 6 },
-        { key: 'Kama', title: 'Kaufmans Adaptive Moving Average', content: KamacontentPanel, index: 7 },
-        { key: 'ROC', title: 'Rate-of-Change (ROC) indicator', content: ROCcontentPanel, index: 8 },
+        { key: 'RSI', title: 'Relative Strength Index', content: {as: RSIcontentPanel}, index: 0 },
+        { key: 'TSI', title: 'True Strength Index', content: {as: TSIcontentPanel}, index: 1 },
+        { key: 'UO', title: 'Ultimate Oscillator', content: {as: UOcontentPanel}, index: 2 },
+        { key: 'Stoch', title: 'Stochastic Oscillator', content: {as: StochcontentPanel}, index: 3 },
+        { key: 'StochSignal', title: 'Stochastic Oscillator Signal', content: {as: StochSignalcontentPanel}, index: 4 },
+        { key: 'WR', title: 'Williams %R', content: {as: WRcontentPanel}, index: 5 },
+        { key: 'AO', title: 'Awesome Oscillator', content :{as: AOcontentPanel}, index: 6 },
+        { key: 'Kama', title: 'Kaufmans Adaptive Moving Average', content: {as: KamacontentPanel}, index: 7 },
+        { key: 'ROC', title: 'Rate-of-Change (ROC) indicator', content: {as: ROCcontentPanel}, index: 8 },
     ]
 
     const Level1MomentumContent = (
@@ -638,7 +641,7 @@ export const StockData = () => {
     )
 
     const level1TrendMenuPanels = [
-        { key: 'RSI', title: 'Exponential Moving Average (EMA)', content: EMAcontentPanel, index: 0 },
+        { key: 'EMA', title: 'Exponential Moving Average (EMA)', content: EMAcontentPanel, index: 0 },
     ]
     
     const Level1TrendContent = (
@@ -652,13 +655,197 @@ export const StockData = () => {
             { key: 'panel-1-Trend', title: 'Trend Indicators', content: { content: Level1TrendContent } },
         ]
 
+    const RSIAccordionTitle = (
+        <Grid columns='equal'>
+            <Grid.Column width={2}>
+                    <Checkbox borderless index={1} defaultChecked onClick={(event) => {
+                                event.stopPropagation()
+                                setDisplayRSIcheckbox(!displayRSIcheckbox)
+                            }}>
+                    </Checkbox>
+            </Grid.Column>
+            <Grid.Column>
+                <h5>Relative Strength Index</h5>
+            </Grid.Column>
+        </Grid>
+        
+  
+        // <Menu borderless>
+        //     <Menu.Item borderless>
+        //         <Checkbox borderless index={1} defaultChecked onClick={(event) => {
+        //                 event.stopPropagation()
+        //                 setDisplayRSIcheckbox(!displayRSIcheckbox)
+        //             }}>
+        //         </Checkbox>
+        //     </Menu.Item>
+        //     <Menu.Item borderless>
+        //         <h5>Relative Strength Index</h5>
+        //     </Menu.Item>
+        // </Menu>
+            
+            
+                
+            
+        
+            // <Menu borderless>
+            //     <Menu.Item borderless>
+            //         <Checkbox borderless index={1} defaultChecked onClick={(event) => {
+            //             event.stopPropagation()
+            //             setDisplayRSIcheckbox(!displayRSIcheckbox)
+            //         }}>
+            //         </Checkbox>
+            //     </Menu.Item>
+            //     <Menu.Item borderless>
+                
+            //     <h5>Relative Strength Index</h5>
+                    
+            //     </Menu.Item>
+            // </Menu>
+        
+        
+    )
 
+    //  onClick={() => {
+                //     setActiveAccordionMenuItem( activeAccodianMenuItem === 0 ? -1 : 0)
+                // }}>
+    
 
+    console.log(activeAccodianMenuItem)
 	return (
 		<div>
             <Grid celled>
                 <Grid.Column width = {4}>
-                    <Grid.Row>
+                    <Grid.Row stretched>
+                        <Form>
+                            <Input 
+                                placeholder="Add ticker ex) APPL" 
+                                value={ticker}
+                                name='ticker'
+                                onChange={(e) => setTicker(e.target.value)}
+                                isClearable
+                            />
+                            <Button animated primary onClick={handleTickerFormSubmit}>
+                                <Button.Content visible>Go!</Button.Content>
+                                <Button.Content hidden>
+                                    <Icon name='arrow right' />
+                                </Button.Content>
+                            </Button>
+                        </Form>
+                        </Grid.Row>
+                        <br/>
+                        <Grid.Row>
+                            
+                            <Menu widths={4}>
+                                <Menu.Item
+                                name='5d'
+                                active={activeItemDateMenu === '5d'}
+                                onClick={() => handleDateClick(8, '5d')}
+                                >
+                                5 d
+                                </Menu.Item>
+                                <Menu.Item
+                                name='1m'
+                                active={activeItemDateMenu === '1m'}
+                                onClick={() => handleDateClick(30, '1m')}
+                                >
+                                1 m
+                                </Menu.Item>
+                                
+                                <Menu.Item
+                                name='6m'
+                                active={activeItemDateMenu === '6m'}
+                                onClick={() => handleDateClick(180, '6m')}
+                                >
+                                6 m
+                                </Menu.Item>
+                                
+                                <Menu.Item
+                                name='1y'
+                                active={activeItemDateMenu === '1y'}
+                                onClick={() => handleDateClick(365, '1y')}
+                                >
+                                1 y
+                                </Menu.Item>
+                              
+                            </Menu>
+                         
+                        </Grid.Row>
+                        <br/>
+                        <Grid.Row>
+                        Custom Dates
+                        <br/>Start: <DatePicker 
+                        selected={startDate} 
+                        maxDate={new Date()} 
+                        onChange={date => handleStartDateClick(date)}
+                        placeholderText='MM/DD/YYYY'
+                        isClearable
+                        showYearDropdown
+                        scrollableMonthYearDropdown />
+                        
+                        <br/>  End:  <DatePicker 
+                        selected={endDate} 
+                        maxDate={new Date()}
+                        onChange={date => handleEndDateClick(date)}
+                        placeholderText='MM/DD/YYYY'
+                        isClearable
+                        showYearDropdown
+                        scrollableMonthYearDropdown />
+                        <br/> 
+                        <br/>
+                        <Form>
+                            <Form.Field>
+                                
+                                <Button toggle active={displayPriceChart} onClick={handlePriceClickLine}>
+                                    Line Chart
+                                </Button>
+                                <Button toggle active={!displayPriceChart} onClick={handlePriceClickCandle}>
+                                    Candle Stick
+                                </Button>
+                            </Form.Field>
+                        </Form>
+                        
+                      
+                    </Grid.Row>
+                    <br/><br/>
+                    <Grid.Row stretched>
+                        <div id="accordionIndicators">
+                        <Accordion as={Menu} vertical fluid borderless>
+                            <Menu.Item borderless>
+                                <Accordion.Title
+                                    active={activeAccodianMenuItem === 0}
+                                    content={RSIAccordionTitle}
+                                    index={0}
+                                    borderless
+                                    onClick={(e,index) => {
+                                        setActiveAccordionMenuItem(index.index === activeAccodianMenuItem ? -1 : index.index)
+                                        }}
+                                    
+                                />
+                                <Accordion.Content borderless active={activeAccodianMenuItem === 0} content={RSIcontentPanel} />
+                                
+                                    
+                            
+                            </Menu.Item>
+
+                            <Menu.Item>
+                            <Accordion.Title
+                                active={activeAccodianMenuItem === 1}
+                                content='TSI'
+                                index={1}
+                                onClick={(e,index) => {
+                                setActiveAccordionMenuItem( index.index === activeAccodianMenuItem ? -1 : index.index)
+                                    }}
+                            />
+                            <Accordion.Content active={activeAccodianMenuItem === 1} content={TSIcontentPanel} />
+                            </Menu.Item>
+                        </Accordion>
+                        </div>
+                    </Grid.Row>
+                    
+                    
+                    
+                    
+                    {/* <Grid.Row>
                         <Grid.Row stretched>
                             <Segment>
                                 <Form>
@@ -734,7 +921,7 @@ export const StockData = () => {
                             <Segment>
                                 <Form>
                                     <Form.Field>
-                                        {/* Line <Radio toggle value={displayPriceChart} checked={!displayPriceChart} onChange={handlePriceClick}/> Candle Stick */}
+                                        
                                         <Button toggle active={displayPriceChart} onClick={handlePriceClickLine}>
                                             Line Chart
                                         </Button>
@@ -743,150 +930,15 @@ export const StockData = () => {
                                         </Button>
                                     </Form.Field>
                                 </Form>
-                            {/* <Button toggle active={displayPriceChart} onClick={setDisplayPriceChart(!displayPriceChart)}>
-                                Line Chart
-                            </Button>
-                            <Button toggle active={!displayPriceChart} onClick={setDisplayPriceChart(!displayPriceChart)}>
-                                Candle Stick
-                            </Button> */}
+                            
                             </Segment>
                         </Grid.Row>
                         <Grid.Row>
+                            
                             <Accordion defaultActiveIndex={0} panels={rootPanels} styled />
-                            {/* <Accordion>
-                                <Accordion.Title
-                                    onClick={() => {
-                                        setActiveMomentumMenuItem(!activeMomentumMenuItem)
-                                    }}
-                                >
-                                    <h3>Momentum Indicators {activeMomentumMenuItem ? "-" : "+"}</h3>
-                                </Accordion.Title>
-                                <Accordion.Content active={activeMomentumMenuItem}>
-                                    <React.Fragment>
-                                    <Accordion>
-                                        <Accordion.Title
-                                        onClick={() => {
-                                            setActiveRSIMenuItem(!activeRSIMenuItem)
-                                        }}
-                                        >
-                                        <Accordion.Content active={activeRSIMenuItem}>
-                                            <React.Fragment>
-                                            <Checkbox defaultChecked onClick={() => {
-                                                setDisplayRSIcheckbox(!displayRSIcheckbox)
-                                                }} label="Relative Strength Index">
-                                            </Checkbox>
-                                                <Form.Field
-                                                    control={Select}
-                                                    options={momentumNtradingDayOptions}
-                                                    label={{ children: 'over how many trading days?' }}
-                                                    placeholder='10'
-                                                    onChange ={(e,selectedOption) => {
-                                                        console.log(selectedOption.value)
-                                                        setNforRSI(selectedOption.value)
-                                                        }}
-                                                />
-                                                </React.Fragment>
-                                            </Accordion.Content>
-                                        </Accordion>
-                                    </React.Fragment>
-                                    
-                                    
-                                    <React.Fragment>
-                                        <Checkbox onClick={() => {
-                                            setDisplayTSIcheckbox(!displayTSIcheckbox)
-                                            }} label="True Strength Index">
-                                        </Checkbox>
-                                        <Form.Field
-                                            control={Select}
-                                            options={momentumNtradingDayOptions}
-                                            label={{ children: 'EMA Smoothing Period (r)' }}
-                                            placeholder='25'
-                                            onChange ={(e,selectedOption) => {
-                                                console.log(selectedOption.value)
-                                                setrForTSI(selectedOption.value)
-                                                }}
-                                        />
-                                        <Form.Field
-                                            control={Select}
-                                            options={momentumNtradingDayOptions}
-                                            label={{ children: 'EMA Smoothing Period for Smoothed Mom (s)' }}
-                                            placeholder='13'
-                                            onChange ={(e,selectedOption) => {
-                                                console.log(selectedOption.value)
-                                                setsForTSI(selectedOption.value)
-                                                }}
-                                        />
-                                    </React.Fragment>
-                                    <React.Fragment>
-                                        <Checkbox onClick={() => {
-                                            setUOcheckbox(!displayUOcheckbox)
-                                            }} label="Ultimate Oscillator">
-                                        </Checkbox>
-                                        <Form.Field
-                                            control={Select}
-                                            options={momentumNtradingDayOptions}
-                                            label={{ children: 'Short Period (s)' }}
-                                            placeholder='7'
-                                            onChange ={(e,selectedOption) => {
-                                                console.log(selectedOption.value)
-                                                setsForUO(selectedOption.value)
-                                                }}
-                                        />
-                                        <Form.Field
-                                            control={Select}
-                                            options={momentumNtradingDayOptions}
-                                            label={{ children: 'Medium Period (m)' }}
-                                            placeholder='14'
-                                            onChange ={(e,selectedOption) => {
-                                                console.log(selectedOption.value)
-                                                setmForUO(selectedOption.value)
-                                                }}
-                                        />
-                                        <Form.Field
-                                            control={Select}
-                                            options={momentumNtradingDayOptions}
-                                            label={{ children: 'Long Period (l)' }}
-                                            placeholder='28'
-                                            onChange ={(e,selectedOption) => {
-                                                console.log(selectedOption.value)
-                                                setlenForUO(selectedOption.value)
-                                                }}
-                                        />
-                                        <Form.Field
-                                            control={Select}
-                                            options={momentumNtradingDayOptions}
-                                            label={{ children: 'Weight of Short BP Average (ws)' }}
-                                            placeholder='4'
-                                            onChange ={(e,selectedOption) => {
-                                                console.log(selectedOption.value)
-                                                setwsForUO(selectedOption.value)
-                                                }}
-                                        />
-                                        <Form.Field
-                                            control={Select}
-                                            options={momentumNtradingDayOptions}
-                                            label={{ children: 'Weight of Medium BP Average (wm)' }}
-                                            placeholder='2'
-                                            onChange ={(e,selectedOption) => {
-                                                console.log(selectedOption.value)
-                                                setwmForUO(selectedOption.value)
-                                                }}
-                                        />
-                                        <Form.Field
-                                            control={Select}
-                                            options={momentumNtradingDayOptions}
-                                            label={{ children: 'Weight of Long BP Average (wl)' }}
-                                            placeholder='1'
-                                            onChange ={(e,selectedOption) => {
-                                                console.log(selectedOption.value)
-                                                setwlForUO(selectedOption.value)
-                                                }}
-                                        />
-                                    </React.Fragment>
-                                </Accordion.Content>
-                            </Accordion> */}
+                            
                         </Grid.Row>
-                    </Grid.Row>
+                    </Grid.Row> */}
                     
                 </Grid.Column>
                 <Grid.Column width = {12}>
