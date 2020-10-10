@@ -184,6 +184,8 @@ def calculate_Trend_Indicators():
     #export_df = df.drop(columns=['open', 'high', 'low', 'close', 'volume'])
     return (json.dumps(df.to_dict('records')))
 
+
+
 @algo.route("/calculate_Momentum_Indicators/", methods=['GET','POST'])
 def calculate_Momentum_Indicators():
     
@@ -235,7 +237,7 @@ def calculate_Momentum_Indicators():
     # Rate of Change (ROC)
     ROCChecked = JSON_sent[9]['displayROC']
     nForROC = JSON_sent[9]['nForROC']
-
+    print(ROCChecked)
     
 
 
@@ -277,95 +279,8 @@ def calculate_Momentum_Indicators():
     
     df.fillna(0, inplace=True)
     export_df = df.drop(columns=['open', 'high', 'low', 'close', 'volume'])
+    print(export_df)
     return (json.dumps(export_df.to_dict('records')))
 
 
 
-
-
-
-
-    
-# @algo.route("/get_stock_data/<ticker>/<int:StartYear>/<int:StartMonth>/<int:StartDay>/<int:EndYear>/<int:EndMonth>/<int:EndDay>", methods=['GET'])
-# def get_stock_data(ticker,StartYear,StartMonth,StartDay,EndYear,EndMonth,EndDay):
-    
-#     start = datetime(StartYear,StartMonth,StartDay)
-#     end = datetime(EndYear,EndMonth,EndDay)
-
-#     def getDBdata(start,end):
-#         queriedData = OHLC_JSONdata.query.all()
-#         out = []
-#         trigger = False
-#         print(trigger)
-#         for i in range(len(queriedData)):
-#             print('this is the start day')
-#             print(EndDay)
-#             print('This is the end dat')
-#             print(int(queriedData[i].AAPL['date'][8:]))
-#             print(trigger)
-#             if (int(queriedData[i].AAPL['date'][0:4]) == StartYear) and (int(queriedData[i].AAPL['date'][5:7]) == StartMonth) and (int(queriedData[i].AAPL['date'][8:]) == StartDay):
-#                 trigger = True
-#             if (int(queriedData[i].AAPL['date'][0:4]) == EndYear) and (int(queriedData[i].AAPL['date'][5:7]) == EndMonth) and (int(queriedData[i].AAPL['date'][8:]) == EndDay):
-#                 trigger = False
-#             if trigger:
-#                 out.append(queriedData[i].AAPL)
-#         return out
-
-#     def flatten_json(stockData):
-#         out = []
-#         for i in stockData:
-#             out2 = {}
-#             out2['date']=i
-#             for j in stockData[i]:
-#                 out2[j] = stockData[i][j]
-#             out.append(out2) 
-#         return out
-    
-#     if ticker == 'AAPL':
-#         Historical_Data = getDBdata(start,end)
-#     else:
-#         historicalData = get_historical_data(ticker,start=start, end=end, token=IEX_api_key)
-#         Historical_Data = flatten_json(historicalData)
-
-#     df = pd.DataFrame(Historical_Data)
-#     df = ta.utils.dropna(df)
-#     print('This is historical data')
-#     print(Historical_Data)
-#     indicator_bb = BollingerBands(close=df["close"], n=20, ndev=2)
-#     #df = ta.add_all_ta_features(df, open="open", high="high", low="low", close="close", volume="volume")
-
-#     # Add Bollinger Bands features
-#     df['bb_bbm'] = indicator_bb.bollinger_mavg()
-#     df['bb_bbh'] = indicator_bb.bollinger_hband()
-#     df['bb_bbl'] = indicator_bb.bollinger_lband()
-
-#     # Add Bollinger Band high indicator
-#     df['bb_bbhi'] = indicator_bb.bollinger_hband_indicator()
-
-#     # Add Bollinger Band low indicator
-#     df['bb_bbli'] = indicator_bb.bollinger_lband_indicator()
-
-#     # Add Width Size Bollinger Bands
-#     df['bb_bbw'] = indicator_bb.bollinger_wband()
-
-#     # Add Percentage Bollinger Bands
-#     df['bb_bbp'] = indicator_bb.bollinger_pband()
-
-#     # Add RSI Indicator
-#     indicator_RSI = RSIIndicator(close=df["close"],n=10)
-#     df['rsi'] = indicator_RSI.rsi()
-
-
-#     df.fillna(0, inplace=True)
-#     # print('This is the Data Frame with RSI')
-#     # print(df)
-#     #return (json.dumps(Historical_Data)) 
-#     return (json.dumps(df.to_dict('records')))
-
-# def initiallyCommitData(data):
-#     for i in range(len(data)):
-#         addedData = OHLC_JSONdata(AAPL=data[i])
-#         db.session.add(addedData)
-#         db.session.commit()
-
-    
