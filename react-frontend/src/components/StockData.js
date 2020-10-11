@@ -79,6 +79,73 @@ export const StockData = () => {
     const [nForEMA, setNForEMA] = useState(12)
     const [activeEMAAccodianMenuItem, setEMAActiveAccordionMenuItem] = useState(-1)
 
+    const [displaySMA, setDisplaySMA] = useState(false)
+    const [nForSMA, setNforSMA] = useState(12)
+    const [activeSMAAccordionMenuItem, setActiveSMAAccordionMenuItem] = useState(-1)
+    
+    const [displayMACD, setDisplayMACD] = useState(false)
+    const [nSlowForMACD, setNslowForMACD] = useState(26)
+    const [nFastForMACD, setNfastForMACD] = useState(12)
+    const [activeMACDAccordionMenuItem, setActiveMACDAccordionMenuItem] = useState(-1)
+
+    const [displayMACDsignal, setDisplayMACDsignal] = useState(false)
+    const [nSlowForMACDsignal, setNslowForMACDsignal] = useState(26)
+    const [nFastForMACDsignal, setNfastForMACDsignal] = useState(12)
+    const [nSignForMACDsignal, setNsignForMACDsignal] = useState(9)
+    const [activeMACDsignalAccordionMenuItem, setActiveMACDsignalAccordionMenuItem] = useState(-1)
+
+    const [displayADX, setDisplayADX] = useState(false)
+    const [nForADX, setNforADX] = useState(14)
+    const [activeADXAccordionMenuItem, setActiveADXAccordionMenuItem] = useState(-1)
+
+    const [displayADXpos, setDisplayADXpos] = useState(false)
+    const [nForADXpos, setNforADXpos] = useState(14)
+    const [activeADXposAccordionMenuItem, setActiveADXposAccordionMenuItem] = useState(-1)
+
+    const [displayADXneg, setDisplayADXneg] = useState(false)
+    const [nForADXneg, setNforADXneg] = useState(14)
+    const [activeADXnegAccordionMenuItem, setActiveADXnegAccordionMenuItem] = useState(-1)
+
+    const [displayVIpos, setDisplayVIpos] = useState(false)
+    const [nForVIpos, setNforVIpos] = useState(14)
+    const [activeVIposAccordionMenuItem, setActiveVIposAccordionMenuItem] = useState(-1)
+
+    const [displayVIneg, setDisplayVIneg] = useState(false)
+    const [nForVIneg, setNforVIneg] = useState(14)
+    const [activeVInegAccordionMenuItem, setActiveVInegAccordionMenuItem] = useState(-1)
+    
+    const [displayTRIX, setDisplayTRIX] = useState(false)
+    const [nForTRIX, setNforTRIX] = useState(14)
+    const [activeTRIXAccordionMenuItem, setActiveTRIXAccordionMenuItem] = useState(-1)
+
+    const [displayMassIndex, setDisplayMassIndex] = useState(false)
+    const [nForMassIndex, setNforMassIndex] = useState(9)
+    const [n2ForMassIndex, setN2forMassIndex] = useState(25)
+    const [activeMassIndexAccordionMenuItem, setActiveMassIndexAccordionMenuItem] = useState(-1)
+
+    const [displayCCI, setDisplayCCI] = useState(false)
+    const [nForCCI, setNforCCI] = useState(20)
+    const [cForCCI, setCforCCI] = useState(0.015)
+    const [activeCCIAccordionMenuItem, setActiveCCIAccordionMenuItem] = useState(-1)
+
+    const [displayDPO, setDisplayDPO] = useState(false)
+    const [nForDPO, setNforDPO] = useState(20)
+    const [activeDPOAccordionMenuItem, setActiveDPOAccordionMenuItem] = useState(-1)
+
+    const [displayIchimuku, setDisplayIchimoku] = useState(false)
+    const [n1ForIchimoku, setN1forIchimoku] = useState(9)
+    const [n2ForIchimoku, setN2forIchimoku] = useState(26)
+    const [visualForIchimoku, setVisualForIchimoku] = useState(false)
+    const [activeIchimokuAccordionMenuItem, setActiveIchimokuAccordionMenuItem] = useState(-1)
+    
+    const [displayAIup, setDisplayAIup] = useState(false)
+    const [nForAIup, setNforAIup] = useState(25)
+    const [activeAIupAccordionMenuItem, setActiveAIupAccordionMenuItem] = useState(-1)
+
+    const [displayAIdown, setDisplayAIdown] = useState(false)
+    const [nForAIdown, setNforAIdown] = useState(25)
+    const [activeAIdownAccordionMenuItem, setActiveAIdownAccordionMenuItem] = useState(-1)
+    
 	const earningsChartNode = useRef(null);
 	const showVolumeNode = useRef(null);
 	const stockPriceLineChartNode = useRef(null);
@@ -86,23 +153,23 @@ export const StockData = () => {
 
 	if (stockData.length < 1 && earnings.length < 1){
 		getAndSetStockData(ticker,startDate,endDate)
-		getAndSetEarnings(ticker)
+		//getAndSetEarnings(ticker)
 	}
-
+console.log(displayMACD)
 
 	useEffect(() => {
 		if (stockData.length > 0) {
 			//createStockPriceLineChart(stockData,stockPriceLineChartNode,displayPriceChart);
-            createTrendIndicatorsChartFunction(stockData,stockPriceLineChartNode);
+            createTrendIndicatorsChartFunction(stockData,stockPriceLineChartNode,displayPriceChart,displayEMA,displayAIdown,displayAIup,displayIchimuku,displayDPO,displayCCI,displaySMA,displayMACD,displayMACDsignal,displayADX,displayADXpos,displayADXneg,displayVIpos,displayVIneg,displayTRIX,displayMassIndex);
             createVolumeBarChart(stockData,showVolumeNode);
 			createMomentumIndicatorsChartFunction(stockData,momentumIndicatorsChartNode)
 		}
 
 		if (earnings.length > 0) {
 			//console.log(earnings)
-			createEarningsChart(earnings,earningsChartNode)
+			//createEarningsChart(earnings,earningsChartNode)
 		}
-	},[stockData,displayRSIcheckbox,NforRSI,displayTSIcheckbox,rForTSI,sForTSI,displayUOCheckbox,sForUO,mForUO,lenForUO,wsForUO,wmForUO,wlForUO,displayStochCheckbox,nForStoch,d_nForStoch,,displayStochSignalCheckbox,nForStochSignal,d_nForStochSignal,displayWR,lbpForWR,displayAO,sForAO,lenForAO,displayKama,nForKama,pow1ForKama,pow2ForKama,displayROC,nForROC,displayPriceChart,displayEMA])
+	},[stockData,displayRSIcheckbox,NforRSI,displayTSIcheckbox,rForTSI,sForTSI,displayUOCheckbox,sForUO,mForUO,lenForUO,wsForUO,wmForUO,wlForUO,displayStochCheckbox,nForStoch,d_nForStoch,,displayStochSignalCheckbox,nForStochSignal,d_nForStochSignal,displayWR,lbpForWR,displayAO,sForAO,lenForAO,displayKama,nForKama,pow1ForKama,pow2ForKama,displayROC,nForROC,displayPriceChart,displayEMA,displayAIdown,displayAIup,displayIchimuku,displayDPO,displayCCI,displaySMA,displayMACD,displayMACDsignal,displayADX,displayADXpos,displayADXneg,displayVIpos,displayVIneg,displayTRIX,displayMassIndex])
 
 
 	function convertDatesToString(initialDate) {
@@ -185,19 +252,35 @@ export const StockData = () => {
 
 
     function createTrendIndicatorsChartFunction(data, stockPriceLineChartNode) {
+        console.log(displayMACD)
+        const SMAparameters = {'displaySMA':displaySMA,'nForSMA':nForSMA}
+        const MACDparameters = {'displayMACD':displayMACD,'nSlow':nSlowForMACD,'nFast':nFastForMACD}
+        const MACDsignalparameters = {'displayMACDsignal':displayMACDsignal,'nSlow':nSlowForMACDsignal,'nFast':nFastForMACDsignal,'nSign':nSignForMACDsignal}
         const EMAparameters = {'displayEMA':displayEMA,'nForEMA':nForEMA}
-
+        const ADXparameters = {'displayADX':displayADX,'nForADX':nForADX}
+        const ADXposparameters = {'displayADXpositive':displayADXpos,'nForADXpositive':nForADXpos}
+        const ADXnegparameters = {'displayADXnegative':displayADXneg,'nForADXnegative':nForADXneg}
+        const VIposparameters = {'displayVIpositive':displayVIpos,'nForVIpositive':nForVIpos}
+        const VInegparameters = {'displayVInegative':displayVIneg,'nForVInegative':nForVIneg}
+        const TRIXparameters = {'displayTRIX':displayTRIX,'nForTRIX':nForTRIX}
+        const MIparameters = {'displayMassIndex':displayMassIndex,'nForMassIndex':nForMassIndex,'n2ForMassIndex':n2ForMassIndex}
+        const CCIparameters = {'displayCCIcheck':displayCCI,'nForCCI':nForCCI,'cForCCI':cForCCI}
+        const DPOparameters = {'displayDPO':displayDPO,'nForDPO':nForDPO}
+        const Ichicomkuparameters = {'displayIchimoku':displayIchimuku,'n1ForIchimoku':n1ForIchimoku,'n2ForIchimoku':n2ForIchimoku,'visualForIchimoku':visualForIchimoku}
+        const AIupparameters = {'AIupChecked':displayAIup,'nForAIup':nForAIup}
+        const AIdownparameters = {'AIdownChecked':displayAIdown,'nForAIdown':nForAIdown}
+  
         if (data.length > 1) {
             fetch('/calculate_Trend_Indicators/', {
 				method: 'POST', // or 'PUT'
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify([data,EMAparameters]),
+				body: JSON.stringify([data,SMAparameters,MACDparameters,MACDsignalparameters,EMAparameters,ADXparameters,ADXposparameters,ADXnegparameters,VIposparameters,VInegparameters,TRIXparameters,MIparameters,CCIparameters,DPOparameters,Ichicomkuparameters,AIupparameters,AIdownparameters]),
 				})
 				.then(response => response.json())
 				.then(dataForTrendfromAPI => {
-					createStockPriceLineChart(dataForTrendfromAPI,stockPriceLineChartNode,displayPriceChart,displayEMA)
+					createStockPriceLineChart(dataForTrendfromAPI,stockPriceLineChartNode,displayPriceChart,displayEMA,displayAIdown,displayAIup,displayIchimuku,displayDPO,displayCCI,displaySMA,displayMACD,displayMACDsignal,displayADX,displayADXpos,displayADXneg,displayVIpos,displayVIneg,displayTRIX,displayMassIndex)
 				})
 				.catch((error) => {
 				console.error('Error:', error);
@@ -218,7 +301,7 @@ export const StockData = () => {
         const AOParameters = {'displayAO':displayAO,'sForAO':sForAO,'lenForAO':lenForAO}
         const KamaParameters = {'displayKama':displayKama,'nForKama':nForKama,'pow1ForKama':pow1ForKama,'pow2ForKama':pow2ForKama}
         const ROCParameters = {'displayROC':displayROC,'nForROC':nForROC}
-        console.log(ROCParameters)
+        //console.log(ROCParameters)
 		if (data.length > 1){
 			fetch('/calculate_Momentum_Indicators/', {
 				method: 'POST', // or 'PUT'
@@ -687,9 +770,412 @@ export const StockData = () => {
                 </Grid.Column>
             </Grid.Row>
         </Grid>
-
-
     )
+
+    const SMAcontentPanel = (
+        <Grid columns='equal'>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>Number of Periods (n):
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='12'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setNforSMA(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
+    )
+
+    const MACDcontentPanel = (
+        <Grid columns='equal'>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>Number of Slow Periods:
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='26'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setNslowForMACD(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>Number of Fast Periods:
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='12'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setNfastForMACD(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
+    )
+
+    const MACDSignalcontentPanel = (
+        <Grid columns='equal'>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>Number of Slow Periods:
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='26'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setNslowForMACDsignal(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>Number of Fast Periods:
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='12'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setNfastForMACDsignal(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>N Sign:
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='12'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setNsignForMACDsignal(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
+    )
+
+    const ADXcontentPanel = (
+        <Grid columns='equal'>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>Number of Periods (n):
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='14'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setNforADX(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
+    )
+
+
+    const ADXposcontentPanel = (
+        <Grid columns='equal'>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>Number of Periods (n):
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='14'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setNforADXpos(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
+    )
+
+    const ADXnegcontentPanel = (
+        <Grid columns='equal'>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>Number of Periods (n):
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='14'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setNforADXneg(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
+    )
+ 
+    
+    const VIposcontentPanel = (
+        <Grid columns='equal'>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>Number of Periods (n):
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='14'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setNforVIpos(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
+    )
+    
+    const VInegcontentPanel = (
+        <Grid columns='equal'>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>Number of Periods (n):
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='14'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setNforVIneg(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
+    )
+
+  
+    const TRIXcontentPanel = (
+        <Grid columns='equal'>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>Number of Periods (n):
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='14'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setNforTRIX(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
+    )
+
+
+    const MassIndexcontentPanel = (
+        <Grid columns='equal'>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>Number of Periods (n1):
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='9'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setNforMassIndex(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>Number of Periods (n2):
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='25'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setN2forMassIndex(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
+    )
+
+    
+    const CCIcontentPanel = (
+        <Grid columns='equal'>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>Number of Periods (n):
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='20'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setNforCCI(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
+    )
+
+    const DPOcontentPanel = (
+        <Grid columns='equal'>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>Number of Periods (n):
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='20'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setNforDPO(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
+    )
+
+    
+    const IchimukucontentPanel = (
+        <Grid columns='equal'>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>Number of Periods (n1):
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='9'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setN1forIchimoku(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>Number of Periods (n2):
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='26'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setN2forIchimoku(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
+    )
+
+  
+    const AIupcontentPanel = (
+        <Grid columns='equal'>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>Number of Periods (n):
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='25'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setNforAIup(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
+    )
+    
+  
+    const AIdowncontentPanel = (
+        <Grid columns='equal'>
+            <Grid.Row>
+                <Grid.Column>
+                    <br/>Number of Periods (n):
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <Form.Field
+                        control={Select}
+                        options={momentumNtradingDayOptions}
+                        placeholder='25'
+                        compact
+                        onChange ={(e,selectedOption) => {
+                            setNforAIdown(selectedOption.value)
+                            }}
+                    />
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
+    )
+
+
 
     const level1TrendMenuPanels = [
         { key: 'EMA', title: 'Exponential Moving Average (EMA)', content: EMAcontentPanel, index: 0 },
@@ -854,9 +1340,218 @@ export const StockData = () => {
             </Grid.Column>
         </Grid>
     )
-    
-   
-    //console.log(activeAccodianMenuItem)
+    const SMAAccordionTitle = (
+        <Grid columns='equal'>
+            <Grid.Column width={2}>
+                    <Checkbox borderless index={1} onClick={(event) => {
+                                event.stopPropagation()
+                                setDisplaySMA(!displaySMA)
+                            }}>
+                    </Checkbox>
+            </Grid.Column>
+            <Grid.Column>
+                <h5>Simple Moving Average</h5>
+            </Grid.Column>
+        </Grid>
+    )
+    const MACDAccordionTitle = (
+        <Grid columns='equal'>
+            <Grid.Column width={2}>
+                    <Checkbox borderless index={1} onClick={(event) => {
+                                event.stopPropagation()
+                                setDisplayMACD(!displayMACD)
+                            }}>
+                    </Checkbox>
+            </Grid.Column>
+            <Grid.Column>
+                <h5>Moving Average Convergence Divergence (MACD)</h5>
+            </Grid.Column>
+        </Grid>
+    )
+    const MACDsignalAccordionTitle = (
+        <Grid columns='equal'>
+            <Grid.Column width={2}>
+                    <Checkbox borderless index={1} onClick={(event) => {
+                                event.stopPropagation()
+                                setDisplayMACDsignal(!displayMACDsignal)
+                            }}>
+                    </Checkbox>
+            </Grid.Column>
+            <Grid.Column>
+                <h5>Moving Average Convergence Divergence Signal</h5>
+            </Grid.Column>
+        </Grid>
+    )
+    const ADXAccordionTitle = (
+        <Grid columns='equal'>
+            <Grid.Column width={2}>
+                    <Checkbox borderless index={1} onClick={(event) => {
+                                event.stopPropagation()
+                                setDisplayADX(!displayADX)
+                            }}>
+                    </Checkbox>
+            </Grid.Column>
+            <Grid.Column>
+                <h5>Average Directional Movement Index (ADX)</h5>
+            </Grid.Column>
+        </Grid>
+    )
+    const ADXposAccordionTitle = (
+        <Grid columns='equal'>
+            <Grid.Column width={2}>
+                    <Checkbox borderless index={1} onClick={(event) => {
+                                event.stopPropagation()
+                                setDisplayADXpos(!displayADXpos)
+                            }}>
+                    </Checkbox>
+            </Grid.Column>
+            <Grid.Column>
+                <h5>Average Directional Movement Index (ADX) Positive</h5>
+            </Grid.Column>
+        </Grid>
+    )
+    const ADXnegAccordionTitle = (
+        <Grid columns='equal'>
+            <Grid.Column width={2}>
+                    <Checkbox borderless index={1} onClick={(event) => {
+                                event.stopPropagation()
+                                setDisplayADXneg(!displayADXneg)
+                            }}>
+                    </Checkbox>
+            </Grid.Column>
+            <Grid.Column>
+                <h5>Average Directional Movement Index (ADX) Negative</h5>
+            </Grid.Column>
+        </Grid>
+    )
+    const VIposAccordionTitle = (
+        <Grid columns='equal'>
+            <Grid.Column width={2}>
+                    <Checkbox borderless index={1} onClick={(event) => {
+                                event.stopPropagation()
+                                setDisplayVIpos(!displayVIpos)
+                            }}>
+                    </Checkbox>
+            </Grid.Column>
+            <Grid.Column>
+                <h5>Vortex Indicator (VI) Postive</h5>
+            </Grid.Column>
+        </Grid>
+    )
+    const VInegAccordionTitle = (
+        <Grid columns='equal'>
+            <Grid.Column width={2}>
+                    <Checkbox borderless index={1} onClick={(event) => {
+                                event.stopPropagation()
+                                setDisplayVIneg(!displayVIneg)
+                            }}>
+                    </Checkbox>
+            </Grid.Column>
+            <Grid.Column>
+                <h5>Vortex Indicator (VI) Negative</h5>
+            </Grid.Column>
+        </Grid>
+    )
+    const TRIXAccordionTitle = (
+        <Grid columns='equal'>
+            <Grid.Column width={2}>
+                    <Checkbox borderless index={1} onClick={(event) => {
+                                event.stopPropagation()
+                                setDisplayTRIX(!displayTRIX)
+                            }}>
+                    </Checkbox>
+            </Grid.Column>
+            <Grid.Column>
+                <h5>Trix (TRIX)</h5>
+            </Grid.Column>
+        </Grid>
+    )
+    const MassIndexAccordionTitle = (
+        <Grid columns='equal'>
+            <Grid.Column width={2}>
+                    <Checkbox borderless index={1} onClick={(event) => {
+                                event.stopPropagation()
+                                setDisplayMassIndex(!displayMassIndex)
+                            }}>
+                    </Checkbox>
+            </Grid.Column>
+            <Grid.Column>
+                <h5>Mass Index (MI)</h5>
+            </Grid.Column>
+        </Grid>
+    )
+    const CCIAccordionTitle = (
+        <Grid columns='equal'>
+            <Grid.Column width={2}>
+                    <Checkbox borderless index={1} onClick={(event) => {
+                                event.stopPropagation()
+                                setDisplayCCI(!displayCCI)
+                            }}>
+                    </Checkbox>
+            </Grid.Column>
+            <Grid.Column>
+                <h5>Commodity Channel Index (CCI)</h5>
+            </Grid.Column>
+        </Grid>
+    )
+    const DPOAccordionTitle = (
+        <Grid columns='equal'>
+            <Grid.Column width={2}>
+                    <Checkbox borderless index={1} onClick={(event) => {
+                                event.stopPropagation()
+                                setDisplayDPO(!displayDPO)
+                            }}>
+                    </Checkbox>
+            </Grid.Column>
+            <Grid.Column>
+                <h5>Detrended Price Oscillator (DPO)</h5>
+            </Grid.Column>
+        </Grid>
+    )
+    const IchimukuAccordionTitle = (
+        <Grid columns='equal'>
+            <Grid.Column width={2}>
+                    <Checkbox borderless index={1} onClick={(event) => {
+                                event.stopPropagation()
+                                setDisplayIchimoku(!displayIchimuku)
+                            }}>
+                    </Checkbox>
+            </Grid.Column>
+            <Grid.Column>
+                <h5>Tenkan-sen (Conversion Line)</h5>
+            </Grid.Column>
+        </Grid>
+    )
+    const AIupAccordionTitle = (
+        <Grid columns='equal'>
+            <Grid.Column width={2}>
+                    <Checkbox borderless index={1} onClick={(event) => {
+                                event.stopPropagation()
+                                setDisplayAIup(!displayAIup)
+                            }}>
+                    </Checkbox>
+            </Grid.Column>
+            <Grid.Column>
+                <h5>Aroon Up Indicator (AI)</h5>
+            </Grid.Column>
+        </Grid>
+    )
+    const AIdownAccordionTitle = (
+        <Grid columns='equal'>
+            <Grid.Column width={2}>
+                    <Checkbox borderless index={1} onClick={(event) => {
+                                event.stopPropagation()
+                                setDisplayAIdown(!displayAIdown)
+                            }}>
+                    </Checkbox>
+            </Grid.Column>
+            <Grid.Column>
+                <h5>Aroon Down Indicator (AI)</h5>
+            </Grid.Column>
+        </Grid>
+    )
+  
+    //console.log(stockData)
 	return (
 		<div>
             <Grid celled>
@@ -1084,6 +1779,30 @@ export const StockData = () => {
                         <Accordion as={Menu} vertical fluid borderless>
                             <Menu.Item borderless>
                                 <Accordion.Title
+                                    active={activeSMAAccordionMenuItem === 0}
+                                    content={SMAAccordionTitle}
+                                    index={0}
+                                    borderless
+                                    onClick={(e,index) => {
+                                        setActiveSMAAccordionMenuItem(index.index === activeSMAAccordionMenuItem ? -1 : index.index)
+                                        }}
+                                />
+                                <Accordion.Content borderless active={activeSMAAccordionMenuItem === 0} content={SMAcontentPanel} />
+                            </Menu.Item>
+                            <Menu.Item borderless>
+                                <Accordion.Title
+                                    active={activeMACDAccordionMenuItem === 0}
+                                    content={MACDAccordionTitle}
+                                    index={0}
+                                    borderless
+                                    onClick={(e,index) => {
+                                        setActiveMACDAccordionMenuItem(index.index === activeMACDAccordionMenuItem ? -1 : index.index)
+                                        }}
+                                />
+                                <Accordion.Content borderless active={activeMACDAccordionMenuItem === 0} content={MACDcontentPanel} />
+                            </Menu.Item>
+                            <Menu.Item borderless>
+                                <Accordion.Title
                                     active={activeEMAAccodianMenuItem === 0}
                                     content={EMAAccordionTitle}
                                     index={0}
@@ -1093,7 +1812,162 @@ export const StockData = () => {
                                         }}
                                 />
                                 <Accordion.Content borderless active={activeEMAAccodianMenuItem === 0} content={EMAcontentPanel} />
-
+                            </Menu.Item>
+                            <Menu.Item borderless>
+                                <Accordion.Title
+                                    active={activeMACDsignalAccordionMenuItem === 0}
+                                    content={MACDsignalAccordionTitle}
+                                    index={0}
+                                    borderless
+                                    onClick={(e,index) => {
+                                        setActiveMACDsignalAccordionMenuItem(index.index === activeMACDsignalAccordionMenuItem ? -1 : index.index)
+                                        }}
+                                />
+                                <Accordion.Content borderless active={activeMACDsignalAccordionMenuItem === 0} content={MACDSignalcontentPanel} />
+                            </Menu.Item>
+                            <Menu.Item borderless>
+                                <Accordion.Title
+                                    active={activeADXAccordionMenuItem === 0}
+                                    content={ADXAccordionTitle}
+                                    index={0}
+                                    borderless
+                                    onClick={(e,index) => {
+                                        setActiveADXAccordionMenuItem(index.index === activeADXAccordionMenuItem ? -1 : index.index)
+                                        }}
+                                />
+                                <Accordion.Content borderless active={activeADXAccordionMenuItem === 0} content={ADXcontentPanel} />
+                            </Menu.Item>
+                            <Menu.Item borderless>
+                                <Accordion.Title
+                                    active={activeADXposAccordionMenuItem === 0}
+                                    content={ADXposAccordionTitle}
+                                    index={0}
+                                    borderless
+                                    onClick={(e,index) => {
+                                        setActiveADXposAccordionMenuItem(index.index === activeADXposAccordionMenuItem ? -1 : index.index)
+                                        }}
+                                />
+                                <Accordion.Content borderless active={activeADXposAccordionMenuItem === 0} content={ADXposcontentPanel} />
+                            </Menu.Item>
+                            <Menu.Item borderless>
+                                <Accordion.Title
+                                    active={activeADXnegAccordionMenuItem === 0}
+                                    content={ADXnegAccordionTitle}
+                                    index={0}
+                                    borderless
+                                    onClick={(e,index) => {
+                                        setActiveADXnegAccordionMenuItem(index.index === activeADXnegAccordionMenuItem ? -1 : index.index)
+                                        }}
+                                />
+                                <Accordion.Content borderless active={activeADXnegAccordionMenuItem === 0} content={ADXnegcontentPanel} />
+                            </Menu.Item>
+                            <Menu.Item borderless>
+                                <Accordion.Title
+                                    active={activeVIposAccordionMenuItem === 0}
+                                    content={VIposAccordionTitle}
+                                    index={0}
+                                    borderless
+                                    onClick={(e,index) => {
+                                        setActiveVIposAccordionMenuItem(index.index === activeVIposAccordionMenuItem ? -1 : index.index)
+                                        }}
+                                />
+                                <Accordion.Content borderless active={activeVIposAccordionMenuItem === 0} content={VIposcontentPanel} />
+                            </Menu.Item>
+                            <Menu.Item borderless>
+                                <Accordion.Title
+                                    active={activeVInegAccordionMenuItem === 0}
+                                    content={VInegAccordionTitle}
+                                    index={0}
+                                    borderless
+                                    onClick={(e,index) => {
+                                        setActiveVInegAccordionMenuItem(index.index === activeVInegAccordionMenuItem ? -1 : index.index)
+                                        }}
+                                />
+                                <Accordion.Content borderless active={activeVInegAccordionMenuItem === 0} content={VInegcontentPanel} />
+                            </Menu.Item>
+                            <Menu.Item borderless>
+                                <Accordion.Title
+                                    active={activeTRIXAccordionMenuItem=== 0}
+                                    content={TRIXAccordionTitle}
+                                    index={0}
+                                    borderless
+                                    onClick={(e,index) => {
+                                        setActiveTRIXAccordionMenuItem(index.index === activeTRIXAccordionMenuItem ? -1 : index.index)
+                                        }}
+                                />
+                                <Accordion.Content borderless active={activeTRIXAccordionMenuItem === 0} content={TRIXcontentPanel} />
+                            </Menu.Item>
+                            <Menu.Item borderless>
+                                <Accordion.Title
+                                    active={activeMassIndexAccordionMenuItem=== 0}
+                                    content={MassIndexAccordionTitle}
+                                    index={0}
+                                    borderless
+                                    onClick={(e,index) => {
+                                        setActiveMassIndexAccordionMenuItem(index.index === activeMassIndexAccordionMenuItem ? -1 : index.index)
+                                        }}
+                                />
+                                <Accordion.Content borderless active={activeMassIndexAccordionMenuItem === 0} content={MassIndexcontentPanel} />
+                            </Menu.Item>
+                            <Menu.Item borderless>
+                                <Accordion.Title
+                                    active={activeCCIAccordionMenuItem=== 0}
+                                    content={CCIAccordionTitle}
+                                    index={0}
+                                    borderless
+                                    onClick={(e,index) => {
+                                        setActiveCCIAccordionMenuItem(index.index === activeCCIAccordionMenuItem ? -1 : index.index)
+                                        }}
+                                />
+                                <Accordion.Content borderless active={activeCCIAccordionMenuItem === 0} content={CCIcontentPanel} />
+                            </Menu.Item>
+                            <Menu.Item borderless>
+                                <Accordion.Title
+                                    active={activeDPOAccordionMenuItem=== 0}
+                                    content={DPOAccordionTitle}
+                                    index={0}
+                                    borderless
+                                    onClick={(e,index) => {
+                                        setActiveDPOAccordionMenuItem(index.index === activeDPOAccordionMenuItem ? -1 : index.index)
+                                        }}
+                                />
+                                <Accordion.Content borderless active={activeDPOAccordionMenuItem === 0} content={DPOcontentPanel} />
+                            </Menu.Item>
+                            <Menu.Item borderless>
+                                <Accordion.Title
+                                    active={activeIchimokuAccordionMenuItem=== 0}
+                                    content={IchimukuAccordionTitle}
+                                    index={0}
+                                    borderless
+                                    onClick={(e,index) => {
+                                        setActiveIchimokuAccordionMenuItem(index.index === activeIchimokuAccordionMenuItem ? -1 : index.index)
+                                        }}
+                                />
+                                <Accordion.Content borderless active={activeIchimokuAccordionMenuItem === 0} content={IchimukucontentPanel} />
+                            </Menu.Item>
+                            <Menu.Item borderless>
+                                <Accordion.Title
+                                    active={activeAIupAccordionMenuItem=== 0}
+                                    content={AIupAccordionTitle}
+                                    index={0}
+                                    borderless
+                                    onClick={(e,index) => {
+                                        setActiveAIupAccordionMenuItem(index.index === activeAIupAccordionMenuItem ? -1 : index.index)
+                                        }}
+                                />
+                                <Accordion.Content borderless active={activeAIupAccordionMenuItem === 0} content={AIupcontentPanel} />
+                            </Menu.Item>
+                            <Menu.Item borderless>
+                                <Accordion.Title
+                                    active={activeAIdownAccordionMenuItem=== 0}
+                                    content={AIdownAccordionTitle}
+                                    index={0}
+                                    borderless
+                                    onClick={(e,index) => {
+                                        setActiveAIdownAccordionMenuItem(index.index === activeAIdownAccordionMenuItem ? -1 : index.index)
+                                        }}
+                                />
+                                <Accordion.Content borderless active={activeAIdownAccordionMenuItem === 0} content={AIdowncontentPanel} />
                             </Menu.Item>
                         </Accordion>
                         </div>

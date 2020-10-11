@@ -102,7 +102,7 @@ export function createMomentumIndicatorsChart(data,momentumIndicatorsChartNode,d
     if (min == 0 && max == 0) {
         max = 80
     }
-    console.log(min)
+    
     // function min_max(data,displayRSIcheckbox,displayTSIcheckbox,displayUOcheckbox,displayStochCheckbox,displayStochSignalCheckbox)  {
     //     var min = 0
     //     var max = 0

@@ -8,7 +8,7 @@ from iexfinance.stocks import get_historical_data, Stock
 import ta
 from ta.volatility import BollingerBands
 from ta.momentum import RSIIndicator, TSIIndicator, uo, stoch, stoch_signal, wr, ao, kama, roc
-from ta.trend import ema_indicator
+from ta.trend import sma_indicator, ema_indicator, macd, macd_signal, macd_diff, adx, adx_pos, adx_neg, vortex_indicator_pos, vortex_indicator_neg, trix, mass_index, cci, dpo, kst, kst_sig, ichimoku_conversion_line, ichimoku_base_line, aroon_down, aroon_up, psar_up, psar_down
 from algoPlatform1_project.models import User, Post, Watchlist, OHLC_JSONdata
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -169,19 +169,150 @@ def get_earnings_data(ticker):
 
 @algo.route("/calculate_Trend_Indicators/", methods=['GET','POST'])
 def calculate_Trend_Indicators():
-    JSON_sent = request.get_json() 
+    JSON_sent = request.get_json()
     df = pd.DataFrame(JSON_sent[0])
 
-    # Exponential Moving Average (EMA)
-    EMAChecked = JSON_sent[1]['displayEMA']
-    nForEMA = JSON_sent[1]['nForEMA']
 
-    if EMAChecked:
+    # Simple Moving Average 
+    SMAchecked = JSON_sent[1]['displaySMA']
+    nForSMA = JSON_sent[1]['nForSMA']
+
+    # MACD
+    MACDchecked = JSON_sent[2]['displayMACD']
+    nslowForMACD = JSON_sent[2]['nSlow']
+    nfastForMACD = JSON_sent[2]['nFast']
+
+    # MACD Signal 
+    MACDsignalChecked = JSON_sent[3]['displayMACDsignal']
+    nslowForMACDsignal = JSON_sent[3]['nSlow']
+    nfastForMACDsignal = JSON_sent[3]['nFast']
+    nsignForMACDsignal = JSON_sent[3]['nSign']
+
+    # Exponential Moving Average (EMA)
+    EMAchecked = JSON_sent[4]['displayEMA']
+    nForEMA = JSON_sent[4]['nForEMA']
+
+    # Average Directional Movement Index
+    ADXchecked = JSON_sent[5]['displayADX']
+    nForADX = JSON_sent[5]['nForADX']
+
+    # Average Directional Movement Index Positive (ADX)
+    ADXpositiveChecked = JSON_sent[6]['displayADXpositive']
+    nForADXpositive = JSON_sent[6]['nForADXpositive']
+
+    # Average Directional Movement Index Negative 
+    ADXnegativeChecked = JSON_sent[7]['displayADXnegative']
+    nForADXnegative = JSON_sent[7]['nForADXnegative']
+
+    # Vortex Indicator Positive
+    VIpositiveChecked = JSON_sent[8]['displayVIpositive']
+    nForVIpositive = JSON_sent[8]['nForVIpositive']
+
+    # Vortex Indicator Negative
+    VInegativeChecked = JSON_sent[9]['displayVInegative']
+    nForVInegative = JSON_sent[9]['nForVInegative']
+
+    # TRIX
+    TRIXchecked = JSON_sent[10]['displayTRIX']
+    nForTRIX = JSON_sent[10]['nForTRIX']
+
+    # Mass Index
+    MassIndexchecked = JSON_sent[11]['displayMassIndex']
+    nForMassIndex = JSON_sent[11]['nForMassIndex']
+    n2ForMassIndex = JSON_sent[11]['n2ForMassIndex']
+
+    # Commodity Channel Index 
+    CCIchecked = JSON_sent[12]['displayCCIcheck']
+    nForCCI = JSON_sent[12]['nForCCI']
+    cForCCI = JSON_sent[12]['cForCCI']
+
+    # Detrended Price Oscillator (DPO)
+    DPOchecked = JSON_sent[13]['displayDPO']
+    nForDPO = JSON_sent[13]['nForDPO']
+
+    # Tenkan-sen (Conversion Line)
+    IchimokuChecked = JSON_sent[14]['displayIchimoku']
+    n1ForIchimoku = JSON_sent[14]['n1ForIchimoku']
+    n2ForIchimoku = JSON_sent[14]['n2ForIchimoku']
+    visualForIchimoku = JSON_sent[14]['visualForIchimoku']
+
+    # Aroon up Indicator
+    AIupChecked = JSON_sent[15]['AIupChecked']
+    nForAIup = JSON_sent[15]['nForAIup']
+
+    # Aroon down Indicator
+    AIdownChecked = JSON_sent[16]['AIdownChecked']
+    nForAIdown = JSON_sent[16]['nForAIdown']
+
+    print('MACD array', JSON_sent[2])
+
+    if SMAchecked:
+        indicator_sma = sma_indicator(close=df['close'],n=nForSMA)
+        df['sma'] = indicator_sma
+
+    if EMAchecked:
         indicator_ema = ema_indicator(close=df['close'],n=nForEMA)
         df['ema'] = indicator_ema
     
+    if MACDchecked:
+        indicator_macd = macd(close=df['close'],n_slow=nslowForMACD,n_fast=nfastForMACD)
+        df['macd'] = indicator_macd
+
+    if MACDsignalChecked:
+        indicator_macdSignal = macd_signal(close=df['close'],n_slow=nslowForMACDsignal,n_fast=nfastForMACDsignal,n_sign=nsignForMACDsignal)
+        df['macdSignal'] = indicator_macdSignal
+    
+    if ADXchecked:
+        indicator_ADX = adx(high=df['high'],low=df['low'],close=df['close'],n=nForADX)
+        df['adx'] = indicator_ADX
+
+    if ADXpositiveChecked:
+        indicator_ADXpositive = adx_pos(high=df['high'],low=df['low'],close=df['close'],n=nForADXpositive)
+        df['adxPositive'] = indicator_ADXpositive
+    
+    if ADXnegativeChecked:
+        indicator_ADXnegative = adx_neg(high=df['high'],low=df['low'],close=df['close'],n=nForADXnegative)
+        df['adxNegative'] = indicator_ADXnegative
+
+    if VIpositiveChecked:
+        indicator_VIpositive = vortex_indicator_pos(high=df['high'],low=df['low'],close=df['close'],n=nForVIpositive)
+        df['VIpositive'] = indicator_VIpositive
+
+    if VInegativeChecked:
+        indicator_VInegative = vortex_indicator_neg(high=df['high'],low=df['low'],close=df['close'],n=nForVInegative)
+        df['VInegative'] = indicator_VInegative
+
+    if TRIXchecked:
+        indicator_TRIX = trix(close=df['close'],n=nForTRIX)
+        df['trix'] = indicator_TRIX
+
+    if MassIndexchecked:
+        indicator_MassIndex = mass_index(high=df['high'],low=df['low'],n=nForMassIndex,n2=n2ForMassIndex)
+        df['massIndex'] = indicator_MassIndex
+
+    if CCIchecked:
+        indicator_cci = cci(high=df['high'],low=df['low'],close=['close'],n=nForCCI,c=cForCCI)
+        df['cci'] = indicator_cci
+
+    if DPOchecked:
+        indicator_dpo = dpo(close=df['close'],n=nForDPO)
+        df['dpo'] = indicator_dpo
+
+    if IchimokuChecked:
+        indicator_ichimoku = ichimoku_conversion_line(high=df['high'],low=df['low'],n1=n1ForIchimoku,n2=n2ForIchimoku,visual=visualForIchimoku)
+        df['ichimoku'] = indicator_ichimoku
+
+    if AIupChecked:
+        indicator_AIup = aroon_up(close=df['close'],n=nForAIup)
+        df['AIup'] = indicator_AIup
+
+    if AIdownChecked:
+        indicator_AIdown = aroon_down(close=df['close'],n=nForAIdown)    
+        df['AIdown'] = indicator_AIdown
+
     df.fillna(0, inplace=True)
     #export_df = df.drop(columns=['open', 'high', 'low', 'close', 'volume'])
+    print('The printed df in Trend', df)
     return (json.dumps(df.to_dict('records')))
 
 

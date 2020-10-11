@@ -7,7 +7,7 @@ import * as d3 from "d3";
 export function createVolumeBarChart(data,showVolumeNode) {
     const svg = select(showVolumeNode.current);
     svg.selectAll("g").remove()
-    const margin = ({top: 30, right: 30, bottom: 50, left: 40})
+    const margin = ({top: 5, right: 30, bottom: 50, left: 40})
     const parseDate = d3.utcParse("%Y-%m-%d")
     const height = 150;
     const width = 700;
