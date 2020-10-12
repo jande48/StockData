@@ -244,8 +244,6 @@ def calculate_Trend_Indicators():
     AIdownChecked = JSON_sent[16]['AIdownChecked']
     nForAIdown = JSON_sent[16]['nForAIdown']
 
-    print('MACD array', JSON_sent[2])
-
     if SMAchecked:
         indicator_sma = sma_indicator(close=df['close'],n=nForSMA)
         df['sma'] = indicator_sma
@@ -312,7 +310,7 @@ def calculate_Trend_Indicators():
 
     df.fillna(0, inplace=True)
     #export_df = df.drop(columns=['open', 'high', 'low', 'close', 'volume'])
-    print('The printed df in Trend', df)
+    #print('The printed df in Trend', df)
     return (json.dumps(df.to_dict('records')))
 
 
@@ -368,7 +366,7 @@ def calculate_Momentum_Indicators():
     # Rate of Change (ROC)
     ROCChecked = JSON_sent[9]['displayROC']
     nForROC = JSON_sent[9]['nForROC']
-    print(ROCChecked)
+    #print(ROCChecked)
     
 
 
@@ -410,7 +408,7 @@ def calculate_Momentum_Indicators():
     
     df.fillna(0, inplace=True)
     export_df = df.drop(columns=['open', 'high', 'low', 'close', 'volume'])
-    print(export_df)
+    #print(export_df)
     return (json.dumps(export_df.to_dict('records')))
 
 
