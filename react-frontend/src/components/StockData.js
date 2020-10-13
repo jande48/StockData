@@ -147,7 +147,94 @@ export const StockData = () => {
     const [displayAIdown, setDisplayAIdown] = useState(false)
     const [nForAIdown, setNforAIdown] = useState(25)
     const [activeAIdownAccordionMenuItem, setActiveAIdownAccordionMenuItem] = useState(-1)
+
+    const [displayATR, setDisplayATR] = useState(false)
+    const [nForATR, setNforATR] = useState(14)
+    const [activeATRAccordionMenuItem, setActiveATRAccordionMenuItem] = useState(-1)
     
+    const [displayBBSMA, setDisplayBBSMA] = useState(false)
+    const [nForBBSMA, setNforBBSMA] = useState(20)
+    const [ndevBBSMA, setNdevBBSMA] = useState(2)
+    const [activeBBSMAAccordionMenuItem, setActiveBBSMAAccordionMenuItem] = useState(-1)
+
+    const [displayBBUpper, setDisplayBBUpper] = useState(false)
+    const [nForBBUpper, setNforBBUpper] = useState(20)
+    const [ndevBBUpper, setNdevBBUpper] = useState(2)
+    const [activeBBUpperAccordionMenuItem, setActiveBBUpperAccordionMenuItem] = useState(-1)
+
+    const [displayBBLower, setDisplayBBLower] = useState(false)
+    const [nForBBLower, setNforBBLower] = useState(20)
+    const [ndevBBLower, setNdevBBLower] = useState(2)
+    const [activeBBLowerAccordionMenuItem, setActiveBBLowerAccordionMenuItem] = useState(-1)
+
+    const [displayBBCBW, setDisplayBBCBW] = useState(false)
+    const [nForBBCBW, setNforBBCBW] = useState(20)
+    const [ndevBBCBW, setNdevBBCBW] = useState(2)
+    const [activeBBCBWAccordionMenuItem, setActiveBBCBWAccordionMenuItem] = useState(-1)
+
+    const [displayBBCPB, setDisplayBBCPB] = useState(false)
+    const [nForBBCPB, setNforBBCPB] = useState(20)
+    const [ndevBBCPB, setNdevBBCPB] = useState(2)
+    const [activeBBCPBAccordionMenuItem, setActiveBBCBPBccordionMenuItem] = useState(-1)
+
+    const [displayBBHBI, setDisplayBBHBI] = useState(false)
+    const [nForBBHBI, setNforBBHBI] = useState(20)
+    const [ndevBBHBI, setNdevBBHBI] = useState(2)
+    const [activeBBHBIAccordionMenuItem, setActiveBBHBIAccordionMenuItem] = useState(-1)
+
+    const [displayBBLBI, setDisplayBBLBI] = useState(false)
+    const [nForBBLBI, setNforBBLBI] = useState(20)
+    const [ndevBBLBI, setNdevBBLBI] = useState(2)
+    const [activeBBLBIAccordionMenuItem, setActiveBBLBIAccordionMenuItem] = useState(-1)
+    
+    const [displayKeltnerC, setDisplayKeltnerC] = useState(false)
+    const [nForKeltnerC, setNforKeltnerC] = useState(20)
+    const [activeKeltnerCAccordionMenuItem, setActiveKeltnerCAccordionMenuItem] = useState(-1)
+
+    const [displayKeltnerH, setDisplayKeltnerH] = useState(false)
+    const [nForKeltnerH, setNforKeltnerH] = useState(20)
+    const [activeKeltnerHAccordionMenuItem, setActiveKeltnerHAccordionMenuItem] = useState(-1)
+
+    const [displayKeltnerL, setDisplayKeltnerL] = useState(false)
+    const [nForKeltnerL, setNforKeltnerL] = useState(20)
+    const [activeKeltnerLAccordionMenuItem, setActiveKeltnerLAccordionMenuItem] = useState(-1)
+
+    const [displayKeltnerBW, setDisplayKeltnerBW] = useState(false)
+    const [nForKeltnerBW, setNforKeltnerBW] = useState(20)
+    const [activeKeltnerBWAccordionMenuItem, setActiveKeltnerBWAccordionMenuItem] = useState(-1)
+
+    const [displayKeltnerPB, setDisplayKeltnerPB] = useState(false)
+    const [nForKeltnerPB, setNforKeltnerPB] = useState(20)
+    const [activeKeltnerPBAccordionMenuItem, setActiveKeltnerPBAccordionMenuItem] = useState(-1)
+
+    const [displayKeltnerHB, setDisplayKeltnerHB] = useState(false)
+    const [nForKeltnerHB, setNforKeltnerHB] = useState(20)
+    const [activeKeltnerHBAccordionMenuItem, setActiveKeltnerHBAccordionMenuItem] = useState(-1)
+
+    const [displayKeltnerLB, setDisplayKeltnerLB] = useState(false)
+    const [nForKeltnerLB, setNforKeltnerLB] = useState(20)
+    const [activeKeltnerLBAccordionMenuItem, setActiveKeltnerLBAccordionMenuItem] = useState(-1)
+
+    const [displayDonchianHB, setDisplayDonchianHB] = useState(false)
+    const [nForDonchianHB, setNforDonchianHB] = useState(20)
+    const [activeDonchianHBAccordionMenuItem, setActiveDonchianHBMenuItem]= useState(-1)
+    
+    const [displayDonchianLB, setDisplayDonchianLB] = useState(false)
+    const [nForDonchianLB, setNforDonchianLB] = useState(20)
+    const [activeDonchianLBAccordionMenuItem, setActiveDonchianLBMenuItem]= useState(-1)
+    
+    const [displayDonchianMB, setDisplayDonchianMB] = useState(false)
+    const [nForDonchianMB, setNforDonchianMB] = useState(10)
+    const [activeDonchianMBAccordionMenuItem, setActiveDonchianMBMenuItem]= useState(-1)
+    
+    const [displayDonchianBW, setDisplayDonchianBW] = useState(false)
+    const [nForDonchianBW, setNforDonchianBW] = useState(10)
+    const [activeDonchianBWAccordionMenuItem, setActiveDonchianBWMenuItem]= useState(-1)
+    
+    const [displayDonchianPB, setDisplayDonchianPB] = useState(false)
+    const [nForDonchianPB, setNforDonchianPB] = useState(10)
+    const [activeDonchianPBAccordionMenuItem, setActiveDonchianPBMenuItem]= useState(-1)
+        
 	const earningsChartNode = useRef(null);
 	const showVolumeNode = useRef(null);
 	const stockPriceLineChartNode = useRef(null);
@@ -252,7 +339,7 @@ export const StockData = () => {
 
 
     function createTrendIndicatorsChartFunction(data, stockPriceLineChartNode) {
-        console.log(displayMACD)
+        
         const SMAparameters = {'displaySMA':displaySMA,'nForSMA':nForSMA}
         const MACDparameters = {'displayMACD':displayMACD,'nSlow':nSlowForMACD,'nFast':nFastForMACD}
         const MACDsignalparameters = {'displayMACDsignal':displayMACDsignal,'nSlow':nSlowForMACDsignal,'nFast':nFastForMACDsignal,'nSign':nSignForMACDsignal}
@@ -269,14 +356,39 @@ export const StockData = () => {
         const Ichicomkuparameters = {'displayIchimoku':displayIchimuku,'n1ForIchimoku':n1ForIchimoku,'n2ForIchimoku':n2ForIchimoku,'visualForIchimoku':visualForIchimoku}
         const AIupparameters = {'AIupChecked':displayAIup,'nForAIup':nForAIup}
         const AIdownparameters = {'AIdownChecked':displayAIdown,'nForAIdown':nForAIdown}
-  
+
+        const ATRparameters = {'displayATR':displayATR,'nForATR':nForATR}
+        const BollingerSMAparameters = {'displayBBSMA':displayBBSMA,'nForBBSMA':nForBBSMA,'ndevBBSMA': ndevBBSMA}
+        const BollingerUpperparameters = {'displayBBUpper':displayBBUpper,'nForBBUpper':nForBBUpper,'ndevBBUpper': ndevBBUpper}
+        const BollingerLowerparameters = {'displayBBLower':displayBBLower,'nForBBLower':nForBBLower,'ndevBBLower': ndevBBLower}
+        const BollingerCBWparameters = {'displayBBCBW':displayBBCBW,'nForBBCBW':nForBBCBW,'ndevBBCBW': ndevBBCBW}
+        const BollingerCPBparameters = {'displayBBCPB':displayBBCPB,'nForBBCPB':nForBBCPB,'ndevBBCPB': ndevBBCPB}
+        const BollingerHBIparameters = {'displayBBHBI':displayBBHBI,'nForBBHBI':nForBBHBI,'ndevBBHBI': ndevBBHBI}
+        const BollingerLBWparameters = {'displayBBLBI':displayBBLBI,'nForBBLBI':nForBBLBI,'ndevBBLBI': ndevBBLBI}
+        const KeltnerCparameters = {'displayKeltnerC':displayKeltnerC,'nForKeltnerC':nForKeltnerC}
+        const KeltnerHparameters = {'displayKeltnerH':displayKeltnerH,'nForKeltnerH':nForKeltnerH}
+        const KeltnerLparameters = {'displayKeltnerL':displayKeltnerL,'nForKeltnerL':nForKeltnerL}
+        const KeltnerBWparameters = {'displayKeltnerBW':displayKeltnerBW,'nForKeltnerBW':nForKeltnerBW}
+        const KeltnerPBparameters = {'displayKeltnerPB':displayKeltnerPB,'nForKeltnerPB':nForKeltnerPB}
+        const KeltnerHBparameters = {'displayKeltnerHB':displayKeltnerHB,'nForKeltnerHB':nForKeltnerHB}
+        const KeltnerLBparameters = {'displayKeltnerLB':displayKeltnerLB,'nForKeltnerLB':nForKeltnerLB}
+        const DonchianHBparameters = {'displayDonchianHB':displayDonchianHB,'nForDonchianHB':nForDonchianHB}
+        const DonchianLBparameters = {'displayDonchianLB':displayDonchianLB,'nForDonchianLB':nForDonchianLB}
+        const DonchianMBparameters = {'displayDonchianMB':displayDonchianMB,'nForDonchianMB':nForDonchianMB}
+        const DonchianBWparameters = {'displayDonchianBW':displayDonchianBW,'nForDonchianBW':nForDonchianBW}
+        const DonchianPBparameters = {'displayDonchianPB':displayDonchianPB,'nForDonchianPB':nForDonchianPB}
+
         if (data.length > 1) {
             fetch('/calculate_Trend_Indicators/', {
 				method: 'POST', // or 'PUT'
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify([data,SMAparameters,MACDparameters,MACDsignalparameters,EMAparameters,ADXparameters,ADXposparameters,ADXnegparameters,VIposparameters,VInegparameters,TRIXparameters,MIparameters,CCIparameters,DPOparameters,Ichicomkuparameters,AIupparameters,AIdownparameters]),
+                body: JSON.stringify([data,SMAparameters,MACDparameters,MACDsignalparameters,EMAparameters,ADXparameters,ADXposparameters,ADXnegparameters,VIposparameters,VInegparameters,TRIXparameters,MIparameters,CCIparameters,DPOparameters,Ichicomkuparameters,AIupparameters,AIdownparameters,
+                    ATRparameters,BollingerSMAparameters,BollingerUpperparameters,BollingerLowerparameters,BollingerCBWparameters,BollingerCPBparameters,
+                    BollingerHBIparameters,BollingerLBWparameters,KeltnerCparameters,KeltnerHparameters,
+                    KeltnerLparameters,KeltnerBWparameters,KeltnerPBparameters,KeltnerHBparameters,
+                    KeltnerLBparameters,DonchianHBparameters,DonchianLBparameters,DonchianMBparameters,DonchianBWparameters,DonchianPBparameters]),
 				})
 				.then(response => response.json())
 				.then(dataForTrendfromAPI => {
@@ -848,12 +960,13 @@ export const StockData = () => {
     const IchimukuAccordionTitle = createAccordionTile(setDisplayIchimoku,displayIchimuku,'Tenkan-sen (Conversion Line)')
     const AIupAccordionTitle = createAccordionTile(setDisplayAIup,displayAIup,'Aroon Up Indicator (AI)')
     const AIdownAccordionTitle = createAccordionTile(setDisplayAIdown,displayAIdown,'Aroon Down Indicator (AI)') 
+
     function headerCollapsible(title) {
         return (
             <Item.Group>
             <Item>
                 <Item.Content>
-                    <Item.Header as='a'>{title}</Item.Header></br>
+                    <Item.Header as='a'>{title}</Item.Header><br/>
                 </Item.Content>
             </Item>
         </Item.Group>
@@ -1080,7 +1193,7 @@ export const StockData = () => {
                     </Collapsible>
                     <br/>
 
-                    <Collapsible trigger={<Header as='h2'>Trend</Header>}>
+                    <Collapsible trigger={headerCollapsible('Trend')}>
                     <Grid.Row stretched>
                         <div id="accordionIndicators">
                             
