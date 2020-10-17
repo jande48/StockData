@@ -4,7 +4,6 @@ import '../App.css'
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
 import { Item, Label, List, Message, Header, Form, Input, Button, Radio, Grid, Container, Menu, Sidebar, Icon, Accordion, Segment,  Checkbox, Select } from "semantic-ui-react"
-import AccordionExampleMenu from './AccordionExampleMenu'
 import { createCandleStickChart } from './charts/candleStickChart.js'
 import { createVolumeBarChart } from './charts/volumeBarChart.js'
 import { createEarningsChart } from './charts/earningChart.js'

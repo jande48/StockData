@@ -1,0 +1,128 @@
+
+	useEffect(() => {
+		if (stockData.length > 0) {
+			//createStockPriceLineChart(stockData,stockPriceLineChartNode,displayPriceChart);
+            createTrendIndicatorsChartFunction(stockData,stockPriceLineChartNode,displayPriceChart,displayEMA,displayAIdown,displayAIup,displayIchimuku,displayDPO,displayCCI,displaySMA,displayMACD,displayMACDsignal,displayADX,displayADXpos,displayADXneg,displayVIpos,displayVIneg,displayTRIX,displayMassIndex);
+            createVolumeBarChart(stockData,showVolumeNode);
+			createMomentumIndicatorsChartFunction(stockData,momentumIndicatorsChartNode)
+		}
+
+		if (earnings.length > 0) {
+			//console.log(earnings)
+			createEarningsChart(earnings,earningsChartNode)
+        }
+        if (lineChartData.length > 1) {
+            createStockPriceLineChart(lineChartData,stockPriceLineChartNode,displayPriceChart,displayEMA,displayAIdown,displayAIup,displayIchimuku,displayDPO,displayCCI,displaySMA,displayMACD,displayMACDsignal,displayADX,displayADXpos,displayADXneg,displayVIpos,displayVIneg,displayTRIX,displayMassIndex)
+        }
+	},[stockData,lineChartData,displayRSIcheckbox,NforRSI,displayTSIcheckbox,rForTSI,sForTSI,displayUOCheckbox,sForUO,mForUO,lenForUO,wsForUO,wmForUO,wlForUO,displayStochCheckbox,nForStoch,d_nForStoch,,displayStochSignalCheckbox,nForStochSignal,d_nForStochSignal,displayWR,lbpForWR,displayAO,sForAO,lenForAO,displayKama,nForKama,pow1ForKama,pow2ForKama,displayROC,nForROC,displayPriceChart,displayEMA,displayAIdown,displayAIup,displayIchimuku,displayDPO,displayCCI,displaySMA,displayMACD,displayMACDsignal,displayADX,displayADXpos,displayADXneg,displayVIpos,displayVIneg,displayTRIX,displayMassIndex])
+
+
+var SMAparameters = {'displaySMA':displaySMA,'nForSMA':nForSMA}
+    var MACDparameters = {'displayMACD':displayMACD,'nSlow':nSlowForMACD,'nFast':nFastForMACD}
+    var MACDsignalparameters = {'displayMACDsignal':displayMACDsignal,'nSlow':nSlowForMACDsignal,'nFast':nFastForMACDsignal,'nSign':nSignForMACDsignal}
+    var EMAparameters = {'displayEMA':displayEMA,'nForEMA':nForEMA}
+    var ADXparameters = {'displayADX':displayADX,'nForADX':nForADX}
+    var ADXposparameters = {'displayADXpositive':displayADXpos,'nForADXpositive':nForADXpos}
+    var ADXnegparameters = {'displayADXnegative':displayADXneg,'nForADXnegative':nForADXneg}
+    var VIposparameters = {'displayVIpositive':displayVIpos,'nForVIpositive':nForVIpos}
+    var VInegparameters = {'displayVInegative':displayVIneg,'nForVInegative':nForVIneg}
+    var TRIXparameters = {'displayTRIX':displayTRIX,'nForTRIX':nForTRIX}
+    var MIparameters = {'displayMassIndex':displayMassIndex,'nForMassIndex':nForMassIndex,'n2ForMassIndex':n2ForMassIndex}
+    var CCIparameters = {'displayCCIcheck':displayCCI,'nForCCI':nForCCI,'cForCCI':cForCCI}
+    var DPOparameters = {'displayDPO':displayDPO,'nForDPO':nForDPO}
+    var Ichicomkuparameters = {'displayIchimoku':displayIchimuku,'n1ForIchimoku':n1ForIchimoku,'n2ForIchimoku':n2ForIchimoku,'visualForIchimoku':visualForIchimoku}
+    var AIupparameters = {'AIupChecked':displayAIup,'nForAIup':nForAIup}
+    var AIdownparameters = {'AIdownChecked':displayAIdown,'nForAIdown':nForAIdown}
+
+    var ATRparameters = {'displayATR':displayATR,'nForATR':nForATR}
+    var BollingerSMAparameters = {'displayBBSMA':displayBBSMA,'nForBBSMA':nForBBSMA,'ndevBBSMA': ndevBBSMA}
+    var BollingerUpperparameters = {'displayBBUpper':displayBBUpper,'nForBBUpper':nForBBUpper,'ndevBBUpper': ndevBBUpper}
+    var BollingerLowerparameters = {'displayBBLower':displayBBLower,'nForBBLower':nForBBLower,'ndevBBLower': ndevBBLower}
+    var BollingerCBWparameters = {'displayBBCBW':displayBBCBW,'nForBBCBW':nForBBCBW,'ndevBBCBW': ndevBBCBW}
+    var BollingerCPBparameters = {'displayBBCPB':displayBBCPB,'nForBBCPB':nForBBCPB,'ndevBBCPB': ndevBBCPB}
+    var BollingerHBIparameters = {'displayBBHBI':displayBBHBI,'nForBBHBI':nForBBHBI,'ndevBBHBI': ndevBBHBI}
+    var BollingerLBWparameters = {'displayBBLBI':displayBBLBI,'nForBBLBI':nForBBLBI,'ndevBBLBI': ndevBBLBI}
+    var KeltnerCparameters = {'displayKeltnerC':displayKeltnerC,'nForKeltnerC':nForKeltnerC}
+    var KeltnerHparameters = {'displayKeltnerH':displayKeltnerH,'nForKeltnerH':nForKeltnerH}
+    var KeltnerLparameters = {'displayKeltnerL':displayKeltnerL,'nForKeltnerL':nForKeltnerL}
+    var KeltnerBWparameters = {'displayKeltnerBW':displayKeltnerBW,'nForKeltnerBW':nForKeltnerBW}
+    var KeltnerPBparameters = {'displayKeltnerPB':displayKeltnerPB,'nForKeltnerPB':nForKeltnerPB}
+    var KeltnerHBparameters = {'displayKeltnerHB':displayKeltnerHB,'nForKeltnerHB':nForKeltnerHB}
+    var KeltnerLBparameters = {'displayKeltnerLB':displayKeltnerLB,'nForKeltnerLB':nForKeltnerLB}
+    var DonchianHBparameters = {'displayDonchianHB':displayDonchianHB,'nForDonchianHB':nForDonchianHB}
+    var DonchianLBparameters = {'displayDonchianLB':displayDonchianLB,'nForDonchianLB':nForDonchianLB}
+    var DonchianMBparameters = {'displayDonchianMB':displayDonchianMB,'nForDonchianMB':nForDonchianMB}
+    var DonchianBWparameters = {'displayDonchianBW':displayDonchianBW,'nForDonchianBW':nForDonchianBW}
+    var DonchianPBparameters = {'displayDonchianPB':displayDonchianPB,'nForDonchianPB':nForDonchianPB}
+
+    function createTrendIndicatorsChartFunction(data,SMAparameters,MACDparameters,MACDsignalparameters,EMAparameters,ADXparameters,ADXposparameters,ADXnegparameters,VIposparameters,VInegparameters,TRIXparameters,MIparameters,CCIparameters,DPOparameters,Ichicomkuparameters,AIupparameters,AIdownparameters,
+        ATRparameters,BollingerSMAparameters,BollingerUpperparameters,BollingerLowerparameters,BollingerCBWparameters,BollingerCPBparameters,
+        BollingerHBIparameters,BollingerLBWparameters,KeltnerCparameters,KeltnerHparameters,
+        KeltnerLparameters,KeltnerBWparameters,KeltnerPBparameters,KeltnerHBparameters,
+        KeltnerLBparameters,DonchianHBparameters,DonchianLBparameters,DonchianMBparameters,DonchianBWparameters,DonchianPBparameters) {
+        
+        
+
+        if (data.length > 1) {
+            fetch('/calculate_Trend_Indicators/', {
+				method: 'POST', // or 'PUT'
+				headers: {
+					'Content-Type': 'application/json',
+				},
+                body: JSON.stringify([data,SMAparameters,MACDparameters,MACDsignalparameters,EMAparameters,ADXparameters,ADXposparameters,ADXnegparameters,VIposparameters,VInegparameters,TRIXparameters,MIparameters,CCIparameters,DPOparameters,Ichicomkuparameters,AIupparameters,AIdownparameters,
+                    ATRparameters,BollingerSMAparameters,BollingerUpperparameters,BollingerLowerparameters,BollingerCBWparameters,BollingerCPBparameters,
+                    BollingerHBIparameters,BollingerLBWparameters,KeltnerCparameters,KeltnerHparameters,
+                    KeltnerLparameters,KeltnerBWparameters,KeltnerPBparameters,KeltnerHBparameters,
+                    KeltnerLBparameters,DonchianHBparameters,DonchianLBparameters,DonchianMBparameters,DonchianBWparameters,DonchianPBparameters]),
+				})
+				.then(response => response.json())
+				.then(dataForTrendfromAPI => {
+                    setLineChartData(dataForTrendfromAPI)
+					//createStockPriceLineChart(dataForTrendfromAPI,stockPriceLineChartNode,displayPriceChart,displayEMA,displayAIdown,displayAIup,displayIchimuku,displayDPO,displayCCI,displaySMA,displayMACD,displayMACDsignal,displayADX,displayADXpos,displayADXneg,displayVIpos,displayVIneg,displayTRIX,displayMassIndex)
+				})
+				.catch((error) => {
+				console.error('Error:', error);
+				});
+        }else{
+			createStockPriceLineChart(data,stockPriceLineChartNode,displayPriceChart,displayEMA);
+		}
+    }
+    
+    
+	function createMomentumIndicatorsChartFunction(data,momentumIndicatorsChartNode) {
+		console.log(NforRSI)
+		const RSIparameters = {'N':NforRSI}
+		const TSIparameters = {'displayTSI':displayTSIcheckbox,'rTSI':rForTSI,'sTSI':sForTSI}
+		const UOparameters = {'displayUO':displayUOCheckbox,'sForUO':sForUO,'mForUO':mForUO,'lenForUO':lenForUO,'wsForUO':wsForUO,'wmForUO':wmForUO,'wlForUO':wlForUO}
+		const StochParameters = {'displayStoch':displayStochCheckbox,'nForStoch':nForStoch,'d_nForStoch':d_nForStoch}
+		const StochSignalParameters = {'displayStochSignal':displayStochSignalCheckbox,'nForStochSignal':nForStochSignal,'d_nForStochSignal':d_nForStochSignal}
+        const WRParameters = {'displayWR':displayWR,'lbpForWR':lbpForWR}
+        const AOParameters = {'displayAO':displayAO,'sForAO':sForAO,'lenForAO':lenForAO}
+        const KamaParameters = {'displayKama':displayKama,'nForKama':nForKama,'pow1ForKama':pow1ForKama,'pow2ForKama':pow2ForKama}
+        const ROCParameters = {'displayROC':displayROC,'nForROC':nForROC}
+        //console.log(ROCParameters)
+		if (data.length > 1){
+			fetch('/calculate_Momentum_Indicators/', {
+				method: 'POST', // or 'PUT'
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify([data,RSIparameters,TSIparameters,UOparameters,StochParameters,StochSignalParameters,WRParameters,AOParameters,KamaParameters,ROCParameters]),
+				})
+				.then(response => response.json())
+				.then(dataForMomfromAPI => {
+                    
+					createMomentumIndicatorsChart(dataForMomfromAPI,momentumIndicatorsChartNode,displayRSIcheckbox,displayTSIcheckbox,displayUOCheckbox,displayStochCheckbox,displayStochSignalCheckbox,displayWR,displayAO,displayKama,displayROC)
+				})
+				.catch((error) => {
+				console.error('Error:', error);
+				});
+		}else{
+			createMomentumIndicatorsChart(data,momentumIndicatorsChartNode,displayRSIcheckbox,displayTSIcheckbox,displayUOCheckbox,displayStochCheckbox,displayStochSignalCheckbox,displayWR,displayAO,displayKama,displayROC)
+		}
+    }
+
+
+
+2ae7125eea4785786ad4c6c639d9566f65c74d72
+ 
