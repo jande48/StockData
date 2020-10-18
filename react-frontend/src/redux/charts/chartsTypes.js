@@ -1,0 +1,1 @@
+export const ADD_LINE_CANDLE = 'ADD_LINE_CANDLE'

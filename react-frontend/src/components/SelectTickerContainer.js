@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import { connect } from 'react-redux'
 import { addTicker } from '../redux'
 import { Input, Form, Icon, Button} from "semantic-ui-react"

@@ -5,6 +5,7 @@ import store from './redux/store'
 import SelectTickerContainer from './components/SelectTickerContainer'
 import SelectDatesFromMenuContainer from './components/SelectDatesFromMenuContainer'
 import SelectCustomDatesContainer from './components/SelectCustomDatesContainer'
+import SelectLineOrCandleContainer from './components/SelectLineOrCandleContainer'
 import { Grid} from "semantic-ui-react"
 // import HooksCakeContainer from './components/HooksCakeContainer'
 // import IceCreamContainer from './components/IceCreamContainer'
@@ -21,7 +22,8 @@ function App () {
             <Grid.Row stretched>
               <SelectTickerContainer /><br/>
               <SelectDatesFromMenuContainer /><br/>
-              <SelectCustomDatesContainer />
+              <SelectCustomDatesContainer /><br/>
+              <SelectLineOrCandleContainer />
             </Grid.Row>
             
             

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import { connect } from 'react-redux'
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
@@ -66,12 +66,12 @@ function SelectCustomDatesContainer(props) {
   )
 }
 
-const mapStateToProps = state => {
-  return {
-    startDate: state.datesFromRootReducer.startDate,
-    endDate: state.datesFromRootReducer.endDate
-  }
-}
+// const mapStateToProps = state => {
+//   return {
+//     startDate: state.datesFromRootReducer.startDate,
+//     endDate: state.datesFromRootReducer.endDate
+//   }
+// }
 
 const mapDispatchToProps = dispatch => {
   return {
@@ -81,7 +81,8 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(
-  mapStateToProps,
+  // mapStateToProps,
+  null,
   mapDispatchToProps
 )(SelectCustomDatesContainer)
 
