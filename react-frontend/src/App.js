@@ -2,7 +2,9 @@ import React from 'react'
 import { Provider } from 'react-redux'
 import './App.css'
 import store from './redux/store'
-import CakeContainer from './components/CakeContainer'
+import SelectTickerContainer from './components/SelectTickerContainer'
+import SelectDatesFromMenuContainer from './components/SelectDatesFromMenuContainer'
+import { Grid} from "semantic-ui-react"
 // import HooksCakeContainer from './components/HooksCakeContainer'
 // import IceCreamContainer from './components/IceCreamContainer'
 // import NewCakeContainer from './components/NewCakeContainer'
@@ -13,8 +15,21 @@ function App () {
   return (
     <Provider store={store}>
       <div className='App'>
+        <Grid celled>
+          <Grid.Column width = {4}>
+            <Grid.Row stretched>
+              <SelectTickerContainer /><br/>
+              <SelectDatesFromMenuContainer />
+            </Grid.Row>
+            
+            
+          </Grid.Column>
+          <Grid.Column width = {12}>
+            <SelectTickerContainer />
+          </Grid.Column>
+        </Grid>
         
-        <CakeContainer />
+        
         {/* <ItemContainer cake />
         <ItemContainer />
         <NewCakeContainer />

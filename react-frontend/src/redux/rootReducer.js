@@ -1,9 +1,11 @@
 import { combineReducers } from 'redux'
-import cakeReducer from './cake/cakeReducer'
+import datesReducer from './dates/datesReducer'
+import tickerReducer from './tickers/tickerReducer'
 
 
 const rootReducer = combineReducers({
-  cake: cakeReducer,
+  tickersFromRootReducer: tickerReducer,
+  datesFromRootReducer: datesReducer
 
 })
 
