@@ -1,29 +1,31 @@
 import React, {useState, useEffect} from 'react'
 import { connect } from 'react-redux'
-import { addStartDate } from '../redux'
-import { Input, Form, Icon, Button, Menu} from "semantic-ui-react"
+import { addEndDate, addStartDate } from '../redux'
+import {  Menu} from "semantic-ui-react"
+ 
 
 
 
 function SelectDatesFromMenuContainer(props) {
-    const [activeItemDateMenu, setActiveItemDateMenu] = useState('');
-    var currentDate = new Date();
-	var dateOffset = (24*60*60*1000) * 182; 
-	var newDate = currentDate.setTime(currentDate.getTime() - dateOffset);
-	const [startDate, setStartDate] = useState(currentDate);
+  const [activeItemDateMenu, setActiveItemDateMenu] = useState('6m');
+  var currentDateInit = new Date()
+  var newDate = currentDateInit.setTime(currentDateInit.getTime() - (24*60*60*1000) * 182);
+  const [startDate, setStartDate] = useState(currentDateInit);
+  const [endDate, setEndDate] = useState(new Date())
 
-    function handleDateClick(minusDays, name) {
-        setActiveItemDateMenu(name)
-        
-        var currentDate = new Date();
-        var dateOffset = (24*60*60*1000) * minusDays; 
-        var newDate = currentDate.setTime(currentDate.getTime() - dateOffset);
-        setStartDate(currentDate);
-        props.addStartDateDispatch(startDate)
-        // getAndSetStockData(ticker,currentDate,endDate) 
-        // getAndSetFinancials(ticker);
-        // getAndSetEarnings(ticker);
-        }
+
+  function handleDateClick(minusDays, name) {
+      setActiveItemDateMenu(name)
+      var currentDate = new Date() //theRealCurrentDate2;
+      var dateOffset = (24*60*60*1000) * minusDays; 
+      var newDate = currentDate.setTime(currentDate.getTime() - ((24*60*60*1000) * minusDays));
+      setStartDate( currentDate);
+      props.addStartDateDispatch(currentDate)
+      props.addEndDateDispatch(endDate)
+      // getAndSetStockData(ticker,currentDate,endDate) 
+      // getAndSetFinancials(ticker);
+      // getAndSetEarnings(ticker);
+      }
 
   return (
     <div>
@@ -64,19 +66,22 @@ function SelectDatesFromMenuContainer(props) {
   )
 }
 
-const mapStateToProps = state => {
-  return {
-    startDate: state.datesFromRootReducer.startDate
-  }
-}
+// const mapStateToProps = state => {
+//   return {
+//     startDate: state.datesFromRootReducer.startDate,
+//     endDate: state.datesFromRootReducer.endDate
+//   }
+// }
 
 const mapDispatchToProps = dispatch => {
   return {
-    addStartDateDispatch: startDate => dispatch(addStartDate(startDate))
+    addStartDateDispatch: startDate => dispatch(addStartDate(startDate)),
+    addEndDateDispatch: endDate => dispatch(addEndDate(endDate))
   }
 }
 
 export default connect(
-  mapStateToProps,
+  //mapStateToProps,
+  null,
   mapDispatchToProps
 )(SelectDatesFromMenuContainer)

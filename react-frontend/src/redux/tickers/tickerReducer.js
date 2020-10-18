@@ -7,7 +7,7 @@ const initialState = {
 const tickerReducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_TICKER: return {
-      ...state,
+      //...state,
       tickers: action.payload
     }
 

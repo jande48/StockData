@@ -1,2 +1,2 @@
 export { addTicker } from './tickers/tickerActions'
-export { addStartDate } from './dates/datesActions'
+export { addStartDate, addEndDate } from './dates/datesActions'
