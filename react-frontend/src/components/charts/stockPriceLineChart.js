@@ -19,7 +19,7 @@ import {
 export function createStockPriceLineChart(data,stockPriceLineChartNode,displayPriceChart,displayEMA,displayAIdown,displayAIup,displayIchimuku,displayDPO,displayCCI,displaySMA,displayMACD,displayMACDsignal,displayADX,displayADXpos,displayADXneg,displayVIpos,displayVIneg,displayTRIX,displayMassIndex) {
     var min = 0
     var max = 0
-    console.log(displayEMA)
+    //console.log(displayEMA)
     for (var i = 0; i < data.length; i++) {
         if (data[i]['close'] < min) {
             min = data[i]['close']

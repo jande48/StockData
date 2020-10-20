@@ -1,3 +1,5 @@
 export { addTicker } from './tickers/tickerActions'
 export { addStartDate, addEndDate } from './dates/datesActions'
 export { addLineChart } from './charts/chartsActions'
+export { displayRSI, nForRSI, displayTSI, rForTSI } from './momentum/momentumActions'
+export {fetchStockData} from './stockDataRequest/stockDataActions'

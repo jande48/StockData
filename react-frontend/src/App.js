@@ -6,12 +6,10 @@ import SelectTickerContainer from './components/SelectTickerContainer'
 import SelectDatesFromMenuContainer from './components/SelectDatesFromMenuContainer'
 import SelectCustomDatesContainer from './components/SelectCustomDatesContainer'
 import SelectLineOrCandleContainer from './components/SelectLineOrCandleContainer'
+import LineCandleGraphContainer from './components/LineCandleGraphContainer'
 import { Grid} from "semantic-ui-react"
-// import HooksCakeContainer from './components/HooksCakeContainer'
-// import IceCreamContainer from './components/IceCreamContainer'
-// import NewCakeContainer from './components/NewCakeContainer'
-// import ItemContainer from './components/ItemContainer'
-//import UsersContainer from './components/UsersContainer'
+import MomentumMenuContainer from './components/MomentumMenuContainer'
+
 
 function App () {
   return (
@@ -23,13 +21,14 @@ function App () {
               <SelectTickerContainer /><br/>
               <SelectDatesFromMenuContainer /><br/>
               <SelectCustomDatesContainer /><br/>
-              <SelectLineOrCandleContainer />
+              <SelectLineOrCandleContainer /><br/>
+              <MomentumMenuContainer />
             </Grid.Row>
             
             
           </Grid.Column>
           <Grid.Column width = {12}>
-            <SelectTickerContainer />
+            <LineCandleGraphContainer />
           </Grid.Column>
         </Grid>
         
