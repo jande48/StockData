@@ -10,11 +10,11 @@ const initialState = {
 const datesReducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_START_DATE: return {
-      //...state,
+      ...state,
       startDate: action.payload
     }
     case ADD_END_DATE: return {
-      //...state,
+      ...state,
       endDate: action.payload
     }
 

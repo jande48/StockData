@@ -15,10 +15,13 @@ import {
 //   }
 // }
 
+
+// https://redux.js.org/advanced/async-actions
 export function fetchStockData(apiString) {
-  
+
   return function (dispatch) {
     //dispatch(requestAPIstockData(apiString))
+
     axios({
       method: 'get',
       url: "/get_stock_data/"+apiString,

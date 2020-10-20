@@ -19,20 +19,6 @@ IEX_api_key =  os.environ.get('IEX_CLOUD_API_KEY')
 from flask import Blueprint
 algo = Blueprint('algo',__name__)
 
-# @algo.route("/create_algo", methods=['GET'])
-# def create_algo():
-#     sym = "TSLA"  # This is not case-sensitive
-#     tickers = ['MSFT',
-#                'AAPL']
-#     tickers = ','.join(tickers)
-#     endpoints = 'chart'
-#     data_range = '1d' 
-#     HTTP_request = f'https://cloud.iexapis.com/stable/stock/market/batch?symbols={tickers}&types={endpoints}&range={data_range}&token={IEX_api_key}'
-#     IEX_data = pd.read_json(HTTP_request)
-#     IEX_data_head = IEX_data.tail()
-#     return render_template('old_index.html',head=IEX_data_head)
-
-
 @algo.route("/get_stock_data/<ticker>/<startDate>/<endDate>", methods=['GET'])
 def get_stock_data(ticker,startDate,endDate):
 
@@ -41,13 +27,7 @@ def get_stock_data(ticker,startDate,endDate):
 
     endDateForAPItemp = endDate.split('-')
     endDateForAPI = datetime(int(endDateForAPItemp[0]),int(endDateForAPItemp[1]),int(endDateForAPItemp[2]))
-    # print(start.date())
-    # end = datetime.fromtimestamp(endDate)
-    # print(end.date())
-
-    # start = datetime(StartYear,StartMonth,StartDay)
-    # end = datetime(EndYear,EndMonth,EndDay)
-
+    
     def getDBdata(start,end):
         queriedData = OHLC_JSONdata.query.all()
         out = []
