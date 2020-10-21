@@ -49,7 +49,6 @@ export function fetchMomentumData(apiString) {
       })
       .then(response => response.json())
       .then(momentumData => {
-        console.log(momentumData)
         dispatch(fetchMomentumDataSuccess(momentumData))
       })
       .catch((error) => {

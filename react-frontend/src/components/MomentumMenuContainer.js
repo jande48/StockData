@@ -695,7 +695,8 @@ const mapStateToProps = state => {
   return {
     
     displayRSI: state.momentumFromRootReducer.displayRSI,
-    nForRSI: state.momentumFromRootReducer.nForRSI
+    nForRSI: state.momentumFromRootReducer.nForRSI,
+    displayTSI: state.momentumFromRootReducer.displayTSI
 
   }
 }

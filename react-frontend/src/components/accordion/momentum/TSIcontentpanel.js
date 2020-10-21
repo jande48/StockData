@@ -44,6 +44,7 @@ function TSIcontentPanel(props) {
     ]
     return (
     <Grid columns='equal'>
+        <Grid.Row>
             <Grid.Column>
                 <br/>'High Period (r):'
             </Grid.Column>
@@ -58,6 +59,8 @@ function TSIcontentPanel(props) {
                         }}
                 />
             </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
             <Grid.Column>
                 <br/>'Low Period (s):'
             </Grid.Column>
@@ -72,6 +75,7 @@ function TSIcontentPanel(props) {
                         }}
                 />
             </Grid.Column>
+        </Grid.Row>
         </Grid>
         )
 }

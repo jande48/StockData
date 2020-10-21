@@ -729,7 +729,6 @@ def calculate_Momentum_Indicators():
     
     df.fillna(0, inplace=True)
     export_df = df.drop(columns=['open', 'high', 'low', 'close', 'volume'])
-    print(export_df)
     return (json.dumps(export_df.to_dict('records')))
 
 
