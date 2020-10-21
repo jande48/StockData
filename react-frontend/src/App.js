@@ -10,7 +10,7 @@ import LineCandleGraphContainer from './components/LineCandleGraphContainer'
 import VolumeGraphContainer from './components/VolumeGraphContainer'
 import { Grid} from "semantic-ui-react"
 import MomentumMenuContainer from './components/MomentumMenuContainer'
-import MomentumGraphContainer from './components/MomentumGraphContainer'
+import MomentumGraphContainer2 from './components/MomentumGraphContainer2'
 
 
 function App () {
@@ -26,13 +26,11 @@ function App () {
               <SelectLineOrCandleContainer /><br/>
               <MomentumMenuContainer />
             </Grid.Row>
-            
-            
           </Grid.Column>
           <Grid.Column width = {12}>
             <LineCandleGraphContainer /><br/>
             <VolumeGraphContainer/><br/>
-            <MomentumGraphContainer/>
+            <MomentumGraphContainer2/>
           </Grid.Column>
         </Grid>
         

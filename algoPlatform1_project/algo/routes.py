@@ -654,86 +654,82 @@ def calculate_Momentum_Indicators():
     TSIr = int(JSON_sent[2]['rTSI'])
     TSIs = int(JSON_sent[2]['sTSI'])
 
-    # Ultimate Ossilator
-    UOchecked = JSON_sent[3]['displayUO']
-    sForUO = int(JSON_sent[3]['sForUO'])
-    mForUO = int(JSON_sent[3]['mForUO'])
-    lenForUO = int(JSON_sent[3]['lenForUO'])
-    wsForUO = float(JSON_sent[3]['wsForUO'])
-    wmForUO = float(JSON_sent[3]['wmForUO'])
-    wlForUO = float(JSON_sent[3]['wlForUO'])
+    # # Ultimate Ossilator
+    # UOchecked = JSON_sent[3]['displayUO']
+    # sForUO = int(JSON_sent[3]['sForUO'])
+    # mForUO = int(JSON_sent[3]['mForUO'])
+    # lenForUO = int(JSON_sent[3]['lenForUO'])
+    # wsForUO = float(JSON_sent[3]['wsForUO'])
+    # wmForUO = float(JSON_sent[3]['wmForUO'])
+    # wlForUO = float(JSON_sent[3]['wlForUO'])
 
-    # Stochastic Oscillator
-    StochChecked = JSON_sent[4]['displayStoch']
-    nForStoch = int(JSON_sent[4]['nForStoch'])
-    d_nForStoch = int(JSON_sent[4]['d_nForStoch'])
+    # # Stochastic Oscillator
+    # StochChecked = JSON_sent[4]['displayStoch']
+    # nForStoch = int(JSON_sent[4]['nForStoch'])
+    # d_nForStoch = int(JSON_sent[4]['d_nForStoch'])
 
-    # Stochastic Signal
-    StochSignalChecked = JSON_sent[5]['displayStochSignal']
-    nForStochSignal = int(JSON_sent[5]['nForStochSignal'])
-    d_nForStochSignal = int(JSON_sent[5]['d_nForStochSignal'])
+    # # Stochastic Signal
+    # StochSignalChecked = JSON_sent[5]['displayStochSignal']
+    # nForStochSignal = int(JSON_sent[5]['nForStochSignal'])
+    # d_nForStochSignal = int(JSON_sent[5]['d_nForStochSignal'])
 
-    # Williams %R
-    wrChecked = JSON_sent[6]['displayWR']
-    lbpForWR = int(JSON_sent[6]['lbpForWR'])
+    # # Williams %R
+    # wrChecked = JSON_sent[6]['displayWR']
+    # lbpForWR = int(JSON_sent[6]['lbpForWR'])
 
-    # Awesome Oscillator
-    aoChecked = JSON_sent[7]['displayAO']
-    sForAO = JSON_sent[7]['sForAO']
-    lenForAO = JSON_sent[7]['lenForAO']
+    # # Awesome Oscillator
+    # aoChecked = JSON_sent[7]['displayAO']
+    # sForAO = JSON_sent[7]['sForAO']
+    # lenForAO = JSON_sent[7]['lenForAO']
 
-    # Kaufman's Adaptive Moving Average (KAMA)
-    kamaChecked = JSON_sent[8]['displayKama']
-    nForKama = JSON_sent[8]['nForKama']
-    pow1ForKama = JSON_sent[8]['pow1ForKama']
-    pow2ForKama = JSON_sent[8]['pow2ForKama']
+    # # Kaufman's Adaptive Moving Average (KAMA)
+    # kamaChecked = JSON_sent[8]['displayKama']
+    # nForKama = JSON_sent[8]['nForKama']
+    # pow1ForKama = JSON_sent[8]['pow1ForKama']
+    # pow2ForKama = JSON_sent[8]['pow2ForKama']
 
-    # Rate of Change (ROC)
-    ROCChecked = JSON_sent[9]['displayROC']
-    nForROC = JSON_sent[9]['nForROC']
-    #print(ROCChecked)
-    
-
+    # # Rate of Change (ROC)
+    # ROCChecked = JSON_sent[9]['displayROC']
+    # nForROC = JSON_sent[9]['nForROC']
 
     indicator_RSI = RSIIndicator(close=df["close"], n=nForRSI)
     df['rsi'] = indicator_RSI.rsi()
     
-
     if TSIchecked:
         indicator_TSI = TSIIndicator(close=df["close"], r=TSIr, s=TSIs)
         df['tsi'] = indicator_TSI.tsi()
     
-    if UOchecked:
-        indicator_UO = uo(high=df['high'],low=df['low'],close=df['close'],s=sForUO,m=mForUO,len=lenForUO,ws=wsForUO,wm=wmForUO,wl=wlForUO)
-        df['UO'] = indicator_UO
+    # if UOchecked:
+    #     indicator_UO = uo(high=df['high'],low=df['low'],close=df['close'],s=sForUO,m=mForUO,len=lenForUO,ws=wsForUO,wm=wmForUO,wl=wlForUO)
+    #     df['UO'] = indicator_UO
     
-    if StochChecked:
-        indicator_Stoch = stoch(high=df['high'],low=df['low'],close=df['close'],n=nForStoch,d_n=d_nForStoch)
-        df['stoch'] = indicator_Stoch
+    # if StochChecked:
+    #     indicator_Stoch = stoch(high=df['high'],low=df['low'],close=df['close'],n=nForStoch,d_n=d_nForStoch)
+    #     df['stoch'] = indicator_Stoch
     
-    if StochSignalChecked:
-        indicator_StochSignal = stoch_signal(high=df['high'],low=df['low'],close=df['close'],n=nForStochSignal,d_n=d_nForStochSignal)
-        df['stoch_signal'] = indicator_StochSignal
+    # if StochSignalChecked:
+    #     indicator_StochSignal = stoch_signal(high=df['high'],low=df['low'],close=df['close'],n=nForStochSignal,d_n=d_nForStochSignal)
+    #     df['stoch_signal'] = indicator_StochSignal
 
-    if wrChecked:
-        indicator_wr = wr(high=df['high'],low=df['low'],close=df['close'],lbp=lbpForWR)
-        df['wr'] = indicator_wr
+    # if wrChecked:
+    #     indicator_wr = wr(high=df['high'],low=df['low'],close=df['close'],lbp=lbpForWR)
+    #     df['wr'] = indicator_wr
     
-    if aoChecked:
-        indicator_ao = ao(high=df['high'],low=df['low'],s=sForUO,len=lenForUO)
-        df['ao'] = indicator_ao
+    # if aoChecked:
+    #     indicator_ao = ao(high=df['high'],low=df['low'],s=sForUO,len=lenForUO)
+    #     df['ao'] = indicator_ao
 
-    if kamaChecked:
-        indicator_kama = kama(close=df['close'],n=nForKama,pow1=pow1ForKama,pow2=pow2ForKama)
-        df['kama'] = indicator_kama
+    # if kamaChecked:
+    #     indicator_kama = kama(close=df['close'],n=nForKama,pow1=pow1ForKama,pow2=pow2ForKama)
+    #     df['kama'] = indicator_kama
 
-    if ROCChecked:
-        indicator_roc = roc(close=df['close'],n=nForRSI)
-        df['roc'] = indicator_roc
+    # if ROCChecked:
+    #     indicator_roc = roc(close=df['close'],n=nForRSI)
+    #     df['roc'] = indicator_roc
     
     df.fillna(0, inplace=True)
     export_df = df.drop(columns=['open', 'high', 'low', 'close', 'volume'])
-    #print(export_df)
+    print(export_df)
     return (json.dumps(export_df.to_dict('records')))
 
 

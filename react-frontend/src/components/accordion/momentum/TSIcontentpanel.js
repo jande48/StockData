@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { rForTSI } from '../../../redux'
+import { rForTSI, sForTSI } from '../../../redux'
 import { Grid, Menu, Form, Select} from "semantic-ui-react"
 
 function TSIcontentPanel(props) {
@@ -45,7 +45,7 @@ function TSIcontentPanel(props) {
     return (
     <Grid columns='equal'>
             <Grid.Column>
-                <br/>'EMA Smoothing Period (r):'
+                <br/>'High Period (r):'
             </Grid.Column>
             <Grid.Column width={4}>
                 <Form.Field
@@ -58,20 +58,35 @@ function TSIcontentPanel(props) {
                         }}
                 />
             </Grid.Column>
+            <Grid.Column>
+                <br/>'Low Period (s):'
+            </Grid.Column>
+            <Grid.Column width={4}>
+                <Form.Field
+                    control={Select}
+                    options={momentumNtradingDayOptions}
+                    placeholder='13'
+                    compact
+                    onChange ={(e,selectedOption) => {
+                        props.sForTSIdispatch(selectedOption.value)
+                        }}
+                />
+            </Grid.Column>
         </Grid>
         )
 }
 
 const mapStateToProps = state => {
   return {
-    rForTSI: state.momentumFromRootReducer.rForTSI
-
+    rForTSI: state.momentumFromRootReducer.rForTSI,
+    sForTSI: state.momentumFromRootReducer.sForTSI
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    rForTSIdispatch: selectedValue => dispatch(rForTSI(selectedValue))
+    rForTSIdispatch: selectedValue => dispatch(rForTSI(selectedValue)),
+    sForTSIdispatch: selectedValue => dispatch(sForTSI(selectedValue))
   }
 }
 

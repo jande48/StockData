@@ -412,7 +412,7 @@ export const StockData = () => {
         const AOParameters = {'displayAO':displayAO,'sForAO':sForAO,'lenForAO':lenForAO}
         const KamaParameters = {'displayKama':displayKama,'nForKama':nForKama,'pow1ForKama':pow1ForKama,'pow2ForKama':pow2ForKama}
         const ROCParameters = {'displayROC':displayROC,'nForROC':nForROC}
-        //console.log(ROCParameters)
+        
 		if (data.length > 1){
 			fetch('/calculate_Momentum_Indicators/', {
 				method: 'POST', // or 'PUT'

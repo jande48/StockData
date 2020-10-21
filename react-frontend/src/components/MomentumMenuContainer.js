@@ -19,12 +19,7 @@ function MomentumMenuContainer(props) {
         )
     }
     
-	const [NforRSI, setNforRSI] = useState(10)
     const [activeRSIAccodianMenuItem, setRSIActiveAccordionMenuItem] = useState(-1)
-
-	const [displayTSIcheckbox, setDisplayTSIcheckbox] = useState(false)
-	const [rForTSI, setrForTSI] = useState(25)
-    const [sForTSI, setsForTSI] = useState(13)
     const [activeTSIAccodianMenuItem, setTSIActiveAccordionMenuItem] = useState(-1)
 
 	const [displayUOCheckbox, setDisplayUOCheckbox] = useState(false)
@@ -98,6 +93,7 @@ function MomentumMenuContainer(props) {
             <h5>True Strength Index</h5>
         </Grid.Column>
         </Grid>)
+    
     //const TSIAccordionTitle = createAccordionTile(setDisplayTSIcheckbox,displayTSIcheckbox,'True Strength Index')
     const UOAccordionTitle = createAccordionTile(setDisplayUOCheckbox,displayUOCheckbox,'Ultimate Oscillator')
     const StochAccordionTitle = createAccordionTile(setDisplayStochCheckbox,displayStochCheckbox,'Stochastic Oscillator')
@@ -587,9 +583,7 @@ function MomentumMenuContainer(props) {
                                 }}
                         />
                         <Accordion.Content borderless active={activeRSIAccodianMenuItem === 0} content={<RSIcontentPanel/>} />
-
                     </Menu.Item>
-
                     <Menu.Item borderless>
                         <Accordion.Title
                             active={activeTSIAccodianMenuItem === 0}
@@ -708,8 +702,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    displayRSIdispatch: n => dispatch(displayRSI(n)),
-    displayTSIdispatch: n => dispatch(displayTSI(n))
+    displayRSIdispatch: varDisplayRSI => dispatch(displayRSI(varDisplayRSI)),
+    displayTSIdispatch: varDisplayTSI => dispatch(displayTSI(varDisplayTSI))
   }
 }
 

@@ -9,7 +9,8 @@ const initialState = {
   loading: false,
   stockData: [],
   error: '',
-  apiString: 'AAPL/2020-4-21/2020-10-20'
+  apiString: 'AAPL/2020-4-21/2020-10-20',
+  loads: 0
 }
 
 // function selectedAPIstring(state = 'AAPL/2020-4-21/2020-10-20', action) {
@@ -22,7 +23,9 @@ const initialState = {
 // }
 
 const StockDataReducer = (state = initialState, action) => {
+  const oldLoads = state.loads
   switch (action.type) {
+    
     case FETCH_STOCK_DATA_REQUEST:
       return {
         ...state,
@@ -32,7 +35,8 @@ const StockDataReducer = (state = initialState, action) => {
       return {
         loading: false,
         stockData: action.payload,
-        error: ''
+        error: '',
+        loads: (oldLoads+1)
       }
     case FETCH_STOCK_DATA_FAILURE:
       return {
