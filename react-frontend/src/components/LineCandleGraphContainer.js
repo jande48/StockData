@@ -22,8 +22,6 @@ import {
     curveLinear
   } from 'd3';
 
-//{ tickers, startDate, endDate, fetchStockData, stockData }
-
 function LineCandleGraphContainer (props) {
 
     const stockPriceLineChartNode = useRef(null);
@@ -35,10 +33,7 @@ function LineCandleGraphContainer (props) {
 		return convertedDate
 	}
   useEffect(() => {
-    //requestAPIstockData(tickers+convertDatesToString(startDate)+convertDatesToString(endDate))
     props.fetchStockData(String(props.tickers+"/"+convertDatesToString(props.startDate)+"/"+convertDatesToString(props.endDate)))
-    
-        
   }, [props.tickers,props.startDate,props.endDate])
 
   if (props.stockData.length > 1) {
@@ -703,12 +698,6 @@ function LineCandleGraphContainer (props) {
         <React.Fragment>
             <svg ref={stockPriceLineChartNode}></svg>
         </React.Fragment>
-        <React.Fragment>
-            <svg ref={showVolumeNode}></svg>
-        </React.Fragment>
-        <React.Fragment>
-            <svg ref={momentumIndicatorsChartNode}></svg>
-        </React.Fragment>
     </div>
   )
 }
@@ -720,7 +709,8 @@ const mapStateToProps = state => {
     endDate: state.datesFromRootReducer.endDate,
     stockData: state.stockDataFromRootReducer.stockData,
     fetchStockData: state.stockDataFromRootReducer.fetchStockData,
-    displayLine: state.chartsFromRootReducer.displayLine
+    displayLine: state.chartsFromRootReducer.displayLine,
+
   }
 }
 

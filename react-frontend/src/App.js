@@ -7,8 +7,10 @@ import SelectDatesFromMenuContainer from './components/SelectDatesFromMenuContai
 import SelectCustomDatesContainer from './components/SelectCustomDatesContainer'
 import SelectLineOrCandleContainer from './components/SelectLineOrCandleContainer'
 import LineCandleGraphContainer from './components/LineCandleGraphContainer'
+import VolumeGraphContainer from './components/VolumeGraphContainer'
 import { Grid} from "semantic-ui-react"
 import MomentumMenuContainer from './components/MomentumMenuContainer'
+import MomentumGraphContainer from './components/MomentumGraphContainer'
 
 
 function App () {
@@ -28,7 +30,9 @@ function App () {
             
           </Grid.Column>
           <Grid.Column width = {12}>
-            <LineCandleGraphContainer />
+            <LineCandleGraphContainer /><br/>
+            <VolumeGraphContainer/><br/>
+            <MomentumGraphContainer/>
           </Grid.Column>
         </Grid>
         
