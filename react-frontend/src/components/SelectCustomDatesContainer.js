@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { addEndDate, addStartDate } from '../redux'
-import { Header} from "semantic-ui-react"
+import { Header, Grid} from "semantic-ui-react"
 
 
 
@@ -43,8 +43,53 @@ function SelectCustomDatesContainer(props) {
 
   return (
     <div>
-      <Header as='h4'>Custom Dates</Header>
-      <br/>Start:
+      <Header as='h3' textAlign='center'>
+            Custom Dates
+            {/* <Header.Content textAlign='center'></Header.Content> */}
+      </Header>
+      <Grid columns='equal'>
+        {/* <Grid.Row>
+          <Header as='h3' textAlign='center'>
+            Custom Dates
+            {/* <Header.Content textAlign='center'></Header.Content>
+          </Header>
+        </Grid.Row> */}
+        <Grid.Row stretched>
+          <Grid.Column width={4}>
+            <Header as='h5'>Start:</Header>
+          </Grid.Column>
+          <Grid.Column>
+            <DatePicker
+            fluid 
+            selected={startDate} 
+            maxDate={new Date()} 
+            onChange={date => handleStartDateClick(date)}
+            placeholderText='MM/DD/YYYY'
+            //isClearable
+            showYearDropdown
+            scrollableMonthYearDropdown />
+          </Grid.Column>
+        </Grid.Row>
+          <Grid.Column width={4}>
+            <Header as='h5'>End:</Header>
+          </Grid.Column>
+          <Grid.Column>
+            <DatePicker 
+            fluid
+            selected={endDate} 
+            maxDate={new Date()} 
+            onChange={date => handleEndDateClick(date)}
+            placeholderText='MM/DD/YYYY'
+            //isClearable
+            showYearDropdown
+            scrollableMonthYearDropdown />
+          </Grid.Column>
+        <Grid.Row stretched>
+
+        </Grid.Row>
+      </Grid>
+      
+      {/* <br/>Start:
       <DatePicker 
           selected={startDate} 
           maxDate={new Date()} 
@@ -61,7 +106,7 @@ function SelectCustomDatesContainer(props) {
           placeholderText='MM/DD/YYYY'
           isClearable
           showYearDropdown
-          scrollableMonthYearDropdown />
+          scrollableMonthYearDropdown /> */}
     </div>
   )
 }

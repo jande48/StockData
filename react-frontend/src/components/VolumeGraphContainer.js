@@ -30,9 +30,9 @@ function VolumeGraphContainer (props) {
     const data = props.stockData
     const svg = select(showVolumeNode.current);
     svg.selectAll("g").remove()
-    const margin = ({top: 5, right: 30, bottom: 50, left: 40})
+    const margin = ({top: 5, right: 30, bottom: 5, left: 40})
     const parseDate = d3.utcParse("%Y-%m-%d")
-    const height = 150;
+    const height = 100;
     const width = 700;
     svg.attr("viewBox", [0, 0, width, height])
     const innerWidth = width - margin.left - margin.right;

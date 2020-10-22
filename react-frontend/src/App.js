@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { Provider } from 'react-redux'
 import './App.css'
 import store from './redux/store'
@@ -8,12 +8,15 @@ import SelectCustomDatesContainer from './components/SelectCustomDatesContainer'
 import SelectLineOrCandleContainer from './components/SelectLineOrCandleContainer'
 import LineCandleGraphContainer from './components/LineCandleGraphContainer'
 import VolumeGraphContainer from './components/VolumeGraphContainer'
-import { Grid} from "semantic-ui-react"
+import { Grid, Accordion, Header, Icon} from "semantic-ui-react"
 import MomentumMenuContainer from './components/MomentumMenuContainer'
 import MomentumGraphContainer from './components/MomentumGraphContainer'
+import momentumReducer from './redux/momentum/momentumReducer'
 
 
 function App () {
+  const [activeMomentumAccodian, setMomentumAccordion] = useState(0)
+  const [activeTrendAccodian, setTrendAccordion] = useState(-1)
   return (
     <Provider store={store}>
       <div className='App'>
@@ -24,7 +27,21 @@ function App () {
               <SelectDatesFromMenuContainer /><br/>
               <SelectCustomDatesContainer /><br/>
               <SelectLineOrCandleContainer /><br/>
-              <MomentumMenuContainer />
+              <Header as='h2' textAlign='center'>
+                Indicators
+              </Header>
+              <Accordion>
+                <Accordion.Title
+                  active={activeMomentumAccodian=== 0}
+                  content=''
+                  index={0}
+                  borderless
+                  onClick={(e,index) => {
+                      setMomentumAccordion(index.index === activeMomentumAccodian ? -1 : index.index)
+                      }}><Header as='h3'><Icon name='dropdown' />Momentum</Header></Accordion.Title>
+                <Accordion.Content borderless active={activeMomentumAccodian === 0} content={<MomentumMenuContainer />} />
+              </Accordion>
+              
             </Grid.Row>
           </Grid.Column>
           <Grid.Column width = {12}>

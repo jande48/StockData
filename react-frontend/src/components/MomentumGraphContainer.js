@@ -125,11 +125,11 @@ function MomentumGraphContainer (props) {
       const svg = select(momentumIndicatorsChartNode.current);
       svg.selectAll("g").remove()
 
-      const height = 150;
+      const height = 100;
       const width = 700;
       //const margin = ({top: 20, right: 30, bottom: 30, left: 80})
 
-      const margin = ({top: 5, right: 30, bottom: 50, left: 40})
+      const margin = ({top: 5, right: 30, bottom: 5, left: 40})
       const parseDate = d3.utcParse("%Y-%m-%d")
       
       const x = scaleBand()

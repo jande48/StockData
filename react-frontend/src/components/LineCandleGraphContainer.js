@@ -193,7 +193,7 @@ function LineCandleGraphContainer (props) {
             const svg = select(stockPriceLineChartNode.current);
             svg.selectAll("g").remove()
         
-            const height = 350;
+            const height = 300;
             const width = 700;
             //const margin = ({top: 20, right: 30, bottom: 30, left: 80})
             //const formatSecond = d3.timeFormat(":%S")
@@ -202,7 +202,7 @@ function LineCandleGraphContainer (props) {
             }
             const parseDate = d3.utcParse("%Y-%m-%d")
             //new Date(secs * 1000);
-            const margin = ({top: 10, right: 30, bottom: 5, left: 40})
+            const margin = ({top: 1, right: 30, bottom: 5, left: 40})
 
             const x = scaleBand()
                 .domain(d3.utcDay
