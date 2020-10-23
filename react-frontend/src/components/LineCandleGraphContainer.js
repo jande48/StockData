@@ -35,7 +35,7 @@ function LineCandleGraphContainer (props) {
     const SMAp = {'displaySMA':props.displaySMA,'nForSMA':props.nForSMA}
     const EMAp = {'displayEMA':props.displayEMA,'nForEMA':props.nForEMA}
     const MACDp = {'displayMACD':props.displayMACD,'nFastForMACD':props.nFastForMACD,'nSlowForMACD':props.nSlowForMACD}
-    console.log(JSON.stringify([props.stockData,SMAp,EMAp,MACDp]))
+    
     props.fetchStockData(String(props.tickers+"/"+convertDatesToString(props.startDate)+"/"+convertDatesToString(props.endDate)))
     props.fetchTrendData(JSON.stringify([props.stockData,SMAp,EMAp,MACDp]))
     // if (props.stockData.length > 1) {
@@ -224,6 +224,8 @@ function LineCandleGraphContainer (props) {
                 .domain([d3.min(data, d => d.low), d3.max(data, d => d.high)])
                 .rangeRound([height - margin.bottom, margin.top])
                     //d3.min(data, d => d.low), d3.max(data, d => d.high
+            
+            
             
         
             const xAxis = g => g

@@ -11,7 +11,8 @@ const initialState = {
   displayMACD: false,
   nFastForMACD: 26,
   nSlowForMACD: 12,
-  trendLoads: 0
+  trendLoads: 0,
+  trendData: []
 }
 
 const trendReducer = (state = initialState, action) => {

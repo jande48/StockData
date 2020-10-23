@@ -121,7 +121,25 @@ function MomentumGraphContainer (props) {
         return [min,max]
       }
       
-      
+      function findMinMaxMACD(data) {
+        var min = 0
+        var max = 0
+        for (var i = 0; i < data.length; i++) {
+           
+          if (data[i]['macd'] < min) {
+              min = data[i]['macd']
+          }
+          if (data[i]['macd'] > max) {
+              max = data[i]['macd']
+          }
+            
+        }
+        if (min == 0 && max == 0) {
+            max = 2
+            min = -2
+        }
+        return [min,max]
+      }
 
       const svg = select(momentumIndicatorsChartNode.current);
       svg.selectAll("g").remove()
@@ -145,6 +163,13 @@ function MomentumGraphContainer (props) {
           .domain(findMinMax(data))
           .rangeRound([height - margin.bottom, margin.top])
 
+      if (props.displayMACD) {
+        var yRight = scaleLinear()
+          //.domain([min,max])
+          .domain(findMinMaxMACD(trendData))
+          .rangeRound([height - margin.bottom, margin.top])
+      }
+
       const xAxis = g => g
           .attr("transform", `translate(0,${height - margin.bottom})`)
           .call(d3.axisBottom(x)
@@ -164,6 +189,22 @@ function MomentumGraphContainer (props) {
               .attr("x2", width - margin.left - margin.right))
           .call(g => g.select(".domain").remove())
 
+      const keys = ["Mister A", "Brigitte", "Eleonore", "Another friend", "Batman"]
+
+
+      if (props.displayMACD) {
+        var yAxisRight = g => g
+          .attr("transform", `translate(${width-margin.left},0)`)
+          .call(d3.axisRight(yRight)
+              .tickFormat(d3.format("~f"))
+              .tickValues(d3.scaleLinear().domain(yRight.domain()).ticks()))
+              .style("fill",'blue')
+          .call(g => g.selectAll(".tick line").clone()
+              .attr("stroke-opacity", 0)
+              .attr("x2", width - margin.left - margin.right+50))
+          .call(g => g.select(".domain").remove())
+      }
+
       svg.attr("viewBox", [0, 0, width, height])
 
       svg.append("g")
@@ -171,6 +212,40 @@ function MomentumGraphContainer (props) {
           
       svg.append("g")
           .call(yAxis);
+
+      // Usually you have a color scale in your chart already
+      var color = d3.scaleOrdinal()
+        .domain(keys)
+        .range(d3.schemeSet2);
+
+      const size = 10
+      svg.selectAll("mydots")
+        .data(keys)
+        .enter()
+        .append("rect")
+          .attr("x", margin.left + 5)
+          .attr("y", function(d,i){ return height - margin.bottom - 5 - i*15}) // 100 is where the first dot appears. 25 is the distance between dots
+          .attr("width",size)
+          .attr("height", size/2)
+          .style("fill", function(d){ return color(d)})
+        
+        // Add one dot in the legend for each name.
+      svg.selectAll('mylabels')
+        .data(keys)
+        .enter()
+        .append("text")
+          .attr("x", margin.left + 15)
+          .attr("y", function(d,i){ return height - margin.bottom - i*15 + 2.5-(size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+          .style("fill", function(d){ return color(d)})
+          .text(function(d){ return d})
+          .attr("text-anchor", "left")
+          .style("alignment-baseline", "middle")
+
+      if (props.displayMACD) {
+        svg.append("g")
+          .attr('fill','blue')
+          .call(yAxisRight)
+      }
 
       const gRSI = svg.append("g")
           .attr("stroke-linecap", "round")
@@ -196,10 +271,14 @@ function MomentumGraphContainer (props) {
       }else{
           svg.selectAll("g").selectAll(".rsi").remove()
       }
-      if (props.displayTSI) {
+
+      
+      
+
+      if (props.displayTSI && typeof(data[0]['tsi']) !== 'undefined') {
           const gTSI = svg.append("g")
               .attr("stroke-linecap", "round")
-              .attr("stroke", "blue")
+              .attr("stroke", "orange")
               .selectAll("g")
               .data(data)
               .join("g")
@@ -231,7 +310,7 @@ function MomentumGraphContainer (props) {
 
         const lineGeneratorMACD = line()
             .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            .y(d => y(d.macd))
+            .y(d => yRight(d.macd))
             .curve(curveLinear);
 
         gMACD.append('path')
