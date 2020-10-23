@@ -202,7 +202,7 @@ function LineCandleGraphContainer (props) {
             }
             const parseDate = d3.utcParse("%Y-%m-%d")
             //new Date(secs * 1000);
-            const margin = ({top: 1, right: 30, bottom: 5, left: 40})
+            const margin = ({top: 1, right: 30, bottom: 50, left: 40})
 
             const x = scaleBand()
                 .domain(d3.utcDay

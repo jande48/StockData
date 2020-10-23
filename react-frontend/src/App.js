@@ -10,6 +10,7 @@ import LineCandleGraphContainer from './components/LineCandleGraphContainer'
 import VolumeGraphContainer from './components/VolumeGraphContainer'
 import { Grid, Accordion, Header, Icon} from "semantic-ui-react"
 import MomentumMenuContainer from './components/MomentumMenuContainer'
+import TrendMenuContainer from './components/TrendMenuContainer'
 import MomentumGraphContainer from './components/MomentumGraphContainer'
 import momentumReducer from './redux/momentum/momentumReducer'
 
@@ -33,13 +34,25 @@ function App () {
               <Accordion>
                 <Accordion.Title
                   active={activeMomentumAccodian=== 0}
-                  content=''
                   index={0}
                   borderless
                   onClick={(e,index) => {
                       setMomentumAccordion(index.index === activeMomentumAccodian ? -1 : index.index)
-                      }}><Header as='h3'><Icon name='dropdown' />Momentum</Header></Accordion.Title>
+                      }}>
+                    <Header as='h3' textAlign='left'><Icon name='dropdown' />Momentum</Header>
+                </Accordion.Title>
                 <Accordion.Content borderless active={activeMomentumAccodian === 0} content={<MomentumMenuContainer />} />
+                <Accordion.Title
+                  active={activeMomentumAccodian=== 1}
+                  content=''
+                  index={1}
+                  borderless
+                  onClick={(e,index) => {
+                      setTrendAccordion(index.index === activeTrendAccodian ? -1 : index.index)
+                      }}>
+                    <Header as='h3' textAlign='left'><Icon name='dropdown' />Trend</Header>
+                </Accordion.Title>
+                <Accordion.Content borderless active={activeTrendAccodian === 1} content={<TrendMenuContainer />} />
               </Accordion>
               
             </Grid.Row>

@@ -339,15 +339,17 @@ def calculate_Trend_Indicators():
     nslowForMACD = JSON_sent[2]['nSlow']
     nfastForMACD = JSON_sent[2]['nFast']
 
-    # MACD Signal 
-    MACDsignalChecked = JSON_sent[3]['displayMACDsignal']
-    nslowForMACDsignal = JSON_sent[3]['nSlow']
-    nfastForMACDsignal = JSON_sent[3]['nFast']
-    nsignForMACDsignal = JSON_sent[3]['nSign']
-
     # Exponential Moving Average (EMA)
-    EMAchecked = JSON_sent[4]['displayEMA']
-    nForEMA = JSON_sent[4]['nForEMA']
+    EMAchecked = JSON_sent[3]['displayEMA']
+    nForEMA = JSON_sent[3]['nForEMA']
+
+    # MACD Signal 
+    MACDsignalChecked = JSON_sent[4]['displayMACDsignal']
+    nslowForMACDsignal = JSON_sent[4]['nSlow']
+    nfastForMACDsignal = JSON_sent[4]['nFast']
+    nsignForMACDsignal = JSON_sent[4]['nSign']
+
+    
 
     # Average Directional Movement Index
     ADXchecked = JSON_sent[5]['displayADX']

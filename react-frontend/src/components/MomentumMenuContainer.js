@@ -567,9 +567,9 @@ function MomentumMenuContainer(props) {
 
   return (
     <div>
-        <Grid>
+        {/* <Grid stretched> */}
         
-        <Grid.Row stretched>
+        {/* <Grid.Row stretched> */}
             {/* <Collapsible trigger={headerCollapsible('Momentum')}> */}
                 
                 <Accordion as={Menu} vertical stretched fluid borderless>
@@ -685,11 +685,11 @@ function MomentumMenuContainer(props) {
                 </Accordion>
               
             {/* </Collapsible> */}
-        </Grid.Row>
+        {/* </Grid.Row> */}
         
-        </Grid>
+        {/* </Grid> */}
       
-    </div>
+    </div> 
   )
 }
 

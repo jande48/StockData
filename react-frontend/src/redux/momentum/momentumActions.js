@@ -91,7 +91,7 @@ export function fetchMomentumData(apiString) {
 // }
 
 
-export const fetchMomentumkDataRequest = () => {
+export const fetchMomentumDataRequest = () => {
   return {
     type: FETCH_MOMENTUM_DATA_REQUEST,
   }
