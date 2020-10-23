@@ -18,7 +18,7 @@ function TrendMenuContainer(props) {
     const SMAAccordionTitle = (
         <Grid columns='equal'>
         <Grid.Column width={2}>
-                <Checkbox borderless index={1} defaultChecked onClick={(event) => {
+                <Checkbox borderless index={1} onClick={(event) => {
                             event.stopPropagation()
                             props.displaySMAdispatch(!props.displaySMA)
 

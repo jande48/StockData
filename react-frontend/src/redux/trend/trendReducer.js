@@ -4,14 +4,14 @@ import { DISPLAY_SMA, N_FOR_SMA, DISPLAY_EMA, N_FOR_EMA, DISPLAY_MACD, N_SLOW_FO
   FETCH_TREND_DATA_FAILURE } from './trendTypes'
 
 const initialState = {
-  displaySMA: true,
+  displaySMA: false,
   nForSMA: 20,
   displayEMA: false,
   nForEMA: 20,
   displayMACD: false,
   nFastForMACD: 26,
   nSlowForMACD: 12,
-  trendLoads: 0 
+  trendLoads: 0
 }
 
 const trendReducer = (state = initialState, action) => {
@@ -54,15 +54,15 @@ const trendReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        momentumData: action.payload,
+        trendData: action.payload,
         error: '',
-        momentumLoads: (oldLoads+1)
+        trendLoads: (oldLoads+1)
       }
     case FETCH_TREND_DATA_FAILURE:
       return {
         ...state,
         loading: false,
-        momentumData: [],
+        trendData: [],
         error: action.payload
       }
     default: return state

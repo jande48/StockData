@@ -1,9 +1,8 @@
 import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import { fetchStockData } from '../redux'
-//import { createStockPriceLineChartRedux } from './charts/stockPriceLineChartRedux'
 import { createVolumeBarChart } from './charts/volumeBarChart.js'
-import { createMomentumIndicatorsChart } from './charts/momentumIndicatorsChart'
+import { fetchTrendData, displaySMA, nForSMA, displayEMA, displayMACD, nSlowForMACD, nFastForMACD } from '../redux';
 import '../App.css'
 import 'react-datepicker/dist/react-datepicker.css'
 import * as d3 from "d3"
@@ -33,8 +32,16 @@ function LineCandleGraphContainer (props) {
 		return convertedDate
 	}
   useEffect(() => {
+    const SMAp = {'displaySMA':props.displaySMA,'nForSMA':props.nForSMA}
+    const EMAp = {'displayEMA':props.displayEMA,'nForEMA':props.nForEMA}
+    const MACDp = {'displayMACD':props.displayMACD,'nFastForMACD':props.nFastForMACD,'nSlowForMACD':props.nSlowForMACD}
+    console.log(JSON.stringify([props.stockData,SMAp,EMAp,MACDp]))
     props.fetchStockData(String(props.tickers+"/"+convertDatesToString(props.startDate)+"/"+convertDatesToString(props.endDate)))
-  }, [props.tickers,props.startDate,props.endDate])
+    props.fetchTrendData(JSON.stringify([props.stockData,SMAp,EMAp,MACDp]))
+    // if (props.stockData.length > 1) {
+    //   createStockPriceLineChart(stockPriceLineChartNode)
+    // }  
+  }, [props.tickers,props.startDate,props.endDate,props.displaySMA,props.nForSMA,props.displayEMA,props.nForEMA,props.displayMACD,props.nFastForMACD,props.nSlowForMACD])
 
   if (props.stockData.length > 1) {
     createStockPriceLineChart(stockPriceLineChartNode)
@@ -44,6 +51,7 @@ function LineCandleGraphContainer (props) {
 
     function createStockPriceLineChart(stockPriceLineChartNode) {
         const data = props.stockData
+        const trendData = props.trendData
         // var min = 0
             // var max = 0
             // //console.log(displayEMA)
@@ -296,36 +304,36 @@ function LineCandleGraphContainer (props) {
                         : d3.schemeSet1[8]);
             }
         
-            // if (displayEMA) {
-            //     const gEMA = svg.append("g")
-            //         .attr("stroke-linecap", "round")
-            //         .attr("stroke", "blue")
-            //         .selectAll("g")
-            //         .data(data)
-            //         .join("g")
-            //         // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
+            if (props.displaySMA) {
+                const gSMA = svg.append("g")
+                    .attr("stroke-linecap", "round")
+                    .attr("stroke", "green")
+                    .selectAll("g")
+                    .data(trendData)
+                    .join("g")
+                    // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
         
-            //     const lineGeneratorEMA = line()
-            //         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            //         .y(d => y(d.ema))
-            //         .curve(curveLinear);
+                const lineGeneratorSMA = line()
+                    .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
+                    .y(d => y(d.sma))
+                    .curve(curveLinear);
         
-            //     gEMA.append('path')
-            //         .attr('class', 'line-path')
-            //         .attr('d', lineGeneratorEMA(data))
-            //         .attr('id','ema')
-            //         .attr('fill','none')
-            //         .attr('stroke-width',3)
-            //         .attr('stroke-linecap','round')
-            // }else{
-            //     svg.selectAll("g").selectAll(".ema").remove()
-            // }
-            // if (displayMACD) {
+                gSMA.append('path')
+                    .attr('class', 'line-path')
+                    .attr('d', lineGeneratorSMA(trendData))
+                    .attr('id','sma')
+                    .attr('fill','none')
+                    .attr('stroke-width',3)
+                    .attr('stroke-linecap','round')
+            }else{
+                svg.selectAll("g").selectAll(".sma").remove()
+            }
+            // if (props.displayMACD) {
             //     const gMACD = svg.append("g")
             //         .attr("stroke-linecap", "round")
             //         .attr("stroke", "blue")
             //         .selectAll("g")
-            //         .data(data)
+            //         .data(trendData)
             //         .join("g")
             //         // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
         
@@ -336,7 +344,7 @@ function LineCandleGraphContainer (props) {
         
             //     gMACD.append('path')
             //         .attr('class', 'line-path')
-            //         .attr('d', lineGeneratorMACD(data))
+            //         .attr('d', lineGeneratorMACD(trendData))
             //         .attr('id','macd')
             //         .attr('fill','none')
             //         .attr('stroke-width',3)
@@ -710,6 +718,14 @@ const mapStateToProps = state => {
     stockData: state.stockDataFromRootReducer.stockData,
     fetchStockData: state.stockDataFromRootReducer.fetchStockData,
     displayLine: state.chartsFromRootReducer.displayLine,
+    displaySMA: state.trendFromRootReducer.displaySMA,
+    nForSMA: state.trendFromRootReducer.nForSMA,
+    displayEMA: state.trendFromRootReducer.displayEMA,
+    nForEMA: state.trendFromRootReducer.nForEMA,
+    displayMACD: state.trendFromRootReducer.displayMACD,
+    nSlowForMACD: state.trendFromRootReducer.nSlowForMACD,
+    nFastForMACD: state.trendFromRootReducer.nFastForMACD,
+    trendData: state.trendFromRootReducer.trendData
 
   }
 }
@@ -717,7 +733,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     //requestAPIstockData: (APIstring) => dispatch(requestAPIstockData(APIstring)),
-    fetchStockData: (APIstring) => dispatch(fetchStockData(APIstring))
+    fetchStockData: (APIstring) => dispatch(fetchStockData(APIstring)),
+    fetchTrendData: (APIstring) => dispatch(fetchTrendData(APIstring))
   }
 }
 

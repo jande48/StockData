@@ -50,6 +50,27 @@ export const nFastForMACD = (n) => {
 
 
 
+export function fetchTrendData(apiString) {
+  console.log(apiString)
+  return function (dispatch) {
+
+    fetch('/calculate_Trend_Indicators/', {
+      method: 'POST', // or 'PUT'
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: apiString,
+      })
+      .then(response => response.json())
+      .then(trendData => {
+        dispatch(fetchTrendDataSuccess(trendData))
+      })
+      .catch((error) => {
+        dispatch(fetchTrendDataFailure(error.message))
+      });
+  }}
+  
+
 export const fetchTrendDataRequest = () => {
   return {
     type: FETCH_TREND_DATA_REQUEST,
@@ -69,25 +90,6 @@ export const fetchTrendDataFailure = error => {
     payload: error
   }
 }
-
-export function fetchTrendData(apiString) {
-  return function (dispatch) {
-
-    fetch('/calculate_Trend_Indicators/', {
-      method: 'POST', // or 'PUT'
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: apiString,
-      })
-      .then(response => response.json())
-      .then(trendData => {
-        dispatch(fetchTrendDataSuccess(trendData))
-      })
-      .catch((error) => {
-        dispatch(fetchTrendDataFailure(error.message))
-      });
-    
 //     // axios({
 //     //   method: 'post',
 //     //   url: "/calculate_Momentum_Indicators/",

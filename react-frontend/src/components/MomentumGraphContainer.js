@@ -36,6 +36,7 @@ function MomentumGraphContainer (props) {
   if (props.momentumLoads > 0) {
     function createMomentumIndicatorsChart(momentumIndicatorsChartNode) {
       const data = props.momentumData
+      const trendData = props.trendData
       
       function findMinMax(data) {
         var min = 0
@@ -219,7 +220,30 @@ function MomentumGraphContainer (props) {
           svg.selectAll("g").selectAll(".tsi").remove()
       }
 
-      
+      if (props.displayMACD) {
+        const gMACD = svg.append("g")
+            .attr("stroke-linecap", "round")
+            .attr("stroke", "blue")
+            .selectAll("g")
+            .data(trendData)
+            .join("g")
+            // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
+
+        const lineGeneratorMACD = line()
+            .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
+            .y(d => y(d.macd))
+            .curve(curveLinear);
+
+        gMACD.append('path')
+            .attr('class', 'line-path')
+            .attr('d', lineGeneratorMACD(trendData))
+            .attr('id','macd')
+            .attr('fill','none')
+            .attr('stroke-width',3)
+            .attr('stroke-linecap','round')
+        }else{
+          svg.selectAll("g").selectAll(".macd").remove()
+        }
 
       // if (displayTSIcheckbox) {
       //     gTSI.append('path')
@@ -432,6 +456,7 @@ function MomentumGraphContainer (props) {
 const mapStateToProps = state => {
   return {
     stockData: state.stockDataFromRootReducer.stockData,
+    trendData: state.trendFromRootReducer.trendData,
     loads: state.stockDataFromRootReducer.loads,
     momentumLoads: state.momentumFromRootReducer.momentumLoads,
     momentumData: state.momentumFromRootReducer.momentumData,
@@ -441,7 +466,9 @@ const mapStateToProps = state => {
     displayTSI: state.momentumFromRootReducer.displayTSI,
     rForTSI: state.momentumFromRootReducer.rForTSI,
     sForTSI: state.momentumFromRootReducer.sForTSI,
-
+    displayMACD: state.trendFromRootReducer.displayMACD,
+    nSlowForMACD: state.trendFromRootReducer.nSlowForMACD,
+    nFastForMACD: state.trendFromRootReducer.nFastForMACD
   }
 }
 
