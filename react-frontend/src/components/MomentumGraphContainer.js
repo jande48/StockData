@@ -24,14 +24,41 @@ function MomentumGraphContainer (props) {
   const LegendLabels = () => {
     const displayParas = [props.displayRSI,props.displayMACD]
     const labels = ['RSI','MACD']
+    const colors = ["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628","#f781bf","#999999"]
     var keysList = []
+    var colorsList = []
     for (var i = 0; i < displayParas.length; i++) {
       if (displayParas[i]){
         keysList.push(labels[i])
+        colorsList.push(colors[i])
       }
     }
     return keysList
   }
+  const  LegendColors = () => {
+    const displayParas = [props.displayRSI,props.displayMACD]
+    const labels = ['RSI','MACD']
+    const colors = ["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628","#f781bf","#999999"]
+    var keysList = []
+    var colorsList = []
+    for (var i = 0; i < displayParas.length; i++) {
+      if (displayParas[i]){
+        keysList.push(labels[i])
+        colorsList.push(colors[i])
+      }
+    }
+    return colorsList
+  }
+  const legendColorList = LegendColors()
+
+
+  // var RSIobject = {name:'RSI',theData:getTheData(this)}
+  // function getTheData() {
+  //   return this.name
+  // }
+  // console.log(RSIobject)
+
+  
 
   const momentumIndicatorsChartNode = useRef(null);
 
@@ -162,6 +189,61 @@ function MomentumGraphContainer (props) {
       const margin = ({top: 5, right: 30, bottom: 5, left: 40})
       const parseDate = d3.utcParse("%Y-%m-%d")
       
+      class Indicator {
+        constructor(name) {
+          this.name = name;
+          this.color = color;
+          this.data = data;
+          this.svg = svg;
+          this.display = props.displayRSI;
+          this.g = this.svg.append("g")
+          
+          this.lineGenerator = line()
+          
+
+
+        }
+        // Getter
+        get d3line() {
+          return this.calcD3LinePara();
+        }
+        // Method
+        calcD3LinePara() {
+          if (this.display) {
+          this.g
+            .attr("stroke-linecap", "round")
+            .attr("stroke", this.color)
+            .selectAll("g")
+            .data(this.data)
+            .join("g")
+    
+          this.lineGenerator
+            .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
+            .y(d => y(d.rsi))
+            .curve(curveLinear);
+
+          this.g.append('path')
+            .attr('class', 'line-path')
+            .attr("id", "rsi")
+            .attr('d', this.lineGenerator(this.data))
+            .attr('fill','none')
+            .attr('stroke-width',2)
+            .attr('stroke-linecap','round')
+          
+          
+            return this.g
+          }else{
+            return svg.selectAll("g").selectAll(".rsi").remove()
+          }
+          
+        }
+    
+      }
+      
+      
+
+
+
       const x = scaleBand()
           .domain(d3.utcDay
               .range(parseDate(data[0].date), +parseDate(data[data.length - 1].date) + 1)
@@ -200,7 +282,6 @@ function MomentumGraphContainer (props) {
               .attr("x2", width - margin.left - margin.right))
           .call(g => g.select(".domain").remove())
 
-      const keys = ["Mister A", "Brigitte", "Eleonore", "Another friend", "Batman"]
 
 
       if (props.displayMACD) {
@@ -229,6 +310,7 @@ function MomentumGraphContainer (props) {
         .domain(LegendLabels())
         .range(d3.schemeSet1);
 
+
       const size = 5
       svg.selectAll("mydots")
         .data(LegendLabels())
@@ -238,8 +320,8 @@ function MomentumGraphContainer (props) {
           .attr("y", function(d,i){ return height - margin.bottom - 2 - i*15}) // 100 is where the first dot appears. 25 is the distance between dots
           .attr("width",size)
           .attr("height", size/2)
-          .style("fill", function(d){ return color(d)})
-        
+          .style("fill", legendColorList.forEach( x => x))
+          //.style("fill", function(d){return color(d)})
         // Add one dot in the legend for each name.
       svg.selectAll('mylabels')
         .data(LegendLabels())
@@ -247,7 +329,7 @@ function MomentumGraphContainer (props) {
         .append("text")
           .attr("x", margin.left + 15)
           .attr("y", function(d,i){ return height - margin.bottom - i*15 }) // 100 is where the first dot appears. 25 is the distance between dots
-          .style("fill", function(d){ return color(d)})
+          .style("fill", legendColorList.forEach( x => x))
           .text(function(d){ return d})
           .attr("text-anchor", "left")
           .attr("font-size",'10px')
@@ -255,43 +337,45 @@ function MomentumGraphContainer (props) {
 
       if (props.displayMACD) {
         svg.append("g")
-          .attr('fill','blue')
+          .attr('fill',legendColorList[1])
           .call(yAxisRight)
       }
 
-      const gRSI = svg.append("g")
-          .attr("stroke-linecap", "round")
-          .attr("stroke", "red")
-          .selectAll("g")
-          .data(data)
-          .join("g")
-          // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
+      // const gRSI = svg.append("g")
+      //     .attr("stroke-linecap", "round")
+      //     .attr("stroke", legendColorList[0])
+      //     .selectAll("g")
+      //     .data(data)
+      //     .join("g")
+      //     // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
 
-      const lineGeneratorRSI = line()
-          .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-          .y(d => y(d.rsi))
-          .curve(curveLinear);
+      // const lineGeneratorRSI = line()
+      //     .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
+      //     .y(d => y(d.rsi))
+      //     .curve(curveLinear);
+      
+      const rsi = new Indicator('rsi', 'red', data, svg);
+      const rsiline = rsi.d3line
+      // if (props.displayRSI) {
+      //     gRSI.append('path')
+      //     .attr('class', 'line-path')
+      //     .attr("id", "rsi")
+      //     .attr('d', lineGeneratorRSI(data))
+      //     .attr('fill','none')
+      //     .attr('stroke-width',2)
+      //     .attr('stroke-linecap','round')
+      // }else{
+      //     svg.selectAll("g").selectAll(".rsi").remove()
+      // }
 
-      if (props.displayRSI) {
-          gRSI.append('path')
-          .attr('class', 'line-path')
-          .attr("id", "rsi")
-          .attr('d', lineGeneratorRSI(data))
-          .attr('fill','none')
-          .attr('stroke-width',2)
-          .attr('stroke-linecap','round')
-      }else{
-          svg.selectAll("g").selectAll(".rsi").remove()
-      }
-
-      //RSIobject = {name:'RSI',display:props.displayRSI,lineGenerator:lineGeneratorRSI,g:gRSI }
+      
       
       
 
       if (props.displayTSI && typeof(data[0]['tsi']) !== 'undefined') {
           const gTSI = svg.append("g")
               .attr("stroke-linecap", "round")
-              .attr("stroke", "orange")
+              .attr("stroke", legendColorList[2])
               .selectAll("g")
               .data(data)
               .join("g")
@@ -315,7 +399,7 @@ function MomentumGraphContainer (props) {
       if (props.displayMACD) {
         const gMACD = svg.append("g")
             .attr("stroke-linecap", "round")
-            .attr("stroke", "blue")
+            .attr("stroke", color(2))
             .selectAll("g")
             .data(trendData)
             .join("g")
