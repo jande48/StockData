@@ -201,7 +201,7 @@ function LineCandleGraphContainer (props) {
             const svg = select(stockPriceLineChartNode.current);
             svg.selectAll("g").remove()
         
-            const height = 300;
+            const height = 220;
             const width = 700;
             //const margin = ({top: 20, right: 30, bottom: 30, left: 80})
             //const formatSecond = d3.timeFormat(":%S")
@@ -210,7 +210,7 @@ function LineCandleGraphContainer (props) {
             }
             const parseDate = d3.utcParse("%Y-%m-%d")
             //new Date(secs * 1000);
-            const margin = ({top: 1, right: 30, bottom: 50, left: 40})
+            const margin = ({top: 1, right: 30, bottom: 20, left: 40})
 
             const x = scaleBand()
                 .domain(d3.utcDay
@@ -279,7 +279,7 @@ function LineCandleGraphContainer (props) {
                     .attr('d', lineGenerator(data))
                     .attr('id','lineChart')
                     .attr('fill','none')
-                    .attr('stroke-width',3)
+                    .attr('stroke-width',2)
                     .attr('stroke-linecap','round')
             }else{
                 svg.selectAll("g").selectAll(".lineChart").remove()
@@ -325,7 +325,7 @@ function LineCandleGraphContainer (props) {
                     .attr('d', lineGeneratorSMA(trendData))
                     .attr('id','sma')
                     .attr('fill','none')
-                    .attr('stroke-width',3)
+                    .attr('stroke-width',2)
                     .attr('stroke-linecap','round')
             }else{
                 svg.selectAll("g").selectAll(".sma").remove()

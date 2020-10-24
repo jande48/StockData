@@ -21,6 +21,17 @@ import {
 
 function MomentumGraphContainer (props) {
 
+  const LegendLabels = () => {
+    const displayParas = [props.displayRSI,props.displayMACD]
+    const labels = ['RSI','MACD']
+    var keysList = []
+    for (var i = 0; i < displayParas.length; i++) {
+      if (displayParas[i]){
+        keysList.push(labels[i])
+      }
+    }
+    return keysList
+  }
 
   const momentumIndicatorsChartNode = useRef(null);
 
@@ -144,7 +155,7 @@ function MomentumGraphContainer (props) {
       const svg = select(momentumIndicatorsChartNode.current);
       svg.selectAll("g").remove()
 
-      const height = 100;
+      const height = 70;
       const width = 700;
       //const margin = ({top: 20, right: 30, bottom: 30, left: 80})
 
@@ -215,30 +226,31 @@ function MomentumGraphContainer (props) {
 
       // Usually you have a color scale in your chart already
       var color = d3.scaleOrdinal()
-        .domain(keys)
-        .range(d3.schemeSet2);
+        .domain(LegendLabels())
+        .range(d3.schemeSet1);
 
-      const size = 10
+      const size = 5
       svg.selectAll("mydots")
-        .data(keys)
+        .data(LegendLabels())
         .enter()
         .append("rect")
           .attr("x", margin.left + 5)
-          .attr("y", function(d,i){ return height - margin.bottom - 5 - i*15}) // 100 is where the first dot appears. 25 is the distance between dots
+          .attr("y", function(d,i){ return height - margin.bottom - 2 - i*15}) // 100 is where the first dot appears. 25 is the distance between dots
           .attr("width",size)
           .attr("height", size/2)
           .style("fill", function(d){ return color(d)})
         
         // Add one dot in the legend for each name.
       svg.selectAll('mylabels')
-        .data(keys)
+        .data(LegendLabels())
         .enter()
         .append("text")
           .attr("x", margin.left + 15)
-          .attr("y", function(d,i){ return height - margin.bottom - i*15 + 2.5-(size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+          .attr("y", function(d,i){ return height - margin.bottom - i*15 }) // 100 is where the first dot appears. 25 is the distance between dots
           .style("fill", function(d){ return color(d)})
           .text(function(d){ return d})
           .attr("text-anchor", "left")
+          .attr("font-size",'10px')
           .style("alignment-baseline", "middle")
 
       if (props.displayMACD) {
@@ -266,12 +278,13 @@ function MomentumGraphContainer (props) {
           .attr("id", "rsi")
           .attr('d', lineGeneratorRSI(data))
           .attr('fill','none')
-          .attr('stroke-width',3)
+          .attr('stroke-width',2)
           .attr('stroke-linecap','round')
       }else{
           svg.selectAll("g").selectAll(".rsi").remove()
       }
 
+      //RSIobject = {name:'RSI',display:props.displayRSI,lineGenerator:lineGeneratorRSI,g:gRSI }
       
       
 
@@ -293,7 +306,7 @@ function MomentumGraphContainer (props) {
               .attr("id", "tsi")
               .attr('d', lineGeneratorTSI(data))
               .attr('fill','none')
-              .attr('stroke-width',3)
+              .attr('stroke-width',2)
               .attr('stroke-linecap','round')
       }else{
           svg.selectAll("g").selectAll(".tsi").remove()
@@ -318,7 +331,7 @@ function MomentumGraphContainer (props) {
             .attr('d', lineGeneratorMACD(trendData))
             .attr('id','macd')
             .attr('fill','none')
-            .attr('stroke-width',3)
+            .attr('stroke-width',2)
             .attr('stroke-linecap','round')
         }else{
           svg.selectAll("g").selectAll(".macd").remove()

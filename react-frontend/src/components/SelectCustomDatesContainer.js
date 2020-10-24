@@ -84,9 +84,6 @@ function SelectCustomDatesContainer(props) {
             showYearDropdown
             scrollableMonthYearDropdown />
           </Grid.Column>
-        <Grid.Row stretched>
-
-        </Grid.Row>
       </Grid>
       
       {/* <br/>Start:
