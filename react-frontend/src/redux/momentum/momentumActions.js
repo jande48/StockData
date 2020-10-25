@@ -39,7 +39,7 @@ export const sForTSI = (n) => {
 }
 export function fetchMomentumData(apiString) {
   return function (dispatch) {
-
+    dispatch(fetchMomentumDataRequest())
     fetch('/calculate_Momentum_Indicators/', {
       method: 'POST', // or 'PUT'
       headers: {

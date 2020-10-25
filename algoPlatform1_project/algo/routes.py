@@ -12,9 +12,11 @@ from ta.trend import sma_indicator, ema_indicator, macd, macd_signal, macd_diff,
 from ta.volatility import average_true_range, bollinger_mavg, bollinger_hband, bollinger_lband, bollinger_wband, bollinger_pband, bollinger_hband_indicator, bollinger_lband_indicator, keltner_channel_mband, keltner_channel_hband, keltner_channel_lband, keltner_channel_wband, keltner_channel_pband, keltner_channel_hband_indicator, keltner_channel_lband_indicator, donchian_channel_hband, donchian_channel_lband, donchian_channel_mband, donchian_channel_wband, donchian_channel_pband 
 from algoPlatform1_project.models import User, Post, Watchlist, OHLC_JSONdata
 from flask_login import login_user, current_user, logout_user, login_required
+from urllib.request import urlopen
 
 IEX_secret_api_key = os.environ.get('IEX_CLOUD_SECRET_API_KEY')
 IEX_api_key =  os.environ.get('IEX_CLOUD_API_KEY') 
+Stock_Ticker_Lookup_key = os.environ.get('StockTickerCompanyNameAPIkey')
 
 from flask import Blueprint
 algo = Blueprint('algo',__name__)
@@ -114,6 +116,15 @@ def initiallyCommitData(data):
         db.session.add(addedData)
         db.session.commit()
 
+
+@algo.route("/get_ticker_company_name/<user_input>", methods=['GET'])
+def get_ticker_company_name(user_input):
+    print('We got to the api call')
+    url = ("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange=NASDAQ&apikey="+Stock_Ticker_Lookup_key)
+    response = urlopen(url)
+    data = response.read().decode("utf-8")
+    print((data))
+    return data
 
 @algo.route("/get_financial_data/<ticker>", methods=['GET'])
 def get_fianancial_data(ticker):

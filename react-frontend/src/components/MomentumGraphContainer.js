@@ -184,29 +184,25 @@ function MomentumGraphContainer (props) {
 
       const height = 70;
       const width = 700;
-      //const margin = ({top: 20, right: 30, bottom: 30, left: 80})
 
       const margin = ({top: 5, right: 30, bottom: 5, left: 40})
       const parseDate = d3.utcParse("%Y-%m-%d")
       
       class Indicator {
-        constructor(name) {
+        constructor(name,color,dataForInd,display) {
           this.name = name;
           this.color = color;
-          this.data = data;
+          this.dataInd = dataForInd;
           this.svg = svg;
-          this.display = props.displayRSI;
+          this.display =display;
           this.g = this.svg.append("g")
-          
           this.lineGenerator = line()
-          
-
-
         }
         // Getter
         get d3line() {
           return this.calcD3LinePara();
         }
+
         // Method
         calcD3LinePara() {
           if (this.display) {
@@ -214,7 +210,7 @@ function MomentumGraphContainer (props) {
             .attr("stroke-linecap", "round")
             .attr("stroke", this.color)
             .selectAll("g")
-            .data(this.data)
+            .data(this.dataInd)
             .join("g")
     
           this.lineGenerator
@@ -224,20 +220,17 @@ function MomentumGraphContainer (props) {
 
           this.g.append('path')
             .attr('class', 'line-path')
-            .attr("id", "rsi")
-            .attr('d', this.lineGenerator(this.data))
+            .attr("id", this.name)
+            .attr('d', this.lineGenerator(this.dataInd))
             .attr('fill','none')
             .attr('stroke-width',2)
             .attr('stroke-linecap','round')
           
-          
             return this.g
           }else{
-            return svg.selectAll("g").selectAll(".rsi").remove()
+            return svg.selectAll("g").selectAll("."+this.name).remove()
           }
-          
         }
-    
       }
       
       
@@ -354,8 +347,10 @@ function MomentumGraphContainer (props) {
       //     .y(d => y(d.rsi))
       //     .curve(curveLinear);
       
-      const rsi = new Indicator('rsi', 'red', data, svg);
+      const rsi = new Indicator('rsi',"#377eb8",data,props.displayRSI);
+      const macd = new Indicator('macd',"#e41a1c",trendData,props.displayMACD)
       const rsiline = rsi.d3line
+      const macdline = macd.d3line
       // if (props.displayRSI) {
       //     gRSI.append('path')
       //     .attr('class', 'line-path')

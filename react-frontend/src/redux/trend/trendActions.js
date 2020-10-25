@@ -51,7 +51,7 @@ export const nFastForMACD = (n) => {
 
 
 export function fetchTrendData(apiString) {
-  console.log(apiString)
+  //console.log(apiString)
   return function (dispatch) {
 
     fetch('/calculate_Trend_Indicators/', {

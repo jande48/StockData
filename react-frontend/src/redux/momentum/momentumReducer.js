@@ -10,7 +10,8 @@ const initialState = {
   displayTSI: false,
   rForTSI: 25,
   sForTSI: 13,
-  momentumLoads: 0 
+  momentumLoads: 0,
+  loading: false
 }
 
 const momentumReducer = (state = initialState, action) => {
