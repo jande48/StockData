@@ -1,28 +1,52 @@
   
-import { ADD_TICKER, FETCH_COMP_INFO_REQUEST, FETCH_COMP_INFO_SUCCESS, FETCH_COMP_INFO_FAILURE } from './tickerTypes'
+import { ADD_TICKER, FETCH_COMP_INFO_REQUEST, FETCH_COMP_INFO_SUCCESS, FETCH_COMP_INFO_FAILURE, COMPANY_NAME, ADD_PERCENT_CHANGE } from './tickerTypes'
 import axios from 'axios'
 
 export const addTicker = (ticker = 'AAPL') => {
   return {
     type: ADD_TICKER,
-    payload: ticker
+    payload: ticker.toUpperCase()
   }
 }
 
+export const addPercentChange = (percentChange = 0) => {
+  return {
+    type: ADD_PERCENT_CHANGE,
+    payload: percentChange
+  }
+}
+
+export const addCompanyName = (name = 'Apple, Inc') => {
+  return {
+    type: COMPANY_NAME,
+    payload: name
+  }
+}
+
+export function fetchCompanyNameFromTicker(APIstring) {
+  return function (dispatch) {
+    axios({
+      method: 'get',
+      url: "/get_company_name_from_ticker/"+APIstring,
+    })
+      .then(response => {
+        const compData = response.data 
+        dispatch(addCompanyName(compData))
+      })
+      .catch(error => {
+        dispatch(fetchCompInfoDataFailure(error.message))
+      })
+  }
+}
 
 export function fetchCompInfoData(APIstring) {
   return function (dispatch) {
-    console.log('We really got Right inside the api call')
-    // fetch("/get_ticker_company_name/"+APIstring)
-    //   .then(response => response.json())
-    //   .then(data => console.log(data));
     axios({
       method: 'get',
       url: "/get_ticker_company_name/"+APIstring,
     })
       .then(response => {
         const compData = response.data 
-        console.log(compData)
         dispatch(fetchCompInfoDataSuccess(compData))
       })
       .catch(error => {

@@ -1,6 +1,6 @@
 import React, {useState, useRef, useCallback} from 'react'
 import { connect } from 'react-redux'
-import { addTicker, fetchCompInfoData, fetchCompInfoDataRequest } from '../redux'
+import { addCompanyName, addTicker, displayEMA, fetchCompInfoData, fetchCompInfoDataRequest, fetchCompanyNameFromTicker } from '../redux'
 import { Input, Form, Icon, Button, Grid, Search, Label, Header} from "semantic-ui-react"
 import _ from 'lodash'
 
@@ -13,6 +13,7 @@ function SelectTickerContainer(props) {
     
     clearTimeout(timeoutRef.current)
     fetchCompInfoDataRequest(data.value)
+
     setNewTicker(e.target.value)
     props.fetchCompInfoData(String(data.value))
     // timeoutRef.current = setTimeout(() => {
@@ -57,8 +58,9 @@ function SelectTickerContainer(props) {
               loading={props.loading}
               onResultSelect={(e, data) =>{
                 console.log(data.result.symbol)
-                props.addTickerDispatch(data.result.symbol)}
-                //dispatch({ type: 'UPDATE_SELECTION', selection: data.result.title })
+                props.addCompanyName(data.result.name)
+                props.addTickerDispatch(data.result.symbol)
+                }
               }
               onSearchChange={handleSearchChange}
               resultRenderer={resultRenderer}
@@ -67,7 +69,10 @@ function SelectTickerContainer(props) {
             />
           </Grid.Column>
           <Grid.Column width={4}>
-            <Button fluid color='green' animated onClick={(e) => props.addTickerDispatch(newTicker)}>
+            <Button fluid color='green' animated onClick={(e) => {
+              props.addTickerDispatch(newTicker)
+              props.fetchCompanyNameFromTicker(newTicker)
+            }}>
               <Button.Content visible>Go!</Button.Content>
               <Button.Content hidden>
                   <Icon name='arrow right' />
@@ -95,6 +100,8 @@ const mapDispatchToProps = dispatch => {
     addTickerDispatch: newTicker => dispatch(addTicker(newTicker)),
     fetchCompInfoData: (APIstring) => dispatch(fetchCompInfoData(APIstring)),
     fetchCompInfoDataRequest: (userInput) => dispatch(fetchCompInfoDataRequest(userInput)),
+    addCompanyName: (selectedName) => dispatch(addCompanyName(selectedName)),
+    fetchCompanyNameFromTicker: (ticker) => (dispatch(fetchCompanyNameFromTicker(ticker)))
   }
 }
 

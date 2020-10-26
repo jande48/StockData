@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import { fetchStockData } from '../redux'
+import { addPercentChange, fetchStockData } from '../redux'
+import {Header, Grid} from 'semantic-ui-react'
 import { createVolumeBarChart } from './charts/volumeBarChart.js'
 import { fetchTrendData, displaySMA, nForSMA, displayEMA, displayMACD, nSlowForMACD, nFastForMACD } from '../redux';
 import '../App.css'
@@ -38,10 +39,13 @@ function LineCandleGraphContainer (props) {
     
     props.fetchStockData(String(props.tickers+"/"+convertDatesToString(props.startDate)+"/"+convertDatesToString(props.endDate)))
     props.fetchTrendData(JSON.stringify([props.stockData,SMAp,EMAp,MACDp]))
+    
     // if (props.stockData.length > 1) {
     //   createStockPriceLineChart(stockPriceLineChartNode)
     // }  
   }, [props.tickers,props.startDate,props.endDate,props.displaySMA,props.nForSMA,props.displayEMA,props.nForEMA,props.displayMACD,props.nFastForMACD,props.nSlowForMACD])
+  
+  props.addPercentChange(calcPercentChange())
 
   if (props.stockData.length > 1) {
     createStockPriceLineChart(stockPriceLineChartNode)
@@ -285,7 +289,7 @@ function LineCandleGraphContainer (props) {
                 svg.selectAll("g").selectAll(".lineChart").remove()
         
                 const g = svg.append("g")
-                    .attr("stroke-linecap", "round")
+                    .attr("stroke-linecap", "butt")
                     .attr("stroke", "black")
                     .selectAll("g")
                     .data(data)
@@ -697,6 +701,22 @@ function LineCandleGraphContainer (props) {
           return svg.node();
         }
 
+    function calcPercentChange() {
+        var exportDefault = 0
+        if (props.stockData.length > 2) {
+            const percentChange = ((props.stockData[props.stockData.length -1]['close'] - props.stockData[props.stockData.length -2]['close'])/props.stockData[props.stockData.length -1]['close'])*100
+            const percentChangeFormatted = percentChange.toFixed(2)
+            return percentChangeFormatted
+            // return (
+            //     <Header as='h2' textAlign='right' color={(props.stockData != 'undefined' && calcPercentChange() > 0) ? 'green' : 'red'}>{(calcPercentChange() > 0) ? '+' + String(calcPercentChange()) + '%': '-' + String(calcPercentChange())+'%'}
+            //     </Header>
+            // )
+
+        }else{
+            return exportDefault
+        }
+    }
+
   return props.stockData.loading ? (
 
 
@@ -706,6 +726,18 @@ function LineCandleGraphContainer (props) {
   ) : (
     <div>
         <React.Fragment>
+        <Grid columns='equal'>
+          <Grid.Row stretched>
+            <Grid.Column>
+                <Header as='h2' textAlign='left'>{props.compName} - {props.tickers} </Header>
+            </Grid.Column>
+            <Grid.Column>
+                <Header as='h2' textAlign='right' color={(props.percentChange > 0) ? 'green' : 'red'}>{(props.percentChange > 0) ? '+' + String(props.percentChange) + '%': '-' + String(props.percentChange)+'%'}
+                </Header>
+            </Grid.Column>
+          </Grid.Row>
+          </Grid>
+           
             <svg ref={stockPriceLineChartNode}></svg>
         </React.Fragment>
     </div>
@@ -727,7 +759,10 @@ const mapStateToProps = state => {
     displayMACD: state.trendFromRootReducer.displayMACD,
     nSlowForMACD: state.trendFromRootReducer.nSlowForMACD,
     nFastForMACD: state.trendFromRootReducer.nFastForMACD,
-    trendData: state.trendFromRootReducer.trendData
+    trendData: state.trendFromRootReducer.trendData,
+    compName: state.tickersFromRootReducer.name,
+    percentChange: state.tickersFromRootReducer.percentChange
+
 
   }
 }
@@ -736,7 +771,8 @@ const mapDispatchToProps = dispatch => {
   return {
     //requestAPIstockData: (APIstring) => dispatch(requestAPIstockData(APIstring)),
     fetchStockData: (APIstring) => dispatch(fetchStockData(APIstring)),
-    fetchTrendData: (APIstring) => dispatch(fetchTrendData(APIstring))
+    fetchTrendData: (APIstring) => dispatch(fetchTrendData(APIstring)),
+    addPercentChange: (percentChange) => dispatch(addPercentChange(percentChange))
   }
 }
 

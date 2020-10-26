@@ -1,18 +1,20 @@
-import { ADD_TICKER, FETCH_COMP_INFO_REQUEST, FETCH_COMP_INFO_SUCCESS, FETCH_COMP_INFO_FAILURE  } from './tickerTypes'
+import { ADD_TICKER, FETCH_COMP_INFO_REQUEST, FETCH_COMP_INFO_SUCCESS, FETCH_COMP_INFO_FAILURE, COMPANY_NAME, ADD_PERCENT_CHANGE  } from './tickerTypes'
 
 const initialState = {
   tickers: 'AAPL',
   loading: false,
   compInfo: [],
   compLoads: 0,
-  query: ''
+  query: '',
+  name: 'Apple, Inc',
+  percentChange: 0,
 }
 
 const tickerReducer = (state = initialState, action) => {
   const oldLoads = state.compLoads
   switch (action.type) {
     case ADD_TICKER: return {
-      //...state,
+      ...state,
       tickers: action.payload
     }
     case FETCH_COMP_INFO_REQUEST:
@@ -35,6 +37,16 @@ const tickerReducer = (state = initialState, action) => {
         loading: false,
         comp_info: [],
         error: action.payload
+      }
+    case COMPANY_NAME:
+      return {
+        ...state,
+        name: action.payload
+      }
+    case ADD_PERCENT_CHANGE:
+      return {
+        ...state,
+        percentChange: action.payload
       }
     default: return state
   }
