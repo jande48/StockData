@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { connect } from 'react-redux'
 import { addEndDate, addStartDate } from '../redux'
-import {  Menu} from "semantic-ui-react"
+import {  Menu, Grid} from "semantic-ui-react"
  
 
 
@@ -29,7 +29,8 @@ function SelectDatesFromMenuContainer(props) {
 
   return (
     <div>
-        <Menu widths={4}>
+      <Grid inverted>
+        <Menu widths={4} inverted>
             <Menu.Item
             name='5d'
             active={activeItemDateMenu === '5d'}
@@ -62,6 +63,7 @@ function SelectDatesFromMenuContainer(props) {
             </Menu.Item>
             
         </Menu>
+      </Grid>
     </div>
   )
 }

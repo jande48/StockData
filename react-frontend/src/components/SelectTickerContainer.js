@@ -43,9 +43,9 @@ function SelectTickerContainer(props) {
   return (
     <div>
       <Form>
-        <Grid columns='equal'>
-          <Grid.Row stretched>
-          <Grid.Column>
+        <Grid columns='equal' inverted>
+          <Grid.Row stretched color='black'>
+          <Grid.Column color='black'>
             {/* <Input 
               placeholder="Add ticker ex) APPL" 
               value={newTicker}
@@ -62,13 +62,14 @@ function SelectTickerContainer(props) {
                 props.addTickerDispatch(data.result.symbol)
                 }
               }
+              placeholder='Search company or ticker'
               onSearchChange={handleSearchChange}
               resultRenderer={resultRenderer}
               results={props.compInfo}
               //value={newTicker}
-            />
+            inverted/>
           </Grid.Column>
-          <Grid.Column width={4}>
+          <Grid.Column width={4} color='black'>
             <Button fluid color='green' animated onClick={(e) => {
               props.addTickerDispatch(newTicker)
               props.fetchCompanyNameFromTicker(newTicker)

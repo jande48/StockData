@@ -126,10 +126,8 @@ def get_ticker_company_name(user_input):
 
 @algo.route("/get_company_name_from_ticker/<ticker>", methods=['GET'])
 def get_company_name_from_ticker(ticker):
-    print(ticker)
     stock = Stock(ticker, token=IEX_api_key)
     company = stock.get_company()
-    print(company['companyName'])
     return company['companyName']
 
 @algo.route("/get_financial_data/<ticker>", methods=['GET'])
@@ -138,7 +136,6 @@ def get_fianancial_data(ticker):
     stock = Stock(ticker, token=IEX_api_key)
     financials = stock.get_financials()
     company = stock.get_company()
-    print(company)
 
     # def divideByMillion(financialParameter,newFinancials):
     #     newFinancials[0][financialParameter] = newFinancials[0][financialParameter]/1000000
@@ -346,8 +343,6 @@ def calculate_Trend_Indicators():
     JSON_sent = request.get_json()
     if len(JSON_sent[0])>0:
         df = pd.DataFrame(JSON_sent[0])
-        print(df)
-
 
         # Simple Moving Average 
         SMAchecked = JSON_sent[1]['displaySMA']

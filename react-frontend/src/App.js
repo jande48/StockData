@@ -20,26 +20,27 @@ function App () {
   const [activeTrendAccodian, setTrendAccordion] = useState(-1)
   return (
     <Provider store={store}>
-      <div className='App'>
-        <Grid celled>
-          <Grid.Column width = {4}>
-            <Grid.Row stretched>
+        <Grid celled inverted>
+          <Grid.Column width = {4} inverted>
+            <Grid.Row stretched color='black'>
               <SelectTickerContainer /><br/>
               <SelectDatesFromMenuContainer /><br/>
               <SelectCustomDatesContainer /><br/>
               <SelectLineOrCandleContainer /><br/>
-              <Header as='h2' textAlign='center'>
+              {/* <Header inverted as='h2' textAlign='center'>
                 Indicators
-              </Header>
-              <Accordion>
+              </Header> */}
+              <Grid.Row color='black' inverted stretched>
+              <Accordion inverted stretched color='black'>
                 <Accordion.Title
-                  active={activeMomentumAccodian=== 0}
+                  inverted
+                  active={activeMomentumAccodian === 0}
                   index={0}
                   borderless
                   onClick={(e,index) => {
                       setMomentumAccordion(index.index === activeMomentumAccodian ? -1 : index.index)
                       }}>
-                    <Header as='h3' textAlign='left'><Icon name='dropdown' />Momentum</Header>
+                    <Header as='h3' textAlign='left' inverted><Icon name='dropdown' />Momentum</Header>
                 </Accordion.Title>
                 <Accordion.Content borderless active={activeMomentumAccodian === 0} content={<MomentumMenuContainer />} />
                 <Accordion.Title
@@ -54,7 +55,7 @@ function App () {
                 </Accordion.Title>
                 <Accordion.Content borderless active={activeTrendAccodian === 1} content={<TrendMenuContainer />} />
               </Accordion>
-              
+              </Grid.Row>
             </Grid.Row>
           </Grid.Column>
           <Grid.Column width = {12}>
@@ -71,7 +72,7 @@ function App () {
         <UsersContainer />
         <HooksCakeContainer />
         <IceCreamContainer /> */}
-      </div>
+      
     </Provider>
   )
 }

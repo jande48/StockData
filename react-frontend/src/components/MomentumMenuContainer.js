@@ -572,7 +572,7 @@ function MomentumMenuContainer(props) {
         {/* <Grid.Row stretched> */}
             {/* <Collapsible trigger={headerCollapsible('Momentum')}> */}
                 
-                <Accordion as={Menu} vertical stretched fluid borderless>
+                <Accordion as={Menu} vertical stretched fluid borderless inverted>
                     <Menu.Item borderless>
                         <Accordion.Title
                             active={activeRSIAccodianMenuItem === 0}
@@ -582,6 +582,7 @@ function MomentumMenuContainer(props) {
                             onClick={(e,index) => {
                                 setRSIActiveAccordionMenuItem(index.index === activeRSIAccodianMenuItem ? -1 : index.index)
                                 }}
+                            inverted
                         />
                         <Accordion.Content borderless active={activeRSIAccodianMenuItem === 0} content={<RSIcontentPanel/>} />
                     </Menu.Item>

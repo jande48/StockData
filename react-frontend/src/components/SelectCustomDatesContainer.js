@@ -43,20 +43,28 @@ function SelectCustomDatesContainer(props) {
 
   return (
     <div>
-      <Header as='h3' textAlign='center'>
-            Custom Dates
+      {/* <Grid inverted>
+      <Header as='h5' textAlign='center' inverted>
+            --- or ---
             {/* <Header.Content textAlign='center'></Header.Content> */}
-      </Header>
-      <Grid columns='equal'>
-        {/* <Grid.Row>
-          <Header as='h3' textAlign='center'>
-            Custom Dates
-            {/* <Header.Content textAlign='center'></Header.Content>
+      {/*} </Header>
+      </Grid>
+      <Header as='h5' textAlign='center' inverted>
+            --- or ---
+            <Header.Content textAlign='center'></Header.Content> 
+      </Header> */}
+      <Grid columns='equal' inverted>
+        <Grid.Row color='black' textAlign='center' stretched>
+          <Grid.Column>
+          <Header as='h5' textAlign='center' inverted>
+            <Header.Content textAlign='center' inverted>-- or --</Header.Content>
           </Header>
-        </Grid.Row> */}
-        <Grid.Row stretched>
+          </Grid.Column>
+          
+        </Grid.Row>
+        <Grid.Row stretched color='black'>
           <Grid.Column width={4}>
-            <Header as='h5'>Start:</Header>
+            <Header as='h5' inverted textAlign='center'>Start:</Header>
           </Grid.Column>
           <Grid.Column>
             <DatePicker
@@ -67,13 +75,14 @@ function SelectCustomDatesContainer(props) {
             placeholderText='MM/DD/YYYY'
             //isClearable
             showYearDropdown
-            scrollableMonthYearDropdown />
+            scrollableMonthYearDropdown 
+            inverted/>
           </Grid.Column>
         </Grid.Row>
-          <Grid.Column width={4}>
-            <Header as='h5'>End:</Header>
+          <Grid.Column width={4} color='black'>
+            <Header as='h5' inverted textAlign='center'>End:</Header>
           </Grid.Column>
-          <Grid.Column>
+          <Grid.Column color='black'>
             <DatePicker 
             fluid
             selected={endDate} 
@@ -82,7 +91,8 @@ function SelectCustomDatesContainer(props) {
             placeholderText='MM/DD/YYYY'
             //isClearable
             showYearDropdown
-            scrollableMonthYearDropdown />
+            scrollableMonthYearDropdown
+            inverted />
           </Grid.Column>
       </Grid>
       

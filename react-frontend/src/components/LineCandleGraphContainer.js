@@ -205,6 +205,11 @@ function LineCandleGraphContainer (props) {
             const svg = select(stockPriceLineChartNode.current);
             svg.selectAll("g").remove()
         
+            svg.append("rect")
+                .attr('width','100%')
+                .attr('height','100%')
+                .attr('fill','black')
+
             const height = 220;
             const width = 700;
             //const margin = ({top: 20, right: 30, bottom: 30, left: 80})
@@ -214,7 +219,7 @@ function LineCandleGraphContainer (props) {
             }
             const parseDate = d3.utcParse("%Y-%m-%d")
             //new Date(secs * 1000);
-            const margin = ({top: 1, right: 30, bottom: 20, left: 40})
+            const margin = ({top: 15, right: 30, bottom: 20, left: 40})
 
             const x = scaleBand()
                 .domain(d3.utcDay
@@ -234,6 +239,7 @@ function LineCandleGraphContainer (props) {
         
             const xAxis = g => g
                 .attr("transform", `translate(0,${height - margin.bottom})`)
+                .attr('class','axisWhite')
                 .call(d3.axisBottom(x)
                     .tickValues(d3.utcMonday
                         .every(data.length > 2 ? (data.length > 15 ? 4 : 2) : 1)
@@ -244,6 +250,7 @@ function LineCandleGraphContainer (props) {
         
             const yAxis = g => g
                 .attr("transform", `translate(${margin.left},0)`)
+                .attr('class','axisWhite')
                 .call(d3.axisLeft(y)
                     .tickFormat(d3.format("$~f"))
                     .tickValues(d3.scaleLinear().domain(y.domain()).ticks()))
@@ -267,7 +274,7 @@ function LineCandleGraphContainer (props) {
         
                 const g = svg.append("g")
                     .attr("stroke-linecap", "round")
-                    .attr("stroke", "black")
+                    .attr("stroke", "white")
                     .selectAll("g")
                     .data(data)
                     .join("g")
@@ -290,7 +297,7 @@ function LineCandleGraphContainer (props) {
         
                 const g = svg.append("g")
                     .attr("stroke-linecap", "butt")
-                    .attr("stroke", "black")
+                    .attr("stroke", "white")
                     .selectAll("g")
                     .data(data)
                     .join("g")
@@ -707,10 +714,6 @@ function LineCandleGraphContainer (props) {
             const percentChange = ((props.stockData[props.stockData.length -1]['close'] - props.stockData[props.stockData.length -2]['close'])/props.stockData[props.stockData.length -1]['close'])*100
             const percentChangeFormatted = percentChange.toFixed(2)
             return percentChangeFormatted
-            // return (
-            //     <Header as='h2' textAlign='right' color={(props.stockData != 'undefined' && calcPercentChange() > 0) ? 'green' : 'red'}>{(calcPercentChange() > 0) ? '+' + String(calcPercentChange()) + '%': '-' + String(calcPercentChange())+'%'}
-            //     </Header>
-            // )
 
         }else{
             return exportDefault
@@ -726,13 +729,13 @@ function LineCandleGraphContainer (props) {
   ) : (
     <div>
         <React.Fragment>
-        <Grid columns='equal'>
-          <Grid.Row stretched>
-            <Grid.Column>
-                <Header as='h2' textAlign='left'>{props.compName} - {props.tickers} </Header>
+        <Grid inverted columns='equal'>
+          <Grid.Row stretched  color='black'>
+            <Grid.Column  color='black'>
+                <Header as='h2' textAlign='left' inverted>{props.compName} - {props.tickers}</Header>
             </Grid.Column>
-            <Grid.Column>
-                <Header as='h2' textAlign='right' color={(props.percentChange > 0) ? 'green' : 'red'}>{(props.percentChange > 0) ? '+' + String(props.percentChange) + '%': '-' + String(props.percentChange)+'%'}
+            <Grid.Column color='black'>
+                <Header as='h2' textAlign='right' color={(props.percentChange > 0) ? 'green' : 'red'}>{((props.percentChange==0) ? '' : (props.percentChange > 0) ? '+' + String(props.percentChange) + '%': '-' + String(props.percentChange)+'%')}
                 </Header>
             </Grid.Column>
           </Grid.Row>

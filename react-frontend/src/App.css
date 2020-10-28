@@ -5,6 +5,14 @@
   box-shadow: none;
 }
 
+.axisWhite text{
+  fill: white
+}
+
+.axisWhite line{
+  stroke: white;
+}
+
 .App {
   text-align: center;
 }

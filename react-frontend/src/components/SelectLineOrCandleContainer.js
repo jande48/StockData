@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import { connect } from 'react-redux'
 import { addLineChart} from '../redux'
-import { Form, Button} from "semantic-ui-react"
+import { Form, Button, Grid} from "semantic-ui-react"
 
 function SelectLineOrCandle(props) {
   const [displayPriceChart, setDisplayPriceChart] = useState(true)
@@ -19,9 +19,11 @@ function SelectLineOrCandle(props) {
   }
 
   return (
-    <div>
-      <Form>
-        <Form.Field>
+    <div background-color='black'>
+    <Grid columns='equal' inverted centered>
+        <Grid.Row color='black' textAlign='center' stretched>
+      <Form inverted stretched>
+        <Form.Field inverted>
             <Button toggle active={displayPriceChart} color={displayPriceChart ? 'blue' : null} onClick={handlePriceClickLine}>
                 Line Chart
             </Button>
@@ -29,7 +31,9 @@ function SelectLineOrCandle(props) {
                 Candle Stick
             </Button>
         </Form.Field>
-    </Form>
+      </Form>
+      </Grid.Row>
+    </Grid>
     </div>
   )
 }
