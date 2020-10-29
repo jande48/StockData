@@ -567,9 +567,9 @@ function MomentumMenuContainer(props) {
 
   return (
     <div>
-        {/* <Grid stretched> */}
+        <Grid stretched> 
         
-        {/* <Grid.Row stretched> */}
+         <Grid.Row stretched>
             {/* <Collapsible trigger={headerCollapsible('Momentum')}> */}
                 
                 <Accordion as={Menu} vertical stretched fluid borderless inverted>
@@ -578,7 +578,7 @@ function MomentumMenuContainer(props) {
                             active={activeRSIAccodianMenuItem === 0}
                             content={RSIAccordionTitle}
                             index={0}
-                            borderless
+                            //borderless
                             onClick={(e,index) => {
                                 setRSIActiveAccordionMenuItem(index.index === activeRSIAccodianMenuItem ? -1 : index.index)
                                 }}
@@ -591,7 +591,7 @@ function MomentumMenuContainer(props) {
                             active={activeTSIAccodianMenuItem === 0}
                             content={TSIAccordionTitle}
                             index={0}
-                            borderless
+                            //borderless
                             onClick={(e,index) => {
                                 setTSIActiveAccordionMenuItem(index.index === activeTSIAccodianMenuItem ? -1 : index.index)
                                 }}
@@ -686,9 +686,9 @@ function MomentumMenuContainer(props) {
                 </Accordion>
               
             {/* </Collapsible> */}
-        {/* </Grid.Row> */}
+        </Grid.Row> 
         
-        {/* </Grid> */}
+     </Grid>
       
     </div> 
   )

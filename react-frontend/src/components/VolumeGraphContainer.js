@@ -30,7 +30,7 @@ function VolumeGraphContainer (props) {
     const data = props.stockData
     const svg = select(showVolumeNode.current);
     svg.selectAll("g").remove()
-    const margin = ({top: 5, right: 30, bottom: 5, left: 40})
+    const margin = ({top: 10, right: 10, bottom: 5, left: 50})
     const parseDate = d3.utcParse("%Y-%m-%d")
     const height = 70;
     const width = 700;
@@ -48,30 +48,39 @@ function VolumeGraphContainer (props) {
     // d3.min(data, d => d.volume)-(d3.max(data, d => d.volume)-d3.min(data, d => d.volume))/10
     const y = scaleLinear()
         .domain([0, d3.max(data, d => d.volume)])
-        .rangeRound([0,innerHeight])
+        .rangeRound([innerHeight, 0])
     //console.log(y.domain())
     const xAxis = g => g
-        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .attr("transform", `translate(0,${height - margin.bottom- margin.top})`)
+        .attr('class','axisWhite')
         .call(d3.axisBottom(x)
             .tickValues(d3.utcMonday
                 .every(data.length > 2 ? (data.length > 15 ? 4 : 2) : 1)
                 .range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
-            .tickFormat(d3.utcFormat("%-m/%-d")))
-        .call(g => g.select(".domain").remove())
+            .tickFormat(d3.utcFormat("")))
+        //.call(g => g.select(".domain").remove())
     
 
     const yAxis = g => g
         .attr("transform", `translate(${margin.left},0)`)
-        .call(d3.axisLeft(y).ticks(0))
+        .attr('class','axisWhite')
+        .call(d3.axisLeft(y).ticks(3,'s'))
         //     .tickValues(d3.scaleLinear().domain(y.domain()).ticks()))
         // .call(g => g.selectAll(".tick line").clone()
         //     .attr("stroke-width", 0))
             //.attr("x2", width - margin.left - margin.right))
-        .call(g => g.select(".domain").remove())
+        //.call(g => g.select(".domain").remove())
 
     // yAxis.select('.domain')
     //     .attr('stroke-width', 0);
-
+    svg.append("text")
+        .attr("class", "axisWhite")
+        .attr("text-anchor", "middle")
+        .attr("font-size",'10px')
+        .style('fill','#e0e1e2')
+        .attr('transform',`translate(10,${height/2}) rotate(-90)`)
+        .text("Volume")
+        
     svg.append("g")
         .call(xAxis);
         
@@ -96,14 +105,17 @@ function VolumeGraphContainer (props) {
         .attr("transform", data => `translate(${x(parseDate(data.date))},0)`);
 
     g.append("rect")
+        .attr('x',0)
+        .attr('y',0)
         .attr('width', d=>(x.bandwidth()+x.padding()))
-        .attr('height',d=>y(d.volume))
+        .attr('height',d=>(innerHeight - y(d.volume)))
         .attr("fill", d => d.open > d.close ? d3.schemeSet1[0]
             : d.close > d.open ? d3.schemeSet1[2]
             : d3.schemeSet1[8])
-        .attr('transform',`translate(${x.bandwidth()},${innerHeight})  rotate(180)`)
-        .on('mouseover', handleMouseOverRect)
-        .on('mouseout', handleMouseOutRect)
+        .attr('transform',d=>(`translate(${x.bandwidth()},${innerHeight}) rotate(180)`))
+        //.attr('transform',`translate(${x.bandwidth()},${innerHeight})  rotate(180)`)
+        // .on('mouseover', handleMouseOverRect)
+        // .on('mouseout', handleMouseOutRect)
 
     function findIndexStockData(d) {
       for (var i = 0; i < data.length; i++) {

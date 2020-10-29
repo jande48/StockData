@@ -5,12 +5,23 @@
   box-shadow: none;
 }
 
+body {
+  background-color: #1b1c1d;
+}
+
 .axisWhite text{
-  fill: white
+  fill: 	#636669;
+  /* fill: #e0e1e2; */
+}
+
+.axisWhite path{
+  stroke: 	#636669;
+  /* stroke: #e0e1e2; */
 }
 
 .axisWhite line{
-  stroke: white;
+  stroke:	#636669;
+  /* stroke: #e0e1e2; */
 }
 
 .App {

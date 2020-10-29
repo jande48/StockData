@@ -52,14 +52,6 @@ function MomentumGraphContainer (props) {
   const legendColorList = LegendColors()
 
 
-  // var RSIobject = {name:'RSI',theData:getTheData(this)}
-  // function getTheData() {
-  //   return this.name
-  // }
-  // console.log(RSIobject)
-
-  
-
   const momentumIndicatorsChartNode = useRef(null);
 
   useEffect(() => {
@@ -185,7 +177,7 @@ function MomentumGraphContainer (props) {
       const height = 70;
       const width = 700;
 
-      const margin = ({top: 5, right: 30, bottom: 5, left: 40})
+      const margin = ({top: 5, right: 10, bottom: 5, left: 50})
       const parseDate = d3.utcParse("%Y-%m-%d")
       
       class Indicator {
@@ -215,7 +207,7 @@ function MomentumGraphContainer (props) {
     
           this.lineGenerator
             .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            .y(d => y(d.rsi))
+            .y(d => y(d[this.name]))
             .curve(curveLinear);
 
           this.g.append('path')
@@ -232,9 +224,6 @@ function MomentumGraphContainer (props) {
           }
         }
       }
-      
-      
-
 
 
       const x = scaleBand()
@@ -258,24 +247,32 @@ function MomentumGraphContainer (props) {
 
       const xAxis = g => g
           .attr("transform", `translate(0,${height - margin.bottom})`)
+          .attr('class','axisWhite')
           .call(d3.axisBottom(x)
               .tickValues(d3.utcMonday
                   .every(data.length > 2 ? (data.length > 15 ? 4 : 2) : 1)
                   .range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
-              .tickFormat(d3.utcFormat("%-m/%-d")))
-          .call(g => g.select(".domain").remove())
+              .tickFormat(d3.utcFormat("")))
+          //.call(g => g.select(".domain").remove())
 
       var yAxis = g => g
           .attr("transform", `translate(${margin.left},0)`)
+          .attr('class','axisWhite')
           .call(d3.axisLeft(y)
               .tickFormat(d3.format("~f"))
-              .tickValues(d3.scaleLinear().domain(y.domain()).ticks()))
+              .tickValues(d3.scaleLinear().domain(y.domain()).ticks(4)))
           .call(g => g.selectAll(".tick line").clone()
               .attr("stroke-opacity", 0)
               .attr("x2", width - margin.left - margin.right))
-          .call(g => g.select(".domain").remove())
+          //.call(g => g.select(".domain").remove())
 
-
+      svg.append("text")
+          .attr("class", "axisWhite")
+          .attr("text-anchor", "middle")
+          .attr("font-size",'10px')
+          .style('fill','#e0e1e2')
+          .attr('transform',`translate(10,${height/2}) rotate(-90)`)
+          .text("Indicator")
 
       if (props.displayMACD) {
         var yAxisRight = g => g
@@ -287,7 +284,7 @@ function MomentumGraphContainer (props) {
           .call(g => g.selectAll(".tick line").clone()
               .attr("stroke-opacity", 0)
               .attr("x2", width - margin.left - margin.right+50))
-          .call(g => g.select(".domain").remove())
+          //.call(g => g.select(".domain").remove())
       }
 
       svg.attr("viewBox", [0, 0, width, height])
@@ -303,7 +300,7 @@ function MomentumGraphContainer (props) {
         .domain(LegendLabels())
         .range(d3.schemeSet1);
 
-
+        
       const size = 5
       svg.selectAll("mydots")
         .data(LegendLabels())
@@ -334,36 +331,13 @@ function MomentumGraphContainer (props) {
           .call(yAxisRight)
       }
 
-      // const gRSI = svg.append("g")
-      //     .attr("stroke-linecap", "round")
-      //     .attr("stroke", legendColorList[0])
-      //     .selectAll("g")
-      //     .data(data)
-      //     .join("g")
-      //     // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-
-      // const lineGeneratorRSI = line()
-      //     .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-      //     .y(d => y(d.rsi))
-      //     .curve(curveLinear);
-      
-      const rsi = new Indicator('rsi',"#377eb8",data,props.displayRSI);
-      const macd = new Indicator('macd',"#e41a1c",trendData,props.displayMACD)
+      // d3 Schema Set 3 https://observablehq.com/@d3/color-schemes
+      //  ["#8dd3c7","#ffffb3","#bebada","#fb8072","#80b1d3","#fdb462","#b3de69","#fccde5","#d9d9d9","#bc80bd","#ccebc5","#ffed6f"]
+      const rsi = new Indicator('rsi',"#8dd3c7",data,props.displayRSI);
+      const macd = new Indicator('macd',"#ffffb3",trendData,props.displayMACD)
+      const tsi = new Indicator('tsi',"#bebada",data,props.displayTSI)
       const rsiline = rsi.d3line
       const macdline = macd.d3line
-      // if (props.displayRSI) {
-      //     gRSI.append('path')
-      //     .attr('class', 'line-path')
-      //     .attr("id", "rsi")
-      //     .attr('d', lineGeneratorRSI(data))
-      //     .attr('fill','none')
-      //     .attr('stroke-width',2)
-      //     .attr('stroke-linecap','round')
-      // }else{
-      //     svg.selectAll("g").selectAll(".rsi").remove()
-      // }
-
-      
       
       
 
@@ -415,6 +389,124 @@ function MomentumGraphContainer (props) {
         }else{
           svg.selectAll("g").selectAll(".macd").remove()
         }
+
+
+      return svg.node();
+
+    }
+    createMomentumIndicatorsChart(momentumIndicatorsChartNode)
+  }
+      
+  
+
+
+
+
+  return props.stockData.loading ? (
+
+
+    <h2>Loading</h2>
+  ) : props.stockData.error ? (
+    <h2>{props.stockData.error}</h2>
+  ) : (
+    <div>
+        <React.Fragment>
+            <svg ref={momentumIndicatorsChartNode}></svg>
+        </React.Fragment>
+    </div>
+  )
+}
+
+const mapStateToProps = state => {
+  return {
+    stockData: state.stockDataFromRootReducer.stockData,
+    trendData: state.trendFromRootReducer.trendData,
+    loads: state.stockDataFromRootReducer.loads,
+    momentumLoads: state.momentumFromRootReducer.momentumLoads,
+    momentumData: state.momentumFromRootReducer.momentumData,
+    fetchMomentumData: state.momentumFromRootReducer.fetchMomentumData,
+    displayRSI: state.momentumFromRootReducer.displayRSI,
+    nForRSI: state.momentumFromRootReducer.nForRSI,
+    displayTSI: state.momentumFromRootReducer.displayTSI,
+    rForTSI: state.momentumFromRootReducer.rForTSI,
+    sForTSI: state.momentumFromRootReducer.sForTSI,
+    displayMACD: state.trendFromRootReducer.displayMACD,
+    nSlowForMACD: state.trendFromRootReducer.nSlowForMACD,
+    nFastForMACD: state.trendFromRootReducer.nFastForMACD
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    //requestAPIstockData: (APIstring) => dispatch(requestAPIstockData(APIstring)),
+    fetchMomentumData: (APIstring) => dispatch(fetchMomentumData(APIstring))
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MomentumGraphContainer)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // var RSIobject = {name:'RSI',theData:getTheData(this)}
+  // function getTheData() {
+  //   return this.name
+  // }
+  // console.log(RSIobject)
+
+  
+
+
+      // const gRSI = svg.append("g")
+      //     .attr("stroke-linecap", "round")
+      //     .attr("stroke", legendColorList[0])
+      //     .selectAll("g")
+      //     .data(data)
+      //     .join("g")
+      //     // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
+
+      // const lineGeneratorRSI = line()
+      //     .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
+      //     .y(d => y(d.rsi))
+      //     .curve(curveLinear);
+
+
+// if (props.displayRSI) {
+      //     gRSI.append('path')
+      //     .attr('class', 'line-path')
+      //     .attr("id", "rsi")
+      //     .attr('d', lineGeneratorRSI(data))
+      //     .attr('fill','none')
+      //     .attr('stroke-width',2)
+      //     .attr('stroke-linecap','round')
+      // }else{
+      //     svg.selectAll("g").selectAll(".rsi").remove()
+      // }
+
+      
+      
+
+
 
       // if (displayTSIcheckbox) {
       //     gTSI.append('path')
@@ -597,62 +689,5 @@ function MomentumGraphContainer (props) {
       // }else{
       //     svg.selectAll("g").selectAll(".roc").remove()
       // }
-
-      return svg.node();
-
-    }
-    createMomentumIndicatorsChart(momentumIndicatorsChartNode)
-  }
-      
-  
-
-
-
-
-  return props.stockData.loading ? (
-
-
-    <h2>Loading</h2>
-  ) : props.stockData.error ? (
-    <h2>{props.stockData.error}</h2>
-  ) : (
-    <div>
-        <React.Fragment>
-            <svg ref={momentumIndicatorsChartNode}></svg>
-        </React.Fragment>
-    </div>
-  )
-}
-
-const mapStateToProps = state => {
-  return {
-    stockData: state.stockDataFromRootReducer.stockData,
-    trendData: state.trendFromRootReducer.trendData,
-    loads: state.stockDataFromRootReducer.loads,
-    momentumLoads: state.momentumFromRootReducer.momentumLoads,
-    momentumData: state.momentumFromRootReducer.momentumData,
-    fetchMomentumData: state.momentumFromRootReducer.fetchMomentumData,
-    displayRSI: state.momentumFromRootReducer.displayRSI,
-    nForRSI: state.momentumFromRootReducer.nForRSI,
-    displayTSI: state.momentumFromRootReducer.displayTSI,
-    rForTSI: state.momentumFromRootReducer.rForTSI,
-    sForTSI: state.momentumFromRootReducer.sForTSI,
-    displayMACD: state.trendFromRootReducer.displayMACD,
-    nSlowForMACD: state.trendFromRootReducer.nSlowForMACD,
-    nFastForMACD: state.trendFromRootReducer.nFastForMACD
-  }
-}
-
-const mapDispatchToProps = dispatch => {
-  return {
-    //requestAPIstockData: (APIstring) => dispatch(requestAPIstockData(APIstring)),
-    fetchMomentumData: (APIstring) => dispatch(fetchMomentumData(APIstring))
-  }
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(MomentumGraphContainer)
 
 

@@ -54,14 +54,14 @@ function SelectCustomDatesContainer(props) {
             <Header.Content textAlign='center'></Header.Content> 
       </Header> */}
       <Grid columns='equal' inverted>
-        <Grid.Row color='black' textAlign='center' stretched>
+        {/* <Grid.Row color='black' textAlign='center' stretched>
           <Grid.Column>
           <Header as='h5' textAlign='center' inverted>
             <Header.Content textAlign='center' inverted>-- or --</Header.Content>
           </Header>
           </Grid.Column>
           
-        </Grid.Row>
+        </Grid.Row> */}
         <Grid.Row stretched color='black'>
           <Grid.Column width={4}>
             <Header as='h5' inverted textAlign='center'>Start:</Header>

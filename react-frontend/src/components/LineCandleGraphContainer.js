@@ -205,10 +205,7 @@ function LineCandleGraphContainer (props) {
             const svg = select(stockPriceLineChartNode.current);
             svg.selectAll("g").remove()
         
-            svg.append("rect")
-                .attr('width','100%')
-                .attr('height','100%')
-                .attr('fill','black')
+            
 
             const height = 220;
             const width = 700;
@@ -219,7 +216,14 @@ function LineCandleGraphContainer (props) {
             }
             const parseDate = d3.utcParse("%Y-%m-%d")
             //new Date(secs * 1000);
-            const margin = ({top: 15, right: 30, bottom: 20, left: 40})
+            const margin = ({top: 15, right: 10, bottom: 20, left: 50})
+
+            // svg.append("rect")
+            //     .attr('x',margin.left)
+            //     .attr('y',margin.bottom)
+            //     .attr('width',width-margin.left-margin.right)
+            //     .attr('height',height-margin.top-margin.bottom)
+            //     .attr('fill','#222222')
 
             const x = scaleBand()
                 .domain(d3.utcDay
@@ -245,20 +249,31 @@ function LineCandleGraphContainer (props) {
                         .every(data.length > 2 ? (data.length > 15 ? 4 : 2) : 1)
                         .range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
                     .tickFormat(d3.utcFormat("%-m/%-d")))
-                .call(g => g.select(".domain").remove())
+                //.call(g => g.select(".domain").remove())
             
-        
+            // xAxis.select(".domain")
+            //    .attr('stroke','white')
+
+            svg.append("text")
+                .attr("class", "axisWhite")
+                .attr("text-anchor", "middle")
+                .attr("font-size",'10px')
+                .style('fill','#e0e1e2')
+                .attr('transform',`translate(10,${height/2}) rotate(-90)`)
+                .text("Price ($)")
+                
+
             const yAxis = g => g
                 .attr("transform", `translate(${margin.left},0)`)
                 .attr('class','axisWhite')
                 .call(d3.axisLeft(y)
-                    .tickFormat(d3.format("$~f"))
+                    .tickFormat(d3.format("~f"))
                     .tickValues(d3.scaleLinear().domain(y.domain()).ticks()))
                 .call(g => g.selectAll(".tick line").clone()
                     .attr("stroke-opacity", 0)
                     .attr("x2", width - margin.left - margin.right))
-                .call(g => g.select(".domain").remove())
-        
+                //.call(g => g.select(".domain").remove())
+
             svg.attr("viewBox", [0, 0, width, height])
         
             svg.append("g")
@@ -274,7 +289,7 @@ function LineCandleGraphContainer (props) {
         
                 const g = svg.append("g")
                     .attr("stroke-linecap", "round")
-                    .attr("stroke", "white")
+                    .attr("stroke", "#e0e1e2")
                     .selectAll("g")
                     .data(data)
                     .join("g")
@@ -290,14 +305,14 @@ function LineCandleGraphContainer (props) {
                     .attr('d', lineGenerator(data))
                     .attr('id','lineChart')
                     .attr('fill','none')
-                    .attr('stroke-width',2)
+                    .attr('stroke-width',1)
                     .attr('stroke-linecap','round')
             }else{
                 svg.selectAll("g").selectAll(".lineChart").remove()
         
                 const g = svg.append("g")
                     .attr("stroke-linecap", "butt")
-                    .attr("stroke", "white")
+                    .attr("stroke", "#e0e1e2")
                     .selectAll("g")
                     .data(data)
                     .join("g")
@@ -732,7 +747,7 @@ function LineCandleGraphContainer (props) {
         <Grid inverted columns='equal'>
           <Grid.Row stretched  color='black'>
             <Grid.Column  color='black'>
-                <Header as='h2' textAlign='left' inverted>{props.compName} - {props.tickers}</Header>
+                <Header as='h2' textAlign='left' inverted color='#e0e1e2'>{props.compName} - {props.tickers}</Header>
             </Grid.Column>
             <Grid.Column color='black'>
                 <Header as='h2' textAlign='right' color={(props.percentChange > 0) ? 'green' : 'red'}>{((props.percentChange==0) ? '' : (props.percentChange > 0) ? '+' + String(props.percentChange) + '%': '-' + String(props.percentChange)+'%')}

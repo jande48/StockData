@@ -110,10 +110,11 @@ const EMAAccordionTitle = (
         
         <Grid.Row stretched>
 
-                
-                <Accordion as={Menu} vertical stretched fluid borderless>
+                                     
+                <Accordion as={Menu} vertical stretched fluid borderless inverted>
                 <Menu.Item borderless>
                     <Accordion.Title
+                        inverted
                         active={activeSMAAccordionMenuItem === 0}
                         content={SMAAccordionTitle}
                         index={0}

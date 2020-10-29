@@ -103,7 +103,6 @@ def get_stock_data(ticker,startDate,endDate):
 
 
     df.fillna(0, inplace=True)
-    
     # return (json.dumps(Historical_Data)) 
     return (json.dumps(df.to_dict('records')))
 

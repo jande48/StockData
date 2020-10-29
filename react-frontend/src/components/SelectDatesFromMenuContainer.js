@@ -29,7 +29,6 @@ function SelectDatesFromMenuContainer(props) {
 
   return (
     <div>
-      <Grid inverted>
         <Menu widths={4} inverted>
             <Menu.Item
             name='5d'
@@ -63,7 +62,6 @@ function SelectDatesFromMenuContainer(props) {
             </Menu.Item>
             
         </Menu>
-      </Grid>
     </div>
   )
 }
