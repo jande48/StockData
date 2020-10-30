@@ -144,6 +144,32 @@ function MomentumGraphContainer (props) {
         return [min,max]
       }
 
+      function findMixMaxObjects(objects,leftOrRight) {
+        var min = 0
+        var max = 0
+        
+          for (var i = 0; i < objects.length; i++) {
+            if (objects[i]['axis'] == leftOrRight && objects[i]['dataInd'] !='undefined' && objects[i]['display']) {
+              for (var j = 0; j < objects[i]['dataInd'].length; j++) {
+                if (objects[i]['dataInd'][j][objects[i]['name']] < min) {
+                    min = objects[i]['dataInd'][j][objects[i]['name']]
+                }
+                if (objects[i]['dataInd'][j][objects[i]['name']] > max) {
+                    max = objects[i]['dataInd'][j][objects[i]['name']] 
+                }
+              }
+              
+            }
+          }
+        
+        
+        if (min == 0 && max == 0) {
+          max = 80
+        }
+        //console.log(min,max)
+        return [min,max]
+      }
+
       const svg = select(momentumIndicatorsChartNode.current);
       svg.selectAll("g").remove()
 
@@ -207,7 +233,12 @@ function MomentumGraphContainer (props) {
         }
       }
 
-
+      const rsi = new Indicator('rsi',"#1f77b4",data,props.displayRSI,'axisLeft');
+      const macd = new Indicator('macd',"#ff7f0e",trendData,props.displayMACD,'axisRight')
+      const tsi = new Indicator('tsi',"#2ca02c",data,props.displayTSI,'axisLeft')
+      
+      const objectList = [rsi,macd,tsi]
+      console.log(objectList[0]['display'])
       const x = scaleBand()
           .domain(d3.utcDay
               .range(parseDate(data[0].date), +parseDate(data[data.length - 1].date) + 1)
@@ -217,15 +248,16 @@ function MomentumGraphContainer (props) {
 
       var y = scaleLinear()
           //.domain([d3.min(data, d => d.rsi), d3.max(data, d => d.rsi)])
-          .domain(findMinMax(data))
+          //.domain(findMinMax(data))
+          .domain(findMixMaxObjects(objectList,'axisLeft'))
           .rangeRound([height - margin.bottom, margin.top])
 
-      if (props.displayMACD) {
-        var yRight = scaleLinear()
-          //.domain([min,max])
-          .domain(findMinMaxMACD(trendData))
-          .rangeRound([height - margin.bottom, margin.top])
-      }
+      // if (props.displayMACD) {
+      //   var yRight = scaleLinear()
+      //     //.domain([min,max])
+      //     .domain(findMixMaxObjects(objectList,'axisRight'))
+      //     .rangeRound([height - margin.bottom, margin.top])
+      // }
 
       const xAxis = g => g
           .attr("transform", `translate(0,${height - margin.bottom})`)
@@ -256,7 +288,18 @@ function MomentumGraphContainer (props) {
           .attr('transform',`translate(10,${height/2}) rotate(-90)`)
           .text("Indicator")
 
-      if (props.displayMACD) {
+      var showRightAxis = false
+      for (var i = 0; i < objectList.length; i++) {
+        if (objectList[i]['axis'] == 'axisRight') {
+          showRightAxis = true
+          break
+        }
+      }
+      if (showRightAxis) {
+        var yRight = scaleLinear()
+            .domain(findMixMaxObjects(objectList,'axisRight'))
+            .rangeRound([height - margin.bottom, margin.top])
+
         var yAxisRight = g => g
           .attr("transform", `translate(${width-margin.right},0)`)
           .attr('class','axisWhite')
@@ -273,26 +316,19 @@ function MomentumGraphContainer (props) {
 
       svg.append("g")
           .call(xAxis);
-          
+
       svg.append("g")
-          .call(yAxis);
-
-        
-      
-
-      
+        .call(yAxis);
 
       // d3 Schema Set 3 https://observablehq.com/@d3/color-schemes
       //  ["#8dd3c7","#ffffb3","#bebada","#fb8072","#80b1d3","#fdb462","#b3de69","#fccde5","#d9d9d9","#bc80bd","#ccebc5","#ffed6f"]
       // categorical 10: ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"]
-      const rsi = new Indicator('rsi',"#1f77b4",data,props.displayRSI,'axisLeft');
-      const macd = new Indicator('macd',"#ff7f0e",trendData,props.displayMACD,'axisRight')
-      const tsi = new Indicator('tsi',"#2ca02c",data,props.displayTSI,'axisLeft')
+      
       const rsiline = rsi.d3line
       const macdline = macd.d3line
       const tsiline = tsi.d3line
       
-      const objectList = [rsi,macd,tsi]
+      
 
       if (props.displayMACD) {
         svg.append("g")
