@@ -21,35 +21,7 @@ import {
 
 function MomentumGraphContainer (props) {
 
-  const LegendLabels = () => {
-    const displayParas = [props.displayRSI,props.displayMACD]
-    const labels = ['RSI','MACD']
-    const colors = ["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628","#f781bf","#999999"]
-    var keysList = []
-    var colorsList = []
-    for (var i = 0; i < displayParas.length; i++) {
-      if (displayParas[i]){
-        keysList.push(labels[i])
-        colorsList.push(colors[i])
-      }
-    }
-    return keysList
-  }
-  const  LegendColors = () => {
-    const displayParas = [props.displayRSI,props.displayMACD]
-    const labels = ['RSI','MACD']
-    const colors = ["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628","#f781bf","#999999"]
-    var keysList = []
-    var colorsList = []
-    for (var i = 0; i < displayParas.length; i++) {
-      if (displayParas[i]){
-        keysList.push(labels[i])
-        colorsList.push(colors[i])
-      }
-    }
-    return colorsList
-  }
-  const legendColorList = LegendColors()
+  
 
 
   const momentumIndicatorsChartNode = useRef(null);
@@ -59,6 +31,7 @@ function MomentumGraphContainer (props) {
       const RSIparameters = {'N':props.nForRSI}
       const TSIparameters = {'displayTSI':props.displayTSI,'rTSI':props.rForTSI,'sTSI':props.sForTSI}
       props.fetchMomentumData(JSON.stringify([props.stockData,RSIparameters,TSIparameters]))
+
     }
     
   }, [props.stockData,props.displayRSI,props.nForRSI,props.displayTSI,props.sForTSI,props.rForTSI])
@@ -177,16 +150,17 @@ function MomentumGraphContainer (props) {
       const height = 70;
       const width = 700;
 
-      const margin = ({top: 5, right: 10, bottom: 5, left: 50})
+      const margin = ({top: 5, right: 20, bottom: 5, left: 50})
       const parseDate = d3.utcParse("%Y-%m-%d")
       
       class Indicator {
-        constructor(name,color,dataForInd,display) {
+        constructor(name,color,dataForInd,display,axis) {
           this.name = name;
           this.color = color;
           this.dataInd = dataForInd;
           this.svg = svg;
           this.display =display;
+          this.axis = axis;
           this.g = this.svg.append("g")
           this.lineGenerator = line()
         }
@@ -205,17 +179,25 @@ function MomentumGraphContainer (props) {
             .data(this.dataInd)
             .join("g")
     
-          this.lineGenerator
-            .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            .y(d => y(d[this.name]))
-            .curve(curveLinear);
+            if (this.axis == 'axisLeft') {
+              this.lineGenerator
+                .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
+                .y(d => y(d[this.name]))
+                .curve(curveLinear);
+            }else{
+              this.lineGenerator
+                .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
+                .y(d => yRight(d[this.name]))
+                .curve(curveLinear);
+            }
+          
 
           this.g.append('path')
             .attr('class', 'line-path')
             .attr("id", this.name)
             .attr('d', this.lineGenerator(this.dataInd))
             .attr('fill','none')
-            .attr('stroke-width',2)
+            .attr('stroke-width',1)
             .attr('stroke-linecap','round')
           
             return this.g
@@ -276,11 +258,11 @@ function MomentumGraphContainer (props) {
 
       if (props.displayMACD) {
         var yAxisRight = g => g
-          .attr("transform", `translate(${width-margin.left},0)`)
+          .attr("transform", `translate(${width-margin.right},0)`)
+          .attr('class','axisWhite')
           .call(d3.axisRight(yRight)
               .tickFormat(d3.format("~f"))
-              .tickValues(d3.scaleLinear().domain(yRight.domain()).ticks()))
-              .style("fill",'blue')
+              .tickValues(d3.scaleLinear().domain(yRight.domain()).ticks(4)))
           .call(g => g.selectAll(".tick line").clone()
               .attr("stroke-opacity", 0)
               .attr("x2", width - margin.left - margin.right+50))
@@ -295,101 +277,117 @@ function MomentumGraphContainer (props) {
       svg.append("g")
           .call(yAxis);
 
-      // Usually you have a color scale in your chart already
-      var color = d3.scaleOrdinal()
-        .domain(LegendLabels())
-        .range(d3.schemeSet1);
-
         
-      const size = 5
-      svg.selectAll("mydots")
-        .data(LegendLabels())
-        .enter()
-        .append("rect")
-          .attr("x", margin.left + 5)
-          .attr("y", function(d,i){ return height - margin.bottom - 2 - i*15}) // 100 is where the first dot appears. 25 is the distance between dots
-          .attr("width",size)
-          .attr("height", size/2)
-          .style("fill", legendColorList.forEach( x => x))
-          //.style("fill", function(d){return color(d)})
-        // Add one dot in the legend for each name.
-      svg.selectAll('mylabels')
-        .data(LegendLabels())
-        .enter()
-        .append("text")
-          .attr("x", margin.left + 15)
-          .attr("y", function(d,i){ return height - margin.bottom - i*15 }) // 100 is where the first dot appears. 25 is the distance between dots
-          .style("fill", legendColorList.forEach( x => x))
-          .text(function(d){ return d})
-          .attr("text-anchor", "left")
-          .attr("font-size",'10px')
-          .style("alignment-baseline", "middle")
+      
 
-      if (props.displayMACD) {
-        svg.append("g")
-          .attr('fill',legendColorList[1])
-          .call(yAxisRight)
-      }
+      
 
       // d3 Schema Set 3 https://observablehq.com/@d3/color-schemes
       //  ["#8dd3c7","#ffffb3","#bebada","#fb8072","#80b1d3","#fdb462","#b3de69","#fccde5","#d9d9d9","#bc80bd","#ccebc5","#ffed6f"]
-      const rsi = new Indicator('rsi',"#8dd3c7",data,props.displayRSI);
-      const macd = new Indicator('macd',"#ffffb3",trendData,props.displayMACD)
-      const tsi = new Indicator('tsi',"#bebada",data,props.displayTSI)
+      // categorical 10: ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"]
+      const rsi = new Indicator('rsi',"#1f77b4",data,props.displayRSI,'axisLeft');
+      const macd = new Indicator('macd',"#ff7f0e",trendData,props.displayMACD,'axisRight')
+      const tsi = new Indicator('tsi',"#2ca02c",data,props.displayTSI,'axisLeft')
       const rsiline = rsi.d3line
       const macdline = macd.d3line
+      const tsiline = tsi.d3line
       
-      
-
-      if (props.displayTSI && typeof(data[0]['tsi']) !== 'undefined') {
-          const gTSI = svg.append("g")
-              .attr("stroke-linecap", "round")
-              .attr("stroke", legendColorList[2])
-              .selectAll("g")
-              .data(data)
-              .join("g")
-
-          const lineGeneratorTSI = line()
-              .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-              .y(d => y(d.tsi))
-              .curve(curveLinear);
-
-          gTSI.append('path')
-              .attr('class', 'line-path')
-              .attr("id", "tsi")
-              .attr('d', lineGeneratorTSI(data))
-              .attr('fill','none')
-              .attr('stroke-width',2)
-              .attr('stroke-linecap','round')
-      }else{
-          svg.selectAll("g").selectAll(".tsi").remove()
-      }
+      const objectList = [rsi,macd,tsi]
 
       if (props.displayMACD) {
-        const gMACD = svg.append("g")
-            .attr("stroke-linecap", "round")
-            .attr("stroke", color(2))
-            .selectAll("g")
-            .data(trendData)
-            .join("g")
-            // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
+        svg.append("g")
+          .attr('fill',macd.color)
+          .call(yAxisRight)
+      }
 
-        const lineGeneratorMACD = line()
-            .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            .y(d => yRight(d.macd))
-            .curve(curveLinear);
-
-        gMACD.append('path')
-            .attr('class', 'line-path')
-            .attr('d', lineGeneratorMACD(trendData))
-            .attr('id','macd')
-            .attr('fill','none')
-            .attr('stroke-width',2)
-            .attr('stroke-linecap','round')
-        }else{
-          svg.selectAll("g").selectAll(".macd").remove()
+      function createLegendLeft(objects) {
+        var keysList = []
+        for (var i = 0; i < objects.length; i++) {
+          if (objects[i]['display'] && objects[i]['axis'] == 'axisLeft'){
+            keysList.push({'name':objects[i]['name'],'color':objects[i]['color']})
+          }
         }
+        svg.selectAll("g").selectAll(".mydotsLeft").remove()
+        svg.selectAll("g").selectAll(".mylabelsLeft").remove()
+        //svg.selectAll("mydotsLeft").remove()
+        //svg.selectAll("mylabelsLeft").remove()
+        const size = 10
+        //svg.selectAll("mydotsLeft")
+        const mydotsLeft = svg.append("g")
+          .selectAll("g")
+          .data(keysList)
+          .join('g')
+          //.enter()
+        mydotsLeft.append("rect")
+            .attr('id','mydotsLeft')
+            .attr("x", margin.left + 5)
+            .attr("y", function(d,i){ return height - margin.bottom - 7 - i*10}) // 100 is where the first dot appears. 25 is the distance between dots
+            .attr("width",size)
+            .attr("height", size/2)
+            .style("fill", function(d){return d['color']})
+          // Add one dot in the legend for each name.
 
+        const mylabelsLeft = svg.append('g')
+          .selectAll('g')
+          .data(keysList)
+          .join('g')
+
+        mylabelsLeft.append("text")
+            .attr('id','mylabelsLeft')
+            .attr("x", margin.left + 20)
+            .attr("y", function(d,i){ return height - margin.bottom - 4 - i*10 }) // 100 is where the first dot appears. 25 is the distance between dots
+            .style("fill", function(d){return d['color']})
+            .text(function(d){ return d['name'].toUpperCase()})
+            .attr("text-anchor", "left")
+            .attr("font-size",'10px')
+            .style("alignment-baseline", "middle")
+      }
+
+      function createLegendRight(objects) {
+        var keysList = []
+        for (var i = 0; i < objects.length; i++) {
+          if (objects[i]['display'] && objects[i]['axis'] == 'axisRight'){
+            keysList.push({'name':objects[i]['name'],'color':objects[i]['color']})
+          }
+        }
+        svg.selectAll("g").selectAll(".mydotsRight").remove()
+        svg.selectAll("g").selectAll(".mylabelsRight").remove()
+        const size = 10
+
+        const mydotsRight = svg.append("g")
+          .selectAll("g")
+          .data(keysList)
+          .join('g')
+
+        mydotsRight.append("rect")
+          .attr('id','mydotsRight')
+          .attr("x", width - margin.right - 50)
+          .attr("y", function(d,i){ return height - margin.bottom - 7 - i*10}) // 100 is where the first dot appears. 25 is the distance between dots
+          .attr("width",size)
+          .attr("height", size/2)
+          .style("fill", function(d){return d['color']})
+        // Add one dot in the legend for each name.
+
+        const mylabelsRight = svg.append('g')
+          .selectAll('g')
+          .data(keysList)
+          .join('g')
+
+        mylabelsRight.append("text")
+          .attr('id','mylabelsRight')
+          .attr("x", width - margin.right - 35)
+          .attr("y", function(d,i){ return height - margin.bottom - 4 - i*10 }) // 100 is where the first dot appears. 25 is the distance between dots
+          .style("fill", function(d){return d['color']})
+          .text(function(d){ return d['name'].toUpperCase()})
+          .attr("text-anchor", "left")
+          .attr("font-size",'10px')
+          .style("alignment-baseline", "middle")
+      }
+
+      createLegendLeft(objectList)
+      createLegendRight(objectList)
+
+    
 
       return svg.node();
 
@@ -460,11 +458,92 @@ export default connect(
 
 
 
+      // // Usually you have a color scale in your chart already
+      // var color = d3.scaleOrdinal()
+      //   .domain(LegendLabels())
+      //   .range(d3.schemeSet1);
 
 
 
 
+      // const LegendLabels = () => {
+      //   const displayParas = [props.displayRSI,props.displayMACD]
+      //   const labels = ['RSI','MACD']
+      //   const colors = ["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628","#f781bf","#999999"]
+      //   var keysList = []
+      //   var colorsList = []
+      //   for (var i = 0; i < displayParas.length; i++) {
+      //     if (displayParas[i]){
+      //       keysList.push(labels[i])
+      //       colorsList.push(colors[i])
+      //     }
+      //   }
+      //   return keysList
+      // }
+      // const  LegendColors = () => {
+      //   const displayParas = [props.displayRSI,props.displayMACD]
+      //   const labels = ['RSI','MACD']
+      //   const colors = ["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628","#f781bf","#999999"]
+      //   var keysList = []
+      //   var colorsList = []
+      //   for (var i = 0; i < displayParas.length; i++) {
+      //     if (displayParas[i]){
+      //       keysList.push(labels[i])
+      //       colorsList.push(colors[i])
+      //     }
+      //   }
+      //   return colorsList
+      // }
+      // const legendColorList = LegendColors()
 
+//if (props.displayTSI && typeof(data[0]['tsi']) !== 'undefined') {
+  //     const gTSI = svg.append("g")
+  //         .attr("stroke-linecap", "round")
+  //         .attr("stroke", legendColorList[2])
+  //         .selectAll("g")
+  //         .data(data)
+  //         .join("g")
+
+  //     const lineGeneratorTSI = line()
+  //         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
+  //         .y(d => y(d.tsi))
+  //         .curve(curveLinear);
+
+  //     gTSI.append('path')
+  //         .attr('class', 'line-path')
+  //         .attr("id", "tsi")
+  //         .attr('d', lineGeneratorTSI(data))
+  //         .attr('fill','none')
+  //         .attr('stroke-width',2)
+  //         .attr('stroke-linecap','round')
+  // }else{
+  //     svg.selectAll("g").selectAll(".tsi").remove()
+  // }
+
+  // if (props.displayMACD) {
+  //   const gMACD = svg.append("g")
+  //       .attr("stroke-linecap", "round")
+  //       .attr("stroke", color(2))
+  //       .selectAll("g")
+  //       .data(trendData)
+  //       .join("g")
+  //       // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
+
+  //   const lineGeneratorMACD = line()
+  //       .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
+  //       .y(d => yRight(d.macd))
+  //       .curve(curveLinear);
+
+  //   gMACD.append('path')
+  //       .attr('class', 'line-path')
+  //       .attr('d', lineGeneratorMACD(trendData))
+  //       .attr('id','macd')
+  //       .attr('fill','none')
+  //       .attr('stroke-width',2)
+  //       .attr('stroke-linecap','round')
+  //   }else{
+  //     svg.selectAll("g").selectAll(".macd").remove()
+  //   }
 
 
 

@@ -216,7 +216,7 @@ function LineCandleGraphContainer (props) {
             }
             const parseDate = d3.utcParse("%Y-%m-%d")
             //new Date(secs * 1000);
-            const margin = ({top: 15, right: 10, bottom: 20, left: 50})
+            const margin = ({top: 15, right: 20, bottom: 20, left: 50})
 
             // svg.append("rect")
             //     .attr('x',margin.left)
