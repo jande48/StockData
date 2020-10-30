@@ -41,108 +41,6 @@ function MomentumGraphContainer (props) {
       const data = props.momentumData
       const trendData = props.trendData
       
-      function findMinMax(data) {
-        var min = 0
-        var max = 0
-        for (var i = 0; i < data.length; i++) {
-            if (props.displayRSI) {
-                if (data[i]['rsi'] < min) {
-                    min = data[i]['rsi']
-                }
-                if (data[i]['rsi'] > max) {
-                    max = data[i]['rsi']
-                }
-            }
-            if (props.displayTSI) {
-                if (data[i]['tsi'] < min) {
-                    min = data[i]['tsi']
-                }
-                if (data[i]['tsi'] > max) {
-                    max = data[i]['tsi']
-                }
-            }
-        //     if (displayUOcheckbox) {
-        //         if (data[i]['uo'] < min) {
-        //             min = data[i]['uo']
-        //         }
-        //         if (data[i]['uo'] > max) {
-        //             max = data[i]['uo']
-        //         }
-        //     }
-        //     if (displayStochCheckbox) {
-        //         if (data[i]['stoch'] < min) {
-        //             min = data[i]['stoch']
-        //         }
-        //         if (data[i]['stoch'] > max) {
-        //             max = data[i]['stoch']
-        //         }
-        //     }
-        //     if (displayStochSignalCheckbox) {
-        //         if (data[i]['stoch_signal'] < min) {
-        //             min = data[i]['stoch_signal']
-        //         }
-        //         if (data[i]['stoch_signal'] > max) {
-        //             max = data[i]['stoch_signal']
-        //         }
-        //     }
-        //     if (displayWR) {
-        //         if (data[i]['wr'] < min) {
-        //             min = data[i]['wr']
-        //         }
-        //         if (data[i]['wr'] > max) {
-        //             max = data[i]['wr']
-        //         }
-        //     }
-        //     if (displayAO) {
-        //         if (data[i]['ao'] < min) {
-        //             min = data[i]['ao']
-        //         }
-        //         if (data[i]['ao'] > max) {
-        //             max = data[i]['ao']
-        //         }
-        //     }
-        //     if (displayKama) {
-        //         if (data[i]['kama'] < min) {
-        //             min = data[i]['kama']
-        //         }
-        //         if (data[i]['kama'] > max) {
-        //             max = data[i]['kama']
-        //         }
-        //     }
-        //     if (displayROC) {
-        //         if (data[i]['roc'] < min) {
-        //             min = data[i]['roc']
-        //         }
-        //         if (data[i]['roc'] > max) {
-        //             max = data[i]['roc']
-        //         }
-        //     }
-        }
-        if (min == 0 && max == 0) {
-            max = 80
-        }
-        return [min,max]
-      }
-      
-      function findMinMaxMACD(data) {
-        var min = 0
-        var max = 0
-        for (var i = 0; i < data.length; i++) {
-           
-          if (data[i]['macd'] < min) {
-              min = data[i]['macd']
-          }
-          if (data[i]['macd'] > max) {
-              max = data[i]['macd']
-          }
-            
-        }
-        if (min == 0 && max == 0) {
-            max = 2
-            min = -2
-        }
-        return [min,max]
-      }
 
       function findMixMaxObjects(objects,leftOrRight) {
         var min = 0
@@ -238,7 +136,7 @@ function MomentumGraphContainer (props) {
       const tsi = new Indicator('tsi',"#2ca02c",data,props.displayTSI,'axisLeft')
       
       const objectList = [rsi,macd,tsi]
-      console.log(objectList[0]['display'])
+      
       const x = scaleBand()
           .domain(d3.utcDay
               .range(parseDate(data[0].date), +parseDate(data[data.length - 1].date) + 1)
