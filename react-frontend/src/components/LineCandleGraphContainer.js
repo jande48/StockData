@@ -61,8 +61,8 @@ function LineCandleGraphContainer (props) {
             var min = objects[0]['dataInd'][0]['close']
             var max = 0
               for (var i = 0; i < objects.length; i++) {
-                if (objects[i]['axis'] == leftOrRight && objects[i]['dataInd'] !='undefined'  && objects[i]['display']) {
-                  for (var j = 0; j < objects[i]['dataInd'].length; j++) {
+                if (objects[i]['axis'] == leftOrRight && objects[i]['dataInd'] !='undefined'  && objects[i]['display'] || (objects[i]['name'] == 'close' && !objects[i]['display'] && leftOrRight == 'axisLeft')) {
+                    for (var j = 0; j < objects[i]['dataInd'].length; j++) {
                     if (objects[i]['dataInd'][j][objects[i]['name']] < min) {
                         min = objects[i]['dataInd'][j][objects[i]['name']]
                     }
@@ -148,8 +148,9 @@ function LineCandleGraphContainer (props) {
         const close = new Indicator('close',"#e0e1e2",data,props.displayLine,'axisLeft');
         const sma = new Indicator('sma',"#d62728",trendData,props.displaySMA,'axisLeft')
         const macd = new Indicator('macd',"#ff7f0e",trendData,props.displayMACD,'axisRight')
+        const ema = new Indicator('ema',"#9467bd",trendData,props.displayEMA,'axisLeft')
         
-        const objectList = [close,sma,macd]
+        const objectList = [close,sma,macd,ema]
 
 
         const x = scaleBand()
@@ -208,37 +209,7 @@ function LineCandleGraphContainer (props) {
         svg.append("g")
             .call(yAxis);
         
-        const closeline = close.d3line
-        const macdline = macd.d3line
-        const smaline = sma.d3line
-
-        var showRightAxis = false
-        for (var i = 0; i < objectList.length; i++) {
-            if (objectList[i]['axis'] == 'axisRight' && objectList[i]['display']) {
-            showRightAxis = true
-            break
-            }
-        }
-        if (showRightAxis) {
-            
-            
-
-            var yAxisRight = g => g
-                .attr("transform", `translate(${width-margin.right},0)`)
-                .attr('class','axisWhite')
-                .call(d3.axisRight(yRight)
-                    .tickFormat(d3.format("~f"))
-                    .tickValues(d3.scaleLinear().domain(yRight.domain()).ticks(4)))
-                .call(g => g.selectAll(".tick line").clone()
-                    .attr("stroke-opacity", 0)
-                    .attr("x2", width - margin.left - margin.right+50))
-                //.call(g => g.select(".domain").remove())
-         
-            svg.append("g")
-                .attr('fill',macd.color)
-                .call(yAxisRight)
-              
-        }
+        
 
         if (props.displayLine) {
             
@@ -289,31 +260,37 @@ function LineCandleGraphContainer (props) {
                     : d3.schemeSet1[8]);
         }
     
-        // if (props.displaySMA) {
-        //     const gSMA = svg.append("g")
-        //         .attr("stroke-linecap", "round")
-        //         .attr("stroke", "green")
-        //         .selectAll("g")
-        //         .data(trendData)
-        //         .join("g")
-        //         // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-    
-        //     const lineGeneratorSMA = line()
-        //         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-        //         .y(d => y(d.sma))
-        //         .curve(curveLinear);
-    
-        //     gSMA.append('path')
-        //         .attr('class', 'line-path')
-        //         .attr('d', lineGeneratorSMA(trendData))
-        //         .attr('id','sma')
-        //         .attr('fill','none')
-        //         .attr('stroke-width',2)
-        //         .attr('stroke-linecap','round')
-        // }else{
-        //     svg.selectAll("g").selectAll(".sma").remove()
-        // }
-            
+        const closeline = close.d3line
+        const macdline = macd.d3line
+        const smaline = sma.d3line
+        const emaline = ema.d3line
+
+        var showRightAxis = false
+        for (var i = 0; i < objectList.length; i++) {
+            if (objectList[i]['axis'] == 'axisRight' && objectList[i]['display']) {
+            showRightAxis = true
+            break
+            }
+        }
+        if (showRightAxis) {
+
+
+            var yAxisRight = g => g
+                .attr("transform", `translate(${width-margin.right},0)`)
+                .attr('class','axisWhite')
+                .call(d3.axisRight(yRight)
+                    .tickFormat(d3.format("~f"))
+                    .tickValues(d3.scaleLinear().domain(yRight.domain()).ticks(4)))
+                .call(g => g.selectAll(".tick line").clone()
+                    .attr("stroke-opacity", 0)
+                    .attr("x2", width - margin.left - margin.right+50))
+                //.call(g => g.select(".domain").remove())
+         
+            svg.append("g")
+                .attr('fill',macd.color)
+                .call(yAxisRight)
+              
+        }
         function createLegendLeft(objects) {
             var keysList = []
             for (var i = 0; i < objects.length; i++) {
@@ -335,7 +312,7 @@ function LineCandleGraphContainer (props) {
             mydotsLeft.append("rect")
                 .attr('id','mydotsLeft')
                 .attr("x", margin.left + 5)
-                .attr("y", function(d,i){ return height - margin.bottom - 7 - i*10}) // 100 is where the first dot appears. 25 is the distance between dots
+                .attr("y", function(d,i){ return margin.top + 1 + i*10}) // 100 is where the first dot appears. 25 is the distance between dots
                 .attr("width",size)
                 .attr("height", size/2)
                 .style("fill", function(d){return d['color']})
@@ -349,7 +326,7 @@ function LineCandleGraphContainer (props) {
             mylabelsLeft.append("text")
                 .attr('id','mylabelsLeft')
                 .attr("x", margin.left + 20)
-                .attr("y", function(d,i){ return height - margin.bottom - 4 - i*10 }) // 100 is where the first dot appears. 25 is the distance between dots
+                .attr("y", function(d,i){ return margin.top + 4 + i*10 }) // 100 is where the first dot appears. 25 is the distance between dots
                 .style("fill", function(d){return d['color']})
                 .text(function(d){ return d['name'].toUpperCase()})
                 .attr("text-anchor", "left")
@@ -431,7 +408,7 @@ function LineCandleGraphContainer (props) {
                 <Header as='h2' textAlign='left' inverted color='#e0e1e2'>{props.compName} - {props.tickers}</Header>
             </Grid.Column>
             <Grid.Column color='black'>
-                <Header as='h2' textAlign='right' color={(props.percentChange > 0) ? 'green' : 'red'}>{((props.percentChange==0) ? '' : (props.percentChange > 0) ? '+' + String(props.percentChange) + '%': '-' + String(props.percentChange)+'%')}
+                <Header as='h2' textAlign='right' color={(props.percentChange > 0) ? 'green' : 'red'}>{((props.percentChange==0) ? '' : (props.percentChange > 0) ? '+' + String(props.percentChange) + '%': String(props.percentChange)+'%')}
                 </Header>
             </Grid.Column>
           </Grid.Row>

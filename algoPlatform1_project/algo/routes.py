@@ -1,7 +1,7 @@
 from flask import render_template, url_for, jsonify, flash, redirect, request
 from algoPlatform1_project import app, db
-import os, json
-from datetime import datetime
+import os, json, ast
+from datetime import datetime, timedelta
 import pyEX as p
 import pandas as pd
 from iexfinance.stocks import get_historical_data, Stock
@@ -10,9 +10,10 @@ from ta.volatility import BollingerBands
 from ta.momentum import RSIIndicator, TSIIndicator, uo, stoch, stoch_signal, wr, ao, kama, roc
 from ta.trend import sma_indicator, ema_indicator, macd, macd_signal, macd_diff, adx, adx_pos, adx_neg, vortex_indicator_pos, vortex_indicator_neg, trix, mass_index, cci, dpo, kst, kst_sig, ichimoku_conversion_line, ichimoku_base_line, aroon_down, aroon_up, psar_up, psar_down
 from ta.volatility import average_true_range, bollinger_mavg, bollinger_hband, bollinger_lband, bollinger_wband, bollinger_pband, bollinger_hband_indicator, bollinger_lband_indicator, keltner_channel_mband, keltner_channel_hband, keltner_channel_lband, keltner_channel_wband, keltner_channel_pband, keltner_channel_hband_indicator, keltner_channel_lband_indicator, donchian_channel_hband, donchian_channel_lband, donchian_channel_mband, donchian_channel_wband, donchian_channel_pband 
-from algoPlatform1_project.models import User, Post, Watchlist, OHLC_JSONdata
+from algoPlatform1_project.models import User, Post, Watchlist, sp_OHLC_data, sp500List
 from flask_login import login_user, current_user, logout_user, login_required
 from urllib.request import urlopen
+
 
 IEX_secret_api_key = os.environ.get('IEX_CLOUD_SECRET_API_KEY')
 IEX_api_key =  os.environ.get('IEX_CLOUD_API_KEY') 
@@ -26,29 +27,23 @@ def get_stock_data(ticker,startDate,endDate):
 
     startDateForAPItemp = startDate.split('-')
     startDateForAPI = datetime(int(startDateForAPItemp[0]),int(startDateForAPItemp[1]),int(startDateForAPItemp[2]))
+    
+    if startDateForAPI.weekday() == 5:
+        startDateForAPI += timedelta(days=2)
+    elif startDateForAPI.weekday() == 6:
+        startDateForAPI += timedelta(days=1)
 
     endDateForAPItemp = endDate.split('-')
     endDateForAPI = datetime(int(endDateForAPItemp[0]),int(endDateForAPItemp[1]),int(endDateForAPItemp[2]))
-    
-    def getDBdata(start,end):
-        queriedData = OHLC_JSONdata.query.all()
-        out = []
-        trigger = False
-        for i in range(len(queriedData)):
-            startDateForDBobjectTemp = queriedData[i].AAPL['date'].split('-')
-            startDateForDBobject = datetime(int(startDateForDBobjectTemp[0]),int(startDateForDBobjectTemp[1]),int(startDateForDBobjectTemp[2]))
-            #if (queriedData[i].AAPL['date'] == startDate) or (startDateForAPI <= startDateForDBobject):
-            if startDateForAPI <= startDateForDBobject:
-                trigger = True
-            if queriedData[i].AAPL['date'] == endDate:
-                trigger = False   
-            # if (int(queriedData[i].AAPL['date'][0:4]) == StartYear) and (int(queriedData[i].AAPL['date'][5:7]) == StartMonth) and (int(queriedData[i].AAPL['date'][8:]) == StartDay):
-            #     trigger = True
-            # if (int(queriedData[i].AAPL['date'][0:4]) == EndYear) and (int(queriedData[i].AAPL['date'][5:7]) == EndMonth) and (int(queriedData[i].AAPL['date'][8:]) == EndDay):
-            #     trigger = False
-            if trigger:
-                out.append(queriedData[i].AAPL)
-        return out
+
+    currentTime = datetime.utcnow()
+    if str(currentTime.date()) == str(endDateForAPI.date()):
+        endDateForAPI -= timedelta(days=1)
+
+    if endDateForAPI.weekday() == 5:
+        endDateForAPI -= timedelta(days=1)
+    elif endDateForAPI.weekday() == 6:
+        endDateForAPI -= timedelta(days=2)
 
     def flatten_json(stockData):
         out = []
@@ -59,61 +54,195 @@ def get_stock_data(ticker,startDate,endDate):
                 out2[j] = stockData[i][j]
             out.append(out2) 
         return out
-    
-    if ticker == 'AAPL':
-        Historical_Data = getDBdata(startDate,endDate)
+
+    if ticker in sp500List:
+        # start by seeing if there's data in the database for the start and end date
+        queriedStartDate = sp_OHLC_data.query.filter_by(date=str(startDateForAPI.date())).first()
+        queriedEndDate = sp_OHLC_data.query.filter_by(date=str(endDateForAPI.date())).first()
+
+        # First we'll see if neither the start and end date have data, ie we need a full api call and commit it to the db
+        if (getattr(queriedStartDate,ticker)) is None and (getattr(queriedEndDate,ticker)) is None:
+            print('This API thinking that there is no data at the starting or ending date.  Change line 62')
+            dataFromAPI = get_historical_data(ticker, start=startDateForAPI.date(), end=endDateForAPI.date(), token=IEX_api_key)
+            flattendDataFromAPI = flatten_json(dataFromAPI)
+
+            initialIndex = int(queriedStartDate.id)
+            for i in range(len(flattendDataFromAPI)):
+                #dateHyphenSplit =  flattendDataFromAPI[i]['date'].split('-')
+                #flattendDataFromAPI[i]['date'] = str(int(dateHyphenSplit[0]))+'-'+str(int(dateHyphenSplit[1]))+'-'+str(int(dateHyphenSplit[2]))
+                dataRow = sp_OHLC_data.query.filter_by(date=flattendDataFromAPI[i]['date']).first()
+                setattr(dataRow,str(ticker),str(flattendDataFromAPI[i]))
+                db.session.commit()
+                initialIndex += 1
+
+        # next we'll see if just the start date doesn't have data, ie we need to partially fill out the db on the earlier dates
+        if (getattr(queriedStartDate,ticker)) is None and (getattr(queriedEndDate,ticker)) is not None:
+            print('This API thinking that there is no data at the starting date.')
+            index = getattr(queriedStartDate,'id')
+            endingIndex = getattr(queriedEndDate,'id')
+            trigger = True
+            while trigger and index < endingIndex:
+                dataRow = sp_OHLC_data.query.filter_by(id=index).first()
+                if (getattr(dataRow,ticker)) is not None:
+                    endingIndex = index - 1
+                    trigger = False
+                index += 1
+
+            endingDateTemp = sp_OHLC_data.query.filter_by(id=endingIndex).first()
+            endingDate = getattr(endingDateTemp,'date')
+
+            dataFromAPI = get_historical_data(ticker, start=startDateForAPI.date(), end=endingDate, token=IEX_api_key)
+            flattendDataFromAPI = flatten_json(dataFromAPI)
+            
+            for i in range(len(flattendDataFromAPI)):
+                #dateHyphenSplit =  flattendDataFromAPI[i]['date'].split('-')
+                #flattendDataFromAPI[i]['date'] = str(int(dateHyphenSplit[0]))+'-'+str(int(dateHyphenSplit[1]))+'-'+str(int(dateHyphenSplit[2]))
+                dataRow = sp_OHLC_data.query.filter_by(date=flattendDataFromAPI[i]['date']).first()
+                setattr(dataRow,str(ticker),str(flattendDataFromAPI[i]))
+                db.session.commit()
+                #initialIndex += 1
+
+        # next we'll see if just the end date doesn't have data, ie we need to partially fill out the db on the later dates
+        if (getattr(queriedStartDate,ticker)) is not None and (getattr(queriedEndDate,ticker)) is None:
+            print('This API thinking that there is no data at the ending date.')
+            print(getattr(queriedEndDate,'id'))
+            index = getattr(queriedStartDate,'id')
+            endingIndex = getattr(queriedEndDate,'id')
+            trigger = True
+            while trigger and index < endingIndex:
+                index += 1
+                dataRow = sp_OHLC_data.query.filter_by(id=index).first()
+                if (getattr(dataRow,ticker)) is None:
+                    trigger = False
+
+            startingDateTemp = sp_OHLC_data.query.filter_by(id=index).first()
+            startingDate = getattr(startingDateTemp,'date')
+            #dataFromAPI = get_historical_data(ticker, start=startingDate, end=endDateForAPI.date(), token=IEX_api_key)
+            flattendDataFromAPI = flatten_json(dataFromAPI)
+
+            for i in range(len(flattendDataFromAPI)):
+                #dateHyphenSplit =  flattendDataFromAPI[i]['date'].split('-')
+                #flattendDataFromAPI[i]['date'] = str(int(dateHyphenSplit[0]))+'-'+str(int(dateHyphenSplit[1]))+'-'+str(int(dateHyphenSplit[2]))
+                dataRow = sp_OHLC_data.query.filter_by(date=flattendDataFromAPI[i]['date']).first()
+                setattr(dataRow,str(ticker),str(flattendDataFromAPI[i]))
+                db.session.commit()
+                #initialIndex += 1
+
+        
+        # now that all of the requested data is in the database, we simply query it back out. 
+        print('the api thinks we have all the right data ')
+        out = []
+        startingIndexOutput = getattr(queriedStartDate,'id')
+        endingIndexOutput = getattr(queriedEndDate,'id')
+        i = startingIndexOutput
+        while i < (endingIndexOutput + 1):
+            dataRow = sp_OHLC_data.query.filter_by(id=i).first()
+            if isinstance(getattr(dataRow,ticker), str):
+                dataRowJSON = ast.literal_eval(getattr(dataRow,ticker))
+                out.append(dataRowJSON)
+            i += 1
+        
+    # or if the ticker is not in the SP 500 we query the api for this full data
     else:
-        historicalData = get_historical_data(ticker, start=startDateForAPI.date(), end=endDateForAPI.date(), token=IEX_api_key)
-        Historical_Data = flatten_json(historicalData)
+        out2 = get_historical_data(ticker, start=startDateForAPI.date(), end=endDateForAPI.date(), token=IEX_api_key)
+        out = flatten_json(out2)
 
-    #historicalData = get_historical_data(ticker, start=start.date(), end=end.date(), token=IEX_api_key)
-    #Historical_Data = flatten_json(historicalData)
-    #print(ticker)
-    #print(Historical_Data)
-    # historicalData = get_historical_data(ticker, start=startDateForAPI.date(), end=endDateForAPI.date(), token=IEX_api_key)
-    # Historical_Data = flatten_json(historicalData)
-    #initiallyCommitData(Historical_Data)
-    df = pd.DataFrame(Historical_Data)
-    df = ta.utils.dropna(df)
-    # print('This is historical data')
-    # print(Historical_Data)
-    # indicator_bb = BollingerBands(close=df["close"], n=20, ndev=2)
-    # #df = ta.add_all_ta_features(df, open="open", high="high", low="low", close="close", volume="volume")
-
-    # # Add Bollinger Bands features
-    # df['bb_bbm'] = indicator_bb.bollinger_mavg()
-    # df['bb_bbh'] = indicator_bb.bollinger_hband()
-    # df['bb_bbl'] = indicator_bb.bollinger_lband()
-
-    # # Add Bollinger Band high indicator
-    # df['bb_bbhi'] = indicator_bb.bollinger_hband_indicator()
-
-    # # Add Bollinger Band low indicator
-    # df['bb_bbli'] = indicator_bb.bollinger_lband_indicator()
-
-    # # Add Width Size Bollinger Bands
-    # df['bb_bbw'] = indicator_bb.bollinger_wband()
-
-    # # Add Percentage Bollinger Bands
-    # df['bb_bbp'] = indicator_bb.bollinger_pband()
-
-    # # Add RSI Indicator
+    # Now we make the pandas dataframe with the database data
+    df = pd.DataFrame(out)
+    
+    # we add the RSI indicator to show it on the initial momentum chart
     indicator_RSI = RSIIndicator(close=df["close"],n=10)
     df['rsi'] = indicator_RSI.rsi()
-
-
-    df.fillna(0, inplace=True)
-    # return (json.dumps(Historical_Data)) 
+    df = ta.utils.dropna(df)
     return (json.dumps(df.to_dict('records')))
 
-def initiallyCommitData(data):
-    for i in range(len(data)):
-        dateTemp =  data[i]['date'].split('-')
-        data[i]['date'] = str(int(dateTemp[0]))+'-'+str(int(dateTemp[1]))+'-'+str(int(dateTemp[2]))
-        # data[i]['date'] = datetime.fromisoformat(data[i]['date']).timestamp() 
-        addedData = OHLC_JSONdata(AAPL=data[i])
-        db.session.add(addedData)
-        db.session.commit()
+    
+    # def getDBdata(start,end):
+    #     queriedData = OHLC_JSONdata.query.all()
+    #     out = []
+    #     trigger = False
+    #     for i in range(len(queriedData)):
+    #         startDateForDBobjectTemp = queriedData[i].AAPL['date'].split('-')
+    #         startDateForDBobject = datetime(int(startDateForDBobjectTemp[0]),int(startDateForDBobjectTemp[1]),int(startDateForDBobjectTemp[2]))
+    #         #if (queriedData[i].AAPL['date'] == startDate) or (startDateForAPI <= startDateForDBobject):
+    #         if startDateForAPI <= startDateForDBobject:
+    #             trigger = True
+    #         if queriedData[i].AAPL['date'] == endDate:
+    #             trigger = False   
+    #         # if (int(queriedData[i].AAPL['date'][0:4]) == StartYear) and (int(queriedData[i].AAPL['date'][5:7]) == StartMonth) and (int(queriedData[i].AAPL['date'][8:]) == StartDay):
+    #         #     trigger = True
+    #         # if (int(queriedData[i].AAPL['date'][0:4]) == EndYear) and (int(queriedData[i].AAPL['date'][5:7]) == EndMonth) and (int(queriedData[i].AAPL['date'][8:]) == EndDay):
+    #         #     trigger = False
+    #         if trigger:
+    #             out.append(queriedData[i].AAPL)
+    #     return out
+
+    # def flatten_json(stockData):
+    #     out = []
+    #     for i in stockData:
+    #         out2 = {}
+    #         out2['date']=i
+    #         for j in stockData[i]:
+    #             out2[j] = stockData[i][j]
+    #         out.append(out2) 
+    #     return out
+    
+    # if ticker == 'AAPL':
+    #     Historical_Data = getDBdata(startDate,endDate)
+    # else:
+    #     historicalData = get_historical_data(ticker, start=startDateForAPI.date(), end=endDateForAPI.date(), token=IEX_api_key)
+    #     Historical_Data = flatten_json(historicalData)
+
+    # #historicalData = get_historical_data(ticker, start=start.date(), end=end.date(), token=IEX_api_key)
+    # #Historical_Data = flatten_json(historicalData)
+    # #print(ticker)
+    # #print(Historical_Data)
+    # # historicalData = get_historical_data(ticker, start=startDateForAPI.date(), end=endDateForAPI.date(), token=IEX_api_key)
+    # # Historical_Data = flatten_json(historicalData)
+    # #initiallyCommitData(Historical_Data)
+    # df = pd.DataFrame(Historical_Data)
+    # df = ta.utils.dropna(df)
+    # # print('This is historical data')
+    # # print(Historical_Data)
+    # # indicator_bb = BollingerBands(close=df["close"], n=20, ndev=2)
+    # # #df = ta.add_all_ta_features(df, open="open", high="high", low="low", close="close", volume="volume")
+
+    # # # Add Bollinger Bands features
+    # # df['bb_bbm'] = indicator_bb.bollinger_mavg()
+    # # df['bb_bbh'] = indicator_bb.bollinger_hband()
+    # # df['bb_bbl'] = indicator_bb.bollinger_lband()
+
+    # # # Add Bollinger Band high indicator
+    # # df['bb_bbhi'] = indicator_bb.bollinger_hband_indicator()
+
+    # # # Add Bollinger Band low indicator
+    # # df['bb_bbli'] = indicator_bb.bollinger_lband_indicator()
+
+    # # # Add Width Size Bollinger Bands
+    # # df['bb_bbw'] = indicator_bb.bollinger_wband()
+
+    # # # Add Percentage Bollinger Bands
+    # # df['bb_bbp'] = indicator_bb.bollinger_pband()
+
+    # # # Add RSI Indicator
+    # indicator_RSI = RSIIndicator(close=df["close"],n=10)
+    # df['rsi'] = indicator_RSI.rsi()
+
+
+    # df.fillna(0, inplace=True)
+    # # return (json.dumps(Historical_Data)) 
+    # return (json.dumps(df.to_dict('records')))
+
+# def initiallyCommitData(data,tickerName):
+    
+        
+#     for i in range(len(data)):
+#         dateTemp =  data[i]['date'].split('-')
+#         data[i]['date'] = str(int(dateTemp[0]))+'-'+str(int(dateTemp[1]))+'-'+str(int(dateTemp[2]))
+#         # data[i]['date'] = datetime.fromisoformat(data[i]['date']).timestamp() 
+#         addedData = OHLC_JSONdata(AAPL=data[i])
+#         db.session.add(addedData)
+#         db.session.commit()
 
 
 @algo.route("/get_ticker_company_name/<user_input>", methods=['GET'])

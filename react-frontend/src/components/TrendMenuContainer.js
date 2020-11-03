@@ -52,7 +52,7 @@ const EMAAccordionTitle = (
     <Grid.Column width={2}>
             <Checkbox borderless index={1} onClick={(event) => {
                         event.stopPropagation()
-                        props.displayEMADdispatch(!props.displayEMA)
+                        props.displayEMAdispatch(!props.displayEMA)
 
 
                     }}>
@@ -179,7 +179,7 @@ const mapDispatchToProps = dispatch => {
   return {
     displaySMAdispatch: varDisplaySMA => dispatch(displaySMA(varDisplaySMA)),
     displayEMAdispatch: varDisplayEMA => dispatch(displayEMA(varDisplayEMA)),
-    displayMACDdispatch: varDisplayMACD => dispatch(displayMACD(varDisplayMACD))
+    displayMACDdispatch: varDisplayMACD => dispatch(displayMACD(varDisplayMACD)),
   }
 }
 
