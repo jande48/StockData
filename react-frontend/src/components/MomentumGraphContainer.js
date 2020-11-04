@@ -135,8 +135,9 @@ function MomentumGraphContainer (props) {
       const rsi = new Indicator('rsi',"#1f77b4",data,props.displayRSI,'axisLeft');
       const macd = new Indicator('macd',"#ff7f0e",trendData,props.displayMACD,'axisRight')
       const tsi = new Indicator('tsi',"#2ca02c",data,props.displayTSI,'axisLeft')
-      
-      const objectList = [rsi,macd,tsi]
+      const uo = new Indicator('uo',"#d62728",data,props.displayUO,'axisLeft')
+
+      const objectList = [rsi,macd,tsi,uo]
       
       const x = scaleBand()
           .domain(d3.utcDay
@@ -226,6 +227,7 @@ function MomentumGraphContainer (props) {
       const rsiline = rsi.d3line
       const macdline = macd.d3line
       const tsiline = tsi.d3line
+      const uoline = uo.d3line
       
       
 

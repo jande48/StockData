@@ -896,7 +896,7 @@ def calculate_Momentum_Indicators():
     
     if UOchecked:
         indicator_UO = uo(high=df['high'],low=df['low'],close=df['close'],s=sForUO,m=mForUO,len=lenForUO,ws=wsForUO,wm=wmForUO,wl=wlForUO)
-        df['UO'] = indicator_UO
+        df['uo'] = indicator_UO
     
     # if StochChecked:
     #     indicator_Stoch = stoch(high=df['high'],low=df['low'],close=df['close'],n=nForStoch,d_n=d_nForStoch)
