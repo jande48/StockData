@@ -1,0 +1,12 @@
+.ui.inverted.equal.width.grid > black.column.noPadding {
+    padding: 0 !important;
+  }
+
+.ui.inverted.equal.width.grid > black.column.noPadding > ui.fluid.search {
+    padding: 0 !important;
+  }
+
+
+.ui.inverted.equal.width.grid > black.column.noPadding > ui.fluid.search > ui.icon.input {
+    padding: 0 !important;
+  }

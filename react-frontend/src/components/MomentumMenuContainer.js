@@ -1,64 +1,18 @@
 import React, {useState} from 'react'
 import { connect } from 'react-redux'
-import { displayRSI, displayTSI } from '../redux'
+import { displayRSI, displayTSI, displayUO } from '../redux'
 import { Grid, Menu, Accordion, Item, Checkbox, Form, Select} from "semantic-ui-react"
 import Collapsible from 'react-collapsible';
 import RSIcontentPanel from './accordion/momentum/RSIcontentpanel'
 import TSIcontentPanel from './accordion/momentum/TSIcontentpanel'
+import UOcontentPanel from './accordion/momentum/UOcontentpanel'
 
 function MomentumMenuContainer(props) {
-    function headerCollapsible(title) {
-        return (
-            <Item.Group>
-            <Item>
-                <Item.Content>
-                    <Item.Header as='a'>{title}</Item.Header><br/>
-                </Item.Content>
-            </Item>
-        </Item.Group>
-        )
-    }
     
     const [activeRSIAccodianMenuItem, setRSIActiveAccordionMenuItem] = useState(-1)
     const [activeTSIAccodianMenuItem, setTSIActiveAccordionMenuItem] = useState(-1)
-
-	const [displayUOCheckbox, setDisplayUOCheckbox] = useState(false)
-	const [sForUO, setsForUO] = useState(7)
-	const [mForUO, setmForUO] = useState(14)
-	const [lenForUO, setlenForUO] = useState(28)
-	const [wsForUO, setwsForUO] = useState(4)
-	const [wmForUO, setwmForUO] = useState(2)
-    const [wlForUO, setwlForUO] = useState(1)
     const [activeUOAccodianMenuItem, setUOActiveAccordionMenuItem] = useState(-1)
-    
-    const [displayStochCheckbox, setDisplayStochCheckbox] = useState(false)
-    const [nForStoch, setNForStoch] = useState(14)
-    const [d_nForStoch, setd_nForStoch] = useState(3)
-    const [activeStochAccodianMenuItem, setStochActiveAccordionMenuItem] = useState(-1)
 
-    const [displayStochSignalCheckbox, setDisplayStochSignalCheckbox] = useState(false)
-    const [nForStochSignal, setNForStochSignal] = useState(14)
-    const [d_nForStochSignal, setd_nForStochSignal] = useState(3)
-    const [activeStochSignalAccodianMenuItem, setStochSignalActiveAccordionMenuItem] = useState(-1)
-
-    const [displayWR, setDisplayWR] = useState(false)
-    const [lbpForWR, setLBPForWR] = useState(14)
-    const [activeWRAccodianMenuItem, setWRActiveAccordionMenuItem] = useState(-1)
-
-    const [displayAO, setDisplayAO] = useState(false)
-    const [sForAO, setSForAO] = useState(5)
-    const [lenForAO, setLenForAO] = useState(34)
-    const [activeAOAccodianMenuItem, setAOActiveAccordionMenuItem] = useState(-1)
-
-    const [displayKama, setDisplayKama] = useState(false)
-    const [nForKama, setNForKama] = useState(10)
-    const [pow1ForKama, setPow1ForKama] = useState(2)
-    const [pow2ForKama, setPow2ForKama] = useState(30)
-    const [activeKamaAccodianMenuItem, setKamaActiveAccordionMenuItem] = useState(-1)
-
-    const [displayROC, setDisplayROC] = useState(false)
-    const [nForROC, setNForROC] = useState(12)
-    const [activeROCAccodianMenuItem, setROCActiveAccordionMenuItem] = useState(-1)
 
     
 
@@ -68,8 +22,6 @@ function MomentumMenuContainer(props) {
                 <Checkbox borderless index={1} defaultChecked onClick={(event) => {
                             event.stopPropagation()
                             props.displayRSIdispatch(!props.displayRSI)
-
-
                         }}>
                 </Checkbox>
         </Grid.Column>
@@ -84,8 +36,6 @@ function MomentumMenuContainer(props) {
                 <Checkbox borderless index={1} onClick={(event) => {
                             event.stopPropagation()
                             props.displayTSIdispatch(!props.displayTSI)
-
-
                         }}>
                 </Checkbox>
         </Grid.Column>
@@ -93,15 +43,21 @@ function MomentumMenuContainer(props) {
             <h5>True Strength Index</h5>
         </Grid.Column>
         </Grid>)
-    
-    //const TSIAccordionTitle = createAccordionTile(setDisplayTSIcheckbox,displayTSIcheckbox,'True Strength Index')
-    const UOAccordionTitle = createAccordionTile(setDisplayUOCheckbox,displayUOCheckbox,'Ultimate Oscillator')
-    const StochAccordionTitle = createAccordionTile(setDisplayStochCheckbox,displayStochCheckbox,'Stochastic Oscillator')
-    const StochSignalAccordionTitle = createAccordionTile(setDisplayStochSignalCheckbox,displayStochSignalCheckbox,'Stochastic Oscillator Signal')
-    const WRAccordionTitle = createAccordionTile(setDisplayWR,displayWR,'Williams %R')
-    const AOAccordionTitle = createAccordionTile(setDisplayAO,displayAO,'Awesome Oscillator') 
-    const KamaAccordionTitle = createAccordionTile(setDisplayKama,displayKama,'Kaufmans Adaptive Moving Average')
-    const ROCAccordionTitle = createAccordionTile(setDisplayROC,displayROC,'Rate-of-Change (ROC) indicator') 
+
+    const UOAccordionTitle = (
+        <Grid columns='equal'>
+        <Grid.Column width={2}>
+                <Checkbox borderless index={1} onClick={(event) => {
+                            event.stopPropagation()
+                            props.displayUOdispatch(!props.displayUO)
+                        }}>
+                </Checkbox>
+        </Grid.Column>
+        <Grid.Column>
+            <h5>Ultimate Oscillator</h5>
+        </Grid.Column>
+        </Grid>)
+
     
     const momentumNtradingDayOptions = [
 		{ key: 'one', text: '1', value: 1 },
@@ -141,36 +97,7 @@ function MomentumMenuContainer(props) {
 		{ key: 'thirtyfive', text: '35', value: 35 }
 	]
 
-    //const RSIcontentPanel = createContentPanelAccordion(['Period in Trading Days (n):'],['12'],[nForRSIdispatch(selectedOption.value)])
-    // const RSIcontentPanel = (
-    //     <Grid columns='equal'>
-    //             <Grid.Column>
-    //                 <br/>'Period in Trading Days (n):'
-    //             </Grid.Column>
-    //             <Grid.Column width={4}>
-    //                 <Form.Field
-    //                     control={Select}
-    //                     options={momentumNtradingDayOptions}
-    //                     placeholder='12'
-    //                     compact
-    //                     onChange ={(e,selectedOption) => {
-    //                         props.nForRSIdispatch(selectedOption.value)
-    //                         }}
-    //                 />
-    //             </Grid.Column>
-    //         </Grid>
-    // )
-    //const TSIcontentPanel = createContentPanelAccordion(['EMA Smoothing Period (r):'],['25'],[setrForTSI])
-    const UOcontentPanel =  createContentPanelAccordion(['Short Period (s):','Medium Period (m): ','Long Period (l)','Weight of Short BP Average (ws):','Weight of Medium BP Average (wm):','Weight of Long BP Average'],['7','14','28','4','2','1'],[setsForUO,setmForUO,setlenForUO,setwsForUO,setwmForUO,setwlForUO])
-    const StochcontentPanel = createContentPanelAccordion(['Period of Trading Days:','Simple Moving Average Period:'],['14','3'],[setNForStoch,setd_nForStoch])
-    const StochSignalcontentPanel = createContentPanelAccordion(['Period of Trading Days:','Simple Moving Average Period:'],['14','3'],[setNForStochSignal,setd_nForStochSignal])
-    const WRcontentPanel =  createContentPanelAccordion(['Lookback Period:'],['14'],[setLBPForWR])
-    const AOcontentPanel = createContentPanelAccordion(['Short Period (s):','Long Period (l):'],['5','34'],[setSForAO,setLenForAO])
-    const KamacontentPanel = createContentPanelAccordion(['Periods for Efficiency Ratio (n):','Periods for Fast EMA Constant:','Periods for Slow EMA Constant:'],['10','2','30'],[setNForKama,setPow1ForKama,setPow2ForKama])
-    const ROCcontentPanel = createContentPanelAccordion(['Number of Periods (n):'],['12'],[setNForROC])
-    
-    
-	  
+
 
 
     function createAccordionTile(set,state,title){
@@ -189,8 +116,6 @@ function MomentumMenuContainer(props) {
         </Grid>)
     }
 
-
-	
 
     function createContentPanelAccordion(title,place,set) {
         // for (var i = 0; i < title.length; i++) {
@@ -569,9 +494,7 @@ function MomentumMenuContainer(props) {
     <div>
         <Grid stretched> 
         
-         <Grid.Row stretched>
-            {/* <Collapsible trigger={headerCollapsible('Momentum')}> */}
-                
+         <Grid.Row stretched>        
                 <Accordion as={Menu} vertical stretched fluid borderless inverted>
                     <Menu.Item borderless>
                         <Accordion.Title
@@ -599,7 +522,7 @@ function MomentumMenuContainer(props) {
                         <Accordion.Content borderless active={activeTSIAccodianMenuItem === 0} content={<TSIcontentPanel/>} />
                     </Menu.Item>
 
-                    {/* <Menu.Item borderless>
+                    <Menu.Item borderless>
                         <Accordion.Title
                             active={activeUOAccodianMenuItem === 0}
                             content={UOAccordionTitle}
@@ -609,9 +532,9 @@ function MomentumMenuContainer(props) {
                                 setUOActiveAccordionMenuItem(index.index === activeUOAccodianMenuItem ? -1 : index.index)
                                 }}
                         />
-                        <Accordion.Content borderless active={activeUOAccodianMenuItem === 0} content={UOcontentPanel} />
+                        <Accordion.Content borderless active={activeUOAccodianMenuItem === 0} content={<UOcontentPanel />} />
                     </Menu.Item>
-                    <Menu.Item borderless>
+                    {/* <Menu.Item borderless>
                         <Accordion.Title
                             active={activeAOAccodianMenuItem === 0}
                             content={AOAccordionTitle}
@@ -699,7 +622,8 @@ const mapStateToProps = state => {
     
     displayRSI: state.momentumFromRootReducer.displayRSI,
     nForRSI: state.momentumFromRootReducer.nForRSI,
-    displayTSI: state.momentumFromRootReducer.displayTSI
+    displayTSI: state.momentumFromRootReducer.displayTSI,
+    displayUO: state.momentumFromRootReducer.displayUO
 
   }
 }
@@ -707,7 +631,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     displayRSIdispatch: varDisplayRSI => dispatch(displayRSI(varDisplayRSI)),
-    displayTSIdispatch: varDisplayTSI => dispatch(displayTSI(varDisplayTSI))
+    displayTSIdispatch: varDisplayTSI => dispatch(displayTSI(varDisplayTSI)),
+    displayUOdispatch: x => dispatch(displayUO(x))
   }
 }
 
@@ -720,3 +645,91 @@ export default connect(
 
 
 
+
+
+
+// function headerCollapsible(title) {
+//     return (
+//         <Item.Group>
+//         <Item>
+//             <Item.Content>
+//                 <Item.Header as='a'>{title}</Item.Header><br/>
+//             </Item.Content>
+//         </Item>
+//     </Item.Group>
+//     )
+// }
+
+
+// const [sForUO, setsForUO] = useState(7)
+// const [mForUO, setmForUO] = useState(14)
+// const [lenForUO, setlenForUO] = useState(28)
+// const [wsForUO, setwsForUO] = useState(4)
+// const [wmForUO, setwmForUO] = useState(2)
+// const [wlForUO, setwlForUO] = useState(1)
+
+// const [nForStoch, setNForStoch] = useState(14)
+//     const [d_nForStoch, setd_nForStoch] = useState(3)
+//     const [activeStochAccodianMenuItem, setStochActiveAccordionMenuItem] = useState(-1)
+//     const [nForStochSignal, setNForStochSignal] = useState(14)
+//     const [d_nForStochSignal, setd_nForStochSignal] = useState(3)
+//     const [activeStochSignalAccodianMenuItem, setStochSignalActiveAccordionMenuItem] = useState(-1)
+//     const [lbpForWR, setLBPForWR] = useState(14)
+//     const [activeWRAccodianMenuItem, setWRActiveAccordionMenuItem] = useState(-1)
+//     const [sForAO, setSForAO] = useState(5)
+//     const [lenForAO, setLenForAO] = useState(34)
+//     const [activeAOAccodianMenuItem, setAOActiveAccordionMenuItem] = useState(-1)
+//     const [nForKama, setNForKama] = useState(10)
+//     const [pow1ForKama, setPow1ForKama] = useState(2)
+//     const [pow2ForKama, setPow2ForKama] = useState(30)
+//     const [activeKamaAccodianMenuItem, setKamaActiveAccordionMenuItem] = useState(-1)
+//     const [nForROC, setNForROC] = useState(12)
+//     const [activeROCAccodianMenuItem, setROCActiveAccordionMenuItem] = useState(-1)
+
+
+    //const TSIAccordionTitle = createAccordionTile(setDisplayTSIcheckbox,displayTSIcheckbox,'True Strength Index')
+    // const UOAccordionTitle = createAccordionTile(setDisplayUOCheckbox,displayUOCheckbox,'Ultimate Oscillator')
+    // const StochAccordionTitle = createAccordionTile(setDisplayStochCheckbox,displayStochCheckbox,'Stochastic Oscillator')
+    // const StochSignalAccordionTitle = createAccordionTile(setDisplayStochSignalCheckbox,displayStochSignalCheckbox,'Stochastic Oscillator Signal')
+    // const WRAccordionTitle = createAccordionTile(setDisplayWR,displayWR,'Williams %R')
+    // const AOAccordionTitle = createAccordionTile(setDisplayAO,displayAO,'Awesome Oscillator') 
+    // const KamaAccordionTitle = createAccordionTile(setDisplayKama,displayKama,'Kaufmans Adaptive Moving Average')
+    // const ROCAccordionTitle = createAccordionTile(setDisplayROC,displayROC,'Rate-of-Change (ROC) indicator') 
+
+
+        //const RSIcontentPanel = createContentPanelAccordion(['Period in Trading Days (n):'],['12'],[nForRSIdispatch(selectedOption.value)])
+    // const RSIcontentPanel = (
+    //     <Grid columns='equal'>
+    //             <Grid.Column>
+    //                 <br/>'Period in Trading Days (n):'
+    //             </Grid.Column>
+    //             <Grid.Column width={4}>
+    //                 <Form.Field
+    //                     control={Select}
+    //                     options={momentumNtradingDayOptions}
+    //                     placeholder='12'
+    //                     compact
+    //                     onChange ={(e,selectedOption) => {
+    //                         props.nForRSIdispatch(selectedOption.value)
+    //                         }}
+    //                 />
+    //             </Grid.Column>
+    //         </Grid>
+    // )
+    //const TSIcontentPanel = createContentPanelAccordion(['EMA Smoothing Period (r):'],['25'],[setrForTSI])
+    // const UOcontentPanel =  createContentPanelAccordion(['Short Period (s):','Medium Period (m): ','Long Period (l)','Weight of Short BP Average (ws):','Weight of Medium BP Average (wm):','Weight of Long BP Average'],['7','14','28','4','2','1'],[setsForUO,setmForUO,setlenForUO,setwsForUO,setwmForUO,setwlForUO])
+    // const StochcontentPanel = createContentPanelAccordion(['Period of Trading Days:','Simple Moving Average Period:'],['14','3'],[setNForStoch,setd_nForStoch])
+    // const StochSignalcontentPanel = createContentPanelAccordion(['Period of Trading Days:','Simple Moving Average Period:'],['14','3'],[setNForStochSignal,setd_nForStochSignal])
+    // const WRcontentPanel =  createContentPanelAccordion(['Lookback Period:'],['14'],[setLBPForWR])
+    // const AOcontentPanel = createContentPanelAccordion(['Short Period (s):','Long Period (l):'],['5','34'],[setSForAO,setLenForAO])
+    // const KamacontentPanel = createContentPanelAccordion(['Periods for Efficiency Ratio (n):','Periods for Fast EMA Constant:','Periods for Slow EMA Constant:'],['10','2','30'],[setNForKama,setPow1ForKama,setPow2ForKama])
+    // const ROCcontentPanel = createContentPanelAccordion(['Number of Periods (n):'],['12'],[setNForROC])
+    
+    
+    // const [displayUOCheckbox, setDisplayUOCheckbox] = useState(false)
+    // const [displayStochCheckbox, setDisplayStochCheckbox] = useState(false)
+    // const [displayStochSignalCheckbox, setDisplayStochSignalCheckbox] = useState(false)
+    // const [displayWR, setDisplayWR] = useState(false)
+    // const [displayAO, setDisplayAO] = useState(false)
+    // const [displayKama, setDisplayKama] = useState(false)
+    // const [displayROC, setDisplayROC] = useState(false)

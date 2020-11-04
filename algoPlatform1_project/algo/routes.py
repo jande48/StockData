@@ -12,8 +12,8 @@ from ta.trend import sma_indicator, ema_indicator, macd, macd_signal, macd_diff,
 from ta.volatility import average_true_range, bollinger_mavg, bollinger_hband, bollinger_lband, bollinger_wband, bollinger_pband, bollinger_hband_indicator, bollinger_lband_indicator, keltner_channel_mband, keltner_channel_hband, keltner_channel_lband, keltner_channel_wband, keltner_channel_pband, keltner_channel_hband_indicator, keltner_channel_lband_indicator, donchian_channel_hband, donchian_channel_lband, donchian_channel_mband, donchian_channel_wband, donchian_channel_pband 
 from algoPlatform1_project.models import User, Post, Watchlist, sp_OHLC_data, sp500List
 from flask_login import login_user, current_user, logout_user, login_required
-from urllib.request import urlopen
-
+from urllib.request import urlopen, Request
+from urllib.error import URLError, HTTPError
 
 IEX_secret_api_key = os.environ.get('IEX_CLOUD_SECRET_API_KEY')
 IEX_api_key =  os.environ.get('IEX_CLOUD_API_KEY') 
@@ -117,7 +117,7 @@ def get_stock_data(ticker,startDate,endDate):
 
             startingDateTemp = sp_OHLC_data.query.filter_by(id=index).first()
             startingDate = getattr(startingDateTemp,'date')
-            #dataFromAPI = get_historical_data(ticker, start=startingDate, end=endDateForAPI.date(), token=IEX_api_key)
+            dataFromAPI = get_historical_data(ticker, start=startingDate, end=endDateForAPI.date(), token=IEX_api_key)
             flattendDataFromAPI = flatten_json(dataFromAPI)
 
             for i in range(len(flattendDataFromAPI)):
@@ -247,10 +247,56 @@ def get_stock_data(ticker,startDate,endDate):
 
 @algo.route("/get_ticker_company_name/<user_input>", methods=['GET'])
 def get_ticker_company_name(user_input):
-    url = ("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange=NASDAQ&apikey="+Stock_Ticker_Lookup_key)
-    response = urlopen(url)
-    data = response.read().decode("utf-8")
-    return data
+    urlNASDAQ = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=2&exchange=NASDAQ&apikey="+Stock_Ticker_Lookup_key)
+    responseNASDAQ = urlopen(urlNASDAQ)
+    dataNASDAQ = responseNASDAQ.read().decode("utf-8")
+    urlNYSE = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=2&exchange=NYSE&apikey="+Stock_Ticker_Lookup_key)
+    responseNYSE = urlopen(urlNYSE)
+    dataNYSE = responseNYSE.read().decode("utf-8")
+    urlAMEX = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=2&exchange=AMEX&apikey="+Stock_Ticker_Lookup_key)
+    responseAMEX = urlopen(urlAMEX)
+    dataAMEX = responseAMEX.read().decode("utf-8")
+    urlINDEX = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=2&exchange=INDEX&apikey="+Stock_Ticker_Lookup_key)
+    responseINDEX = urlopen(urlINDEX)
+    dataINDEX = responseINDEX.read().decode("utf-8")
+    urlMUTUAL_FUND = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=2&exchange=MUTUAL_FUND&apikey="+Stock_Ticker_Lookup_key)
+    responseMUTUAL_FUND = urlopen(urlMUTUAL_FUND)
+    dataMUTUAL_FUND = responseMUTUAL_FUND.read().decode("utf-8")
+    urlETF = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=2&exchange=ETF&apikey="+Stock_Ticker_Lookup_key)
+    responseETF = urlopen(urlETF)
+    dataETF = responseETF.read().decode("utf-8")
+    dataset = [json.loads(dataNASDAQ),json.loads(dataNYSE),json.loads(dataAMEX),json.loads(dataINDEX),json.loads(dataMUTUAL_FUND),json.loads(dataETF)]
+    #print(dataset)
+    out = []
+    for i in range(len(dataset)):
+        for j in range(len(dataset[i])):
+            out.append(dataset[i][j])
+
+    # iters = 0
+    
+
+    # for i in range(len(dataset)):
+    #     for j in range(len(dataset[i])):
+    #         print('this is the user input', user_input.upper())
+    #         print('this is the dataset of name ',dataset[i][j]['name'])
+    #         if user_input.upper() in dataset[i][j]['name']:
+    #             out.append(dataset[i][j])
+    #             iters += 1
+    #             if iters >= 4:
+    #                 break
+
+
+    # for i in range(len(dataset)):
+    #     for j in range(len(dataset[i])):
+    #         if user_input.upper() in dataset[i][j]['symbol']:
+    #             out.append(dataset[i][j])
+    #             iters += 1
+    #             if iters >= 4:
+    #                 break
+        
+
+    # print(json.dumps(out))
+    return json.dumps(out)
 
 @algo.route("/get_company_name_from_ticker/<ticker>", methods=['GET'])
 def get_company_name_from_ticker(ticker):
@@ -804,13 +850,13 @@ def calculate_Momentum_Indicators():
     TSIs = int(JSON_sent[2]['sTSI'])
 
     # # Ultimate Ossilator
-    # UOchecked = JSON_sent[3]['displayUO']
-    # sForUO = int(JSON_sent[3]['sForUO'])
-    # mForUO = int(JSON_sent[3]['mForUO'])
-    # lenForUO = int(JSON_sent[3]['lenForUO'])
-    # wsForUO = float(JSON_sent[3]['wsForUO'])
-    # wmForUO = float(JSON_sent[3]['wmForUO'])
-    # wlForUO = float(JSON_sent[3]['wlForUO'])
+    UOchecked = JSON_sent[3]['displayUO']
+    sForUO = int(JSON_sent[3]['sForUO'])
+    mForUO = int(JSON_sent[3]['mForUO'])
+    lenForUO = int(JSON_sent[3]['lenForUO'])
+    wsForUO = float(JSON_sent[3]['wsForUO'])
+    wmForUO = float(JSON_sent[3]['wmForUO'])
+    wlForUO = float(JSON_sent[3]['wlForUO'])
 
     # # Stochastic Oscillator
     # StochChecked = JSON_sent[4]['displayStoch']
@@ -848,9 +894,9 @@ def calculate_Momentum_Indicators():
         indicator_TSI = TSIIndicator(close=df["close"], r=TSIr, s=TSIs)
         df['tsi'] = indicator_TSI.tsi()
     
-    # if UOchecked:
-    #     indicator_UO = uo(high=df['high'],low=df['low'],close=df['close'],s=sForUO,m=mForUO,len=lenForUO,ws=wsForUO,wm=wmForUO,wl=wlForUO)
-    #     df['UO'] = indicator_UO
+    if UOchecked:
+        indicator_UO = uo(high=df['high'],low=df['low'],close=df['close'],s=sForUO,m=mForUO,len=lenForUO,ws=wsForUO,wm=wmForUO,wl=wlForUO)
+        df['UO'] = indicator_UO
     
     # if StochChecked:
     #     indicator_Stoch = stoch(high=df['high'],low=df['low'],close=df['close'],n=nForStoch,d_n=d_nForStoch)

@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "lodash": "^4.17.20",
     "redux-devtools-extension": "^2.13.8"
   }
 }

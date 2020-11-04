@@ -30,11 +30,12 @@ function MomentumGraphContainer (props) {
     if (props.loads > 0) {
       const RSIparameters = {'N':props.nForRSI}
       const TSIparameters = {'displayTSI':props.displayTSI,'rTSI':props.rForTSI,'sTSI':props.sForTSI}
-      props.fetchMomentumData(JSON.stringify([props.stockData,RSIparameters,TSIparameters]))
+      const UOparameters = {'displayUO':props.displayUO,'sForUO':props.sForUO,'mForUO':props.mForUO,'lenForUO':props.lenForUO,'wsForUO':props.wsForUO,'wmForUO':props.wmForUO,'wlForUO':props.wlForUO}
+      props.fetchMomentumData(JSON.stringify([props.stockData,RSIparameters,TSIparameters,UOparameters]))
 
     }
     
-  }, [props.stockData,props.displayRSI,props.nForRSI,props.displayTSI,props.sForTSI,props.rForTSI])
+  }, [props.stockData,props.displayRSI,props.nForRSI,props.displayTSI,props.sForTSI,props.rForTSI,props.displayUO,props.sForUO,props.mForUO,props.lenForUO,props.wsForUO,props.wmForUO,props.wlForUO])
 
   if (props.momentumLoads > 0) {
     function createMomentumIndicatorsChart(momentumIndicatorsChartNode) {
@@ -364,7 +365,14 @@ const mapStateToProps = state => {
     sForTSI: state.momentumFromRootReducer.sForTSI,
     displayMACD: state.trendFromRootReducer.displayMACD,
     nSlowForMACD: state.trendFromRootReducer.nSlowForMACD,
-    nFastForMACD: state.trendFromRootReducer.nFastForMACD
+    nFastForMACD: state.trendFromRootReducer.nFastForMACD,
+    sForUO: state.momentumFromRootReducer.sForUO,
+    mForUO: state.momentumFromRootReducer.mForUO,
+    lenForUO: state.momentumFromRootReducer.lenForUO,
+    wsForUO: state.momentumFromRootReducer.wsForUO,
+    wmForUO: state.momentumFromRootReducer.wmForUO,
+    wlForUO: state.momentumFromRootReducer.wlForUO,
+    displayUO: state.momentumFromRootReducer.displayUO
   }
 }
 

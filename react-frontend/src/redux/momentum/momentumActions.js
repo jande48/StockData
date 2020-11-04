@@ -1,5 +1,6 @@
   
-import { DISPLAY_RSI, N_FOR_RSI, DISPLAY_TSI, R_FOR_TSI, S_FOR_TSI, FETCH_MOMENTUM_DATA_REQUEST,
+import { DISPLAY_RSI, N_FOR_RSI, DISPLAY_TSI, R_FOR_TSI, S_FOR_TSI, S_FOR_UO, M_FOR_UO, LEN_FOR_UO, WS_FOR_UO, WM_FOR_UO, WL_FOR_UO, DISPLAY_UO,
+   FETCH_MOMENTUM_DATA_REQUEST,
   FETCH_MOMENTUM_DATA_SUCCESS,
   FETCH_MOMENTUM_DATA_FAILURE } from './momentumTypes'
 import axios from 'axios'
@@ -37,6 +38,50 @@ export const sForTSI = (n) => {
     payload: n
   }
 }
+export const sForUO = (n) => {
+  return {
+    type: S_FOR_UO,
+    payload: n
+  }
+}
+export const mForUO = (n) => {
+  return {
+    type: M_FOR_UO,
+    payload: n
+  }
+}
+export const lenForUO = (n) => {
+  return {
+    type: LEN_FOR_UO,
+    payload: n
+  }
+}
+export const wsForUO = (n) => {
+  return {
+    type: WS_FOR_UO,
+    payload: n
+  }
+}
+export const wmForUO = (n) => {
+  return {
+    type: WM_FOR_UO,
+    payload: n
+  }
+}
+export const wlForUO = (n) => {
+  return {
+    type: WL_FOR_UO,
+    payload: n
+  }
+}
+export const displayUO = (n) => {
+  return {
+    type: DISPLAY_UO,
+    payload: n
+  }
+}
+
+
 export function fetchMomentumData(apiString) {
   return function (dispatch) {
     dispatch(fetchMomentumDataRequest())

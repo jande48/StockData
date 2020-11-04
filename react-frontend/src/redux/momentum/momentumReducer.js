@@ -1,5 +1,5 @@
 import { nForRSI } from './momentumActions'
-import { DISPLAY_RSI, N_FOR_RSI, DISPLAY_TSI, R_FOR_TSI, S_FOR_TSI,
+import { DISPLAY_RSI, N_FOR_RSI, DISPLAY_TSI, R_FOR_TSI, S_FOR_TSI, S_FOR_UO, M_FOR_UO, LEN_FOR_UO, WS_FOR_UO, WM_FOR_UO, WL_FOR_UO, DISPLAY_UO,
   FETCH_MOMENTUM_DATA_REQUEST,
   FETCH_MOMENTUM_DATA_SUCCESS,
   FETCH_MOMENTUM_DATA_FAILURE } from './momentumTypes'
@@ -10,6 +10,13 @@ const initialState = {
   displayTSI: false,
   rForTSI: 25,
   sForTSI: 13,
+  displayUO: false,
+  sForUO: 7,
+  mForUO: 14,
+  lenForUO: 28,
+  wsForUO: 4,
+  wmForUO: 2,
+  wlForUO: 1,
   momentumLoads: 0,
   loading: false
 }
@@ -36,6 +43,34 @@ const momentumReducer = (state = initialState, action) => {
     case S_FOR_TSI: return {
       ...state,
       sForTSI: action.payload
+    }
+    case S_FOR_UO: return {
+      ...state,
+      sForUO: action.payload
+    }
+    case M_FOR_UO: return {
+      ...state,
+      mForUO: action.payload
+    }
+    case LEN_FOR_UO: return {
+      ...state,
+      lenForUO: action.payload
+    }
+    case WS_FOR_UO: return {
+      ...state,
+      wsForUO: action.payload
+    }
+    case WM_FOR_UO: return {
+      ...state,
+      wmForUO: action.payload
+    }
+    case WL_FOR_UO: return {
+      ...state,
+      wlForUO: action.payload
+    }
+    case DISPLAY_UO: return {
+      ...state,
+      displayUO: action.payload
     }
     case FETCH_MOMENTUM_DATA_REQUEST:
       return {

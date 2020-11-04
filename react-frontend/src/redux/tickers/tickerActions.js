@@ -1,6 +1,7 @@
   
 import { ADD_TICKER, FETCH_COMP_INFO_REQUEST, FETCH_COMP_INFO_SUCCESS, FETCH_COMP_INFO_FAILURE, COMPANY_NAME, ADD_PERCENT_CHANGE } from './tickerTypes'
 import axios from 'axios'
+import _ from 'lodash'
 
 export const addTicker = (ticker = 'AAPL') => {
   return {
@@ -31,7 +32,10 @@ export function fetchCompanyNameFromTicker(APIstring) {
     })
       .then(response => {
         const compData = response.data 
-        dispatch(addCompanyName(compData))
+        const re = new RegExp(_.escapeRegExp(APIstring), 'i')
+        const isMatch = (result) => re.test(result.name)
+
+        dispatch(addCompanyName(_.filter(compData, isMatch)))
       })
       .catch(error => {
         dispatch(fetchCompInfoDataFailure(error.message))
