@@ -536,16 +536,14 @@ def calculate_Trend_Indicators():
         nslowForMACDsignal = JSON_sent[4]['nSlowForMACDsignal']
         nfastForMACDsignal = JSON_sent[4]['nFastForMACDsignal']
         nsignForMACDsignal = JSON_sent[4]['nSignForMACDsignal']
-        print(JSON_sent[5])
-    
 
         # Average Directional Movement Index
         ADXchecked = JSON_sent[5]['displayADX']
         nForADX = JSON_sent[5]['nForADX']
-
-    # # Average Directional Movement Index Positive (ADX)
-    # ADXpositiveChecked = JSON_sent[6]['displayADXpositive']
-    # nForADXpositive = JSON_sent[6]['nForADXpositive']
+        
+        # # Average Directional Movement Index Positive (ADX)
+        ADXpositiveChecked = JSON_sent[6]['displayADXP']
+        nForADXpositive = JSON_sent[6]['nForADXP']
 
     # # Average Directional Movement Index Negative 
     # ADXnegativeChecked = JSON_sent[7]['displayADXnegative']
@@ -611,9 +609,9 @@ def calculate_Trend_Indicators():
             indicator_ADX = adx(high=df['high'],low=df['low'],close=df['close'],n=nForADX)
             df['adx'] = indicator_ADX
 
-    # if ADXpositiveChecked:
-    #     indicator_ADXpositive = adx_pos(high=df['high'],low=df['low'],close=df['close'],n=nForADXpositive)
-    #     df['adxPositive'] = indicator_ADXpositive
+        if ADXpositiveChecked:
+            indicator_ADXpositive = adx_pos(high=df['high'],low=df['low'],close=df['close'],n=nForADXpositive)
+            df['adxp'] = indicator_ADXpositive
     
     # if ADXnegativeChecked:
     #     indicator_ADXnegative = adx_neg(high=df['high'],low=df['low'],close=df['close'],n=nForADXnegative)

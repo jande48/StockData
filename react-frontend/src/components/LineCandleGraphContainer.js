@@ -38,12 +38,14 @@ function LineCandleGraphContainer (props) {
     const MACDp = {'displayMACD':props.displayMACD,'nFastForMACD':props.nFastForMACD,'nSlowForMACD':props.nSlowForMACD}
     const MACDsignalp = {'displayMACDsignal':props.displayMACDsignal,'nSlowForMACDsignal':props.nSlowForMACDsignal,'nFastForMACDsignal':props.nFastForMACDsignal,'nSignForMACDsignal':props.nSignForMACDsignal}
     const ADXp = {'displayADX':props.displayADX,'nForADX':props.nForADX}
+    const ADXPp = {'displayADXP':props.displayADXP,'nForADXP':props.nForADXP}
 
     props.fetchStockData(String(props.tickers+"/"+convertDatesToString(props.startDate)+"/"+convertDatesToString(props.endDate)))
-    props.fetchTrendData(JSON.stringify([props.stockData,SMAp,EMAp,MACDp,MACDsignalp,ADXp]))
+    props.fetchTrendData(JSON.stringify([props.stockData,SMAp,EMAp,MACDp,MACDsignalp,ADXp,ADXPp]))
     
   }, [props.tickers,props.startDate,props.endDate,props.displaySMA,props.nForSMA,props.displayEMA,props.nForEMA,props.displayMACD,props.nFastForMACD,props.nSlowForMACD,
-    props.displayMACDsignal,props.nSlowForMACDsignal,props.nFastForMACDsignal,props.nSignForMACDsignal,props.displayADX,props.nForADX])
+    props.displayMACDsignal,props.nSlowForMACDsignal,props.nFastForMACDsignal,props.nSignForMACDsignal,props.displayADX,props.nForADX,
+    props.displayADXP,props.nForADXP])
   
   props.addPercentChange(calcPercentChange())
 
@@ -150,8 +152,9 @@ function LineCandleGraphContainer (props) {
         const ema = new Indicator('ema',"#9467bd",trendData,props.displayEMA,'axisLeft')
         const macdSignal = new Indicator('macds',"#1b9e77",trendData,props.displayMACDsignal,'axisRight')
         const adx = new Indicator('adx',"#d95f02",trendData,props.displayADX,'axisLeft')
+        const adxp = new Indicator('adxp',"#7570b3",trendData,props.displayADXP,'axisLeft')
         
-        const objectList = [close,sma,macd,ema,macdSignal,adx]
+        const objectList = [close,sma,macd,ema,macdSignal,adx,adxp]
 
 
         const x = scaleBand()
@@ -267,6 +270,7 @@ function LineCandleGraphContainer (props) {
         const emaline = ema.d3line
         const macdSignalline = macdSignal.d3line
         const adxline = adx.d3line
+        const adxpline = adxp.d3line
 
         var showRightAxis = false
         for (var i = 0; i < objectList.length; i++) {
@@ -447,6 +451,8 @@ const mapStateToProps = state => {
     nSignForMACDsignal: state.trendFromRootReducer.nSignForMACDsignal,
     displayADX: state.trendFromRootReducer.displayADX,
     nForADX: state.trendFromRootReducer.nForADX,
+    displayADXP: state.trendFromRootReducer.displayADXP,
+    nForADXP: state.trendFromRootReducer.nForADXP,
 
 
   }
