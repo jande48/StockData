@@ -1,9 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { nFastForMACD, nSlowForMACD } from '../../../redux'
+import { nSlowForMACDsignal, nFastForMACDsignal, nSignForMACDsignal } from '../../../redux'
 import { Grid, Menu, Form, Select} from "semantic-ui-react"
 
-function MACDcontentPanel(props) {
+function MACDSIGNALcontentPanel(props) {
 
     const momentumNtradingDayOptions = [
         { key: 'one', text: '1', value: 1 },
@@ -46,7 +46,7 @@ function MACDcontentPanel(props) {
     <Grid columns='equal'>
         <Grid.Row>
             <Grid.Column>
-                <br/>'Slow Period :'
+                <br/>'Slow Period: '
             </Grid.Column>
             <Grid.Column width={4}>
                 <Form.Field
@@ -55,14 +55,14 @@ function MACDcontentPanel(props) {
                     placeholder='26'
                     compact
                     onChange ={(e,selectedOption) => {
-                        props.nFastForMACDdispatch(selectedOption.value)
+                        props.nSlowForMACDsignaldispatch(selectedOption.value)
                         }}
                 />
             </Grid.Column>
         </Grid.Row>
         <Grid.Row>
             <Grid.Column>
-                <br/>'Fast Period :'
+                <br/>'Fast Period: '
             </Grid.Column>
             <Grid.Column width={4}>
                 <Form.Field
@@ -71,26 +71,47 @@ function MACDcontentPanel(props) {
                     placeholder='12'
                     compact
                     onChange ={(e,selectedOption) => {
-                        props.nSlowForMACDdispatch(selectedOption.value)
+                        props.nFastForMACDsignaldispatch(selectedOption.value)
                         }}
                 />
             </Grid.Column>
         </Grid.Row>
+        <Grid.Row>
+            <Grid.Column>
+                <br/>'Period to Signal: '
+            </Grid.Column>
+            <Grid.Column width={4}>
+                <Form.Field
+                    control={Select}
+                    options={momentumNtradingDayOptions}
+                    placeholder='9'
+                    compact
+                    onChange ={(e,selectedOption) => {
+                        props.nSignForMACDsignaldispatch(selectedOption.value)
+                        }}
+                />
+            </Grid.Column>
+        </Grid.Row>
+        
+        
         </Grid>
         )
 }
 
 const mapStateToProps = state => {
   return {
-    nFastForMACD: state.trendFromRootReducer.nFastForMACD,
-    nSlowForMACD: state.trendFromRootReducer.nSlowForMACD
+    nSlowForMACDsignal: state.momentumFromRootReducer.nSlowForMACDsignal,
+    nFastForMACDsignal: state.momentumFromRootReducer.nFastForMACDsignal,
+    nSignForMACDsignal: state.momentumFromRootReducer.nSignForMACDsignal,
+
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    nFastForMACDdispatch: selectedValue => dispatch(nFastForMACD(selectedValue)),
-    nSlowForMACDdispatch: selectedValue => dispatch(nSlowForMACD(selectedValue)),
+    nSlowForMACDsignaldispatch: x => dispatch(nSlowForMACDsignal(x)),
+    nFastForMACDsignaldispatch: x => dispatch(nFastForMACDsignal(x)),
+    nSignForMACDsignaldispatch: x => dispatch(nSignForMACDsignal(x)),
   }
 }
 
@@ -98,4 +119,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(MACDcontentPanel)
+)(MACDSIGNALcontentPanel)

@@ -531,13 +531,12 @@ def calculate_Trend_Indicators():
         nslowForMACD = JSON_sent[3]['nSlowForMACD']
         nfastForMACD = JSON_sent[3]['nFastForMACD']
 
-    
-
-    # # MACD Signal 
-    # MACDsignalChecked = JSON_sent[4]['displayMACDsignal']
-    # nslowForMACDsignal = JSON_sent[4]['nSlow']
-    # nfastForMACDsignal = JSON_sent[4]['nFast']
-    # nsignForMACDsignal = JSON_sent[4]['nSign']
+        # # MACD Signal 
+        print(JSON_sent[4])
+        MACDsignalChecked = JSON_sent[4]['displayMACDsignal']
+        nslowForMACDsignal = JSON_sent[4]['nSlowForMACDsignal']
+        nfastForMACDsignal = JSON_sent[4]['nFastForMACDsignal']
+        nsignForMACDsignal = JSON_sent[4]['nSignForMACDsignal']
 
     
 
@@ -605,9 +604,9 @@ def calculate_Trend_Indicators():
             indicator_macd = macd(close=df['close'],n_slow=nslowForMACD,n_fast=nfastForMACD)
             df['macd'] = indicator_macd
 
-    # if MACDsignalChecked:
-    #     indicator_macdSignal = macd_signal(close=df['close'],n_slow=nslowForMACDsignal,n_fast=nfastForMACDsignal,n_sign=nsignForMACDsignal)
-    #     df['macdSignal'] = indicator_macdSignal
+        if MACDsignalChecked:
+            indicator_macdSignal = macd_signal(close=df['close'],n_slow=nslowForMACDsignal,n_fast=nfastForMACDsignal,n_sign=nsignForMACDsignal)
+            df['macdSignal'] = indicator_macdSignal
     
     # if ADXchecked:
     #     indicator_ADX = adx(high=df['high'],low=df['low'],close=df['close'],n=nForADX)

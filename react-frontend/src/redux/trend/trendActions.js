@@ -1,5 +1,6 @@
   
 import { DISPLAY_SMA, N_FOR_SMA, DISPLAY_EMA, N_FOR_EMA, DISPLAY_MACD, N_SLOW_FOR_MACD, N_FAST_FOR_MACD, FETCH_TREND_DATA_REQUEST,
+  DISPLAY_MACD_SIGNAL, N_FAST_FOR_MACD_SIGNAL, N_SLOW_FOR_MACD_SIGNAL, N_SIGN_FOR_MACD_SIGNAL,
   FETCH_TREND_DATA_SUCCESS,
   FETCH_TREND_DATA_FAILURE } from './trendTypes'
 import axios from 'axios'
@@ -47,8 +48,30 @@ export const nFastForMACD = (n) => {
     payload: n
   }
 }
-
-
+export const displayMACDsignal = (n) => {
+  return {
+    type: DISPLAY_MACD_SIGNAL,
+    payload: n
+  }
+}
+export const nSlowForMACDsignal = (n) => {
+  return {
+    type: N_SLOW_FOR_MACD_SIGNAL,
+    payload: n
+  }
+}
+export const nFastForMACDsignal = (n) => {
+  return {
+    type: N_FAST_FOR_MACD_SIGNAL,
+    payload: n
+  }
+}
+export const nSignForMACDsignal = (n) => {
+  return {
+    type: N_SIGN_FOR_MACD_SIGNAL,
+    payload: n
+  }
+}
 
 export function fetchTrendData(apiString) {
   //console.log(apiString)

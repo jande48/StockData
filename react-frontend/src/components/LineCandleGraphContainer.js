@@ -36,14 +36,16 @@ function LineCandleGraphContainer (props) {
     const SMAp = {'displaySMA':props.displaySMA,'nForSMA':props.nForSMA}
     const EMAp = {'displayEMA':props.displayEMA,'nForEMA':props.nForEMA}
     const MACDp = {'displayMACD':props.displayMACD,'nFastForMACD':props.nFastForMACD,'nSlowForMACD':props.nSlowForMACD}
-    
+    const MACDsignalp = {'displayMACDsignal':props.displayMACDsignal,'nSlowForMACDsignal':props.nSlowForMACDsignal,'nFastForMACDsignal':props.nFastForMACDsignal,'nSignForMACDsignal':props.nSignForMACDsignal}
+
     props.fetchStockData(String(props.tickers+"/"+convertDatesToString(props.startDate)+"/"+convertDatesToString(props.endDate)))
-    props.fetchTrendData(JSON.stringify([props.stockData,SMAp,EMAp,MACDp]))
+    props.fetchTrendData(JSON.stringify([props.stockData,SMAp,EMAp,MACDp,MACDsignalp]))
     
     // if (props.stockData.length > 1) {
     //   createStockPriceLineChart(stockPriceLineChartNode)
     // }  
-  }, [props.tickers,props.startDate,props.endDate,props.displaySMA,props.nForSMA,props.displayEMA,props.nForEMA,props.displayMACD,props.nFastForMACD,props.nSlowForMACD])
+  }, [props.tickers,props.startDate,props.endDate,props.displaySMA,props.nForSMA,props.displayEMA,props.nForEMA,props.displayMACD,props.nFastForMACD,props.nSlowForMACD,
+    props.displayMACDsignal,props.nSlowForMACDsignal,props.nFastForMACDSignal,props.nSignForMACDsignal])
   
   props.addPercentChange(calcPercentChange())
 
@@ -144,13 +146,14 @@ function LineCandleGraphContainer (props) {
               }
             }
           }
-
+          // ["#1b9e77","#d95f02","#7570b3","#e7298a","#66a61e","#e6ab02","#a6761d","#666666"]
         const close = new Indicator('close',"#e0e1e2",data,props.displayLine,'axisLeft');
         const sma = new Indicator('sma',"#d62728",trendData,props.displaySMA,'axisLeft')
         const macd = new Indicator('macd',"#ff7f0e",trendData,props.displayMACD,'axisRight')
         const ema = new Indicator('ema',"#9467bd",trendData,props.displayEMA,'axisLeft')
+        const macdSignal = new Indicator('macdSignal',"#1b9e77",trendData,props.displayMACDsignal,'axisRight')
         
-        const objectList = [close,sma,macd,ema]
+        const objectList = [close,sma,macd,ema,macdSignal]
 
 
         const x = scaleBand()
@@ -264,6 +267,7 @@ function LineCandleGraphContainer (props) {
         const macdline = macd.d3line
         const smaline = sma.d3line
         const emaline = ema.d3line
+        const macdSignalline = macdSignal.d3line
 
         var showRightAxis = false
         for (var i = 0; i < objectList.length; i++) {
@@ -437,7 +441,11 @@ const mapStateToProps = state => {
     nFastForMACD: state.trendFromRootReducer.nFastForMACD,
     trendData: state.trendFromRootReducer.trendData,
     compName: state.tickersFromRootReducer.name,
-    percentChange: state.tickersFromRootReducer.percentChange
+    percentChange: state.tickersFromRootReducer.percentChange,
+    displayMACDsignal: state.trendFromRootReducer.displayMACDsignal,
+    nSlowForMACDsignal: state.trendFromRootReducer.nSlowForMACDsignal,
+    nFastForMACDsignal: state.trendFromRootReducer.nFastForMACDsignal,
+    nSignForMACDsignal: state.trendFromRootReducer.nSlowForMACDsignal,
 
 
   }

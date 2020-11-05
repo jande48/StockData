@@ -1,10 +1,11 @@
 import React, {useState} from 'react'
 import { connect } from 'react-redux'
-import { displaySMA, displayEMA, displayMACD } from '../redux'
+import { displaySMA, displayEMA, displayMACD, displayMACDsignal } from '../redux'
 import { Grid, Menu, Accordion, Checkbox } from "semantic-ui-react"
 import SMAcontentpanel from './accordion/momentum/SMAcontentpanel'
 import EMAcontentPanel from './accordion/momentum/EMAcontentpanel'
 import MACDcontentPanel from './accordion/momentum/MACDcontentpanel'
+import MACDSIGNALcontentPanel from './accordion/trend/MACDSIGNALcontentpanel'
 
 function TrendMenuContainer(props) {
     
@@ -12,6 +13,7 @@ function TrendMenuContainer(props) {
     const [activeSMAAccordionMenuItem, setActiveSMAAccordionMenuItem] = useState(-1)
     const [activeMACDAccordionMenuItem, setActiveMACDAccordionMenuItem] = useState(-1)
     const [activeEMAAccodianMenuItem, setActiveEMAAccodianMenuItem] = useState(-1)
+    const [activeMACDSIGNALAccodianMenuItem, setActiveMACDSIGNALAccodianMenuItem] = useState(-1)
 
     
 
@@ -47,22 +49,38 @@ function TrendMenuContainer(props) {
         </Grid.Column>
         </Grid>)
 
-const EMAAccordionTitle = (
-    <Grid columns='equal'>
-    <Grid.Column width={2}>
-            <Checkbox borderless index={1} onClick={(event) => {
-                        event.stopPropagation()
-                        props.displayEMAdispatch(!props.displayEMA)
+    const EMAAccordionTitle = (
+        <Grid columns='equal'>
+        <Grid.Column width={2}>
+                <Checkbox borderless index={1} onClick={(event) => {
+                            event.stopPropagation()
+                            props.displayEMAdispatch(!props.displayEMA)
 
 
-                    }}>
-            </Checkbox>
-    </Grid.Column>
-    <Grid.Column>
-        <h5>Exponential Moving Average</h5>
-    </Grid.Column>
-    </Grid>)
- 
+                        }}>
+                </Checkbox>
+        </Grid.Column>
+        <Grid.Column>
+            <h5>Exponential Moving Average</h5>
+        </Grid.Column>
+        </Grid>)
+
+    const MACDSIGNALAccordionTitle = (
+      <Grid columns='equal'>
+      <Grid.Column width={2}>
+              <Checkbox borderless index={1} onClick={(event) => {
+                          event.stopPropagation()
+                          props.displayMACDsignaldispatch(!props.displayMACDsignal)
+
+
+                      }}>
+              </Checkbox>
+      </Grid.Column>
+      <Grid.Column>
+          <h5>MACD Signal</h5>
+      </Grid.Column>
+      </Grid>)
+
     const momentumNtradingDayOptions = [
 		{ key: 'one', text: '1', value: 1 },
 		{ key: 'two', text: '2', value: 2 },
@@ -149,6 +167,18 @@ const EMAAccordionTitle = (
                     />
                     <Accordion.Content borderless active={activeEMAAccodianMenuItem === 0} content={<EMAcontentPanel />} />
                 </Menu.Item>
+                <Menu.Item borderless>
+                    <Accordion.Title
+                        active={activeMACDSIGNALAccodianMenuItem === 0}
+                        content={MACDSIGNALAccordionTitle}
+                        index={0}
+                        borderless
+                        onClick={(e,index) => {
+                            setActiveMACDSIGNALAccodianMenuItem(index.index === activeMACDSIGNALAccodianMenuItem ? -1 : index.index)
+                            }}
+                    />
+                    <Accordion.Content borderless active={activeMACDSIGNALAccodianMenuItem === 0} content={<MACDSIGNALcontentPanel />} />
+                </Menu.Item>
 
                    
                 </Accordion>
@@ -170,7 +200,10 @@ const mapStateToProps = state => {
     nForEMA: state.trendFromRootReducer.nForEMA,
     displayMACD: state.trendFromRootReducer.displayMACD,
     nFastForMACD: state.trendFromRootReducer.nFastForMACD,
-    nSlowForMACD: state.trendFromRootReducer.nSlowForMACD
+    nSlowForMACD: state.trendFromRootReducer.nSlowForMACD,
+    displayMACDsignal: state.trendFromRootReducer.displayMACDsignal,
+    nFastForMACDsignal: state.trendFromRootReducer.nFastForMACDsignal,
+    nSlowForMACDsignal: state.trendFromRootReducer.nSlowForMACDsigna,
 
   }
 }
@@ -180,6 +213,7 @@ const mapDispatchToProps = dispatch => {
     displaySMAdispatch: varDisplaySMA => dispatch(displaySMA(varDisplaySMA)),
     displayEMAdispatch: varDisplayEMA => dispatch(displayEMA(varDisplayEMA)),
     displayMACDdispatch: varDisplayMACD => dispatch(displayMACD(varDisplayMACD)),
+    displayMACDsignaldispatch: x => dispatch(displayMACDsignal(x)),
   }
 }
 
