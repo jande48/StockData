@@ -545,9 +545,9 @@ def calculate_Trend_Indicators():
         ADXpositiveChecked = JSON_sent[6]['displayADXP']
         nForADXpositive = JSON_sent[6]['nForADXP']
 
-    # # Average Directional Movement Index Negative 
-    # ADXnegativeChecked = JSON_sent[7]['displayADXnegative']
-    # nForADXnegative = JSON_sent[7]['nForADXnegative']
+        # # Average Directional Movement Index Negative 
+        ADXnegativeChecked = JSON_sent[7]['displayADXN']
+        nForADXnegative = JSON_sent[7]['nForADXN']
 
     # # Vortex Indicator Positive
     # VIpositiveChecked = JSON_sent[8]['displayVIpositive']
@@ -613,9 +613,9 @@ def calculate_Trend_Indicators():
             indicator_ADXpositive = adx_pos(high=df['high'],low=df['low'],close=df['close'],n=nForADXpositive)
             df['adxp'] = indicator_ADXpositive
     
-    # if ADXnegativeChecked:
-    #     indicator_ADXnegative = adx_neg(high=df['high'],low=df['low'],close=df['close'],n=nForADXnegative)
-    #     df['adxNegative'] = indicator_ADXnegative
+        if ADXnegativeChecked:
+            indicator_ADXnegative = adx_neg(high=df['high'],low=df['low'],close=df['close'],n=nForADXnegative)
+            df['adxn'] = indicator_ADXnegative
 
     # if VIpositiveChecked:
     #     indicator_VIpositive = vortex_indicator_pos(high=df['high'],low=df['low'],close=df['close'],n=nForVIpositive)

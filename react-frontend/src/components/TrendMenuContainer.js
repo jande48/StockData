@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import { connect } from 'react-redux'
-import { displaySMA, displayEMA, displayMACD, displayMACDsignal, displayADX, displayADXP } from '../redux'
+import { displaySMA, displayEMA, displayMACD, displayMACDsignal, displayADX, displayADXP, displayADXN } from '../redux'
 import { Grid, Menu, Accordion, Checkbox } from "semantic-ui-react"
 import SMAcontentpanel from './accordion/momentum/SMAcontentpanel'
 import EMAcontentPanel from './accordion/momentum/EMAcontentpanel'
@@ -8,6 +8,7 @@ import MACDcontentPanel from './accordion/momentum/MACDcontentpanel'
 import MACDSIGNALcontentPanel from './accordion/trend/MACDSIGNALcontentpanel'
 import ADXcontentPanel from './accordion/trend/ADXcontentpanel'
 import ADXPcontentPanel from './accordion/trend/ADXPcontentpanel'
+import ADXNcontentPanel from './accordion/trend/ADXNcontentpanel'
 
 function TrendMenuContainer(props) {
     
@@ -18,7 +19,7 @@ function TrendMenuContainer(props) {
     const [activeMACDSIGNALAccodianMenuItem, setActiveMACDSIGNALAccodianMenuItem] = useState(-1)
     const [activeADXAccodianMenuItem, setActiveADXAccodianMenuItem] = useState(-1)
     const [activeADXPAccodianMenuItem, setActiveADXPAccodianMenuItem] = useState(-1)
-
+    const [activeADXNAccodianMenuItem, setActiveADXNAccodianMenuItem] = useState(-1)
     
 
     const SMAAccordionTitle = (
@@ -108,6 +109,19 @@ function TrendMenuContainer(props) {
       </Grid.Column>
       <Grid.Column>
           <h5>Average Directional Movement Positive</h5>
+      </Grid.Column>
+      </Grid>)
+    const ADXNAccordionTitle = (
+      <Grid columns='equal'>
+      <Grid.Column width={2}>
+              <Checkbox borderless index={1} onClick={(event) => {
+                          event.stopPropagation()
+                          props.displayADXNdispatch(!props.displayADXN)
+                      }}>
+              </Checkbox>
+      </Grid.Column>
+      <Grid.Column>
+          <h5>Average Directional Movement Negative</h5>
       </Grid.Column>
       </Grid>)
 
@@ -230,6 +244,18 @@ function TrendMenuContainer(props) {
                     />
                     <Accordion.Content borderless active={activeADXPAccodianMenuItem === 0} content={<ADXPcontentPanel />} />
                 </Menu.Item>
+                <Menu.Item borderless>
+                    <Accordion.Title
+                        active={activeADXNAccodianMenuItem === 0}
+                        content={ADXNAccordionTitle}
+                        index={0}
+                        borderless
+                        onClick={(e,index) => {
+                            setActiveADXNAccodianMenuItem(index.index === activeADXNAccodianMenuItem ? -1 : index.index)
+                            }}
+                    />
+                    <Accordion.Content borderless active={activeADXNAccodianMenuItem === 0} content={<ADXNcontentPanel />} />
+                </Menu.Item>
 
                    
                 </Accordion>
@@ -259,6 +285,8 @@ const mapStateToProps = state => {
     nForADX: state.trendFromRootReducer.nForADX,
     displayADXP: state.trendFromRootReducer.displayADXP,
     nForADXP: state.trendFromRootReducer.nForADXP,
+    displayADXN: state.trendFromRootReducer.displayADXN,
+    nForADXN: state.trendFromRootReducer.nForADXN,
 
   }
 }
@@ -271,6 +299,7 @@ const mapDispatchToProps = dispatch => {
     displayMACDsignaldispatch: x => dispatch(displayMACDsignal(x)),
     displayADXdispatch: x => dispatch(displayADX(x)),
     displayADXPdispatch: x => dispatch(displayADXP(x)),
+    displayADXNdispatch: x => dispatch(displayADXN(x)),
   }
 }
 
