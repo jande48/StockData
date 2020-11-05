@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import { connect } from 'react-redux'
-import { displayRSI, displaySTOCH, displayStochSignal, displayTSI, displayUO, displayWR, displayAO  } from '../redux'
+import { displayRSI, displaySTOCH, displayStochSignal, displayTSI, displayUO, displayWR, displayAO, displayKama  } from '../redux'
 import { Grid, Menu, Accordion, Item, Checkbox, Form, Select} from "semantic-ui-react"
 import Collapsible from 'react-collapsible';
 import RSIcontentPanel from './accordion/momentum/RSIcontentpanel'
@@ -10,6 +10,7 @@ import STOCHcontentPanel from './accordion/momentum/STOCHcontentpanel'
 import STOCHSIGNALcontentPanel from './accordion/momentum/STOCHSIGNALcontentpanel'
 import WRcontentPanel from './accordion/momentum/WRcontentpanel'
 import AOcontentPanel from './accordion/momentum/AOcontentpanel'
+import KamacontentPanel from './accordion/momentum/KAMAcontentpanel'
 
 function MomentumMenuContainer(props) {
     
@@ -20,6 +21,7 @@ function MomentumMenuContainer(props) {
     const [activeSTOCHSIGNALAccodianMenuItem, setSTOCHSIGNALActiveAccordionMenuItem] = useState(-1)
     const [activeWRAccodianMenuItem, setWRActiveAccordionMenuItem] = useState(-1)
     const [activeAOAccodianMenuItem, setAOActiveAccordionMenuItem] = useState(-1)
+    const [activeKAMAAccodianMenuItem, setKAMAActiveAccordionMenuItem] = useState(-1)
 
     const RSIAccordionTitle = (
         <Grid columns='equal'>
@@ -115,6 +117,19 @@ function MomentumMenuContainer(props) {
             <h5>Awesome Oscillator</h5>
         </Grid.Column>
         </Grid>)
+    const KAMAAccordionTitle = (
+        <Grid columns='equal'>
+        <Grid.Column width={2}>
+                <Checkbox borderless index={1} onClick={(event) => {
+                            event.stopPropagation()
+                            props.displayKAMAdispatch(!props.displayKama)
+                    }}>
+                </Checkbox>
+        </Grid.Column>
+        <Grid.Column>
+            <h5>Kaufman's Adaptive MA</h5>
+        </Grid.Column>
+        </Grid>)
 
 
     const momentumNtradingDayOptions = [
@@ -156,23 +171,6 @@ function MomentumMenuContainer(props) {
 	]
 
 
-
-
-    function createAccordionTile(set,state,title){
-        return(
-        <Grid columns='equal'>
-        <Grid.Column width={2}>
-                <Checkbox borderless index={1} onClick={(event) => {
-                            event.stopPropagation()
-                            set(!state)
-                        }}>
-                </Checkbox>
-        </Grid.Column>
-        <Grid.Column>
-            <h5>{title}</h5>
-        </Grid.Column>
-        </Grid>)
-    }
 
 
   return (
@@ -265,6 +263,18 @@ function MomentumMenuContainer(props) {
                                 }}
                         />
                         <Accordion.Content borderless active={activeAOAccodianMenuItem === 0} content={<AOcontentPanel />} />
+                    </Menu.Item>
+                    <Menu.Item borderless>
+                        <Accordion.Title
+                            active={activeKAMAAccodianMenuItem === 0}
+                            content={KAMAAccordionTitle}
+                            index={0}
+                            borderless
+                            onClick={(e,index) => {
+                                setKAMAActiveAccordionMenuItem(index.index === activeKAMAAccodianMenuItem ? -1 : index.index)
+                                }}
+                        />
+                        <Accordion.Content borderless active={activeKAMAAccodianMenuItem === 0} content={<KamacontentPanel />} />
                     </Menu.Item>
                     {/* <Menu.Item borderless>
                         <Accordion.Title
@@ -361,7 +371,11 @@ const mapStateToProps = state => {
     displayWR: state.momentumFromRootReducer.displayWR,
     displayAO: state.momentumFromRootReducer.displayAO,
     sForAO: state.momentumFromRootReducer.sForAO,
-    lenForAO: state.momentumFromRootReducer.lenForAO
+    lenForAO: state.momentumFromRootReducer.lenForAO,
+    displayKama: state.momentumFromRootReducer.displayKama,
+    nForKama: state.momentumFromRootReducer.nForKama,
+    pow1ForKama: state.momentumFromRootReducer.pow1ForKama,
+    pow2ForKama: state.momentumFromRootReducer.pow2ForKama
 
   }
 }
@@ -375,6 +389,7 @@ const mapDispatchToProps = dispatch => {
     displaySTOCHSIGNALdispatch: x => dispatch(displayStochSignal(x)),
     displayWRdispatch: x => dispatch(displayWR(x)),
     displayAOdispatch: x => dispatch(displayAO(x)),
+    displayKAMAdispatch: x => dispatch(displayKama(x))
     
   }
 }
@@ -849,3 +864,21 @@ export default connect(
     //             )    
     //     } else {}
     //     }
+
+
+
+    // function createAccordionTile(set,state,title){
+    //     return(
+    //     <Grid columns='equal'>
+    //     <Grid.Column width={2}>
+    //             <Checkbox borderless index={1} onClick={(event) => {
+    //                         event.stopPropagation()
+    //                         set(!state)
+    //                     }}>
+    //             </Checkbox>
+    //     </Grid.Column>
+    //     <Grid.Column>
+    //         <h5>{title}</h5>
+    //     </Grid.Column>
+    //     </Grid>)
+    // }

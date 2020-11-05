@@ -1,7 +1,7 @@
 import { nForRSI } from './momentumActions'
 import { DISPLAY_RSI, N_FOR_RSI, DISPLAY_TSI, R_FOR_TSI, S_FOR_TSI, S_FOR_UO, M_FOR_UO, LEN_FOR_UO, WS_FOR_UO, WM_FOR_UO, WL_FOR_UO, DISPLAY_UO,
   DISPLAY_STOCH, N_FOR_STOCH, D_N_FOR_STOCH, DISPLAY_STOCH_SIGNAL, N_FOR_STOCH_SIGNAL, D_N_FOR_STOCH_SIGNAL, DISPLAY_WR, LBP_FOR_WR,
-  DISPLAY_AO, S_FOR_AO, LEN_FOR_AO,
+  DISPLAY_AO, S_FOR_AO, LEN_FOR_AO, DISPLAY_KAMA, N_FOR_KAMA, POW1_FOR_KAMA, POW2_FOR_KAMA,
   FETCH_MOMENTUM_DATA_REQUEST,
   FETCH_MOMENTUM_DATA_SUCCESS,
   FETCH_MOMENTUM_DATA_FAILURE, 
@@ -31,6 +31,10 @@ const initialState = {
   displayAO: false,
   sForAO: 5,
   lenForAO: 34,
+  displayKama: false,
+  nForKama: 10,
+  pow1ForKama: 2,
+  pow2ForKama: 30,
   momentumLoads: 0,
   loading: false
 }
@@ -129,6 +133,22 @@ const momentumReducer = (state = initialState, action) => {
     case LEN_FOR_AO: return {
       ...state,
       lenForAO: action.payload
+    }
+    case DISPLAY_KAMA: return {
+      ...state,
+      displayKama: action.payload
+    }
+    case N_FOR_KAMA: return {
+      ...state,
+      nForKama: action.payload
+    }
+    case POW1_FOR_KAMA: return {
+      ...state,
+      pow1ForKama: action.payload
+    }
+    case POW2_FOR_KAMA: return {
+      ...state,
+      pow2ForKama: action.payload
     }
     case FETCH_MOMENTUM_DATA_REQUEST:
       return {

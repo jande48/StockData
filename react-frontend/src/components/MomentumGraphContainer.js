@@ -35,14 +35,15 @@ function MomentumGraphContainer (props) {
       const StochSignalparameters = {'displayStochSignal':props.displayStochSignal,'nForStochSignal':props.nForStochSignal,'dnForStochSignal':props.dnForStochSignal}
       const WilliamsRparameters = {'displayWR':props.displayWR,'lbpForWR':props.lbpForWR}
       const AOparameters = {'displayAO':props.displayAO,'sForAO':props.sForAO,'lenForAO':props.lenForAO}
+      const KAMAparameters = {'displayKama':props.displayKama,'nForKama':props.nForKama,'pow1ForKama':props.pow1ForKama,'pow2ForKama':props.pow2ForKama}
       
     
-      props.fetchMomentumData(JSON.stringify([props.stockData,RSIparameters,TSIparameters,UOparameters,STOCHparameters,StochSignalparameters,WilliamsRparameters,AOparameters]))
+      props.fetchMomentumData(JSON.stringify([props.stockData,RSIparameters,TSIparameters,UOparameters,STOCHparameters,StochSignalparameters,WilliamsRparameters,AOparameters,KAMAparameters]))
 
     }
     
   }, [props.stockData,props.displayRSI,props.nForRSI,props.displayTSI,props.sForTSI,props.rForTSI,props.displayUO,props.sForUO,props.mForUO,props.lenForUO,props.wsForUO,props.wmForUO,props.wlForUO,props.displaySTOCH,props.nForSTOCH,props.dnForSTOCH,
-  props.displayStochSignal,props.nForStochSignal,props.dnForStochSignal,props.displayWR,props.lbpForWR,props.displayAO,props.sForAO,props.lenForAO])
+  props.displayStochSignal,props.nForStochSignal,props.dnForStochSignal,props.displayWR,props.lbpForWR,props.displayAO,props.sForAO,props.lenForAO,props.displayKama,props.nForKama,props.pow1ForKama,props.pow2ForKama])
 
   if (props.momentumLoads > 0) {
     function createMomentumIndicatorsChart(momentumIndicatorsChartNode) {
@@ -147,8 +148,9 @@ function MomentumGraphContainer (props) {
       const stochSignal = new Indicator('stoch_signal',"#8c564b",data,props.displayStochSignal,'axisLeft')
       const williamsR = new Indicator('wr',"#e377c2",data,props.displayWR,'axisRight')
       const ao = new Indicator('ao',"#7f7f7f",data,props.displayAO,'axisRight')
+      const kama = new Indicator('kama',"#bcbd22",data,props.displayKama,'axisLeft')
 
-      const objectList = [rsi,tsi,uo,stoch,stochSignal,williamsR,ao]
+      const objectList = [rsi,tsi,uo,stoch,stochSignal,williamsR,ao,kama]
       
       const x = scaleBand()
           .domain(d3.utcDay
@@ -243,6 +245,7 @@ function MomentumGraphContainer (props) {
       const stochSignalLine = stochSignal.d3line
       const wrline = williamsR.d3line
       const aoline = ao.d3line
+      const kamaline = kama.d3line
       
       if ( props.displayWR || props.displayAO) {
         svg.append("g")
@@ -399,6 +402,10 @@ const mapStateToProps = state => {
     displayAO: state.momentumFromRootReducer.displayAO,
     sForAO: state.momentumFromRootReducer.sForAO,
     lenForAO: state.momentumFromRootReducer.lenForAO,
+    displayKama: state.momentumFromRootReducer.displayKama,
+    nForKama: state.momentumFromRootReducer.nForKama,
+    pow1ForKama: state.momentumFromRootReducer.pow1ForKama,
+    pow2ForKama: state.momentumFromRootReducer.pow2ForKama,
 
     
   }

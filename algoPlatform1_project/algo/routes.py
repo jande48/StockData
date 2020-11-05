@@ -878,10 +878,10 @@ def calculate_Momentum_Indicators():
     lenForAO = JSON_sent[7]['lenForAO']
 
     # # Kaufman's Adaptive Moving Average (KAMA)
-    # kamaChecked = JSON_sent[8]['displayKama']
-    # nForKama = JSON_sent[8]['nForKama']
-    # pow1ForKama = JSON_sent[8]['pow1ForKama']
-    # pow2ForKama = JSON_sent[8]['pow2ForKama']
+    kamaChecked = JSON_sent[8]['displayKama']
+    nForKama = JSON_sent[8]['nForKama']
+    pow1ForKama = JSON_sent[8]['pow1ForKama']
+    pow2ForKama = JSON_sent[8]['pow2ForKama']
 
     # # Rate of Change (ROC)
     # ROCChecked = JSON_sent[9]['displayROC']
@@ -914,9 +914,9 @@ def calculate_Momentum_Indicators():
         indicator_ao = ao(high=df['high'],low=df['low'],s=sForUO,len=lenForUO)
         df['ao'] = indicator_ao
 
-    # if kamaChecked:
-    #     indicator_kama = kama(close=df['close'],n=nForKama,pow1=pow1ForKama,pow2=pow2ForKama)
-    #     df['kama'] = indicator_kama
+    if kamaChecked:
+        indicator_kama = kama(close=df['close'],n=nForKama,pow1=pow1ForKama,pow2=pow2ForKama)
+        df['kama'] = indicator_kama
 
     # if ROCChecked:
     #     indicator_roc = roc(close=df['close'],n=nForRSI)
