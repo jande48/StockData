@@ -33,13 +33,13 @@ function MomentumGraphContainer (props) {
       const UOparameters = {'displayUO':props.displayUO,'sForUO':props.sForUO,'mForUO':props.mForUO,'lenForUO':props.lenForUO,'wsForUO':props.wsForUO,'wmForUO':props.wmForUO,'wlForUO':props.wlForUO}
       const STOCHparameters = {'displaySTOCH':props.displaySTOCH,'nForSTOCH':props.nForSTOCH, 'dnForSTOCH':props.dnForSTOCH}
       const StochSignalparameters = {'displayStochSignal':props.displayStochSignal,'nForStochSignal':props.nForStochSignal,'dnForStochSignal':props.dnForStochSignal}
-
-      props.fetchMomentumData(JSON.stringify([props.stockData,RSIparameters,TSIparameters,UOparameters,STOCHparameters,StochSignalparameters]))
+      const WilliamsRparameters = {'displayWR':props.displayWR,'lbpForWR':props.lbpForWR}
+      props.fetchMomentumData(JSON.stringify([props.stockData,RSIparameters,TSIparameters,UOparameters,STOCHparameters,StochSignalparameters,WilliamsRparameters]))
 
     }
     
   }, [props.stockData,props.displayRSI,props.nForRSI,props.displayTSI,props.sForTSI,props.rForTSI,props.displayUO,props.sForUO,props.mForUO,props.lenForUO,props.wsForUO,props.wmForUO,props.wlForUO,props.displaySTOCH,props.nForSTOCH,props.dnForSTOCH,
-  props.displayStochSignal,props.nForStochSignal,props.dnForStochSignal])
+  props.displayStochSignal,props.nForStochSignal,props.dnForStochSignal,props.displayWR,props.lbpForWR])
 
   if (props.momentumLoads > 0) {
     function createMomentumIndicatorsChart(momentumIndicatorsChartNode) {
@@ -142,8 +142,9 @@ function MomentumGraphContainer (props) {
       const uo = new Indicator('uo',"#d62728",data,props.displayUO,'axisLeft')
       const stoch = new Indicator('stoch',"#9467bd",data,props.displaySTOCH,'axisLeft')
       const stochSignal = new Indicator('stoch_signal',"#8c564b",data,props.displayStochSignal,'axisLeft')
+      const williamsR = new Indicator('wr',"#e377c2",data,props.displayWR,'axisRight')
 
-      const objectList = [rsi,macd,tsi,uo,stoch,stochSignal]
+      const objectList = [rsi,macd,tsi,uo,stoch,stochSignal,williamsR]
       
       const x = scaleBand()
           .domain(d3.utcDay
@@ -236,8 +237,9 @@ function MomentumGraphContainer (props) {
       const uoline = uo.d3line
       const stochline = stoch.d3line
       const stochSignalLine = stochSignal.d3line
+      const wrline = williamsR.d3line
       
-      if (props.displayMACD) {
+      if (props.displayMACD || props.displayWR) {
         svg.append("g")
           .attr('fill',macd.color)
           .call(yAxisRight)
@@ -387,6 +389,8 @@ const mapStateToProps = state => {
     displayStochSignal: state.momentumFromRootReducer.displayStochSignal,
     nForStochSignal: state.momentumFromRootReducer.nForStochSignal,
     dnForStochSignal: state.momentumFromRootReducer.dnForStochSignal,
+    displayWR: state.momentumFromRootReducer.displayWR,
+    lbpForWR: state.momentumFromRootReducer.lbpForWR,
     
   }
 }

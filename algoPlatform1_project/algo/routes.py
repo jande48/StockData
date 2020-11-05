@@ -869,8 +869,8 @@ def calculate_Momentum_Indicators():
     dnForStochSignal = int(JSON_sent[5]['dnForStochSignal'])
 
     # # Williams %R
-    # wrChecked = JSON_sent[6]['displayWR']
-    # lbpForWR = int(JSON_sent[6]['lbpForWR'])
+    wrChecked = JSON_sent[6]['displayWR']
+    lbpForWR = int(JSON_sent[6]['lbpForWR'])
 
     # # Awesome Oscillator
     # aoChecked = JSON_sent[7]['displayAO']
@@ -906,9 +906,9 @@ def calculate_Momentum_Indicators():
         indicator_StochSignal = stoch_signal(high=df['high'],low=df['low'],close=df['close'],n=nForStochSignal,d_n=dnForStochSignal)
         df['stoch_signal'] = indicator_StochSignal
 
-    # if wrChecked:
-    #     indicator_wr = wr(high=df['high'],low=df['low'],close=df['close'],lbp=lbpForWR)
-    #     df['wr'] = indicator_wr
+    if wrChecked:
+        indicator_wr = wr(high=df['high'],low=df['low'],close=df['close'],lbp=lbpForWR)
+        df['wr'] = indicator_wr
     
     # if aoChecked:
     #     indicator_ao = ao(high=df['high'],low=df['low'],s=sForUO,len=lenForUO)

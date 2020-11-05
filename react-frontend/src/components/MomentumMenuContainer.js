@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import { connect } from 'react-redux'
-import { displayRSI, displaySTOCH, displayStochSignal, displayTSI, displayUO } from '../redux'
+import { displayRSI, displaySTOCH, displayStochSignal, displayTSI, displayUO, displayWR,  } from '../redux'
 import { Grid, Menu, Accordion, Item, Checkbox, Form, Select} from "semantic-ui-react"
 import Collapsible from 'react-collapsible';
 import RSIcontentPanel from './accordion/momentum/RSIcontentpanel'
@@ -8,6 +8,7 @@ import TSIcontentPanel from './accordion/momentum/TSIcontentpanel'
 import UOcontentPanel from './accordion/momentum/UOcontentpanel'
 import STOCHcontentPanel from './accordion/momentum/STOCHcontentpanel'
 import STOCHSIGNALcontentPanel from './accordion/momentum/STOCHSIGNALcontentpanel'
+import WRcontentPanel from './accordion/momentum/WRcontentpanel'
 
 function MomentumMenuContainer(props) {
     
@@ -16,6 +17,7 @@ function MomentumMenuContainer(props) {
     const [activeUOAccodianMenuItem, setUOActiveAccordionMenuItem] = useState(-1)
     const [activeSTOCHAccodianMenuItem, setSTOCHActiveAccordionMenuItem] = useState(-1)
     const [activeSTOCHSIGNALAccodianMenuItem, setSTOCHSIGNALActiveAccordionMenuItem] = useState(-1)
+    const [activeWRAccodianMenuItem, setWRActiveAccordionMenuItem] = useState(-1)
 
     const RSIAccordionTitle = (
         <Grid columns='equal'>
@@ -85,6 +87,21 @@ function MomentumMenuContainer(props) {
             <h5>Stochcastic Signal Oscillator</h5>
         </Grid.Column>
         </Grid>)
+    const WRAccordionTitle = (
+        <Grid columns='equal'>
+        <Grid.Column width={2}>
+                <Checkbox borderless index={1} onClick={(event) => {
+                            event.stopPropagation()
+                            props.displayWRdispatch(!props.displayWR)
+                    }}>
+                </Checkbox>
+        </Grid.Column>
+        <Grid.Column>
+            <h5>Williams %R</h5>
+        </Grid.Column>
+        </Grid>)
+
+
     const momentumNtradingDayOptions = [
 		{ key: 'one', text: '1', value: 1 },
 		{ key: 'two', text: '2', value: 2 },
@@ -583,6 +600,18 @@ function MomentumMenuContainer(props) {
                         />
                         <Accordion.Content borderless active={activeSTOCHSIGNALAccodianMenuItem === 0} content={<STOCHSIGNALcontentPanel />} />
                     </Menu.Item>
+                    <Menu.Item borderless>
+                        <Accordion.Title
+                            active={activeWRAccodianMenuItem === 0}
+                            content={WRAccordionTitle}
+                            index={0}
+                            borderless
+                            onClick={(e,index) => {
+                                setWRActiveAccordionMenuItem(index.index === activeWRAccodianMenuItem ? -1 : index.index)
+                                }}
+                        />
+                        <Accordion.Content borderless active={activeWRAccodianMenuItem === 0} content={<WRcontentPanel />} />
+                    </Menu.Item>
                     {/* <Menu.Item borderless>
                         <Accordion.Title
                             active={activeAOAccodianMenuItem === 0}
@@ -675,6 +704,7 @@ const mapStateToProps = state => {
     displayUO: state.momentumFromRootReducer.displayUO,
     displaySTOCH: state.momentumFromRootReducer.displaySTOCH,
     displayStochSignal: state.momentumFromRootReducer.displayStochSignal,
+    displayWR: state.momentumFromRootReducer.displayWR,
 
   }
 }
@@ -686,6 +716,7 @@ const mapDispatchToProps = dispatch => {
     displayUOdispatch: x => dispatch(displayUO(x)),
     displaySTOCHdispatch: x => dispatch(displaySTOCH(x)),
     displaySTOCHSIGNALdispatch: x => dispatch(displayStochSignal(x)),
+    displayWRdispatch: x => dispatch(displayWR(x))
   }
 }
 

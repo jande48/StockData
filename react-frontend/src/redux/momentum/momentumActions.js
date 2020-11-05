@@ -1,6 +1,6 @@
   
 import { DISPLAY_RSI, N_FOR_RSI, DISPLAY_TSI, R_FOR_TSI, S_FOR_TSI, S_FOR_UO, M_FOR_UO, LEN_FOR_UO, WS_FOR_UO, WM_FOR_UO, WL_FOR_UO, DISPLAY_UO,
-  DISPLAY_STOCH, N_FOR_STOCH, D_N_FOR_STOCH, DISPLAY_STOCH_SIGNAL, N_FOR_STOCH_SIGNAL, D_N_FOR_STOCH_SIGNAL,
+  DISPLAY_STOCH, N_FOR_STOCH, D_N_FOR_STOCH, DISPLAY_STOCH_SIGNAL, N_FOR_STOCH_SIGNAL, D_N_FOR_STOCH_SIGNAL, DISPLAY_WR, LBP_FOR_WR,
   FETCH_MOMENTUM_DATA_REQUEST,
   FETCH_MOMENTUM_DATA_SUCCESS,
   FETCH_MOMENTUM_DATA_FAILURE } from './momentumTypes'
@@ -114,6 +114,18 @@ export const nForStochSignal = (n) => {
 export const dnForStochSignal = (n) => {
   return {
     type: D_N_FOR_STOCH_SIGNAL,
+    payload: n
+  }
+}
+export const displayWR = (n) => {
+  return {
+    type: DISPLAY_WR,
+    payload: n
+  }
+}
+export const lbpForWR = (n) => {
+  return {
+    type: LBP_FOR_WR,
     payload: n
   }
 }
