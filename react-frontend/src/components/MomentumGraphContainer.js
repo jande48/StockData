@@ -34,12 +34,15 @@ function MomentumGraphContainer (props) {
       const STOCHparameters = {'displaySTOCH':props.displaySTOCH,'nForSTOCH':props.nForSTOCH, 'dnForSTOCH':props.dnForSTOCH}
       const StochSignalparameters = {'displayStochSignal':props.displayStochSignal,'nForStochSignal':props.nForStochSignal,'dnForStochSignal':props.dnForStochSignal}
       const WilliamsRparameters = {'displayWR':props.displayWR,'lbpForWR':props.lbpForWR}
-      props.fetchMomentumData(JSON.stringify([props.stockData,RSIparameters,TSIparameters,UOparameters,STOCHparameters,StochSignalparameters,WilliamsRparameters]))
+      const AOparameters = {'displayAO':props.displayAO,'sForAO':props.sForAO,'lenForAO':props.lenForAO}
+      
+    
+      props.fetchMomentumData(JSON.stringify([props.stockData,RSIparameters,TSIparameters,UOparameters,STOCHparameters,StochSignalparameters,WilliamsRparameters,AOparameters]))
 
     }
     
   }, [props.stockData,props.displayRSI,props.nForRSI,props.displayTSI,props.sForTSI,props.rForTSI,props.displayUO,props.sForUO,props.mForUO,props.lenForUO,props.wsForUO,props.wmForUO,props.wlForUO,props.displaySTOCH,props.nForSTOCH,props.dnForSTOCH,
-  props.displayStochSignal,props.nForStochSignal,props.dnForStochSignal,props.displayWR,props.lbpForWR])
+  props.displayStochSignal,props.nForStochSignal,props.dnForStochSignal,props.displayWR,props.lbpForWR,props.displayAO,props.sForAO,props.lenForAO])
 
   if (props.momentumLoads > 0) {
     function createMomentumIndicatorsChart(momentumIndicatorsChartNode) {
@@ -137,14 +140,15 @@ function MomentumGraphContainer (props) {
       }
 
       const rsi = new Indicator('rsi',"#1f77b4",data,props.displayRSI,'axisLeft');
-      const macd = new Indicator('macd',"#ff7f0e",trendData,props.displayMACD,'axisRight')
+      //const macd = new Indicator('macd',"#ff7f0e",trendData,props.displayMACD,'axisRight')
       const tsi = new Indicator('tsi',"#2ca02c",data,props.displayTSI,'axisLeft')
       const uo = new Indicator('uo',"#d62728",data,props.displayUO,'axisLeft')
       const stoch = new Indicator('stoch',"#9467bd",data,props.displaySTOCH,'axisLeft')
       const stochSignal = new Indicator('stoch_signal',"#8c564b",data,props.displayStochSignal,'axisLeft')
       const williamsR = new Indicator('wr',"#e377c2",data,props.displayWR,'axisRight')
+      const ao = new Indicator('ao',"#7f7f7f",data,props.displayAO,'axisRight')
 
-      const objectList = [rsi,macd,tsi,uo,stoch,stochSignal,williamsR]
+      const objectList = [rsi,tsi,uo,stoch,stochSignal,williamsR,ao]
       
       const x = scaleBand()
           .domain(d3.utcDay
@@ -232,16 +236,17 @@ function MomentumGraphContainer (props) {
       // categorical 10: ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"]
       
       const rsiline = rsi.d3line
-      const macdline = macd.d3line
+      //const macdline = macd.d3line
       const tsiline = tsi.d3line
       const uoline = uo.d3line
       const stochline = stoch.d3line
       const stochSignalLine = stochSignal.d3line
       const wrline = williamsR.d3line
+      const aoline = ao.d3line
       
-      if (props.displayMACD || props.displayWR) {
+      if ( props.displayWR || props.displayAO) {
         svg.append("g")
-          .attr('fill',macd.color)
+          .attr('fill', () => props.displayWR ? williamsR.color : ao.color )
           .call(yAxisRight)
       }
 
@@ -373,9 +378,9 @@ const mapStateToProps = state => {
     displayTSI: state.momentumFromRootReducer.displayTSI,
     rForTSI: state.momentumFromRootReducer.rForTSI,
     sForTSI: state.momentumFromRootReducer.sForTSI,
-    displayMACD: state.trendFromRootReducer.displayMACD,
-    nSlowForMACD: state.trendFromRootReducer.nSlowForMACD,
-    nFastForMACD: state.trendFromRootReducer.nFastForMACD,
+    //displayMACD: state.trendFromRootReducer.displayMACD,
+    //nSlowForMACD: state.trendFromRootReducer.nSlowForMACD,
+    //nFastForMACD: state.trendFromRootReducer.nFastForMACD,
     sForUO: state.momentumFromRootReducer.sForUO,
     mForUO: state.momentumFromRootReducer.mForUO,
     lenForUO: state.momentumFromRootReducer.lenForUO,
@@ -391,6 +396,10 @@ const mapStateToProps = state => {
     dnForStochSignal: state.momentumFromRootReducer.dnForStochSignal,
     displayWR: state.momentumFromRootReducer.displayWR,
     lbpForWR: state.momentumFromRootReducer.lbpForWR,
+    displayAO: state.momentumFromRootReducer.displayAO,
+    sForAO: state.momentumFromRootReducer.sForAO,
+    lenForAO: state.momentumFromRootReducer.lenForAO,
+
     
   }
 }

@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import { connect } from 'react-redux'
-import { displayRSI, displaySTOCH, displayStochSignal, displayTSI, displayUO, displayWR,  } from '../redux'
+import { displayRSI, displaySTOCH, displayStochSignal, displayTSI, displayUO, displayWR, displayAO  } from '../redux'
 import { Grid, Menu, Accordion, Item, Checkbox, Form, Select} from "semantic-ui-react"
 import Collapsible from 'react-collapsible';
 import RSIcontentPanel from './accordion/momentum/RSIcontentpanel'
@@ -9,6 +9,7 @@ import UOcontentPanel from './accordion/momentum/UOcontentpanel'
 import STOCHcontentPanel from './accordion/momentum/STOCHcontentpanel'
 import STOCHSIGNALcontentPanel from './accordion/momentum/STOCHSIGNALcontentpanel'
 import WRcontentPanel from './accordion/momentum/WRcontentpanel'
+import AOcontentPanel from './accordion/momentum/AOcontentpanel'
 
 function MomentumMenuContainer(props) {
     
@@ -18,6 +19,7 @@ function MomentumMenuContainer(props) {
     const [activeSTOCHAccodianMenuItem, setSTOCHActiveAccordionMenuItem] = useState(-1)
     const [activeSTOCHSIGNALAccodianMenuItem, setSTOCHSIGNALActiveAccordionMenuItem] = useState(-1)
     const [activeWRAccodianMenuItem, setWRActiveAccordionMenuItem] = useState(-1)
+    const [activeAOAccodianMenuItem, setAOActiveAccordionMenuItem] = useState(-1)
 
     const RSIAccordionTitle = (
         <Grid columns='equal'>
@@ -100,6 +102,19 @@ function MomentumMenuContainer(props) {
             <h5>Williams %R</h5>
         </Grid.Column>
         </Grid>)
+    const AOAccordionTitle = (
+        <Grid columns='equal'>
+        <Grid.Column width={2}>
+                <Checkbox borderless index={1} onClick={(event) => {
+                            event.stopPropagation()
+                            props.displayAOdispatch(!props.displayAO)
+                    }}>
+                </Checkbox>
+        </Grid.Column>
+        <Grid.Column>
+            <h5>Awesome Oscillator</h5>
+        </Grid.Column>
+        </Grid>)
 
 
     const momentumNtradingDayOptions = [
@@ -159,379 +174,6 @@ function MomentumMenuContainer(props) {
         </Grid>)
     }
 
-
-    function createContentPanelAccordion(title,place,set) {
-        // for (var i = 0; i < title.length; i++) {
-        //     return (
-
-        //     )
-        if (title.length == 1) {
-            return (
-            <Grid columns='equal'>
-                <Grid.Column>
-                    <br/>{title[0]}
-                </Grid.Column>
-                <Grid.Column width={4}>
-                    <Form.Field
-                        control={Select}
-                        options={momentumNtradingDayOptions}
-                        placeholder={place[0]}
-                        compact
-                        onChange ={(e,selectedOption) => {
-                            set[0](selectedOption.value)
-                            }}
-                    />
-                </Grid.Column>
-            </Grid>
-            )
-        } else if (title.length == 2) {
-            return (
-            <Grid columns='equal'>
-                <Grid.Row>
-                <Grid.Column>
-                    <br/>{title[0]}
-                </Grid.Column>
-                <Grid.Column width={4}>
-                    <Form.Field
-                        control={Select}
-                        options={momentumNtradingDayOptions}
-                        placeholder={place[0]}
-                        compact
-                        onChange ={(e,selectedOption) => {
-                            set[0](selectedOption.value)
-                            }}
-                    />
-                </Grid.Column>
-                </Grid.Row>
-                <Grid.Row>
-                <Grid.Column>
-                    <br/>{title[1]}
-                </Grid.Column>
-                <Grid.Column width={4}>
-                    <Form.Field
-                        control={Select}
-                        options={momentumNtradingDayOptions}
-                        placeholder={place[1]}
-                        compact
-                        onChange ={(e,selectedOption) => {
-                            set[1](selectedOption.value)
-                            }}
-                    />
-                </Grid.Column>
-                </Grid.Row>
-            </Grid>
-            )
-        } else if (title.length == 3) {
-            return (
-                <Grid columns='equal'>
-                    <Grid.Row>
-                    <Grid.Column>
-                        <br/>{title[0]}
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                        <Form.Field
-                            control={Select}
-                            options={momentumNtradingDayOptions}
-                            placeholder={place[0]}
-                            compact
-                            onChange ={(e,selectedOption) => {
-                                set[0](selectedOption.value)
-                                }}
-                        />
-                    </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                    <Grid.Column>
-                        <br/>{title[1]}
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                        <Form.Field
-                            control={Select}
-                            options={momentumNtradingDayOptions}
-                            placeholder={place[1]}
-                            compact
-                            onChange ={(e,selectedOption) => {
-                                set[1](selectedOption.value)
-                                }}
-                        />
-                    </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                    <Grid.Column>
-                        <br/>{title[2]}
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                        <Form.Field
-                            control={Select}
-                            options={momentumNtradingDayOptions}
-                            placeholder={place[2]}
-                            compact
-                            onChange ={(e,selectedOption) => {
-                                set[2](selectedOption.value)
-                                }}
-                        />
-                    </Grid.Column>
-                    </Grid.Row>
-                </Grid>
-                )
-        } else if (title.length == 4) {
-            return (
-                <Grid columns='equal'>
-                    <Grid.Row>
-                    <Grid.Column>
-                        <br/>{title[0]}
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                        <Form.Field
-                            control={Select}
-                            options={momentumNtradingDayOptions}
-                            placeholder={place[0]}
-                            compact
-                            onChange ={(e,selectedOption) => {
-                                set[0](selectedOption.value)
-                                }}
-                        />
-                    </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                    <Grid.Column>
-                        <br/>{title[1]}
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                        <Form.Field
-                            control={Select}
-                            options={momentumNtradingDayOptions}
-                            placeholder={place[1]}
-                            compact
-                            onChange ={(e,selectedOption) => {
-                                set[1](selectedOption.value)
-                                }}
-                        />
-                    </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                    <Grid.Column>
-                        <br/>{title[2]}
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                        <Form.Field
-                            control={Select}
-                            options={momentumNtradingDayOptions}
-                            placeholder={place[2]}
-                            compact
-                            onChange ={(e,selectedOption) => {
-                                set[2](selectedOption.value)
-                                }}
-                        />
-                    </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                    <Grid.Column>
-                        <br/>{title[3]}
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                        <Form.Field
-                            control={Select}
-                            options={momentumNtradingDayOptions}
-                            placeholder={place[3]}
-                            compact
-                            onChange ={(e,selectedOption) => {
-                                set[3](selectedOption.value)
-                                }}
-                        />
-                    </Grid.Column>
-                    </Grid.Row>
-                </Grid>
-                )
-    
-        } else if (title.length == 5) {
-            return (
-                <Grid columns='equal'>
-                    <Grid.Row>
-                    <Grid.Column>
-                        <br/>{title[0]}
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                        <Form.Field
-                            control={Select}
-                            options={momentumNtradingDayOptions}
-                            placeholder={place[0]}
-                            compact
-                            onChange ={(e,selectedOption) => {
-                                set[0](selectedOption.value)
-                                }}
-                        />
-                    </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                    <Grid.Column>
-                        <br/>{title[1]}
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                        <Form.Field
-                            control={Select}
-                            options={momentumNtradingDayOptions}
-                            placeholder={place[1]}
-                            compact
-                            onChange ={(e,selectedOption) => {
-                                set[1](selectedOption.value)
-                                }}
-                        />
-                    </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                    <Grid.Column>
-                        <br/>{title[2]}
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                        <Form.Field
-                            control={Select}
-                            options={momentumNtradingDayOptions}
-                            placeholder={place[2]}
-                            compact
-                            onChange ={(e,selectedOption) => {
-                                set[2](selectedOption.value)
-                                }}
-                        />
-                    </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                    <Grid.Column>
-                        <br/>{title[3]}
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                        <Form.Field
-                            control={Select}
-                            options={momentumNtradingDayOptions}
-                            placeholder={place[3]}
-                            compact
-                            onChange ={(e,selectedOption) => {
-                                set[3](selectedOption.value)
-                                }}
-                        />
-                    </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                    <Grid.Column>
-                        <br/>{title[4]}
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                        <Form.Field
-                            control={Select}
-                            options={momentumNtradingDayOptions}
-                            placeholder={place[4]}
-                            compact
-                            onChange ={(e,selectedOption) => {
-                                set[4](selectedOption.value)
-                                }}
-                        />
-                    </Grid.Column>
-                    </Grid.Row>
-                </Grid>
-                )
-        } else if (title.length == 6) {
-            return (
-                <Grid columns='equal'>
-                    <Grid.Row>
-                    <Grid.Column>
-                        <br/>{title[0]}
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                        <Form.Field
-                            control={Select}
-                            options={momentumNtradingDayOptions}
-                            placeholder={place[0]}
-                            compact
-                            onChange ={(e,selectedOption) => {
-                                set[0](selectedOption.value)
-                                }}
-                        />
-                    </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                    <Grid.Column>
-                        <br/>{title[1]}
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                        <Form.Field
-                            control={Select}
-                            options={momentumNtradingDayOptions}
-                            placeholder={place[1]}
-                            compact
-                            onChange ={(e,selectedOption) => {
-                                set[1](selectedOption.value)
-                                }}
-                        />
-                    </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                    <Grid.Column>
-                        <br/>{title[2]}
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                        <Form.Field
-                            control={Select}
-                            options={momentumNtradingDayOptions}
-                            placeholder={place[2]}
-                            compact
-                            onChange ={(e,selectedOption) => {
-                                set[2](selectedOption.value)
-                                }}
-                        />
-                    </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                    <Grid.Column>
-                        <br/>{title[3]}
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                        <Form.Field
-                            control={Select}
-                            options={momentumNtradingDayOptions}
-                            placeholder={place[3]}
-                            compact
-                            onChange ={(e,selectedOption) => {
-                                set[3](selectedOption.value)
-                                }}
-                        />
-                    </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                    <Grid.Column>
-                        <br/>{title[4]}
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                        <Form.Field
-                            control={Select}
-                            options={momentumNtradingDayOptions}
-                            placeholder={place[4]}
-                            compact
-                            onChange ={(e,selectedOption) => {
-                                set[4](selectedOption.value)
-                                }}
-                        />
-                    </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                    <Grid.Column>
-                        <br/>{title[5]}
-                    </Grid.Column>
-                    <Grid.Column width={4}>
-                        <Form.Field
-                            control={Select}
-                            options={momentumNtradingDayOptions}
-                            placeholder={place[5]}
-                            compact
-                            onChange ={(e,selectedOption) => {
-                                set[5](selectedOption.value)
-                                }}
-                        />
-                    </Grid.Column>
-                    </Grid.Row>
-                </Grid>
-                )    
-        } else {}
-        }
 
   return (
     <div>
@@ -611,6 +253,18 @@ function MomentumMenuContainer(props) {
                                 }}
                         />
                         <Accordion.Content borderless active={activeWRAccodianMenuItem === 0} content={<WRcontentPanel />} />
+                    </Menu.Item>
+                    <Menu.Item borderless>
+                        <Accordion.Title
+                            active={activeAOAccodianMenuItem === 0}
+                            content={AOAccordionTitle}
+                            index={0}
+                            borderless
+                            onClick={(e,index) => {
+                                setAOActiveAccordionMenuItem(index.index === activeAOAccodianMenuItem ? -1 : index.index)
+                                }}
+                        />
+                        <Accordion.Content borderless active={activeAOAccodianMenuItem === 0} content={<AOcontentPanel />} />
                     </Menu.Item>
                     {/* <Menu.Item borderless>
                         <Accordion.Title
@@ -705,6 +359,9 @@ const mapStateToProps = state => {
     displaySTOCH: state.momentumFromRootReducer.displaySTOCH,
     displayStochSignal: state.momentumFromRootReducer.displayStochSignal,
     displayWR: state.momentumFromRootReducer.displayWR,
+    displayAO: state.momentumFromRootReducer.displayAO,
+    sForAO: state.momentumFromRootReducer.sForAO,
+    lenForAO: state.momentumFromRootReducer.lenForAO
 
   }
 }
@@ -716,7 +373,9 @@ const mapDispatchToProps = dispatch => {
     displayUOdispatch: x => dispatch(displayUO(x)),
     displaySTOCHdispatch: x => dispatch(displaySTOCH(x)),
     displaySTOCHSIGNALdispatch: x => dispatch(displayStochSignal(x)),
-    displayWRdispatch: x => dispatch(displayWR(x))
+    displayWRdispatch: x => dispatch(displayWR(x)),
+    displayAOdispatch: x => dispatch(displayAO(x)),
+    
   }
 }
 
@@ -817,3 +476,376 @@ export default connect(
     // const [displayAO, setDisplayAO] = useState(false)
     // const [displayKama, setDisplayKama] = useState(false)
     // const [displayROC, setDisplayROC] = useState(false)
+
+    // function createContentPanelAccordion(title,place,set) {
+    //     // for (var i = 0; i < title.length; i++) {
+    //     //     return (
+
+    //     //     )
+    //     if (title.length == 1) {
+    //         return (
+    //         <Grid columns='equal'>
+    //             <Grid.Column>
+    //                 <br/>{title[0]}
+    //             </Grid.Column>
+    //             <Grid.Column width={4}>
+    //                 <Form.Field
+    //                     control={Select}
+    //                     options={momentumNtradingDayOptions}
+    //                     placeholder={place[0]}
+    //                     compact
+    //                     onChange ={(e,selectedOption) => {
+    //                         set[0](selectedOption.value)
+    //                         }}
+    //                 />
+    //             </Grid.Column>
+    //         </Grid>
+    //         )
+    //     } else if (title.length == 2) {
+    //         return (
+    //         <Grid columns='equal'>
+    //             <Grid.Row>
+    //             <Grid.Column>
+    //                 <br/>{title[0]}
+    //             </Grid.Column>
+    //             <Grid.Column width={4}>
+    //                 <Form.Field
+    //                     control={Select}
+    //                     options={momentumNtradingDayOptions}
+    //                     placeholder={place[0]}
+    //                     compact
+    //                     onChange ={(e,selectedOption) => {
+    //                         set[0](selectedOption.value)
+    //                         }}
+    //                 />
+    //             </Grid.Column>
+    //             </Grid.Row>
+    //             <Grid.Row>
+    //             <Grid.Column>
+    //                 <br/>{title[1]}
+    //             </Grid.Column>
+    //             <Grid.Column width={4}>
+    //                 <Form.Field
+    //                     control={Select}
+    //                     options={momentumNtradingDayOptions}
+    //                     placeholder={place[1]}
+    //                     compact
+    //                     onChange ={(e,selectedOption) => {
+    //                         set[1](selectedOption.value)
+    //                         }}
+    //                 />
+    //             </Grid.Column>
+    //             </Grid.Row>
+    //         </Grid>
+    //         )
+    //     } else if (title.length == 3) {
+    //         return (
+    //             <Grid columns='equal'>
+    //                 <Grid.Row>
+    //                 <Grid.Column>
+    //                     <br/>{title[0]}
+    //                 </Grid.Column>
+    //                 <Grid.Column width={4}>
+    //                     <Form.Field
+    //                         control={Select}
+    //                         options={momentumNtradingDayOptions}
+    //                         placeholder={place[0]}
+    //                         compact
+    //                         onChange ={(e,selectedOption) => {
+    //                             set[0](selectedOption.value)
+    //                             }}
+    //                     />
+    //                 </Grid.Column>
+    //                 </Grid.Row>
+    //                 <Grid.Row>
+    //                 <Grid.Column>
+    //                     <br/>{title[1]}
+    //                 </Grid.Column>
+    //                 <Grid.Column width={4}>
+    //                     <Form.Field
+    //                         control={Select}
+    //                         options={momentumNtradingDayOptions}
+    //                         placeholder={place[1]}
+    //                         compact
+    //                         onChange ={(e,selectedOption) => {
+    //                             set[1](selectedOption.value)
+    //                             }}
+    //                     />
+    //                 </Grid.Column>
+    //                 </Grid.Row>
+    //                 <Grid.Row>
+    //                 <Grid.Column>
+    //                     <br/>{title[2]}
+    //                 </Grid.Column>
+    //                 <Grid.Column width={4}>
+    //                     <Form.Field
+    //                         control={Select}
+    //                         options={momentumNtradingDayOptions}
+    //                         placeholder={place[2]}
+    //                         compact
+    //                         onChange ={(e,selectedOption) => {
+    //                             set[2](selectedOption.value)
+    //                             }}
+    //                     />
+    //                 </Grid.Column>
+    //                 </Grid.Row>
+    //             </Grid>
+    //             )
+    //     } else if (title.length == 4) {
+    //         return (
+    //             <Grid columns='equal'>
+    //                 <Grid.Row>
+    //                 <Grid.Column>
+    //                     <br/>{title[0]}
+    //                 </Grid.Column>
+    //                 <Grid.Column width={4}>
+    //                     <Form.Field
+    //                         control={Select}
+    //                         options={momentumNtradingDayOptions}
+    //                         placeholder={place[0]}
+    //                         compact
+    //                         onChange ={(e,selectedOption) => {
+    //                             set[0](selectedOption.value)
+    //                             }}
+    //                     />
+    //                 </Grid.Column>
+    //                 </Grid.Row>
+    //                 <Grid.Row>
+    //                 <Grid.Column>
+    //                     <br/>{title[1]}
+    //                 </Grid.Column>
+    //                 <Grid.Column width={4}>
+    //                     <Form.Field
+    //                         control={Select}
+    //                         options={momentumNtradingDayOptions}
+    //                         placeholder={place[1]}
+    //                         compact
+    //                         onChange ={(e,selectedOption) => {
+    //                             set[1](selectedOption.value)
+    //                             }}
+    //                     />
+    //                 </Grid.Column>
+    //                 </Grid.Row>
+    //                 <Grid.Row>
+    //                 <Grid.Column>
+    //                     <br/>{title[2]}
+    //                 </Grid.Column>
+    //                 <Grid.Column width={4}>
+    //                     <Form.Field
+    //                         control={Select}
+    //                         options={momentumNtradingDayOptions}
+    //                         placeholder={place[2]}
+    //                         compact
+    //                         onChange ={(e,selectedOption) => {
+    //                             set[2](selectedOption.value)
+    //                             }}
+    //                     />
+    //                 </Grid.Column>
+    //                 </Grid.Row>
+    //                 <Grid.Row>
+    //                 <Grid.Column>
+    //                     <br/>{title[3]}
+    //                 </Grid.Column>
+    //                 <Grid.Column width={4}>
+    //                     <Form.Field
+    //                         control={Select}
+    //                         options={momentumNtradingDayOptions}
+    //                         placeholder={place[3]}
+    //                         compact
+    //                         onChange ={(e,selectedOption) => {
+    //                             set[3](selectedOption.value)
+    //                             }}
+    //                     />
+    //                 </Grid.Column>
+    //                 </Grid.Row>
+    //             </Grid>
+    //             )
+    
+    //     } else if (title.length == 5) {
+    //         return (
+    //             <Grid columns='equal'>
+    //                 <Grid.Row>
+    //                 <Grid.Column>
+    //                     <br/>{title[0]}
+    //                 </Grid.Column>
+    //                 <Grid.Column width={4}>
+    //                     <Form.Field
+    //                         control={Select}
+    //                         options={momentumNtradingDayOptions}
+    //                         placeholder={place[0]}
+    //                         compact
+    //                         onChange ={(e,selectedOption) => {
+    //                             set[0](selectedOption.value)
+    //                             }}
+    //                     />
+    //                 </Grid.Column>
+    //                 </Grid.Row>
+    //                 <Grid.Row>
+    //                 <Grid.Column>
+    //                     <br/>{title[1]}
+    //                 </Grid.Column>
+    //                 <Grid.Column width={4}>
+    //                     <Form.Field
+    //                         control={Select}
+    //                         options={momentumNtradingDayOptions}
+    //                         placeholder={place[1]}
+    //                         compact
+    //                         onChange ={(e,selectedOption) => {
+    //                             set[1](selectedOption.value)
+    //                             }}
+    //                     />
+    //                 </Grid.Column>
+    //                 </Grid.Row>
+    //                 <Grid.Row>
+    //                 <Grid.Column>
+    //                     <br/>{title[2]}
+    //                 </Grid.Column>
+    //                 <Grid.Column width={4}>
+    //                     <Form.Field
+    //                         control={Select}
+    //                         options={momentumNtradingDayOptions}
+    //                         placeholder={place[2]}
+    //                         compact
+    //                         onChange ={(e,selectedOption) => {
+    //                             set[2](selectedOption.value)
+    //                             }}
+    //                     />
+    //                 </Grid.Column>
+    //                 </Grid.Row>
+    //                 <Grid.Row>
+    //                 <Grid.Column>
+    //                     <br/>{title[3]}
+    //                 </Grid.Column>
+    //                 <Grid.Column width={4}>
+    //                     <Form.Field
+    //                         control={Select}
+    //                         options={momentumNtradingDayOptions}
+    //                         placeholder={place[3]}
+    //                         compact
+    //                         onChange ={(e,selectedOption) => {
+    //                             set[3](selectedOption.value)
+    //                             }}
+    //                     />
+    //                 </Grid.Column>
+    //                 </Grid.Row>
+    //                 <Grid.Row>
+    //                 <Grid.Column>
+    //                     <br/>{title[4]}
+    //                 </Grid.Column>
+    //                 <Grid.Column width={4}>
+    //                     <Form.Field
+    //                         control={Select}
+    //                         options={momentumNtradingDayOptions}
+    //                         placeholder={place[4]}
+    //                         compact
+    //                         onChange ={(e,selectedOption) => {
+    //                             set[4](selectedOption.value)
+    //                             }}
+    //                     />
+    //                 </Grid.Column>
+    //                 </Grid.Row>
+    //             </Grid>
+    //             )
+    //     } else if (title.length == 6) {
+    //         return (
+    //             <Grid columns='equal'>
+    //                 <Grid.Row>
+    //                 <Grid.Column>
+    //                     <br/>{title[0]}
+    //                 </Grid.Column>
+    //                 <Grid.Column width={4}>
+    //                     <Form.Field
+    //                         control={Select}
+    //                         options={momentumNtradingDayOptions}
+    //                         placeholder={place[0]}
+    //                         compact
+    //                         onChange ={(e,selectedOption) => {
+    //                             set[0](selectedOption.value)
+    //                             }}
+    //                     />
+    //                 </Grid.Column>
+    //                 </Grid.Row>
+    //                 <Grid.Row>
+    //                 <Grid.Column>
+    //                     <br/>{title[1]}
+    //                 </Grid.Column>
+    //                 <Grid.Column width={4}>
+    //                     <Form.Field
+    //                         control={Select}
+    //                         options={momentumNtradingDayOptions}
+    //                         placeholder={place[1]}
+    //                         compact
+    //                         onChange ={(e,selectedOption) => {
+    //                             set[1](selectedOption.value)
+    //                             }}
+    //                     />
+    //                 </Grid.Column>
+    //                 </Grid.Row>
+    //                 <Grid.Row>
+    //                 <Grid.Column>
+    //                     <br/>{title[2]}
+    //                 </Grid.Column>
+    //                 <Grid.Column width={4}>
+    //                     <Form.Field
+    //                         control={Select}
+    //                         options={momentumNtradingDayOptions}
+    //                         placeholder={place[2]}
+    //                         compact
+    //                         onChange ={(e,selectedOption) => {
+    //                             set[2](selectedOption.value)
+    //                             }}
+    //                     />
+    //                 </Grid.Column>
+    //                 </Grid.Row>
+    //                 <Grid.Row>
+    //                 <Grid.Column>
+    //                     <br/>{title[3]}
+    //                 </Grid.Column>
+    //                 <Grid.Column width={4}>
+    //                     <Form.Field
+    //                         control={Select}
+    //                         options={momentumNtradingDayOptions}
+    //                         placeholder={place[3]}
+    //                         compact
+    //                         onChange ={(e,selectedOption) => {
+    //                             set[3](selectedOption.value)
+    //                             }}
+    //                     />
+    //                 </Grid.Column>
+    //                 </Grid.Row>
+    //                 <Grid.Row>
+    //                 <Grid.Column>
+    //                     <br/>{title[4]}
+    //                 </Grid.Column>
+    //                 <Grid.Column width={4}>
+    //                     <Form.Field
+    //                         control={Select}
+    //                         options={momentumNtradingDayOptions}
+    //                         placeholder={place[4]}
+    //                         compact
+    //                         onChange ={(e,selectedOption) => {
+    //                             set[4](selectedOption.value)
+    //                             }}
+    //                     />
+    //                 </Grid.Column>
+    //                 </Grid.Row>
+    //                 <Grid.Row>
+    //                 <Grid.Column>
+    //                     <br/>{title[5]}
+    //                 </Grid.Column>
+    //                 <Grid.Column width={4}>
+    //                     <Form.Field
+    //                         control={Select}
+    //                         options={momentumNtradingDayOptions}
+    //                         placeholder={place[5]}
+    //                         compact
+    //                         onChange ={(e,selectedOption) => {
+    //                             set[5](selectedOption.value)
+    //                             }}
+    //                     />
+    //                 </Grid.Column>
+    //                 </Grid.Row>
+    //             </Grid>
+    //             )    
+    //     } else {}
+    //     }

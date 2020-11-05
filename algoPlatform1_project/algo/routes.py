@@ -873,9 +873,9 @@ def calculate_Momentum_Indicators():
     lbpForWR = int(JSON_sent[6]['lbpForWR'])
 
     # # Awesome Oscillator
-    # aoChecked = JSON_sent[7]['displayAO']
-    # sForAO = JSON_sent[7]['sForAO']
-    # lenForAO = JSON_sent[7]['lenForAO']
+    aoChecked = JSON_sent[7]['displayAO']
+    sForAO = JSON_sent[7]['sForAO']
+    lenForAO = JSON_sent[7]['lenForAO']
 
     # # Kaufman's Adaptive Moving Average (KAMA)
     # kamaChecked = JSON_sent[8]['displayKama']
@@ -910,9 +910,9 @@ def calculate_Momentum_Indicators():
         indicator_wr = wr(high=df['high'],low=df['low'],close=df['close'],lbp=lbpForWR)
         df['wr'] = indicator_wr
     
-    # if aoChecked:
-    #     indicator_ao = ao(high=df['high'],low=df['low'],s=sForUO,len=lenForUO)
-    #     df['ao'] = indicator_ao
+    if aoChecked:
+        indicator_ao = ao(high=df['high'],low=df['low'],s=sForUO,len=lenForUO)
+        df['ao'] = indicator_ao
 
     # if kamaChecked:
     #     indicator_kama = kama(close=df['close'],n=nForKama,pow1=pow1ForKama,pow2=pow2ForKama)
