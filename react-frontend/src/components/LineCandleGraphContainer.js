@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { addPercentChange, fetchStockData } from '../redux'
 import {Header, Grid} from 'semantic-ui-react'
 import { createVolumeBarChart } from './charts/volumeBarChart.js'
-import { fetchTrendData, displaySMA, nForSMA, displayEMA, displayMACD, nSlowForMACD, nFastForMACD } from '../redux';
+import { fetchTrendData } from '../redux';
 import '../App.css'
 import 'react-datepicker/dist/react-datepicker.css'
 import * as d3 from "d3"
@@ -37,22 +37,19 @@ function LineCandleGraphContainer (props) {
     const EMAp = {'displayEMA':props.displayEMA,'nForEMA':props.nForEMA}
     const MACDp = {'displayMACD':props.displayMACD,'nFastForMACD':props.nFastForMACD,'nSlowForMACD':props.nSlowForMACD}
     const MACDsignalp = {'displayMACDsignal':props.displayMACDsignal,'nSlowForMACDsignal':props.nSlowForMACDsignal,'nFastForMACDsignal':props.nFastForMACDsignal,'nSignForMACDsignal':props.nSignForMACDsignal}
+    const ADXp = {'displayADX':props.displayADX,'nForADX':props.nForADX}
 
     props.fetchStockData(String(props.tickers+"/"+convertDatesToString(props.startDate)+"/"+convertDatesToString(props.endDate)))
-    props.fetchTrendData(JSON.stringify([props.stockData,SMAp,EMAp,MACDp,MACDsignalp]))
+    props.fetchTrendData(JSON.stringify([props.stockData,SMAp,EMAp,MACDp,MACDsignalp,ADXp]))
     
-    // if (props.stockData.length > 1) {
-    //   createStockPriceLineChart(stockPriceLineChartNode)
-    // }  
   }, [props.tickers,props.startDate,props.endDate,props.displaySMA,props.nForSMA,props.displayEMA,props.nForEMA,props.displayMACD,props.nFastForMACD,props.nSlowForMACD,
-    props.displayMACDsignal,props.nSlowForMACDsignal,props.nFastForMACDSignal,props.nSignForMACDsignal])
+    props.displayMACDsignal,props.nSlowForMACDsignal,props.nFastForMACDsignal,props.nSignForMACDsignal,props.displayADX,props.nForADX])
   
   props.addPercentChange(calcPercentChange())
 
   if (props.stockData.length > 1) {
     createStockPriceLineChart(stockPriceLineChartNode)
     createVolumeBarChart(props.stockData,showVolumeNode)
-    //createMomentumIndicatorsChartFunction(stockData,momentumIndicatorsChartNode)
     }
 
     function createStockPriceLineChart(stockPriceLineChartNode) {
@@ -151,9 +148,10 @@ function LineCandleGraphContainer (props) {
         const sma = new Indicator('sma',"#d62728",trendData,props.displaySMA,'axisLeft')
         const macd = new Indicator('macd',"#ff7f0e",trendData,props.displayMACD,'axisRight')
         const ema = new Indicator('ema',"#9467bd",trendData,props.displayEMA,'axisLeft')
-        const macdSignal = new Indicator('macdSignal',"#1b9e77",trendData,props.displayMACDsignal,'axisRight')
+        const macdSignal = new Indicator('macds',"#1b9e77",trendData,props.displayMACDsignal,'axisRight')
+        const adx = new Indicator('adx',"#d95f02",trendData,props.displayADX,'axisLeft')
         
-        const objectList = [close,sma,macd,ema,macdSignal]
+        const objectList = [close,sma,macd,ema,macdSignal,adx]
 
 
         const x = scaleBand()
@@ -268,6 +266,7 @@ function LineCandleGraphContainer (props) {
         const smaline = sma.d3line
         const emaline = ema.d3line
         const macdSignalline = macdSignal.d3line
+        const adxline = adx.d3line
 
         var showRightAxis = false
         for (var i = 0; i < objectList.length; i++) {
@@ -445,7 +444,9 @@ const mapStateToProps = state => {
     displayMACDsignal: state.trendFromRootReducer.displayMACDsignal,
     nSlowForMACDsignal: state.trendFromRootReducer.nSlowForMACDsignal,
     nFastForMACDsignal: state.trendFromRootReducer.nFastForMACDsignal,
-    nSignForMACDsignal: state.trendFromRootReducer.nSlowForMACDsignal,
+    nSignForMACDsignal: state.trendFromRootReducer.nSignForMACDsignal,
+    displayADX: state.trendFromRootReducer.displayADX,
+    nForADX: state.trendFromRootReducer.nForADX,
 
 
   }

@@ -1,6 +1,6 @@
 //import { nForRSI } from './momentumActions'
 import { DISPLAY_SMA, N_FOR_SMA, DISPLAY_EMA, N_FOR_EMA, DISPLAY_MACD, N_SLOW_FOR_MACD, N_FAST_FOR_MACD, FETCH_TREND_DATA_REQUEST,
-  DISPLAY_MACD_SIGNAL, N_FAST_FOR_MACD_SIGNAL, N_SLOW_FOR_MACD_SIGNAL, N_SIGN_FOR_MACD_SIGNAL,
+  DISPLAY_MACD_SIGNAL, N_FAST_FOR_MACD_SIGNAL, N_SLOW_FOR_MACD_SIGNAL, N_SIGN_FOR_MACD_SIGNAL, DISPLAY_ADX, N_FOR_ADX,
   FETCH_TREND_DATA_SUCCESS,
   FETCH_TREND_DATA_FAILURE } from './trendTypes'
 
@@ -16,6 +16,8 @@ const initialState = {
   nFastForMACDsignal: 12,
   nSlowForMACDsignal: 26,
   nSignForMACDsignal: 9,
+  displayADX: false,
+  nForADX: 14,
   trendLoads: 0,
   trendData: []
 }
@@ -47,6 +49,10 @@ const trendReducer = (state = initialState, action) => {
       ...state,
       nFastForMACD: action.payload
     }
+    case N_SLOW_FOR_MACD: return {
+      ...state,
+      nSlowForMACD: action.payload
+    }
     case DISPLAY_MACD_SIGNAL: return {
       ...state,
       displayMACDsignal: action.payload
@@ -62,6 +68,14 @@ const trendReducer = (state = initialState, action) => {
     case N_SIGN_FOR_MACD_SIGNAL: return {
       ...state,
       nSignForMACDsignal: action.payload
+    }
+    case DISPLAY_ADX: return {
+      ...state,
+      displayADX: action.payload
+    }
+    case N_FOR_ADX: return {
+      ...state,
+      nForADX: action.payload
     }
     case FETCH_TREND_DATA_REQUEST:
       return {

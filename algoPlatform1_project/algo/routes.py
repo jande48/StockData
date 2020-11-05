@@ -532,17 +532,16 @@ def calculate_Trend_Indicators():
         nfastForMACD = JSON_sent[3]['nFastForMACD']
 
         # # MACD Signal 
-        print(JSON_sent[4])
         MACDsignalChecked = JSON_sent[4]['displayMACDsignal']
         nslowForMACDsignal = JSON_sent[4]['nSlowForMACDsignal']
         nfastForMACDsignal = JSON_sent[4]['nFastForMACDsignal']
         nsignForMACDsignal = JSON_sent[4]['nSignForMACDsignal']
-
+        print(JSON_sent[5])
     
 
-    # # Average Directional Movement Index
-    # ADXchecked = JSON_sent[5]['displayADX']
-    # nForADX = JSON_sent[5]['nForADX']
+        # Average Directional Movement Index
+        ADXchecked = JSON_sent[5]['displayADX']
+        nForADX = JSON_sent[5]['nForADX']
 
     # # Average Directional Movement Index Positive (ADX)
     # ADXpositiveChecked = JSON_sent[6]['displayADXpositive']
@@ -606,11 +605,11 @@ def calculate_Trend_Indicators():
 
         if MACDsignalChecked:
             indicator_macdSignal = macd_signal(close=df['close'],n_slow=nslowForMACDsignal,n_fast=nfastForMACDsignal,n_sign=nsignForMACDsignal)
-            df['macdSignal'] = indicator_macdSignal
+            df['macds'] = indicator_macdSignal
     
-    # if ADXchecked:
-    #     indicator_ADX = adx(high=df['high'],low=df['low'],close=df['close'],n=nForADX)
-    #     df['adx'] = indicator_ADX
+        if ADXchecked:
+            indicator_ADX = adx(high=df['high'],low=df['low'],close=df['close'],n=nForADX)
+            df['adx'] = indicator_ADX
 
     # if ADXpositiveChecked:
     #     indicator_ADXpositive = adx_pos(high=df['high'],low=df['low'],close=df['close'],n=nForADXpositive)

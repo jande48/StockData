@@ -1,11 +1,12 @@
 import React, {useState} from 'react'
 import { connect } from 'react-redux'
-import { displaySMA, displayEMA, displayMACD, displayMACDsignal } from '../redux'
+import { displaySMA, displayEMA, displayMACD, displayMACDsignal, displayADX } from '../redux'
 import { Grid, Menu, Accordion, Checkbox } from "semantic-ui-react"
 import SMAcontentpanel from './accordion/momentum/SMAcontentpanel'
 import EMAcontentPanel from './accordion/momentum/EMAcontentpanel'
 import MACDcontentPanel from './accordion/momentum/MACDcontentpanel'
 import MACDSIGNALcontentPanel from './accordion/trend/MACDSIGNALcontentpanel'
+import ADXcontentPanel from './accordion/trend/ADXcontentpanel'
 
 function TrendMenuContainer(props) {
     
@@ -14,6 +15,7 @@ function TrendMenuContainer(props) {
     const [activeMACDAccordionMenuItem, setActiveMACDAccordionMenuItem] = useState(-1)
     const [activeEMAAccodianMenuItem, setActiveEMAAccodianMenuItem] = useState(-1)
     const [activeMACDSIGNALAccodianMenuItem, setActiveMACDSIGNALAccodianMenuItem] = useState(-1)
+    const [activeADXAccodianMenuItem, setActiveADXAccodianMenuItem] = useState(-1)
 
     
 
@@ -78,6 +80,19 @@ function TrendMenuContainer(props) {
       </Grid.Column>
       <Grid.Column>
           <h5>MACD Signal</h5>
+      </Grid.Column>
+      </Grid>)
+    const ADXAccordionTitle = (
+      <Grid columns='equal'>
+      <Grid.Column width={2}>
+              <Checkbox borderless index={1} onClick={(event) => {
+                          event.stopPropagation()
+                          props.displayADXdispatch(!props.displayADX)
+                      }}>
+              </Checkbox>
+      </Grid.Column>
+      <Grid.Column>
+          <h5>Average Directional Movement</h5>
       </Grid.Column>
       </Grid>)
 
@@ -179,6 +194,18 @@ function TrendMenuContainer(props) {
                     />
                     <Accordion.Content borderless active={activeMACDSIGNALAccodianMenuItem === 0} content={<MACDSIGNALcontentPanel />} />
                 </Menu.Item>
+                <Menu.Item borderless>
+                    <Accordion.Title
+                        active={activeADXAccodianMenuItem === 0}
+                        content={ADXAccordionTitle}
+                        index={0}
+                        borderless
+                        onClick={(e,index) => {
+                            setActiveADXAccodianMenuItem(index.index === activeADXAccodianMenuItem ? -1 : index.index)
+                            }}
+                    />
+                    <Accordion.Content borderless active={activeADXAccodianMenuItem === 0} content={<ADXcontentPanel />} />
+                </Menu.Item>
 
                    
                 </Accordion>
@@ -204,6 +231,8 @@ const mapStateToProps = state => {
     displayMACDsignal: state.trendFromRootReducer.displayMACDsignal,
     nFastForMACDsignal: state.trendFromRootReducer.nFastForMACDsignal,
     nSlowForMACDsignal: state.trendFromRootReducer.nSlowForMACDsigna,
+    displayADX: state.trendFromRootReducer.displayADX,
+    nForADX: state.trendFromRootReducer.nForADX,
 
   }
 }
@@ -214,6 +243,7 @@ const mapDispatchToProps = dispatch => {
     displayEMAdispatch: varDisplayEMA => dispatch(displayEMA(varDisplayEMA)),
     displayMACDdispatch: varDisplayMACD => dispatch(displayMACD(varDisplayMACD)),
     displayMACDsignaldispatch: x => dispatch(displayMACDsignal(x)),
+    displayADXdispatch: x => dispatch(displayADX(x)),
   }
 }
 
