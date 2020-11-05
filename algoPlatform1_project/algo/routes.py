@@ -859,14 +859,14 @@ def calculate_Momentum_Indicators():
     wlForUO = float(JSON_sent[3]['wlForUO'])
 
     # # Stochastic Oscillator
-    # StochChecked = JSON_sent[4]['displayStoch']
-    # nForStoch = int(JSON_sent[4]['nForStoch'])
-    # d_nForStoch = int(JSON_sent[4]['d_nForStoch'])
+    StochChecked = JSON_sent[4]['displaySTOCH']
+    nForStoch = int(JSON_sent[4]['nForSTOCH'])
+    dnForStoch = int(JSON_sent[4]['dnForSTOCH'])
 
     # # Stochastic Signal
-    # StochSignalChecked = JSON_sent[5]['displayStochSignal']
-    # nForStochSignal = int(JSON_sent[5]['nForStochSignal'])
-    # d_nForStochSignal = int(JSON_sent[5]['d_nForStochSignal'])
+    StochSignalChecked = JSON_sent[5]['displayStochSignal']
+    nForStochSignal = int(JSON_sent[5]['nForStochSignal'])
+    dnForStochSignal = int(JSON_sent[5]['dnForStochSignal'])
 
     # # Williams %R
     # wrChecked = JSON_sent[6]['displayWR']
@@ -898,13 +898,13 @@ def calculate_Momentum_Indicators():
         indicator_UO = uo(high=df['high'],low=df['low'],close=df['close'],s=sForUO,m=mForUO,len=lenForUO,ws=wsForUO,wm=wmForUO,wl=wlForUO)
         df['uo'] = indicator_UO
     
-    # if StochChecked:
-    #     indicator_Stoch = stoch(high=df['high'],low=df['low'],close=df['close'],n=nForStoch,d_n=d_nForStoch)
-    #     df['stoch'] = indicator_Stoch
+    if StochChecked:
+        indicator_Stoch = stoch(high=df['high'],low=df['low'],close=df['close'],n=nForStoch,d_n=dnForStoch)
+        df['stoch'] = indicator_Stoch
     
-    # if StochSignalChecked:
-    #     indicator_StochSignal = stoch_signal(high=df['high'],low=df['low'],close=df['close'],n=nForStochSignal,d_n=d_nForStochSignal)
-    #     df['stoch_signal'] = indicator_StochSignal
+    if StochSignalChecked:
+        indicator_StochSignal = stoch_signal(high=df['high'],low=df['low'],close=df['close'],n=nForStochSignal,d_n=dnForStochSignal)
+        df['stoch_signal'] = indicator_StochSignal
 
     # if wrChecked:
     #     indicator_wr = wr(high=df['high'],low=df['low'],close=df['close'],lbp=lbpForWR)

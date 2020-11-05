@@ -1,20 +1,21 @@
 import React, {useState} from 'react'
 import { connect } from 'react-redux'
-import { displayRSI, displayTSI, displayUO } from '../redux'
+import { displayRSI, displaySTOCH, displayStochSignal, displayTSI, displayUO } from '../redux'
 import { Grid, Menu, Accordion, Item, Checkbox, Form, Select} from "semantic-ui-react"
 import Collapsible from 'react-collapsible';
 import RSIcontentPanel from './accordion/momentum/RSIcontentpanel'
 import TSIcontentPanel from './accordion/momentum/TSIcontentpanel'
 import UOcontentPanel from './accordion/momentum/UOcontentpanel'
+import STOCHcontentPanel from './accordion/momentum/STOCHcontentpanel'
+import STOCHSIGNALcontentPanel from './accordion/momentum/STOCHSIGNALcontentpanel'
 
 function MomentumMenuContainer(props) {
     
     const [activeRSIAccodianMenuItem, setRSIActiveAccordionMenuItem] = useState(-1)
     const [activeTSIAccodianMenuItem, setTSIActiveAccordionMenuItem] = useState(-1)
     const [activeUOAccodianMenuItem, setUOActiveAccordionMenuItem] = useState(-1)
-
-
-    
+    const [activeSTOCHAccodianMenuItem, setSTOCHActiveAccordionMenuItem] = useState(-1)
+    const [activeSTOCHSIGNALAccodianMenuItem, setSTOCHSIGNALActiveAccordionMenuItem] = useState(-1)
 
     const RSIAccordionTitle = (
         <Grid columns='equal'>
@@ -58,7 +59,32 @@ function MomentumMenuContainer(props) {
         </Grid.Column>
         </Grid>)
 
-    
+    const STOCHAccordionTitle = (
+        <Grid columns='equal'>
+        <Grid.Column width={2}>
+                <Checkbox borderless index={1} onClick={(event) => {
+                            event.stopPropagation()
+                            props.displaySTOCHdispatch(!props.displaySTOCH)
+                    }}>
+                </Checkbox>
+        </Grid.Column>
+        <Grid.Column>
+            <h5>Stochcastic Oscillator</h5>
+        </Grid.Column>
+        </Grid>)
+    const STOCHSIGNALAccordionTitle = (
+        <Grid columns='equal'>
+        <Grid.Column width={2}>
+                <Checkbox borderless index={1} onClick={(event) => {
+                            event.stopPropagation()
+                            props.displaySTOCHSIGNALdispatch(!props.displayStochSignal)
+                    }}>
+                </Checkbox>
+        </Grid.Column>
+        <Grid.Column>
+            <h5>Stochcastic Signal Oscillator</h5>
+        </Grid.Column>
+        </Grid>)
     const momentumNtradingDayOptions = [
 		{ key: 'one', text: '1', value: 1 },
 		{ key: 'two', text: '2', value: 2 },
@@ -521,7 +547,6 @@ function MomentumMenuContainer(props) {
                         />
                         <Accordion.Content borderless active={activeTSIAccodianMenuItem === 0} content={<TSIcontentPanel/>} />
                     </Menu.Item>
-
                     <Menu.Item borderless>
                         <Accordion.Title
                             active={activeUOAccodianMenuItem === 0}
@@ -533,6 +558,30 @@ function MomentumMenuContainer(props) {
                                 }}
                         />
                         <Accordion.Content borderless active={activeUOAccodianMenuItem === 0} content={<UOcontentPanel />} />
+                    </Menu.Item>
+                    <Menu.Item borderless>
+                        <Accordion.Title
+                            active={activeSTOCHAccodianMenuItem === 0}
+                            content={STOCHAccordionTitle}
+                            index={0}
+                            borderless
+                            onClick={(e,index) => {
+                                setSTOCHActiveAccordionMenuItem(index.index === activeSTOCHAccodianMenuItem ? -1 : index.index)
+                                }}
+                        />
+                        <Accordion.Content borderless active={activeSTOCHAccodianMenuItem === 0} content={<STOCHcontentPanel />} />
+                    </Menu.Item>
+                    <Menu.Item borderless>
+                        <Accordion.Title
+                            active={activeSTOCHSIGNALAccodianMenuItem === 0}
+                            content={STOCHSIGNALAccordionTitle}
+                            index={0}
+                            borderless
+                            onClick={(e,index) => {
+                                setSTOCHSIGNALActiveAccordionMenuItem(index.index === activeSTOCHAccodianMenuItem ? -1 : index.index)
+                                }}
+                        />
+                        <Accordion.Content borderless active={activeSTOCHSIGNALAccodianMenuItem === 0} content={<STOCHSIGNALcontentPanel />} />
                     </Menu.Item>
                     {/* <Menu.Item borderless>
                         <Accordion.Title
@@ -623,7 +672,9 @@ const mapStateToProps = state => {
     displayRSI: state.momentumFromRootReducer.displayRSI,
     nForRSI: state.momentumFromRootReducer.nForRSI,
     displayTSI: state.momentumFromRootReducer.displayTSI,
-    displayUO: state.momentumFromRootReducer.displayUO
+    displayUO: state.momentumFromRootReducer.displayUO,
+    displaySTOCH: state.momentumFromRootReducer.displaySTOCH,
+    displayStochSignal: state.momentumFromRootReducer.displayStochSignal,
 
   }
 }
@@ -632,7 +683,9 @@ const mapDispatchToProps = dispatch => {
   return {
     displayRSIdispatch: varDisplayRSI => dispatch(displayRSI(varDisplayRSI)),
     displayTSIdispatch: varDisplayTSI => dispatch(displayTSI(varDisplayTSI)),
-    displayUOdispatch: x => dispatch(displayUO(x))
+    displayUOdispatch: x => dispatch(displayUO(x)),
+    displaySTOCHdispatch: x => dispatch(displaySTOCH(x)),
+    displaySTOCHSIGNALdispatch: x => dispatch(displayStochSignal(x)),
   }
 }
 

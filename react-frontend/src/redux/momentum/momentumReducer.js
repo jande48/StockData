@@ -1,5 +1,6 @@
 import { nForRSI } from './momentumActions'
 import { DISPLAY_RSI, N_FOR_RSI, DISPLAY_TSI, R_FOR_TSI, S_FOR_TSI, S_FOR_UO, M_FOR_UO, LEN_FOR_UO, WS_FOR_UO, WM_FOR_UO, WL_FOR_UO, DISPLAY_UO,
+  DISPLAY_STOCH, N_FOR_STOCH, D_N_FOR_STOCH, DISPLAY_STOCH_SIGNAL, N_FOR_STOCH_SIGNAL, D_N_FOR_STOCH_SIGNAL,
   FETCH_MOMENTUM_DATA_REQUEST,
   FETCH_MOMENTUM_DATA_SUCCESS,
   FETCH_MOMENTUM_DATA_FAILURE } from './momentumTypes'
@@ -17,6 +18,12 @@ const initialState = {
   wsForUO: 4,
   wmForUO: 2,
   wlForUO: 1,
+  displaySTOCH: false,
+  nForSTOCH: 14,
+  dnForSTOCH: 3,
+  displayStochSignal: false,
+  nForStochSignal: 14,
+  dnForStochSignal: 3,
   momentumLoads: 0,
   loading: false
 }
@@ -71,6 +78,30 @@ const momentumReducer = (state = initialState, action) => {
     case DISPLAY_UO: return {
       ...state,
       displayUO: action.payload
+    }
+    case DISPLAY_STOCH: return {
+      ...state,
+      displaySTOCH: action.payload
+    }
+    case N_FOR_STOCH: return {
+      ...state,
+      nForSTOCH: action.payload
+    }
+    case D_N_FOR_STOCH: return {
+      ...state,
+      dnForSTOCH: action.payload
+    }
+    case DISPLAY_STOCH_SIGNAL: return {
+      ...state,
+      displayStochSignal: action.payload
+    }
+    case N_FOR_STOCH_SIGNAL: return {
+      ...state,
+      nForStochSignal: action.payload
+    }
+    case D_N_FOR_STOCH_SIGNAL: return {
+      ...state,
+      dnForStochSignal: action.payload
     }
     case FETCH_MOMENTUM_DATA_REQUEST:
       return {
