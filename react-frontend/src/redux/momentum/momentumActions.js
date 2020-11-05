@@ -1,7 +1,7 @@
   
 import { DISPLAY_RSI, N_FOR_RSI, DISPLAY_TSI, R_FOR_TSI, S_FOR_TSI, S_FOR_UO, M_FOR_UO, LEN_FOR_UO, WS_FOR_UO, WM_FOR_UO, WL_FOR_UO, DISPLAY_UO,
   DISPLAY_STOCH, N_FOR_STOCH, D_N_FOR_STOCH, DISPLAY_STOCH_SIGNAL, N_FOR_STOCH_SIGNAL, D_N_FOR_STOCH_SIGNAL, DISPLAY_WR, LBP_FOR_WR,
-  DISPLAY_AO, S_FOR_AO, LEN_FOR_AO, DISPLAY_KAMA, N_FOR_KAMA, POW1_FOR_KAMA, POW2_FOR_KAMA,
+  DISPLAY_AO, S_FOR_AO, LEN_FOR_AO, DISPLAY_KAMA, N_FOR_KAMA, POW1_FOR_KAMA, POW2_FOR_KAMA, DISPLAY_ROC, N_FOR_ROC,
   FETCH_MOMENTUM_DATA_REQUEST,
   FETCH_MOMENTUM_DATA_SUCCESS,
   FETCH_MOMENTUM_DATA_FAILURE } from './momentumTypes'
@@ -169,6 +169,18 @@ export const pow1ForKama = (n) => {
 export const pow2ForKama = (n) => {
   return {
     type: POW2_FOR_KAMA,
+    payload: n
+  }
+}
+export const displayROC = (n) => {
+  return {
+    type: DISPLAY_ROC,
+    payload: n
+  }
+}
+export const nForROC = (n) => {
+  return {
+    type: N_FOR_ROC,
     payload: n
   }
 }

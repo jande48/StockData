@@ -1,8 +1,7 @@
 import React, {useState} from 'react'
 import { connect } from 'react-redux'
-import { displayRSI, displaySTOCH, displayStochSignal, displayTSI, displayUO, displayWR, displayAO, displayKama  } from '../redux'
-import { Grid, Menu, Accordion, Item, Checkbox, Form, Select} from "semantic-ui-react"
-import Collapsible from 'react-collapsible';
+import { displayRSI, displaySTOCH, displayStochSignal, displayTSI, displayUO, displayWR, displayAO, displayKama, displayROC  } from '../redux'
+import { Grid, Menu, Accordion, Checkbox} from "semantic-ui-react"
 import RSIcontentPanel from './accordion/momentum/RSIcontentpanel'
 import TSIcontentPanel from './accordion/momentum/TSIcontentpanel'
 import UOcontentPanel from './accordion/momentum/UOcontentpanel'
@@ -11,6 +10,7 @@ import STOCHSIGNALcontentPanel from './accordion/momentum/STOCHSIGNALcontentpane
 import WRcontentPanel from './accordion/momentum/WRcontentpanel'
 import AOcontentPanel from './accordion/momentum/AOcontentpanel'
 import KamacontentPanel from './accordion/momentum/KAMAcontentpanel'
+import ROCcontentPanel from './accordion/momentum/ROCcontentpanel'
 
 function MomentumMenuContainer(props) {
     
@@ -22,6 +22,7 @@ function MomentumMenuContainer(props) {
     const [activeWRAccodianMenuItem, setWRActiveAccordionMenuItem] = useState(-1)
     const [activeAOAccodianMenuItem, setAOActiveAccordionMenuItem] = useState(-1)
     const [activeKAMAAccodianMenuItem, setKAMAActiveAccordionMenuItem] = useState(-1)
+    const [activeROCAccodianMenuItem, setROCActiveAccordionMenuItem] = useState(-1)
 
     const RSIAccordionTitle = (
         <Grid columns='equal'>
@@ -128,6 +129,19 @@ function MomentumMenuContainer(props) {
         </Grid.Column>
         <Grid.Column>
             <h5>Kaufman's Adaptive MA</h5>
+        </Grid.Column>
+        </Grid>)
+    const ROCAccordionTitle = (
+        <Grid columns='equal'>
+        <Grid.Column width={2}>
+                <Checkbox borderless index={1} onClick={(event) => {
+                            event.stopPropagation()
+                            props.displayROCdispatch(!props.displayROC)
+                    }}>
+                </Checkbox>
+        </Grid.Column>
+        <Grid.Column>
+            <h5>Rate of Change</h5>
         </Grid.Column>
         </Grid>)
 
@@ -276,6 +290,18 @@ function MomentumMenuContainer(props) {
                         />
                         <Accordion.Content borderless active={activeKAMAAccodianMenuItem === 0} content={<KamacontentPanel />} />
                     </Menu.Item>
+                    <Menu.Item borderless>
+                        <Accordion.Title
+                            active={activeROCAccodianMenuItem === 0}
+                            content={ROCAccordionTitle}
+                            index={0}
+                            borderless
+                            onClick={(e,index) => {
+                                setROCActiveAccordionMenuItem(index.index === activeROCAccodianMenuItem ? -1 : index.index)
+                                }}
+                        />
+                        <Accordion.Content borderless active={activeROCAccodianMenuItem === 0} content={<ROCcontentPanel />} />
+                    </Menu.Item>
                     {/* <Menu.Item borderless>
                         <Accordion.Title
                             active={activeAOAccodianMenuItem === 0}
@@ -375,7 +401,9 @@ const mapStateToProps = state => {
     displayKama: state.momentumFromRootReducer.displayKama,
     nForKama: state.momentumFromRootReducer.nForKama,
     pow1ForKama: state.momentumFromRootReducer.pow1ForKama,
-    pow2ForKama: state.momentumFromRootReducer.pow2ForKama
+    pow2ForKama: state.momentumFromRootReducer.pow2ForKama,
+    displayROC: state.momentumFromRootReducer.displayROC,
+    nForROC: state.momentumFromRootReducer.nForROC,
 
   }
 }
@@ -389,7 +417,8 @@ const mapDispatchToProps = dispatch => {
     displaySTOCHSIGNALdispatch: x => dispatch(displayStochSignal(x)),
     displayWRdispatch: x => dispatch(displayWR(x)),
     displayAOdispatch: x => dispatch(displayAO(x)),
-    displayKAMAdispatch: x => dispatch(displayKama(x))
+    displayKAMAdispatch: x => dispatch(displayKama(x)),
+    displayROCdispatch: x => dispatch(displayROC(x)),
     
   }
 }

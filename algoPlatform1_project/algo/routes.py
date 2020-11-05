@@ -884,8 +884,8 @@ def calculate_Momentum_Indicators():
     pow2ForKama = JSON_sent[8]['pow2ForKama']
 
     # # Rate of Change (ROC)
-    # ROCChecked = JSON_sent[9]['displayROC']
-    # nForROC = JSON_sent[9]['nForROC']
+    ROCChecked = JSON_sent[9]['displayROC']
+    nForROC = JSON_sent[9]['nForROC']
 
     indicator_RSI = RSIIndicator(close=df["close"], n=nForRSI)
     df['rsi'] = indicator_RSI.rsi()
@@ -918,9 +918,9 @@ def calculate_Momentum_Indicators():
         indicator_kama = kama(close=df['close'],n=nForKama,pow1=pow1ForKama,pow2=pow2ForKama)
         df['kama'] = indicator_kama
 
-    # if ROCChecked:
-    #     indicator_roc = roc(close=df['close'],n=nForRSI)
-    #     df['roc'] = indicator_roc
+    if ROCChecked:
+        indicator_roc = roc(close=df['close'],n=nForROC)
+        df['roc'] = indicator_roc
     
     df.fillna(0, inplace=True)
     export_df = df.drop(columns=['open', 'high', 'low', 'close', 'volume'])
