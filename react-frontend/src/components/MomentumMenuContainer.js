@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import { connect } from 'react-redux'
 import { displayRSI, displaySTOCH, displayStochSignal, displayTSI, displayUO, displayWR, displayAO, displayKama, displayROC  } from '../redux'
-import { Grid, Menu, Accordion, Checkbox} from "semantic-ui-react"
+import { Grid, Menu, Accordion, Checkbox, Icon, Header} from "semantic-ui-react"
 import RSIcontentPanel from './accordion/momentum/RSIcontentpanel'
 import TSIcontentPanel from './accordion/momentum/TSIcontentpanel'
 import UOcontentPanel from './accordion/momentum/UOcontentpanel'
@@ -25,17 +25,23 @@ function MomentumMenuContainer(props) {
     const [activeROCAccodianMenuItem, setROCActiveAccordionMenuItem] = useState(-1)
 
     const RSIAccordionTitle = (
-        <Grid columns='equal'>
-        <Grid.Column width={2}>
-                <Checkbox borderless index={1} defaultChecked onClick={(event) => {
-                            event.stopPropagation()
-                            props.displayRSIdispatch(!props.displayRSI)
-                        }}>
-                </Checkbox>
-        </Grid.Column>
-        <Grid.Column>
-            <h5>Relative Strength Index</h5>
-        </Grid.Column>
+        <Grid columns='equal' textAlign='bottom'>
+            <Grid.Row verticalAlign='top'>
+                <Grid.Column width={2}>
+                    <Checkbox borderless index={1} defaultChecked onClick={(event) => {
+                                event.stopPropagation()
+                                props.displayRSIdispatch(!props.displayRSI)
+                            }}>
+                    </Checkbox>
+                </Grid.Column>
+                <Grid.Column>
+                    <Header as='h5' inverted>Relative Strength Index</Header>
+                </Grid.Column>
+                <Grid.Column floated='right' width={2}>
+                    <Icon name={activeRSIAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
+                    
+                </Grid.Column>
+            </Grid.Row>
         </Grid>)
         
     const TSIAccordionTitle = (
@@ -49,6 +55,9 @@ function MomentumMenuContainer(props) {
         </Grid.Column>
         <Grid.Column>
             <h5>True Strength Index</h5>
+        </Grid.Column>
+        <Grid.Column floated='right' width={2}>
+            <Icon name={activeTSIAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
         </Grid.Column>
         </Grid>)
 
@@ -185,37 +194,37 @@ function MomentumMenuContainer(props) {
 	]
 
 
-
-
+// verticalAlign='top'
+//vertical stretched fluid borderless inverted
   return (
     <div>
-        <Grid stretched> 
+        <Grid> 
         
          <Grid.Row stretched>        
                 <Accordion as={Menu} vertical stretched fluid borderless inverted>
                     <Menu.Item borderless>
                         <Accordion.Title
                             active={activeRSIAccodianMenuItem === 0}
-                            content={RSIAccordionTitle}
+                            //content={RSIAccordionTitle}
                             index={0}
                             //borderless
                             onClick={(e,index) => {
                                 setRSIActiveAccordionMenuItem(index.index === activeRSIAccodianMenuItem ? -1 : index.index)
                                 }}
                             inverted
-                        />
-                        <Accordion.Content borderless active={activeRSIAccodianMenuItem === 0} content={<RSIcontentPanel/>} />
+                        >{RSIAccordionTitle}</Accordion.Title>
+                        <Accordion.Content borderless active={activeRSIAccodianMenuItem === 0} >{<RSIcontentPanel/>}</Accordion.Content>
                     </Menu.Item>
                     <Menu.Item borderless>
                         <Accordion.Title
                             active={activeTSIAccodianMenuItem === 0}
-                            content={TSIAccordionTitle}
+                            //content={TSIAccordionTitle}
                             index={0}
                             //borderless
                             onClick={(e,index) => {
                                 setTSIActiveAccordionMenuItem(index.index === activeTSIAccodianMenuItem ? -1 : index.index)
                                 }}
-                        />
+                        >{TSIAccordionTitle}</Accordion.Title>
                         <Accordion.Content borderless active={activeTSIAccodianMenuItem === 0} content={<TSIcontentPanel/>} />
                     </Menu.Item>
                     <Menu.Item borderless>

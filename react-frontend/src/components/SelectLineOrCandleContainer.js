@@ -17,17 +17,17 @@ function SelectLineOrCandle(props) {
         props.addLineCandleDispatch(false)
       }
   }
-
+//color={displayPriceChart ? 'blue' : null}
   return (
     <div background-color='black'>
     <Grid columns='equal' inverted centered>
         <Grid.Row color='black' textAlign='center' stretched>
       <Form inverted stretched>
         <Form.Field inverted>
-            <Button toggle active={displayPriceChart} color={displayPriceChart ? 'blue' : null} onClick={handlePriceClickLine}>
+            <Button basic inverted color={displayPriceChart ? 'green' : ''} active={displayPriceChart} onClick={handlePriceClickLine}>
                 Line Chart
             </Button>
-            <Button toggle active={!displayPriceChart} color={!displayPriceChart ? 'blue' : null} onClick={handlePriceClickCandle}>
+            <Button basic inverted color={!displayPriceChart ? 'green' : ''} active={!displayPriceChart} onClick={handlePriceClickCandle}>
                 Candle Stick
             </Button>
         </Form.Field>

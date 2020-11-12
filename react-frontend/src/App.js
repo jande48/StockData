@@ -31,7 +31,7 @@ function App () {
                 Indicators
               </Header> */}
               <Grid.Row color='black' inverted stretched>
-              <Accordion inverted stretched color='black'>
+              <Accordion inverted stretched fitted color='black'>
                 <Accordion.Title
                   inverted
                   active={activeMomentumAccodian === 0}
@@ -42,7 +42,7 @@ function App () {
                       }}>
                     <Header as='h3' textAlign='left' inverted><Icon name='dropdown' />Momentum</Header>
                 </Accordion.Title>
-                <Accordion.Content borderless active={activeMomentumAccodian === 0} content={<MomentumMenuContainer />} />
+                <Accordion.Content borderless active={activeMomentumAccodian === 0} >{<MomentumMenuContainer />}</Accordion.Content>
                 <Accordion.Title
                   inverted
                   active={activeMomentumAccodian=== 1}
