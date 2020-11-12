@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import { connect } from 'react-redux'
 import { displaySMA, displayEMA, displayMACD, displayMACDsignal, displayADX, displayADXP, displayADXN, displayVIPOS, displayVINEG,
     displayTRIX, displayMI, displayDPO, } from '../redux'
-import { Grid, Menu, Accordion, Checkbox } from "semantic-ui-react"
+import { Grid, Menu, Accordion, Checkbox, Icon } from "semantic-ui-react"
 import SMAcontentpanel from './accordion/momentum/SMAcontentpanel'
 import EMAcontentPanel from './accordion/momentum/EMAcontentpanel'
 import MACDcontentPanel from './accordion/momentum/MACDcontentpanel'
@@ -46,6 +46,9 @@ function TrendMenuContainer(props) {
         <Grid.Column>
             <h5>Simple Moving Average</h5>
         </Grid.Column>
+        <Grid.Column floated='right' width={2}>
+                <Icon name={activeSMAAccordionMenuItem === 0 ? 'caret down' : 'caret left'}/>
+        </Grid.Column>
         </Grid>)
         
     const MACDAccordionTitle = (
@@ -61,6 +64,9 @@ function TrendMenuContainer(props) {
         </Grid.Column>
         <Grid.Column>
             <h5>MACD</h5>
+        </Grid.Column>
+        <Grid.Column floated='right' width={2}>
+                <Icon name={activeMACDAccordionMenuItem === 0 ? 'caret down' : 'caret left'}/>
         </Grid.Column>
         </Grid>)
 
@@ -78,6 +84,9 @@ function TrendMenuContainer(props) {
         <Grid.Column>
             <h5>Exponential Moving Average</h5>
         </Grid.Column>
+        <Grid.Column floated='right' width={2}>
+                <Icon name={activeEMAAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
+        </Grid.Column>
         </Grid>)
 
     const MACDSIGNALAccordionTitle = (
@@ -94,6 +103,9 @@ function TrendMenuContainer(props) {
       <Grid.Column>
           <h5>MACD Signal</h5>
       </Grid.Column>
+      <Grid.Column floated='right' width={2}>
+                <Icon name={activeMACDSIGNALAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
+        </Grid.Column>
       </Grid>)
     const ADXAccordionTitle = (
       <Grid columns='equal'>
@@ -107,6 +119,9 @@ function TrendMenuContainer(props) {
       <Grid.Column>
           <h5>Average Directional Movement</h5>
       </Grid.Column>
+      <Grid.Column floated='right' width={2}>
+                <Icon name={activeADXAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
+        </Grid.Column>
       </Grid>)
     const ADXPAccordionTitle = (
       <Grid columns='equal'>
@@ -118,8 +133,11 @@ function TrendMenuContainer(props) {
               </Checkbox>
       </Grid.Column>
       <Grid.Column>
-          <h5>Average Directional Movement Positive</h5>
+          <h5>ADM - Positive</h5>
       </Grid.Column>
+      <Grid.Column floated='right' width={2}>
+                <Icon name={activeADXPAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
+        </Grid.Column>
       </Grid>)
     const ADXNAccordionTitle = (
       <Grid columns='equal'>
@@ -131,8 +149,11 @@ function TrendMenuContainer(props) {
               </Checkbox>
       </Grid.Column>
       <Grid.Column>
-          <h5>Average Directional Movement Negative</h5>
+          <h5>ADM - Negative</h5>
       </Grid.Column>
+      <Grid.Column floated='right' width={2}>
+                <Icon name={activeADXNAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
+        </Grid.Column>
       </Grid>)
     const VIPOSAccordionTitle = (
         <Grid columns='equal'>
@@ -145,6 +166,9 @@ function TrendMenuContainer(props) {
         </Grid.Column>
         <Grid.Column>
             <h5>Vortex Indicator - Positive</h5>
+        </Grid.Column>
+        <Grid.Column floated='right' width={2}>
+                <Icon name={activeVIPOSAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
         </Grid.Column>
         </Grid>)
     const VINEGAccordionTitle = (
@@ -159,6 +183,9 @@ function TrendMenuContainer(props) {
         <Grid.Column>
             <h5>Vortex Indicator - Negative</h5>
         </Grid.Column>
+        <Grid.Column floated='right' width={2}>
+                <Icon name={activeVINEGAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
+        </Grid.Column>
         </Grid>)
     const TRIXAccordionTitle = (
         <Grid columns='equal'>
@@ -171,6 +198,9 @@ function TrendMenuContainer(props) {
         </Grid.Column>
         <Grid.Column>
             <h5>TRIX</h5>
+        </Grid.Column>
+        <Grid.Column floated='right' width={2}>
+                <Icon name={activeTRIXAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
         </Grid.Column>
         </Grid>)
     const MIAccordionTitle = (
@@ -185,6 +215,9 @@ function TrendMenuContainer(props) {
         <Grid.Column>
             <h5>Mass Index</h5>
         </Grid.Column>
+        <Grid.Column floated='right' width={2}>
+                <Icon name={activeMIAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
+        </Grid.Column>
         </Grid>)
     const DPOAccordionTitle = (
         <Grid columns='equal'>
@@ -197,6 +230,9 @@ function TrendMenuContainer(props) {
         </Grid.Column>
         <Grid.Column>
             <h5>Detrended Price Oscillator</h5>
+        </Grid.Column>
+        <Grid.Column floated='right' width={2}>
+                <Icon name={activeDPOAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
         </Grid.Column>
         </Grid>)
 
@@ -252,146 +288,134 @@ function TrendMenuContainer(props) {
                     <Accordion.Title
                         inverted
                         active={activeSMAAccordionMenuItem === 0}
-                        content={SMAAccordionTitle}
                         index={0}
                         borderless
                         onClick={(e,index) => {
                             setActiveSMAAccordionMenuItem(index.index === activeSMAAccordionMenuItem ? -1 : index.index)
                             }}
-                    />
-                    <Accordion.Content borderless active={activeSMAAccordionMenuItem === 0} content={<SMAcontentpanel />} />
+                    >{SMAAccordionTitle}</Accordion.Title>
+                    <Accordion.Content borderless active={activeSMAAccordionMenuItem === 0} >{<SMAcontentpanel />}</Accordion.Content>
                 </Menu.Item>
                 <Menu.Item borderless>
                     <Accordion.Title
                         active={activeMACDAccordionMenuItem === 0}
-                        content={MACDAccordionTitle}
                         index={0}
                         borderless
                         onClick={(e,index) => {
                             setActiveMACDAccordionMenuItem(index.index === activeMACDAccordionMenuItem ? -1 : index.index)
                             }}
-                    />
-                    <Accordion.Content borderless active={activeMACDAccordionMenuItem === 0} content={<MACDcontentPanel />} />
+                    >{MACDAccordionTitle}</Accordion.Title>
+                    <Accordion.Content borderless active={activeMACDAccordionMenuItem === 0} >{<MACDcontentPanel />}</Accordion.Content>
                 </Menu.Item>
                 <Menu.Item borderless>
                     <Accordion.Title
                         active={activeEMAAccodianMenuItem === 0}
-                        content={EMAAccordionTitle}
                         index={0}
                         borderless
                         onClick={(e,index) => {
                             setActiveEMAAccodianMenuItem(index.index === activeEMAAccodianMenuItem ? -1 : index.index)
                             }}
-                    />
-                    <Accordion.Content borderless active={activeEMAAccodianMenuItem === 0} content={<EMAcontentPanel />} />
+                    >{EMAAccordionTitle}</Accordion.Title>
+                    <Accordion.Content borderless active={activeEMAAccodianMenuItem === 0} >{<EMAcontentPanel />}</Accordion.Content>
                 </Menu.Item>
                 <Menu.Item borderless>
                     <Accordion.Title
                         active={activeMACDSIGNALAccodianMenuItem === 0}
-                        content={MACDSIGNALAccordionTitle}
                         index={0}
                         borderless
                         onClick={(e,index) => {
                             setActiveMACDSIGNALAccodianMenuItem(index.index === activeMACDSIGNALAccodianMenuItem ? -1 : index.index)
                             }}
-                    />
-                    <Accordion.Content borderless active={activeMACDSIGNALAccodianMenuItem === 0} content={<MACDSIGNALcontentPanel />} />
+                    >{MACDSIGNALAccordionTitle}</Accordion.Title>
+                    <Accordion.Content borderless active={activeMACDSIGNALAccodianMenuItem === 0} >{<MACDSIGNALcontentPanel />}</Accordion.Content>
                 </Menu.Item>
                 <Menu.Item borderless>
                     <Accordion.Title
                         active={activeADXAccodianMenuItem === 0}
-                        content={ADXAccordionTitle}
                         index={0}
                         borderless
                         onClick={(e,index) => {
                             setActiveADXAccodianMenuItem(index.index === activeADXAccodianMenuItem ? -1 : index.index)
                             }}
-                    />
-                    <Accordion.Content borderless active={activeADXAccodianMenuItem === 0} content={<ADXcontentPanel />} />
+                    >{ADXAccordionTitle}</Accordion.Title>
+                    <Accordion.Content borderless active={activeADXAccodianMenuItem === 0} >{<ADXcontentPanel />}</Accordion.Content>
                 </Menu.Item>
                 <Menu.Item borderless>
                     <Accordion.Title
                         active={activeADXPAccodianMenuItem === 0}
-                        content={ADXPAccordionTitle}
                         index={0}
                         borderless
                         onClick={(e,index) => {
                             setActiveADXPAccodianMenuItem(index.index === activeADXPAccodianMenuItem ? -1 : index.index)
                             }}
-                    />
-                    <Accordion.Content borderless active={activeADXPAccodianMenuItem === 0} content={<ADXPcontentPanel />} />
+                    >{ADXPAccordionTitle}</Accordion.Title>
+                    <Accordion.Content borderless active={activeADXPAccodianMenuItem === 0} >{<ADXPcontentPanel />}</Accordion.Content>
                 </Menu.Item>
                 <Menu.Item borderless>
                     <Accordion.Title
                         active={activeADXNAccodianMenuItem === 0}
-                        content={ADXNAccordionTitle}
                         index={0}
                         borderless
                         onClick={(e,index) => {
                             setActiveADXNAccodianMenuItem(index.index === activeADXNAccodianMenuItem ? -1 : index.index)
                             }}
-                    />
-                    <Accordion.Content borderless active={activeADXNAccodianMenuItem === 0} content={<ADXNcontentPanel />} />
+                    >{ADXNAccordionTitle}</Accordion.Title>
+                    <Accordion.Content borderless active={activeADXNAccodianMenuItem === 0} >{<ADXNcontentPanel />}</Accordion.Content>
                 </Menu.Item>
                 <Menu.Item borderless>
                     <Accordion.Title
                         active={activeVIPOSAccodianMenuItem === 0}
-                        content={VIPOSAccordionTitle}
                         index={0}
                         borderless
                         onClick={(e,index) => {
                             setActiveVIPOSAccodianMenuItem(index.index === activeVIPOSAccodianMenuItem ? -1 : index.index)
                             }}
-                    />
-                    <Accordion.Content borderless active={activeVIPOSAccodianMenuItem === 0} content={<VIPOScontentPanel />} />
+                    >{VIPOSAccordionTitle}</Accordion.Title>
+                    <Accordion.Content borderless active={activeVIPOSAccodianMenuItem === 0} >{<VIPOScontentPanel />}</Accordion.Content>
                 </Menu.Item>
                 <Menu.Item borderless>
                     <Accordion.Title
                         active={activeVINEGAccodianMenuItem === 0}
-                        content={VINEGAccordionTitle}
                         index={0}
                         borderless
                         onClick={(e,index) => {
                             setActiveVINEGAccodianMenuItem(index.index === activeVINEGAccodianMenuItem ? -1 : index.index)
                             }}
-                    />
-                    <Accordion.Content borderless active={activeVINEGAccodianMenuItem === 0} content={<VINEGcontentPanel />} />
+                    >{VINEGAccordionTitle}</Accordion.Title>
+                    <Accordion.Content borderless active={activeVINEGAccodianMenuItem === 0} >{<VINEGcontentPanel />}</Accordion.Content>
                 </Menu.Item>
                 <Menu.Item borderless>
                     <Accordion.Title
                         active={activeTRIXAccodianMenuItem === 0}
-                        content={TRIXAccordionTitle}
                         index={0}
                         borderless
                         onClick={(e,index) => {
                             setActiveTRIXAccodianMenuItem(index.index === activeTRIXAccodianMenuItem ? -1 : index.index)
                             }}
-                    />
-                    <Accordion.Content borderless active={activeTRIXAccodianMenuItem === 0} content={<TRIXcontentPanel />} />
+                    >{TRIXAccordionTitle}</Accordion.Title>
+                    <Accordion.Content borderless active={activeTRIXAccodianMenuItem === 0} >{<TRIXcontentPanel />}</Accordion.Content>
                 </Menu.Item>
                 <Menu.Item borderless>
                     <Accordion.Title
                         active={activeMIAccodianMenuItem === 0}
-                        content={MIAccordionTitle}
                         index={0}
                         borderless
                         onClick={(e,index) => {
                             setActiveMIAccodianMenuItem(index.index === activeMIAccodianMenuItem ? -1 : index.index)
                             }}
-                    />
-                    <Accordion.Content borderless active={activeMIAccodianMenuItem === 0} content={<MIcontentPanel />} />
+                    >{MIAccordionTitle}</Accordion.Title>
+                    <Accordion.Content borderless active={activeMIAccodianMenuItem === 0} >{<MIcontentPanel />}</Accordion.Content>
                 </Menu.Item>
                 <Menu.Item borderless>
                     <Accordion.Title
                         active={activeDPOAccodianMenuItem === 0}
-                        content={DPOAccordionTitle}
                         index={0}
                         borderless
                         onClick={(e,index) => {
                             setActiveDPOAccodianMenuItem(index.index === activeDPOAccodianMenuItem ? -1 : index.index)
                             }}
-                    />
-                    <Accordion.Content borderless active={activeDPOAccodianMenuItem === 0} content={<DPOcontentPanel />} />
+                    >{DPOAccordionTitle}</Accordion.Title>
+                    <Accordion.Content borderless active={activeDPOAccodianMenuItem === 0} >{<DPOcontentPanel />}</Accordion.Content>
                 </Menu.Item>
                 
                    

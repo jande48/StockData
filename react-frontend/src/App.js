@@ -45,8 +45,7 @@ function App () {
                 <Accordion.Content borderless active={activeMomentumAccodian === 0} >{<MomentumMenuContainer />}</Accordion.Content>
                 <Accordion.Title
                   inverted
-                  active={activeMomentumAccodian=== 1}
-                  content=''
+                  active={activeTrendAccodian=== 1}
                   index={1}
                   borderless
                   onClick={(e,index) => {
@@ -54,7 +53,7 @@ function App () {
                       }}>
                     <Header as='h3' textAlign='left' inverted><Icon name='dropdown' />Trend</Header>
                 </Accordion.Title>
-                <Accordion.Content borderless active={activeTrendAccodian === 1} content={<TrendMenuContainer />} />
+                <Accordion.Content borderless active={activeTrendAccodian === 1} >{<TrendMenuContainer />}</Accordion.Content>
               </Accordion>
               </Grid.Row>
             </Grid.Row>

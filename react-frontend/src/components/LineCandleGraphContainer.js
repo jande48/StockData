@@ -437,7 +437,7 @@ function LineCandleGraphContainer (props) {
         <Grid inverted columns='equal'>
           <Grid.Row stretched  color='black'>
             <Grid.Column  color='black'>
-                <Header as='h2' textAlign='left' inverted color='#8d8e8e'> {props.stockData.length > 0 ? props.compName + ' - '+ props.tickers + ' ($' + props.stockData[props.stockData.length-1]['close'] + ')' : ''}</Header>
+                <Header as='h2' textAlign='left' inverted color="#e0e1e2"> {props.stockData.length > 0 ? props.compName + ' - '+ props.tickers + ' ($' + props.stockData[props.stockData.length-1]['close'] + ')' : ''}</Header>
             </Grid.Column>
             <Grid.Column color='black'>
                 <Header as='h2' textAlign='right' color={(props.percentChange > 0) ? 'green' : 'red'}>{((props.percentChange==0) ? '' : (props.percentChange > 0) ? '+' + String(props.percentChange) + '%': String(props.percentChange)+'%')}

@@ -39,7 +39,6 @@ function MomentumMenuContainer(props) {
                 </Grid.Column>
                 <Grid.Column floated='right' width={2}>
                     <Icon name={activeRSIAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
-                    
                 </Grid.Column>
             </Grid.Row>
         </Grid>)
@@ -73,6 +72,9 @@ function MomentumMenuContainer(props) {
         <Grid.Column>
             <h5>Ultimate Oscillator</h5>
         </Grid.Column>
+        <Grid.Column floated='right' width={2}>
+            <Icon name={activeUOAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
+        </Grid.Column>
         </Grid>)
 
     const STOCHAccordionTitle = (
@@ -87,6 +89,9 @@ function MomentumMenuContainer(props) {
         <Grid.Column>
             <h5>Stochcastic Oscillator</h5>
         </Grid.Column>
+        <Grid.Column floated='right' width={2}>
+            <Icon name={activeSTOCHAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
+        </Grid.Column>
         </Grid>)
     const STOCHSIGNALAccordionTitle = (
         <Grid columns='equal'>
@@ -99,6 +104,9 @@ function MomentumMenuContainer(props) {
         </Grid.Column>
         <Grid.Column>
             <h5>Stochcastic Signal Oscillator</h5>
+        </Grid.Column>
+        <Grid.Column floated='right' width={2}>
+            <Icon name={activeSTOCHSIGNALAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
         </Grid.Column>
         </Grid>)
     const WRAccordionTitle = (
@@ -113,6 +121,9 @@ function MomentumMenuContainer(props) {
         <Grid.Column>
             <h5>Williams %R</h5>
         </Grid.Column>
+        <Grid.Column floated='right' width={2}>
+            <Icon name={activeWRAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
+        </Grid.Column>
         </Grid>)
     const AOAccordionTitle = (
         <Grid columns='equal'>
@@ -125,6 +136,9 @@ function MomentumMenuContainer(props) {
         </Grid.Column>
         <Grid.Column>
             <h5>Awesome Oscillator</h5>
+        </Grid.Column>
+        <Grid.Column floated='right' width={2}>
+            <Icon name={activeAOAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
         </Grid.Column>
         </Grid>)
     const KAMAAccordionTitle = (
@@ -139,6 +153,9 @@ function MomentumMenuContainer(props) {
         <Grid.Column>
             <h5>Kaufman's Adaptive MA</h5>
         </Grid.Column>
+        <Grid.Column floated='right' width={2}>
+            <Icon name={activeKAMAAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
+        </Grid.Column>
         </Grid>)
     const ROCAccordionTitle = (
         <Grid columns='equal'>
@@ -151,6 +168,9 @@ function MomentumMenuContainer(props) {
         </Grid.Column>
         <Grid.Column>
             <h5>Rate of Change</h5>
+        </Grid.Column>
+        <Grid.Column floated='right' width={2}>
+            <Icon name={activeROCAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
         </Grid.Column>
         </Grid>)
 
@@ -225,91 +245,84 @@ function MomentumMenuContainer(props) {
                                 setTSIActiveAccordionMenuItem(index.index === activeTSIAccodianMenuItem ? -1 : index.index)
                                 }}
                         >{TSIAccordionTitle}</Accordion.Title>
-                        <Accordion.Content borderless active={activeTSIAccodianMenuItem === 0} content={<TSIcontentPanel/>} />
+                        <Accordion.Content borderless active={activeTSIAccodianMenuItem === 0}  >{<TSIcontentPanel/>}</Accordion.Content>
                     </Menu.Item>
                     <Menu.Item borderless>
                         <Accordion.Title
                             active={activeUOAccodianMenuItem === 0}
-                            content={UOAccordionTitle}
                             index={0}
                             borderless
                             onClick={(e,index) => {
                                 setUOActiveAccordionMenuItem(index.index === activeUOAccodianMenuItem ? -1 : index.index)
                                 }}
-                        />
-                        <Accordion.Content borderless active={activeUOAccodianMenuItem === 0} content={<UOcontentPanel />} />
+                        >{UOAccordionTitle}</Accordion.Title>
+                        <Accordion.Content borderless active={activeUOAccodianMenuItem === 0} >{<UOcontentPanel />}</Accordion.Content>
                     </Menu.Item>
                     <Menu.Item borderless>
                         <Accordion.Title
                             active={activeSTOCHAccodianMenuItem === 0}
-                            content={STOCHAccordionTitle}
                             index={0}
                             borderless
                             onClick={(e,index) => {
                                 setSTOCHActiveAccordionMenuItem(index.index === activeSTOCHAccodianMenuItem ? -1 : index.index)
                                 }}
-                        />
-                        <Accordion.Content borderless active={activeSTOCHAccodianMenuItem === 0} content={<STOCHcontentPanel />} />
+                        >{STOCHAccordionTitle}</Accordion.Title>
+                        <Accordion.Content borderless active={activeSTOCHAccodianMenuItem === 0} >{<STOCHcontentPanel />} </Accordion.Content>
                     </Menu.Item>
                     <Menu.Item borderless>
                         <Accordion.Title
                             active={activeSTOCHSIGNALAccodianMenuItem === 0}
-                            content={STOCHSIGNALAccordionTitle}
                             index={0}
                             borderless
                             onClick={(e,index) => {
                                 setSTOCHSIGNALActiveAccordionMenuItem(index.index === activeSTOCHAccodianMenuItem ? -1 : index.index)
                                 }}
-                        />
-                        <Accordion.Content borderless active={activeSTOCHSIGNALAccodianMenuItem === 0} content={<STOCHSIGNALcontentPanel />} />
+                        >{STOCHSIGNALAccordionTitle}</Accordion.Title>
+                        <Accordion.Content borderless active={activeSTOCHSIGNALAccodianMenuItem === 0} >{<STOCHSIGNALcontentPanel />}</Accordion.Content>
                     </Menu.Item>
                     <Menu.Item borderless>
                         <Accordion.Title
                             active={activeWRAccodianMenuItem === 0}
-                            content={WRAccordionTitle}
                             index={0}
                             borderless
                             onClick={(e,index) => {
                                 setWRActiveAccordionMenuItem(index.index === activeWRAccodianMenuItem ? -1 : index.index)
                                 }}
-                        />
-                        <Accordion.Content borderless active={activeWRAccodianMenuItem === 0} content={<WRcontentPanel />} />
+                        >{WRAccordionTitle}</Accordion.Title>
+                        <Accordion.Content borderless active={activeWRAccodianMenuItem === 0} >{<WRcontentPanel />}</Accordion.Content>
                     </Menu.Item>
                     <Menu.Item borderless>
                         <Accordion.Title
                             active={activeAOAccodianMenuItem === 0}
-                            content={AOAccordionTitle}
                             index={0}
                             borderless
                             onClick={(e,index) => {
                                 setAOActiveAccordionMenuItem(index.index === activeAOAccodianMenuItem ? -1 : index.index)
                                 }}
-                        />
-                        <Accordion.Content borderless active={activeAOAccodianMenuItem === 0} content={<AOcontentPanel />} />
+                        >{AOAccordionTitle}</Accordion.Title>
+                        <Accordion.Content borderless active={activeAOAccodianMenuItem === 0} >{<AOcontentPanel />} </Accordion.Content>
                     </Menu.Item>
                     <Menu.Item borderless>
                         <Accordion.Title
                             active={activeKAMAAccodianMenuItem === 0}
-                            content={KAMAAccordionTitle}
                             index={0}
                             borderless
                             onClick={(e,index) => {
                                 setKAMAActiveAccordionMenuItem(index.index === activeKAMAAccodianMenuItem ? -1 : index.index)
                                 }}
-                        />
-                        <Accordion.Content borderless active={activeKAMAAccodianMenuItem === 0} content={<KamacontentPanel />} />
+                        >{KAMAAccordionTitle}</Accordion.Title>
+                        <Accordion.Content borderless active={activeKAMAAccodianMenuItem === 0} >{<KamacontentPanel />}</Accordion.Content>
                     </Menu.Item>
                     <Menu.Item borderless>
                         <Accordion.Title
                             active={activeROCAccodianMenuItem === 0}
-                            content={ROCAccordionTitle}
                             index={0}
                             borderless
                             onClick={(e,index) => {
                                 setROCActiveAccordionMenuItem(index.index === activeROCAccodianMenuItem ? -1 : index.index)
                                 }}
-                        />
-                        <Accordion.Content borderless active={activeROCAccodianMenuItem === 0} content={<ROCcontentPanel />} />
+                        >{ROCAccordionTitle}</Accordion.Title>
+                        <Accordion.Content borderless active={activeROCAccodianMenuItem === 0} >{<ROCcontentPanel />}</Accordion.Content>
                     </Menu.Item>
                     {/* <Menu.Item borderless>
                         <Accordion.Title

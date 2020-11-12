@@ -24,10 +24,10 @@ function SelectLineOrCandle(props) {
         <Grid.Row color='black' textAlign='center' stretched>
       <Form inverted stretched>
         <Form.Field inverted>
-            <Button basic inverted color={displayPriceChart ? 'green' : ''} active={displayPriceChart} onClick={handlePriceClickLine}>
+            <Button icon basic inverted color={displayPriceChart ? 'green' : ''} active={displayPriceChart} onClick={handlePriceClickLine}>
                 <Icon name='chart line' />
             </Button>
-            <Button basic inverted color={!displayPriceChart ? 'green' : ''} active={!displayPriceChart} onClick={handlePriceClickCandle}>
+            <Button icon basic inverted color={!displayPriceChart ? 'green' : ''} active={!displayPriceChart} onClick={handlePriceClickCandle}>
                 <Icon name='chart bar' />
             </Button>
         </Form.Field>
