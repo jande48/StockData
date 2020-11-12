@@ -1,9 +1,9 @@
   
 import { DISPLAY_SMA, N_FOR_SMA, DISPLAY_EMA, N_FOR_EMA, DISPLAY_MACD, N_SLOW_FOR_MACD, N_FAST_FOR_MACD, FETCH_TREND_DATA_REQUEST,
   DISPLAY_MACD_SIGNAL, N_FAST_FOR_MACD_SIGNAL, N_SLOW_FOR_MACD_SIGNAL, N_SIGN_FOR_MACD_SIGNAL, DISPLAY_ADX, N_FOR_ADX,
-  DISPLAY_ADXP, N_FOR_ADXP, DISPLAY_ADXN, N_FOR_ADXN,
-  FETCH_TREND_DATA_SUCCESS,
-  FETCH_TREND_DATA_FAILURE } from './trendTypes'
+  DISPLAY_ADXP, N_FOR_ADXP, DISPLAY_ADXN, N_FOR_ADXN, DISPLAY_VIPOS, N_FOR_VIPOS, DISPLAY_VINEG, N_FOR_VINEG, DISPLAY_TRIX, N_FOR_TRIX,
+  DISPLAY_MI, N_FOR_MI, N2_FOR_MI, DISPLAY_DPO, N_FOR_DPO, FETCH_TREND_DATA_SUCCESS,
+  FETCH_TREND_DATA_FAILURE} from './trendTypes'
 import axios from 'axios'
 
 
@@ -106,6 +106,72 @@ export const displayADXN = (n) => {
 export const nForADXN = (n) => {
   return {
     type: N_FOR_ADXN,
+    payload: n
+  }
+}
+export const displayVIPOS = (n) => {
+  return {
+    type: DISPLAY_VIPOS,
+    payload: n
+  }
+}
+export const nForVIPOS = (n) => {
+  return {
+    type: N_FOR_VIPOS,
+    payload: n
+  }
+}
+export const displayVINEG = (n) => {
+  return {
+    type: DISPLAY_VINEG,
+    payload: n
+  }
+}
+export const nForVINEG = (n) => {
+  return {
+    type: N_FOR_VINEG,
+    payload: n
+  }
+}
+export const displayTRIX = (n) => {
+  return {
+    type: DISPLAY_TRIX,
+    payload: n
+  }
+}
+export const nForTRIX = (n) => {
+  return {
+    type: N_FOR_TRIX,
+    payload: n
+  }
+}
+export const displayMI = (n) => {
+  return {
+    type: DISPLAY_MI,
+    payload: n
+  }
+}
+export const nForMI = (n) => {
+  return {
+    type: N_FOR_MI,
+    payload: n
+  }
+}
+export const n2ForMI = (n) => {
+  return {
+    type: N2_FOR_MI,
+    payload: n
+  }
+}
+export const displayDPO = (n) => {
+  return {
+    type: DISPLAY_DPO,
+    payload: n
+  }
+}
+export const nForDPO = (n) => {
+  return {
+    type: N_FOR_DPO,
     payload: n
   }
 }

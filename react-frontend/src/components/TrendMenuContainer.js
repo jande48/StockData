@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import { connect } from 'react-redux'
-import { displaySMA, displayEMA, displayMACD, displayMACDsignal, displayADX, displayADXP, displayADXN } from '../redux'
+import { displaySMA, displayEMA, displayMACD, displayMACDsignal, displayADX, displayADXP, displayADXN, displayVIPOS, displayVINEG,
+    displayTRIX, displayMI, displayDPO, } from '../redux'
 import { Grid, Menu, Accordion, Checkbox } from "semantic-ui-react"
 import SMAcontentpanel from './accordion/momentum/SMAcontentpanel'
 import EMAcontentPanel from './accordion/momentum/EMAcontentpanel'
@@ -9,6 +10,12 @@ import MACDSIGNALcontentPanel from './accordion/trend/MACDSIGNALcontentpanel'
 import ADXcontentPanel from './accordion/trend/ADXcontentpanel'
 import ADXPcontentPanel from './accordion/trend/ADXPcontentpanel'
 import ADXNcontentPanel from './accordion/trend/ADXNcontentpanel'
+import VIPOScontentPanel from './accordion/trend/VIPOScontentpanel'
+import VINEGcontentPanel from './accordion/trend/VINEGcontentpanel'
+import TRIXcontentPanel from './accordion/trend/TRIXcontentpanel'
+import MIcontentPanel from './accordion/trend/MIcontentpanel'
+import DPOcontentPanel from './accordion/trend/DPOcontentpanel'
+//import CCIcontentPanel from './accordion/trend/CCIcontentpanel'
 
 function TrendMenuContainer(props) {
     
@@ -20,7 +27,12 @@ function TrendMenuContainer(props) {
     const [activeADXAccodianMenuItem, setActiveADXAccodianMenuItem] = useState(-1)
     const [activeADXPAccodianMenuItem, setActiveADXPAccodianMenuItem] = useState(-1)
     const [activeADXNAccodianMenuItem, setActiveADXNAccodianMenuItem] = useState(-1)
-    
+    const [activeVIPOSAccodianMenuItem, setActiveVIPOSAccodianMenuItem] = useState(-1)
+    const [activeVINEGAccodianMenuItem, setActiveVINEGAccodianMenuItem] = useState(-1)
+    const [activeTRIXAccodianMenuItem, setActiveTRIXAccodianMenuItem] = useState(-1)
+    const [activeMIAccodianMenuItem, setActiveMIAccodianMenuItem] = useState(-1)
+    const [activeDPOAccodianMenuItem, setActiveDPOAccodianMenuItem] = useState(-1)
+    //const [activeCCIAccodianMenuItem, setActiveCCIAccodianMenuItem] = useState(-1)
 
     const SMAAccordionTitle = (
         <Grid columns='equal'>
@@ -28,8 +40,6 @@ function TrendMenuContainer(props) {
                 <Checkbox borderless index={1} onClick={(event) => {
                             event.stopPropagation()
                             props.displaySMAdispatch(!props.displaySMA)
-
-
                         }}>
                 </Checkbox>
         </Grid.Column>
@@ -124,6 +134,73 @@ function TrendMenuContainer(props) {
           <h5>Average Directional Movement Negative</h5>
       </Grid.Column>
       </Grid>)
+    const VIPOSAccordionTitle = (
+        <Grid columns='equal'>
+        <Grid.Column width={2}>
+                <Checkbox borderless index={1} onClick={(event) => {
+                            event.stopPropagation()
+                            props.displayVIPOSNdispatch(!props.displayVIPOS)
+                        }}>
+                </Checkbox>
+        </Grid.Column>
+        <Grid.Column>
+            <h5>Vortex Indicator - Positive</h5>
+        </Grid.Column>
+        </Grid>)
+    const VINEGAccordionTitle = (
+        <Grid columns='equal'>
+        <Grid.Column width={2}>
+                <Checkbox borderless index={1} onClick={(event) => {
+                            event.stopPropagation()
+                            props.displayVINEGdispatch(!props.displayVINEG)
+                        }}>
+                </Checkbox>
+        </Grid.Column>
+        <Grid.Column>
+            <h5>Vortex Indicator - Negative</h5>
+        </Grid.Column>
+        </Grid>)
+    const TRIXAccordionTitle = (
+        <Grid columns='equal'>
+        <Grid.Column width={2}>
+                <Checkbox borderless index={1} onClick={(event) => {
+                            event.stopPropagation()
+                            props.displayTRIXdispatch(!props.displayTRIX)
+                        }}>
+                </Checkbox>
+        </Grid.Column>
+        <Grid.Column>
+            <h5>TRIX</h5>
+        </Grid.Column>
+        </Grid>)
+    const MIAccordionTitle = (
+        <Grid columns='equal'>
+        <Grid.Column width={2}>
+                <Checkbox borderless index={1} onClick={(event) => {
+                            event.stopPropagation()
+                            props.displayMIdispatch(!props.displayMI)
+                        }}>
+                </Checkbox>
+        </Grid.Column>
+        <Grid.Column>
+            <h5>Mass Index</h5>
+        </Grid.Column>
+        </Grid>)
+    const DPOAccordionTitle = (
+        <Grid columns='equal'>
+        <Grid.Column width={2}>
+                <Checkbox borderless index={1} onClick={(event) => {
+                            event.stopPropagation()
+                            props.displayDPOdispatch(!props.displayDPO)
+                        }}>
+                </Checkbox>
+        </Grid.Column>
+        <Grid.Column>
+            <h5>Detrended Price Oscillator</h5>
+        </Grid.Column>
+        </Grid>)
+
+    
 
     const momentumNtradingDayOptions = [
 		{ key: 'one', text: '1', value: 1 },
@@ -256,7 +333,67 @@ function TrendMenuContainer(props) {
                     />
                     <Accordion.Content borderless active={activeADXNAccodianMenuItem === 0} content={<ADXNcontentPanel />} />
                 </Menu.Item>
-
+                <Menu.Item borderless>
+                    <Accordion.Title
+                        active={activeVIPOSAccodianMenuItem === 0}
+                        content={VIPOSAccordionTitle}
+                        index={0}
+                        borderless
+                        onClick={(e,index) => {
+                            setActiveVIPOSAccodianMenuItem(index.index === activeVIPOSAccodianMenuItem ? -1 : index.index)
+                            }}
+                    />
+                    <Accordion.Content borderless active={activeVIPOSAccodianMenuItem === 0} content={<VIPOScontentPanel />} />
+                </Menu.Item>
+                <Menu.Item borderless>
+                    <Accordion.Title
+                        active={activeVINEGAccodianMenuItem === 0}
+                        content={VINEGAccordionTitle}
+                        index={0}
+                        borderless
+                        onClick={(e,index) => {
+                            setActiveVINEGAccodianMenuItem(index.index === activeVINEGAccodianMenuItem ? -1 : index.index)
+                            }}
+                    />
+                    <Accordion.Content borderless active={activeVINEGAccodianMenuItem === 0} content={<VINEGcontentPanel />} />
+                </Menu.Item>
+                <Menu.Item borderless>
+                    <Accordion.Title
+                        active={activeTRIXAccodianMenuItem === 0}
+                        content={TRIXAccordionTitle}
+                        index={0}
+                        borderless
+                        onClick={(e,index) => {
+                            setActiveTRIXAccodianMenuItem(index.index === activeTRIXAccodianMenuItem ? -1 : index.index)
+                            }}
+                    />
+                    <Accordion.Content borderless active={activeTRIXAccodianMenuItem === 0} content={<TRIXcontentPanel />} />
+                </Menu.Item>
+                <Menu.Item borderless>
+                    <Accordion.Title
+                        active={activeMIAccodianMenuItem === 0}
+                        content={MIAccordionTitle}
+                        index={0}
+                        borderless
+                        onClick={(e,index) => {
+                            setActiveMIAccodianMenuItem(index.index === activeMIAccodianMenuItem ? -1 : index.index)
+                            }}
+                    />
+                    <Accordion.Content borderless active={activeMIAccodianMenuItem === 0} content={<MIcontentPanel />} />
+                </Menu.Item>
+                <Menu.Item borderless>
+                    <Accordion.Title
+                        active={activeDPOAccodianMenuItem === 0}
+                        content={DPOAccordionTitle}
+                        index={0}
+                        borderless
+                        onClick={(e,index) => {
+                            setActiveDPOAccodianMenuItem(index.index === activeDPOAccodianMenuItem ? -1 : index.index)
+                            }}
+                    />
+                    <Accordion.Content borderless active={activeDPOAccodianMenuItem === 0} content={<DPOcontentPanel />} />
+                </Menu.Item>
+                
                    
                 </Accordion>
 
@@ -287,6 +424,21 @@ const mapStateToProps = state => {
     nForADXP: state.trendFromRootReducer.nForADXP,
     displayADXN: state.trendFromRootReducer.displayADXN,
     nForADXN: state.trendFromRootReducer.nForADXN,
+    displayVIPOS: state.trendFromRootReducer.displayVIPOS,
+    nForVIPOS: state.trendFromRootReducer.nForVIPOS,
+    displayVINEG: state.trendFromRootReducer.displayVINEG,
+    nForVINEG: state.trendFromRootReducer.nForVINEG,
+    displayTRIX: state.trendFromRootReducer.displayTRIX,
+    nForTRIX: state.trendFromRootReducer.nForTRIX,
+    displayMI: state.trendFromRootReducer.displayMI,
+    nForMI: state.trendFromRootReducer.nForMI,
+    n2ForMI: state.trendFromRootReducer.n2ForMI,
+    displayDPO: state.trendFromRootReducer.displayDPO,
+    nForDPO: state.trendFromRootReducer.nForDPO,
+    displayCCI: state.trendFromRootReducer.displayCCI,
+    nForCCI: state.trendFromRootReducer.nForCCI,
+    //cForCCI: state.trendFromRootReducer.cForCCI,
+
 
   }
 }
@@ -300,6 +452,12 @@ const mapDispatchToProps = dispatch => {
     displayADXdispatch: x => dispatch(displayADX(x)),
     displayADXPdispatch: x => dispatch(displayADXP(x)),
     displayADXNdispatch: x => dispatch(displayADXN(x)),
+    displayVIPOSNdispatch: x => dispatch(displayVIPOS(x)),
+    displayVINEGdispatch: x => dispatch(displayVINEG(x)),
+    displayTRIXdispatch: x => dispatch(displayTRIX(x)),
+    displayMIdispatch: x => dispatch(displayMI(x)),
+    displayDPOdispatch: x => dispatch(displayDPO(x)),
+
   }
 }
 

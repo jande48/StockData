@@ -105,7 +105,6 @@ def get_stock_data(ticker,startDate,endDate):
         # next we'll see if just the end date doesn't have data, ie we need to partially fill out the db on the later dates
         if (getattr(queriedStartDate,ticker)) is not None and (getattr(queriedEndDate,ticker)) is None:
             print('This API thinking that there is no data at the ending date.')
-            print(getattr(queriedEndDate,'id'))
             index = getattr(queriedStartDate,'id')
             endingIndex = getattr(queriedEndDate,'id')
             trigger = True
@@ -130,7 +129,6 @@ def get_stock_data(ticker,startDate,endDate):
 
         
         # now that all of the requested data is in the database, we simply query it back out. 
-        print('the api thinks we have all the right data ')
         out = []
         startingIndexOutput = getattr(queriedStartDate,'id')
         endingIndexOutput = getattr(queriedEndDate,'id')
@@ -549,31 +547,38 @@ def calculate_Trend_Indicators():
         ADXnegativeChecked = JSON_sent[7]['displayADXN']
         nForADXnegative = JSON_sent[7]['nForADXN']
 
-    # # Vortex Indicator Positive
-    # VIpositiveChecked = JSON_sent[8]['displayVIpositive']
-    # nForVIpositive = JSON_sent[8]['nForVIpositive']
+        # # Bollinger Band SMA
+        # BBSMAchecked = JSON_sent[8]['displayBBSMA']
+        # nForBBSMA = JSON_sent[8]['nForBBSMA']
+        # nDev = JSON_sent[8]['ndevBBSMA']
 
-    # # Vortex Indicator Negative
-    # VInegativeChecked = JSON_sent[9]['displayVInegative']
-    # nForVInegative = JSON_sent[9]['nForVInegative']
+        # # Vortex Indicator Positive
+        VIpositiveChecked = JSON_sent[8]['displayVIPOS']
+        nForVIpositive = JSON_sent[8]['nForVIPOS']
 
-    # # TRIX
-    # TRIXchecked = JSON_sent[10]['displayTRIX']
-    # nForTRIX = JSON_sent[10]['nForTRIX']
+        # # Vortex Indicator Negative
+        VInegativeChecked = JSON_sent[9]['displayVINEG']
+        nForVInegative = JSON_sent[9]['nForVINEG']
 
-    # # Mass Index
-    # MassIndexchecked = JSON_sent[11]['displayMassIndex']
-    # nForMassIndex = JSON_sent[11]['nForMassIndex']
-    # n2ForMassIndex = JSON_sent[11]['n2ForMassIndex']
+        # # TRIX
+        TRIXchecked = JSON_sent[10]['displayTRIX']
+        nForTRIX = JSON_sent[10]['nForTRIX']
 
-    # # Commodity Channel Index 
-    # CCIchecked = JSON_sent[12]['displayCCIcheck']
-    # nForCCI = JSON_sent[12]['nForCCI']
-    # cForCCI = JSON_sent[12]['cForCCI']
+        # # Mass Index
+        MassIndexchecked = JSON_sent[11]['displayMI']
+        nForMassIndex = JSON_sent[11]['nForMI']
+        n2ForMassIndex = JSON_sent[11]['n2ForMI']
 
-    # # Detrended Price Oscillator (DPO)
-    # DPOchecked = JSON_sent[13]['displayDPO']
-    # nForDPO = JSON_sent[13]['nForDPO']
+        # # Commodity Channel Index 
+        # CCIchecked = JSON_sent[12]['displayCCI']
+        # nForCCI = JSON_sent[12]['nForCCI']
+        # cForCCI = float(JSON_sent[12]['cForCCI'])
+        #print('The N for CCI', nForCCI)
+        #print('The C for CCI', cForCCI)
+
+        # # Detrended Price Oscillator (DPO)
+        DPOchecked = JSON_sent[12]['displayDPO']
+        nForDPO = JSON_sent[12]['nForDPO']
 
     # # Tenkan-sen (Conversion Line)
     # IchimokuChecked = JSON_sent[14]['displayIchimoku']
@@ -617,29 +622,33 @@ def calculate_Trend_Indicators():
             indicator_ADXnegative = adx_neg(high=df['high'],low=df['low'],close=df['close'],n=nForADXnegative)
             df['adxn'] = indicator_ADXnegative
 
-    # if VIpositiveChecked:
-    #     indicator_VIpositive = vortex_indicator_pos(high=df['high'],low=df['low'],close=df['close'],n=nForVIpositive)
-    #     df['VIpositive'] = indicator_VIpositive
+        # if BBSMAchecked:
+        #     indicator_BBSMA = bollinger_mavg(close=df['close'],n=nForBBSMA)
+        #     df['bbsma'] = indicator_BBSMA
 
-    # if VInegativeChecked:
-    #     indicator_VInegative = vortex_indicator_neg(high=df['high'],low=df['low'],close=df['close'],n=nForVInegative)
-    #     df['VInegative'] = indicator_VInegative
+        if VIpositiveChecked:
+            indicator_VIpositive = vortex_indicator_pos(high=df['high'],low=df['low'],close=df['close'],n=nForVIpositive)
+            df['vipos'] = indicator_VIpositive
 
-    # if TRIXchecked:
-    #     indicator_TRIX = trix(close=df['close'],n=nForTRIX)
-    #     df['trix'] = indicator_TRIX
+        if VInegativeChecked:
+            indicator_VInegative = vortex_indicator_neg(high=df['high'],low=df['low'],close=df['close'],n=nForVInegative)
+            df['vineg'] = indicator_VInegative
 
-    # if MassIndexchecked:
-    #     indicator_MassIndex = mass_index(high=df['high'],low=df['low'],n=nForMassIndex,n2=n2ForMassIndex)
-    #     df['massIndex'] = indicator_MassIndex
+        if TRIXchecked:
+            indicator_TRIX = trix(close=df['close'],n=nForTRIX)
+            df['trix'] = indicator_TRIX
 
-    # if CCIchecked:
-    #     indicator_cci = cci(high=df['high'],low=df['low'],close=['close'],n=nForCCI,c=cForCCI)
-    #     df['cci'] = indicator_cci
+        if MassIndexchecked:
+            indicator_MassIndex = mass_index(high=df['high'],low=df['low'],n=nForMassIndex,n2=n2ForMassIndex)
+            df['mi'] = indicator_MassIndex
 
-    # if DPOchecked:
-    #     indicator_dpo = dpo(close=df['close'],n=nForDPO)
-    #     df['dpo'] = indicator_dpo
+        # if CCIchecked:
+        #     indicator_cci = cci(high=df['high'],low=df['low'],close=['close'],n=nForCCI,c=cForCCI)
+        #     df['cci'] = indicator_cci
+
+        if DPOchecked:
+            indicator_dpo = dpo(close=df['close'],n=nForDPO)
+            df['dpo'] = indicator_dpo
 
     # if IchimokuChecked:
     #     indicator_ichimoku = ichimoku_conversion_line(high=df['high'],low=df['low'],n1=n1ForIchimoku,n2=n2ForIchimoku,visual=visualForIchimoku)
@@ -667,9 +676,7 @@ def calculate_Trend_Indicators():
     # nForBBSMA = JSON_sent[18]['nForBBSMA']
     # nDev = JSON_sent[18]['ndevBBSMA']
 
-    # if BBSMAchecked:
-    #     indicator_BBSMA = bollinger_mavg(close=df['close'],n=nForBBSMA)
-    #     df['bbsma'] = indicator_BBSMA
+
 
     # # Bollinger Band Upper
     # BBUpperChecked = JSON_sent[19]['displayBBUpper']

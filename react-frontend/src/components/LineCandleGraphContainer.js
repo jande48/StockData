@@ -40,13 +40,21 @@ function LineCandleGraphContainer (props) {
     const ADXp = {'displayADX':props.displayADX,'nForADX':props.nForADX}
     const ADXPp = {'displayADXP':props.displayADXP,'nForADXP':props.nForADXP}
     const ADXNp = {'displayADXN':props.displayADXN,'nForADXN':props.nForADXN}
+    // const BBSMAp = {'displayBBSMA':props.displayBBSMA, 'nForBBSMA':props.nForBBSMA, 'nDevForBBSMA': props.nDevForBBSMA}
+    const VIPOSp = {'displayVIPOS':props.displayVIPOS,'nForVIPOS':props.nForVIPOS}
+    const VINEGp = {'displayVINEG':props.displayVINEG,'nForVINEG':props.nForVINEG}
+    const TRIXp = {'displayTRIX':props.displayTRIX,'nForTRIX':props.nForTRIX}
+    const MIp = {'displayMI':props.displayMI,'nForMI':props.nForMI,'n2ForMI':props.n2ForMI}
+    //const CCIp = {'displayCCI':props.displayCCI,'nForCCI':props.nForCCI,'cForCCI':props.cForCCI}
+    const DPOp = {'displayDPO':props.displayDPO,'nForDPO':props.nForDPO}
 
     props.fetchStockData(String(props.tickers+"/"+convertDatesToString(props.startDate)+"/"+convertDatesToString(props.endDate)))
-    props.fetchTrendData(JSON.stringify([props.stockData,SMAp,EMAp,MACDp,MACDsignalp,ADXp,ADXPp,ADXNp]))
+    props.fetchTrendData(JSON.stringify([props.stockData,SMAp,EMAp,MACDp,MACDsignalp,ADXp,ADXPp,ADXNp,VIPOSp,VINEGp,TRIXp,MIp, DPOp]))
     
   }, [props.tickers,props.startDate,props.endDate,props.displaySMA,props.nForSMA,props.displayEMA,props.nForEMA,props.displayMACD,props.nFastForMACD,props.nSlowForMACD,
     props.displayMACDsignal,props.nSlowForMACDsignal,props.nFastForMACDsignal,props.nSignForMACDsignal,props.displayADX,props.nForADX,
-    props.displayADXP,props.nForADXP,props.displayADXN,props.nForADXN])
+    props.displayADXP,props.nForADXP,props.displayADXN,props.nForADXN,props.displayVIPOS,props.nForVIPOS,props.displayVINEG,props.nForVINEG,
+    props.displayTRIX,props.nForTRIX,props.displayMI,props.nForMI,props.n2ForMI,props.displayDPO,props.nForDPO])
   
   props.addPercentChange(calcPercentChange())
 
@@ -155,8 +163,15 @@ function LineCandleGraphContainer (props) {
         const adx = new Indicator('adx',"#d95f02",trendData,props.displayADX,'axisLeft')
         const adxp = new Indicator('adxp',"#7570b3",trendData,props.displayADXP,'axisLeft')
         const adxn = new Indicator('adxn',"#e7298a",trendData,props.displayADXN,'axisLeft')
+        const vipos = new Indicator('vipos',"#66a61e",trendData,props.displayVIPOS,'axisRight')
+        const vineg = new Indicator('vineg',"#e6ab02",trendData,props.displayVINEG,'axisRight')
+        const trix = new Indicator('trix',"#a6761d",trendData,props.displayTRIX,'axisRight')
+        const mi = new Indicator('mi',"#666666",trendData,props.displayMI,'axisRight')
+        //const cci = new Indicator('cci',"#1b9e77",trendData,props.displayCCI,'axisRight')
+        const dpo = new Indicator('dpo',"#1b9e77",trendData,props.displayDPO,'axisRight')
+        // const bbsma = new Indicator('bbsma',"#66a61e",trendData,props.displayBBSMA,'axisLeft')
         
-        const objectList = [close,sma,macd,ema,macdSignal,adx,adxp,adxn]
+        const objectList = [close,sma,macd,ema,macdSignal,adx,adxp,adxn,vipos,vineg,trix,mi,dpo]
 
 
         const x = scaleBand()
@@ -274,6 +289,13 @@ function LineCandleGraphContainer (props) {
         const adxline = adx.d3line
         const adxpline = adxp.d3line
         const adxnline = adxn.d3line
+        // const bbsmaline = bbsma.d3line
+        const viposline = vipos.d3line
+        const vinegline = vineg.d3line
+        const trixline = trix.d3line
+        const miline = mi.d3line
+        //const cciline = cci.d3line
+        const dpoline = dpo.d3line
 
         var showRightAxis = false
         for (var i = 0; i < objectList.length; i++) {
@@ -458,6 +480,24 @@ const mapStateToProps = state => {
     nForADXP: state.trendFromRootReducer.nForADXP,
     displayADXN: state.trendFromRootReducer.displayADXN,
     nForADXN: state.trendFromRootReducer.nForADXN,
+    displayVIPOS: state.trendFromRootReducer.displayVIPOS,
+    nForVIPOS: state.trendFromRootReducer.nForVIPOS,
+    displayVINEG: state.trendFromRootReducer.displayVINEG,
+    nForVINEG: state.trendFromRootReducer.nForVINEG,
+    displayTRIX: state.trendFromRootReducer.displayTRIX,
+    nForTRIX: state.trendFromRootReducer.nForTRIX,
+    displayMI: state.trendFromRootReducer.displayMI,
+    nForMI: state.trendFromRootReducer.nForMI,
+    n2ForMI: state.trendFromRootReducer.n2ForMI,
+    displayDPO: state.trendFromRootReducer.displayDPO,
+    nForDPO: state.trendFromRootReducer.nForDPO,
+    // displayCCI: state.trendFromRootReducer.displayCCI,
+    // nForCCI: state.trendFromRootReducer.nForCCI,
+    // cForCCI: state.trendFromRootReducer.cForCCI,
+    // displayBBSMA: state.trendFromRootReducer.displayBBSMA,
+    // nForBBSMA: state.trendFromRootReducer.nForBBSMA,
+    // nDevForBBSMA: state.trendFromRootReducer.nDevForBBSMA,
+    
 
 
   }
