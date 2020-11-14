@@ -64,8 +64,37 @@ function LineCandleGraphContainer (props) {
     }
 
     function createStockPriceLineChart(stockPriceLineChartNode) {
-        const data = props.stockData
-        const trendData = props.trendData
+        const Initialdata = props.stockData
+
+        function sliceDataStartDate(data) {
+          var startingIndex = 0
+          var startingDate = props.startDate
+          if (props.startDate.getDay()== 0){
+            var dateOffset = (24*60*60*1000) * 2; 
+            startingDate.setTime(startingDate.getTime()-dateOffset)
+          }
+          if (props.startDate.getDay()== 6){
+            var dateOffset = (24*60*60*1000) * 1; 
+            startingDate.setTime(startingDate.getTime()-dateOffset)
+          }
+          for (var i = 0; i < data.length; i++) {
+            var dateSplit = data[i]['date'].split("-")
+            if ((String(parseInt(dateSplit[0]))+"-"+String(parseInt(dateSplit[1]))+"-"+String(parseInt(dateSplit[2]))) == convertDatesToString(startingDate)) {
+              startingIndex = i
+              break
+            } 
+          }
+          const exportData = data.slice(startingIndex)
+          console.log(startingIndex)
+          console.log(convertDatesToString(startingDate))
+          console.log(exportData)
+          return exportData
+        }
+
+        const data = sliceDataStartDate(Initialdata)
+      
+        const InitialtrendData = props.trendData
+        const trendData = sliceDataStartDate(InitialtrendData)
         
         function findMixMaxObjects(objects,leftOrRight) {
             var min = objects[0]['dataInd'][0]['close']

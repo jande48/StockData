@@ -40,16 +40,16 @@ function SelectTickerContainer(props) {
     )
   }
 
-  var columnStyle = {
-    padding: "0 !important"
-  };
 
+// color='black' stretched
   return (
     <div>
-      <Grid inverted>
-        <Grid.Row color='black' stretched>
-          <Grid.Column color='black' width={12}>
+      <Grid columns='equal' centered>
+        <Grid.Row verticalAlign='top'>
+          <Grid.Column>
           <Search
+              input={{ fluid: true }}
+              fluid
               loading={props.loading}
               onResultSelect={(e, data) =>{
                 props.addCompanyName(data.result.name)
@@ -63,8 +63,14 @@ function SelectTickerContainer(props) {
               //value={newTicker}
             inverted/>
           </Grid.Column>
-          <Grid.Column color='black' width={4}>
-            <Button color='green' animated onClick={(e) => {
+          <Grid.Column width={3}>
+            <Button icon basic inverted color='green' onClick={(e) => {
+                props.addTickerDispatch(newTicker)
+                props.fetchCompanyNameFromTicker(newTicker)
+              }}>
+                <Icon name='arrow right' />
+            </Button>
+            {/* <Button color='green' animated onClick={(e) => {
                 props.addTickerDispatch(newTicker)
                 props.fetchCompanyNameFromTicker(newTicker)
               }}>
@@ -72,7 +78,7 @@ function SelectTickerContainer(props) {
               <Button.Content hidden>
                   <Icon name='arrow right' />
               </Button.Content>
-            </Button>
+            </Button> */}
           </Grid.Column>
         </Grid.Row>
       </Grid>

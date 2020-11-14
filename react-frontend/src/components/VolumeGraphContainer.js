@@ -27,7 +27,33 @@ function VolumeGraphContainer (props) {
     }
 
   function createVolumeBarChart(showVolumeNode) {
-    const data = props.stockData
+    const Initialdata = props.stockData
+    function convertDatesToString(initialDate) {
+      const convertedDate = String(initialDate.getFullYear())+"-"+String(initialDate.getMonth() + 1)+"-"+String(initialDate.getDate())
+      return convertedDate
+    }
+    function sliceDataStartDate(data) {
+      var startingIndex = 0
+      var startingDate = props.startDate
+      if (props.startDate.getDay()== 0){
+        var dateOffset = (24*60*60*1000) * 2; 
+        startingDate.setTime(startingDate.getTime()-dateOffset)
+      }
+      if (props.startDate.getDay()== 6){
+        var dateOffset = (24*60*60*1000) * 1; 
+        startingDate.setTime(startingDate.getTime()-dateOffset)
+      }
+      for (var i = 0; i < data.length; i++) {
+        var dateSplit = data[i]['date'].split("-")
+        if ((String(parseInt(dateSplit[0]))+"-"+String(parseInt(dateSplit[1]))+"-"+String(parseInt(dateSplit[2]))) == convertDatesToString(startingDate)) {
+          startingIndex = i
+          break
+        } 
+      }
+      const exportData = data.slice(startingIndex)
+      return exportData
+    }
+    const data = sliceDataStartDate(Initialdata)
     const svg = select(showVolumeNode.current);
     svg.selectAll("g").remove()
     const margin = ({top: 10, right: 20, bottom: 5, left: 50})
@@ -197,7 +223,7 @@ const mapStateToProps = state => {
   return {
     stockData: state.stockDataFromRootReducer.stockData,
     displayLine: state.chartsFromRootReducer.displayLine,
-
+    startDate: state.datesFromRootReducer.startDate,
   }
 }
 

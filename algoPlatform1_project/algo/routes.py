@@ -1,11 +1,12 @@
 from flask import render_template, url_for, jsonify, flash, redirect, request
 from algoPlatform1_project import app, db
-import os, json, ast
+import os, json, ast, re
 from datetime import datetime, timedelta
+from threading import Thread
 import pyEX as p
 import pandas as pd
 from iexfinance.stocks import get_historical_data, Stock
-import ta
+import ta, time
 from ta.volatility import BollingerBands
 from ta.momentum import RSIIndicator, TSIIndicator, uo, stoch, stoch_signal, wr, ao, kama, roc
 from ta.trend import sma_indicator, ema_indicator, macd, macd_signal, macd_diff, adx, adx_pos, adx_neg, vortex_indicator_pos, vortex_indicator_neg, trix, mass_index, cci, dpo, kst, kst_sig, ichimoku_conversion_line, ichimoku_base_line, aroon_down, aroon_up, psar_up, psar_down
@@ -26,7 +27,7 @@ algo = Blueprint('algo',__name__)
 def get_stock_data(ticker,startDate,endDate):
 
     startDateForAPItemp = startDate.split('-')
-    startDateForAPI = datetime(int(startDateForAPItemp[0]),int(startDateForAPItemp[1]),int(startDateForAPItemp[2]))
+    startDateForAPI = datetime(int(startDateForAPItemp[0]),int(startDateForAPItemp[1]),int(startDateForAPItemp[2])) - timedelta(days=70)
     
     if startDateForAPI.weekday() == 5:
         startDateForAPI += timedelta(days=2)
@@ -245,33 +246,137 @@ def get_stock_data(ticker,startDate,endDate):
 
 @algo.route("/get_ticker_company_name/<user_input>", methods=['GET'])
 def get_ticker_company_name(user_input):
-    urlNASDAQ = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=2&exchange=NASDAQ&apikey="+Stock_Ticker_Lookup_key)
-    responseNASDAQ = urlopen(urlNASDAQ)
-    dataNASDAQ = responseNASDAQ.read().decode("utf-8")
-    urlNYSE = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=2&exchange=NYSE&apikey="+Stock_Ticker_Lookup_key)
-    responseNYSE = urlopen(urlNYSE)
-    dataNYSE = responseNYSE.read().decode("utf-8")
-    urlAMEX = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=2&exchange=AMEX&apikey="+Stock_Ticker_Lookup_key)
-    responseAMEX = urlopen(urlAMEX)
-    dataAMEX = responseAMEX.read().decode("utf-8")
-    urlINDEX = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=2&exchange=INDEX&apikey="+Stock_Ticker_Lookup_key)
-    responseINDEX = urlopen(urlINDEX)
-    dataINDEX = responseINDEX.read().decode("utf-8")
-    urlMUTUAL_FUND = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=2&exchange=MUTUAL_FUND&apikey="+Stock_Ticker_Lookup_key)
-    responseMUTUAL_FUND = urlopen(urlMUTUAL_FUND)
-    dataMUTUAL_FUND = responseMUTUAL_FUND.read().decode("utf-8")
-    urlETF = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=2&exchange=ETF&apikey="+Stock_Ticker_Lookup_key)
-    responseETF = urlopen(urlETF)
-    dataETF = responseETF.read().decode("utf-8")
-    dataset = [json.loads(dataNASDAQ),json.loads(dataNYSE),json.loads(dataAMEX),json.loads(dataINDEX),json.loads(dataMUTUAL_FUND),json.loads(dataETF)]
-    #print(dataset)
-    out = []
-    for i in range(len(dataset)):
-        for j in range(len(dataset[i])):
-            out.append(dataset[i][j])
 
-    # iters = 0
+
+    start = time.time()
+    #url_t = "http://localhost:8000/records/%i"
+
+    def process_id(id):
+        """process a single ID"""
+
+        url = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange="+id+"&apikey="+Stock_Ticker_Lookup_key)
+        response = urlopen(url,data=None,timeout=0.5)
+        data = response.read().decode("utf-8")
+        
+        return data
+    def process_range(id_range, store=None):
+        """process a number of ids, storing the results in a dict"""
+        if store is None:
+            store = {}
+        for id in id_range:
+            store[id] = json.loads(process_id(id))
+        return store
     
+    def threaded_process_range(nthreads, id_range):
+        """process the id range in a specified number of threads"""
+        store = {}
+        threads = []
+        # create the threads
+        for i in range(nthreads):
+            ids = id_range[i::nthreads]
+            t = Thread(target=process_range, args=(ids,store))
+            threads.append(t)
+
+        # start the threads
+        [ t.start() for t in threads ]
+        # wait for the threads to finish
+        [ t.join() for t in threads ]
+        return store
+    
+    temp = threaded_process_range(6,['NASDAQ','NYSE','AMEX','INDEX','MUTUAL_FUND','ETF'])
+    #time.sleep(5)
+    trigger = 0
+    while trigger < 8 and len(temp) == 0:
+        time.sleep(0.1)
+        trigger += 1
+
+    end4 =  time.time()
+    #print('This is the threaded time',end4-start)
+    print('this is temp',temp)
+    if len(temp) == 0:
+        temp = threaded_process_range(6,['NASDAQ','NYSE','AMEX','INDEX','MUTUAL_FUND','ETF'])
+    #https://stackoverflow.com/questions/3640359/regular-expressions-search-in-list
+    
+    # urlNASDAQ = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange=NASDAQ&apikey="+Stock_Ticker_Lookup_key)
+    # responseNASDAQ = urlopen(urlNASDAQ)
+    # dataNASDAQ = responseNASDAQ.read().decode("utf-8")
+    # urlNYSE = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange=NYSE&apikey="+Stock_Ticker_Lookup_key)
+    # responseNYSE = urlopen(urlNYSE)
+    # dataNYSE = responseNYSE.read().decode("utf-8")
+    # urlAMEX = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange=AMEX&apikey="+Stock_Ticker_Lookup_key)
+    # responseAMEX = urlopen(urlAMEX)
+    # dataAMEX = responseAMEX.read().decode("utf-8")
+    # urlINDEX = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange=INDEX&apikey="+Stock_Ticker_Lookup_key)
+    # responseINDEX = urlopen(urlINDEX)
+    # dataINDEX = responseINDEX.read().decode("utf-8")
+    # urlMUTUAL_FUND = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange=MUTUAL_FUND&apikey="+Stock_Ticker_Lookup_key)
+    # responseMUTUAL_FUND = urlopen(urlMUTUAL_FUND)
+    # dataMUTUAL_FUND = responseMUTUAL_FUND.read().decode("utf-8")
+    # urlETF = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange=ETF&apikey="+Stock_Ticker_Lookup_key)
+    # responseETF = urlopen(urlETF)
+    # dataETF = responseETF.read().decode("utf-8")
+    # dataset = [json.loads(dataNASDAQ),json.loads(dataNYSE),json.loads(dataAMEX),json.loads(dataINDEX),json.loads(dataMUTUAL_FUND),json.loads(dataETF)]
+    # #print(dataset)
+    out = []
+    end1 =  time.time()
+    print(end1-start)
+    #print(type(json.loads(dataNASDAQ)))
+    # if len(dataNASDAQ) > 0:
+    #     for i in range(len(dataNASDAQ)):
+    #         #print('This is data Nasdaq',dataNASDAQ[i])
+    #         #print('this is the name',dataNASDAQ[i]['name'])
+    #         try:
+    #             dataNASDAQ[i]['name'].index(user_input)
+    #         except ValueError:
+    #             print("Not found!")
+    #         else:
+    #             #print("Found!",dataNASDAQ[i]['name'].index(user_input))
+    #             dataNASDAQ[i]['startingStrIndex'] = dataNASDAQ[i]['name'].index(user_input)
+    #             out2.append(dataNASDAQ[i])
+    #             #print('new dataNasdaq[i]', dataNASDAQ[i])
+    # # user_input_regex = re.compile(user_input.upper())
+    # # for i in range(len(dataNASDAQ)):
+    # #     if list(filter(user_input_regex.match,dataNASDAQ['name'])):
+    # #         out2.append(dataNASDAQ[i])
+    # out2.sort(key = lambda out2: out2['startingStrIndex']) 
+    # print('this is the sorted out2',out2)
+    # for i in range(len(dataset)):
+    #     for j in range(len(dataset[i])):
+    #         dataset[i][j]['name'] = dataset[i][j]['name'].upper()
+    dataset2 = []
+    ids = ['NASDAQ','NYSE','AMEX','INDEX','MUTUAL_FUND','ETF']
+    for i in range(len(ids)):
+        if ids[i] in temp:
+            dataset2.append(temp[ids[i]])
+
+
+    for i in range(len(dataset2)):
+        for j in range(len(dataset2[i])):
+            try:
+                dataset2[i][j]['name'].upper().index(user_input.upper())
+            except ValueError:
+                print("Not found!")
+            else:
+                #print("Found!",dataNASDAQ[i]['name'].index(user_input))
+                dataset2[i][j]['startingStrIndex'] = dataset2[i][j]['name'].upper().index(user_input.upper())
+                out.append(dataset2[i][j])
+    # for i in range(len(dataset)):
+    #     for j in range(len(dataset[i])):
+    #         try:
+    #             dataset[i][j]['name'].upper().index(user_input.upper())
+    #         except ValueError:
+    #             print("Not found!")
+    #         else:
+    #             #print("Found!",dataNASDAQ[i]['name'].index(user_input))
+    #             dataset[i][j]['startingStrIndex'] = dataset[i][j]['name'].upper().index(user_input.upper())
+    #             out.append(dataset[i][j])
+            #out.append(dataset[i][j])
+    #print(out2)
+    # iters = 0
+    end2 =  time.time()
+    print(end2-end1)
+    out.sort(key = lambda out: out['startingStrIndex']) 
+    #print(out)
 
     # for i in range(len(dataset)):
     #     for j in range(len(dataset[i])):
@@ -292,7 +397,8 @@ def get_ticker_company_name(user_input):
     #             if iters >= 4:
     #                 break
         
-
+    end3 =  time.time()
+    print(end3-end2)
     # print(json.dumps(out))
     return json.dumps(out)
 
@@ -508,7 +614,6 @@ def calculate_Volitility_Indicators():
 
     df.fillna(0, inplace=True)
     return (json.dumps(df.to_dict('records')))
-
 
 @algo.route("/calculate_Trend_Indicators/", methods=['GET','POST'])
 def calculate_Trend_Indicators():
@@ -835,8 +940,6 @@ def calculate_Trend_Indicators():
     else:
         df = pd.DataFrame([])
         return (json.dumps(df.to_dict('records')))
-
-
 
 @algo.route("/calculate_Momentum_Indicators/", methods=['GET','POST'])
 def calculate_Momentum_Indicators():

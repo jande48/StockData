@@ -48,8 +48,36 @@ function MomentumGraphContainer (props) {
 
   if (props.momentumLoads > 0) {
     function createMomentumIndicatorsChart(momentumIndicatorsChartNode) {
-      const data = props.momentumData
-      const trendData = props.trendData
+      const Initialdata = props.momentumData
+      const InitialtrendData = props.trendData
+      function convertDatesToString(initialDate) {
+        const convertedDate = String(initialDate.getFullYear())+"-"+String(initialDate.getMonth() + 1)+"-"+String(initialDate.getDate())
+        return convertedDate
+      }
+      function sliceDataStartDate(data) {
+        var startingIndex = 0
+        var startingDate = props.startDate
+        if (props.startDate.getDay()== 0){
+          var dateOffset = (24*60*60*1000) * 2; 
+          startingDate.setTime(startingDate.getTime()-dateOffset)
+        }
+        if (props.startDate.getDay()== 6){
+          var dateOffset = (24*60*60*1000) * 1; 
+          startingDate.setTime(startingDate.getTime()-dateOffset)
+        }
+        for (var i = 0; i < data.length; i++) {
+          var dateSplit = data[i]['date'].split("-")
+          if ((String(parseInt(dateSplit[0]))+"-"+String(parseInt(dateSplit[1]))+"-"+String(parseInt(dateSplit[2]))) == convertDatesToString(startingDate)) {
+            startingIndex = i
+            break
+          } 
+        }
+        const exportData = data.slice(startingIndex)
+
+        return exportData
+      }
+      const data = sliceDataStartDate(Initialdata)
+      const trendData = sliceDataStartDate(InitialtrendData)
       
 
       function findMixMaxObjects(objects,leftOrRight) {
@@ -411,7 +439,7 @@ const mapStateToProps = state => {
     pow2ForKama: state.momentumFromRootReducer.pow2ForKama,
     displayROC: state.momentumFromRootReducer.displayROC,
     nForROC: state.momentumFromRootReducer.nForROC,
-
+    startDate: state.datesFromRootReducer.startDate,
     
   }
 }
