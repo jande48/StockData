@@ -27,7 +27,7 @@ algo = Blueprint('algo',__name__)
 def get_stock_data(ticker,startDate,endDate):
 
     startDateForAPItemp = startDate.split('-')
-    startDateForAPI = datetime(int(startDateForAPItemp[0]),int(startDateForAPItemp[1]),int(startDateForAPItemp[2])) - timedelta(days=70)
+    startDateForAPI = datetime(int(startDateForAPItemp[0]),int(startDateForAPItemp[1]),int(startDateForAPItemp[2])) - timedelta(days=90)
     
     if startDateForAPI.weekday() == 5:
         startDateForAPI += timedelta(days=2)
@@ -247,13 +247,13 @@ def get_stock_data(ticker,startDate,endDate):
 @algo.route("/get_ticker_company_name/<user_input>", methods=['GET'])
 def get_ticker_company_name(user_input):
 
-
+    # noSpacesUser = user_input_initial.upper().split(' ')
+    # user_input = "".join(noSpacesUser)
     start = time.time()
-    #url_t = "http://localhost:8000/records/%i"
 
     def process_id(id):
         """process a single ID"""
-
+        print('User id in process id ',user_input)
         url = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange="+id+"&apikey="+Stock_Ticker_Lookup_key)
         response = urlopen(url,data=None,timeout=0.5)
         data = response.read().decode("utf-8")
@@ -282,7 +282,7 @@ def get_ticker_company_name(user_input):
         # wait for the threads to finish
         [ t.join() for t in threads ]
         return store
-    
+    print('this is the user input before threading', user_input)
     temp = threaded_process_range(6,['NASDAQ','NYSE','AMEX','INDEX','MUTUAL_FUND','ETF'])
     #time.sleep(5)
     trigger = 0
@@ -292,9 +292,11 @@ def get_ticker_company_name(user_input):
 
     end4 =  time.time()
     #print('This is the threaded time',end4-start)
-    print('this is temp',temp)
+    #print('this is temp',temp)
+    
     if len(temp) == 0:
         temp = threaded_process_range(6,['NASDAQ','NYSE','AMEX','INDEX','MUTUAL_FUND','ETF'])
+    print('this is the user input after threading ', user_input)
     #https://stackoverflow.com/questions/3640359/regular-expressions-search-in-list
     
     # urlNASDAQ = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange=NASDAQ&apikey="+Stock_Ticker_Lookup_key)
@@ -317,6 +319,7 @@ def get_ticker_company_name(user_input):
     # dataETF = responseETF.read().decode("utf-8")
     # dataset = [json.loads(dataNASDAQ),json.loads(dataNYSE),json.loads(dataAMEX),json.loads(dataINDEX),json.loads(dataMUTUAL_FUND),json.loads(dataETF)]
     # #print(dataset)
+    time.sleep(1)
     out = []
     end1 =  time.time()
     print(end1-start)
@@ -349,16 +352,34 @@ def get_ticker_company_name(user_input):
         if ids[i] in temp:
             dataset2.append(temp[ids[i]])
 
-
+    print('this is the user input before for loop', user_input)
+    print('this is temp ',temp)
+    user_input_matching = user_input.replace("_","")
     for i in range(len(dataset2)):
         for j in range(len(dataset2[i])):
+            # noSpacesAPI = dataset2[i][j]['name'].upper().split(' ')
+            # noSpacesAPI2 = "".join(noSpacesAPI)
+            # s = re.sub('[^0-9a-zA-Z]+', '*', s)
+
+            if dataset2[i][j]['name'] is not None:
+
+                #print('this is dataset2 name',dataset2[i][j]['name'] )
+                noSpacesAPI =re.sub(r'\W+', '',dataset2[i][j]['name'] )
+                noSpacesAPI2 = noSpacesAPI.upper()
+                print('this is the API', noSpacesAPI2)
+                print('this is the user input', user_input_matching)
             try:
-                dataset2[i][j]['name'].upper().index(user_input.upper())
+                noSpacesAPI2.index(user_input_matching.upper())
+                #dataset2[i][j]['name'].upper().index(user_input.upper())
+                
             except ValueError:
                 print("Not found!")
             else:
                 #print("Found!",dataNASDAQ[i]['name'].index(user_input))
-                dataset2[i][j]['startingStrIndex'] = dataset2[i][j]['name'].upper().index(user_input.upper())
+                print('this is the API', noSpacesAPI2)
+                print('this is the user input', user_input_matching)
+                dataset2[i][j]['startingStrIndex'] = noSpacesAPI2.index(user_input_matching.upper()) 
+                #dataset2[i][j]['name'].upper().index(user_input.upper())
                 out.append(dataset2[i][j])
     # for i in range(len(dataset)):
     #     for j in range(len(dataset[i])):

@@ -66,12 +66,6 @@ function App () {
         </Grid>
         
         
-        {/* <ItemContainer cake />
-        <ItemContainer />
-        <NewCakeContainer />
-        <UsersContainer />
-        <HooksCakeContainer />
-        <IceCreamContainer /> */}
       
     </Provider>
   )
