@@ -22,9 +22,11 @@ function VolumeGraphContainer (props) {
     const showVolumeNode = useRef(null);
 
 
-  if (props.stockData.length > 1) {
+  if (typeof(props.stockData) != 'undefined' ) {
+    
+    if (props.stockData.length > 0){
     createVolumeBarChart(showVolumeNode)
-    }
+    }}
 
   function createVolumeBarChart(showVolumeNode) {
     const Initialdata = props.stockData
@@ -204,12 +206,12 @@ function VolumeGraphContainer (props) {
     return svg.node();
   }
 
-  return props.stockData.loading ? (
+  return props.loading ? (
 
 
     <h2>Loading</h2>
-  ) : props.stockData.error ? (
-    <h2>{props.stockData.error}</h2>
+  ) : props.error ? (
+    <h2>{props.error}</h2>
   ) : (
     <div>
         <React.Fragment>
@@ -222,6 +224,8 @@ function VolumeGraphContainer (props) {
 const mapStateToProps = state => {
   return {
     stockData: state.stockDataFromRootReducer.stockData,
+    loading: state.stockDataFromRootReducer.loading,
+    error: state.stockDataFromRootReducer.error,
     displayLine: state.chartsFromRootReducer.displayLine,
     startDate: state.datesFromRootReducer.startDate,
   }

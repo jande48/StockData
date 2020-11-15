@@ -38,7 +38,8 @@ const initialState = {
   displayROC: false,
   nForROC: 14,
   momentumLoads: 0,
-  loading: false
+  loading: false,
+  momentumData: []
 }
 
 const momentumReducer = (state = initialState, action) => {

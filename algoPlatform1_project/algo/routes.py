@@ -247,13 +247,9 @@ def get_stock_data(ticker,startDate,endDate):
 @algo.route("/get_ticker_company_name/<user_input>", methods=['GET'])
 def get_ticker_company_name(user_input):
 
-    # noSpacesUser = user_input_initial.upper().split(' ')
-    # user_input = "".join(noSpacesUser)
-    start = time.time()
 
     def process_id(id):
         """process a single ID"""
-        print('User id in process id ',user_input)
         url = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange="+id+"&apikey="+Stock_Ticker_Lookup_key)
         response = urlopen(url,data=None,timeout=0.5)
         data = response.read().decode("utf-8")
@@ -282,21 +278,17 @@ def get_ticker_company_name(user_input):
         # wait for the threads to finish
         [ t.join() for t in threads ]
         return store
-    print('this is the user input before threading', user_input)
-    temp = threaded_process_range(6,['NASDAQ','NYSE','AMEX','INDEX','MUTUAL_FUND','ETF'])
-    #time.sleep(5)
+
+    threaded_results = threaded_process_range(6,['NASDAQ','NYSE','AMEX','INDEX','MUTUAL_FUND','ETF'])
+
     trigger = 0
-    while trigger < 8 and len(temp) == 0:
+    while trigger < 8 and len(threaded_results) == 0:
         time.sleep(0.1)
         trigger += 1
-
-    end4 =  time.time()
-    #print('This is the threaded time',end4-start)
-    #print('this is temp',temp)
     
-    if len(temp) == 0:
-        temp = threaded_process_range(6,['NASDAQ','NYSE','AMEX','INDEX','MUTUAL_FUND','ETF'])
-    print('this is the user input after threading ', user_input)
+    if len(threaded_results) == 0:
+        threaded_results = threaded_process_range(6,['NASDAQ','NYSE','AMEX','INDEX','MUTUAL_FUND','ETF'])
+
     #https://stackoverflow.com/questions/3640359/regular-expressions-search-in-list
     
     # urlNASDAQ = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange=NASDAQ&apikey="+Stock_Ticker_Lookup_key)
@@ -319,108 +311,31 @@ def get_ticker_company_name(user_input):
     # dataETF = responseETF.read().decode("utf-8")
     # dataset = [json.loads(dataNASDAQ),json.loads(dataNYSE),json.loads(dataAMEX),json.loads(dataINDEX),json.loads(dataMUTUAL_FUND),json.loads(dataETF)]
     # #print(dataset)
-    time.sleep(1)
+    #time.sleep(1)
     out = []
-    end1 =  time.time()
-    print(end1-start)
-    #print(type(json.loads(dataNASDAQ)))
-    # if len(dataNASDAQ) > 0:
-    #     for i in range(len(dataNASDAQ)):
-    #         #print('This is data Nasdaq',dataNASDAQ[i])
-    #         #print('this is the name',dataNASDAQ[i]['name'])
-    #         try:
-    #             dataNASDAQ[i]['name'].index(user_input)
-    #         except ValueError:
-    #             print("Not found!")
-    #         else:
-    #             #print("Found!",dataNASDAQ[i]['name'].index(user_input))
-    #             dataNASDAQ[i]['startingStrIndex'] = dataNASDAQ[i]['name'].index(user_input)
-    #             out2.append(dataNASDAQ[i])
-    #             #print('new dataNasdaq[i]', dataNASDAQ[i])
-    # # user_input_regex = re.compile(user_input.upper())
-    # # for i in range(len(dataNASDAQ)):
-    # #     if list(filter(user_input_regex.match,dataNASDAQ['name'])):
-    # #         out2.append(dataNASDAQ[i])
-    # out2.sort(key = lambda out2: out2['startingStrIndex']) 
-    # print('this is the sorted out2',out2)
-    # for i in range(len(dataset)):
-    #     for j in range(len(dataset[i])):
-    #         dataset[i][j]['name'] = dataset[i][j]['name'].upper()
-    dataset2 = []
+    
+    dataset = []
     ids = ['NASDAQ','NYSE','AMEX','INDEX','MUTUAL_FUND','ETF']
     for i in range(len(ids)):
-        if ids[i] in temp:
-            dataset2.append(temp[ids[i]])
+        if ids[i] in threaded_results:
+            dataset.append(threaded_results[ids[i]])
 
-    print('this is the user input before for loop', user_input)
-    print('this is temp ',temp)
     user_input_matching = user_input.replace("_","")
-    for i in range(len(dataset2)):
-        for j in range(len(dataset2[i])):
-            # noSpacesAPI = dataset2[i][j]['name'].upper().split(' ')
-            # noSpacesAPI2 = "".join(noSpacesAPI)
-            # s = re.sub('[^0-9a-zA-Z]+', '*', s)
+    for i in range(len(dataset)):
+        for j in range(len(dataset[i])):
 
-            if dataset2[i][j]['name'] is not None:
-
-                #print('this is dataset2 name',dataset2[i][j]['name'] )
-                noSpacesAPI =re.sub(r'\W+', '',dataset2[i][j]['name'] )
+            if dataset[i][j]['name'] is not None:
+                noSpacesAPI =re.sub(r'\W+', '',dataset[i][j]['name'] )
                 noSpacesAPI2 = noSpacesAPI.upper()
-                print('this is the API', noSpacesAPI2)
-                print('this is the user input', user_input_matching)
             try:
                 noSpacesAPI2.index(user_input_matching.upper())
-                #dataset2[i][j]['name'].upper().index(user_input.upper())
-                
             except ValueError:
                 print("Not found!")
             else:
-                #print("Found!",dataNASDAQ[i]['name'].index(user_input))
-                print('this is the API', noSpacesAPI2)
-                print('this is the user input', user_input_matching)
-                dataset2[i][j]['startingStrIndex'] = noSpacesAPI2.index(user_input_matching.upper()) 
-                #dataset2[i][j]['name'].upper().index(user_input.upper())
-                out.append(dataset2[i][j])
-    # for i in range(len(dataset)):
-    #     for j in range(len(dataset[i])):
-    #         try:
-    #             dataset[i][j]['name'].upper().index(user_input.upper())
-    #         except ValueError:
-    #             print("Not found!")
-    #         else:
-    #             #print("Found!",dataNASDAQ[i]['name'].index(user_input))
-    #             dataset[i][j]['startingStrIndex'] = dataset[i][j]['name'].upper().index(user_input.upper())
-    #             out.append(dataset[i][j])
-            #out.append(dataset[i][j])
-    #print(out2)
-    # iters = 0
-    end2 =  time.time()
-    print(end2-end1)
+                dataset[i][j]['startingStrIndex'] = noSpacesAPI2.index(user_input_matching.upper()) 
+                out.append(dataset[i][j])
+
     out.sort(key = lambda out: out['startingStrIndex']) 
-    #print(out)
-
-    # for i in range(len(dataset)):
-    #     for j in range(len(dataset[i])):
-    #         print('this is the user input', user_input.upper())
-    #         print('this is the dataset of name ',dataset[i][j]['name'])
-    #         if user_input.upper() in dataset[i][j]['name']:
-    #             out.append(dataset[i][j])
-    #             iters += 1
-    #             if iters >= 4:
-    #                 break
-
-
-    # for i in range(len(dataset)):
-    #     for j in range(len(dataset[i])):
-    #         if user_input.upper() in dataset[i][j]['symbol']:
-    #             out.append(dataset[i][j])
-    #             iters += 1
-    #             if iters >= 4:
-    #                 break
-        
-    end3 =  time.time()
-    print(end3-end2)
-    # print(json.dumps(out))
     return json.dumps(out)
 
 @algo.route("/get_company_name_from_ticker/<ticker>", methods=['GET'])
@@ -434,24 +349,28 @@ def get_fianancial_data(ticker):
 
     stock = Stock(ticker, token=IEX_api_key)
     financials = stock.get_financials()
-    company = stock.get_company()
-
+    companyIEX = stock.get_company()
+    url = Request("https://financialmodelingprep.com/api/v3/profile/"+ticker+"?apikey="+Stock_Ticker_Lookup_key)
+    response = urlopen(url,data=None,timeout=0.5)
+    companyFinModPrep = json.loads(response.read().decode("utf-8"))
     # def divideByMillion(financialParameter,newFinancials):
     #     newFinancials[0][financialParameter] = newFinancials[0][financialParameter]/1000000
 
     # financialParameters = ('grossProfit','operatingRevenue','totalRevenue','totalAssets','totalLiabilities','totalCash','netIncome','cashFlow','totalDebt','shortTermDebt','longTermDebt')
-
-    financials[0]['grossProfit'] = financials[0]['grossProfit']/1000000
-    financials[0]['operatingRevenue'] = financials[0]['operatingRevenue']/1000000
-    financials[0]['totalRevenue'] = financials[0]['totalRevenue']/1000000
-    financials[0]['totalAssets'] = financials[0]['totalAssets']/1000000
-    financials[0]['totalLiabilities'] = financials[0]['totalLiabilities']/1000000
-    financials[0]['totalCash'] = financials[0]['totalCash']/1000000
-    financials[0]['netIncome'] = financials[0]['researchAndDevelopment']/1000000
-    financials[0]['cashFlow'] = financials[0]['cashFlow']/1000000
-    financials[0]['totalDebt'] = financials[0]['totalDebt']/1000000
-    financials[0]['shortTermDebt'] = financials[0]['shortTermDebt']/1000000
-    financials[0]['longTermDebt'] = financials[0]['longTermDebt']/1000000
+    financials.append(companyIEX)
+    financials.append(companyFinModPrep[0])
+    print(financials)
+    # financials[0]['grossProfit'] = financials[0]['grossProfit']/1000000
+    # financials[0]['operatingRevenue'] = financials[0]['operatingRevenue']/1000000
+    # financials[0]['totalRevenue'] = financials[0]['totalRevenue']/1000000
+    # financials[0]['totalAssets'] = financials[0]['totalAssets']/1000000
+    # financials[0]['totalLiabilities'] = financials[0]['totalLiabilities']/1000000
+    # financials[0]['totalCash'] = financials[0]['totalCash']/1000000
+    # financials[0]['netIncome'] = financials[0]['researchAndDevelopment']/1000000
+    # financials[0]['cashFlow'] = financials[0]['cashFlow']/1000000
+    # financials[0]['totalDebt'] = financials[0]['totalDebt']/1000000
+    # financials[0]['shortTermDebt'] = financials[0]['shortTermDebt']/1000000
+    # financials[0]['longTermDebt'] = financials[0]['longTermDebt']/1000000
     return (json.dumps(financials))
 
 @algo.route("/get_earnings_data/<ticker>", methods=['GET'])

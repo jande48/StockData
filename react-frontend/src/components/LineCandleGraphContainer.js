@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import { addPercentChange, fetchStockData } from '../redux'
-import {Header, Grid} from 'semantic-ui-react'
+import {Header, Grid, Image} from 'semantic-ui-react'
 import { createVolumeBarChart } from './charts/volumeBarChart.js'
 import { fetchTrendData } from '../redux';
 import '../App.css'
@@ -58,10 +58,11 @@ function LineCandleGraphContainer (props) {
   
   props.addPercentChange(calcPercentChange())
 
+  if (typeof(props.stockData) != 'undefined') {
   if (props.stockData.length > 1) {
     createStockPriceLineChart(stockPriceLineChartNode)
     createVolumeBarChart(props.stockData,showVolumeNode)
-    }
+    }}
 
     function createStockPriceLineChart(stockPriceLineChartNode) {
         const Initialdata = props.stockData
@@ -85,9 +86,6 @@ function LineCandleGraphContainer (props) {
             } 
           }
           const exportData = data.slice(startingIndex)
-          console.log(startingIndex)
-          console.log(convertDatesToString(startingDate))
-          console.log(exportData)
           return exportData
         }
 
@@ -444,6 +442,7 @@ function LineCandleGraphContainer (props) {
 
     function calcPercentChange() {
         var exportDefault = 0
+        if (typeof(props.stockData) != 'undefined'){
         if (props.stockData.length > 2) {
             const percentChange = ((props.stockData[props.stockData.length -1]['close'] - props.stockData[props.stockData.length -2]['close'])/props.stockData[props.stockData.length -1]['close'])*100
             const percentChangeFormatted = percentChange.toFixed(2)
@@ -451,22 +450,23 @@ function LineCandleGraphContainer (props) {
 
         }else{
             return exportDefault
-        }
+        }}
     }
 
-  return props.stockData.loading ? (
+  return props.loading ? (
 
 
     <h2>Loading</h2>
-  ) : props.stockData.error ? (
-    <h2>{props.stockData.error}</h2>
+  ) : props.error ? (
+    <h2>{props.error}</h2>
   ) : (
     <div>
         <React.Fragment>
         <Grid inverted columns='equal'>
           <Grid.Row stretched  color='black'>
             <Grid.Column  color='black'>
-                <Header as='h2' textAlign='left' inverted color="#e0e1e2"> {props.stockData.length > 0 ? props.compName + ' - '+ props.tickers + ' ($' + props.stockData[props.stockData.length-1]['close'] + ')' : ''}</Header>
+            {/* <Image src={(typeof(props.financials)!='undefined') ? (props.financials.length>0 ? props.financials[2]['image'] : '') : ''} size='mini' spaced='right' verticalAlign='top' /> */}
+              <Header as='h2' textAlign='left' inverted color="#e0e1e2"> { typeof(props.stockData) === 'undefined' ? '' : (props.stockData.length > 0 ?  props.compName + ' - '+ props.tickers + ' ($' + props.stockData[props.stockData.length-1]['close'] + ')' : '')}</Header>
             </Grid.Column>
             <Grid.Column color='black'>
                 <Header as='h2' textAlign='right' color={(props.percentChange > 0) ? 'green' : 'red'}>{((props.percentChange==0) ? '' : (props.percentChange > 0) ? '+' + String(props.percentChange) + '%': String(props.percentChange)+'%')}
@@ -487,6 +487,8 @@ const mapStateToProps = state => {
     startDate: state.datesFromRootReducer.startDate,
     endDate: state.datesFromRootReducer.endDate,
     stockData: state.stockDataFromRootReducer.stockData,
+    loading: state.stockDataFromRootReducer.loading,
+    error: state.stockDataFromRootReducer.error,
     fetchStockData: state.stockDataFromRootReducer.fetchStockData,
     displayLine: state.chartsFromRootReducer.displayLine,
     displaySMA: state.trendFromRootReducer.displaySMA,
@@ -520,6 +522,7 @@ const mapStateToProps = state => {
     n2ForMI: state.trendFromRootReducer.n2ForMI,
     displayDPO: state.trendFromRootReducer.displayDPO,
     nForDPO: state.trendFromRootReducer.nForDPO,
+    financials: state.stockDataFromRootReducer.financialsData,
     // displayCCI: state.trendFromRootReducer.displayCCI,
     // nForCCI: state.trendFromRootReducer.nForCCI,
     // cForCCI: state.trendFromRootReducer.cForCCI,

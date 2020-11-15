@@ -45,7 +45,6 @@ export function fetchCompanyNameFromTicker(APIstring) {
 
 export function fetchCompInfoData(APIstring) {
   return function (dispatch) {
-    console.log(APIstring)
     axios({
       method: 'get',
       url: "/get_ticker_company_name/"+APIstring,
@@ -59,6 +58,8 @@ export function fetchCompInfoData(APIstring) {
       })
   }
 }
+
+
     // fetch('/get_ticker_company_name/', {
     //   method: 'POST', // or 'PUT'
     //   headers: {

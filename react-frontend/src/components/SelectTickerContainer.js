@@ -14,23 +14,11 @@ function SelectTickerContainer(props) {
     clearTimeout(timeoutRef.current)
     let re = new RegExp('^[a-z0-9]+$')
     var regex_user_input = data.value.replace(/\W/g, '_').toUpperCase();
-    console.log(regex_user_input)
-    // var user_input_spaces = data.value.split(' ')
-    // user_input_spaces.join('')
-    // var user_input_spaces_str = String(user_input_spaces)
-    //console.log(user_input_spaces_str)
-    //console.log(typeof(user_input_spaces_str))
     fetchCompInfoDataRequest(regex_user_input)
 
     setNewTicker(e.target.value)
     props.fetchCompInfoData(regex_user_input)
-    // timeoutRef.current = setTimeout(() => {
-    //   // const re = new RegExp(_.escapeRegExp(data.value), 'i')
-    //   // const isMatch = (result) => re.test(result.name)
 
-    //   console.log('We got Right before the api call')
-    //   fetchCompInfoData(String(data.value))
-    // }, 400)
   }, [])
 
   const resultRenderer = ({ name, symbol }) => {

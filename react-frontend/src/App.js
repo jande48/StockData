@@ -8,6 +8,7 @@ import SelectCustomDatesContainer from './components/SelectCustomDatesContainer'
 import SelectLineOrCandleContainer from './components/SelectLineOrCandleContainer'
 import LineCandleGraphContainer from './components/LineCandleGraphContainer'
 import VolumeGraphContainer from './components/VolumeGraphContainer'
+import CompanyFinancialsContainer from './components/CompanyFinancialContainer'
 import { Grid, Accordion, Header, Icon} from "semantic-ui-react"
 import MomentumMenuContainer from './components/MomentumMenuContainer'
 import TrendMenuContainer from './components/TrendMenuContainer'
@@ -61,7 +62,8 @@ function App () {
           <Grid.Column width = {12}>
             <LineCandleGraphContainer /><br/>
             <VolumeGraphContainer/><br/>
-            <MomentumGraphContainer/>
+            <MomentumGraphContainer/><br />
+            <CompanyFinancialsContainer/>
           </Grid.Column>
         </Grid>
         

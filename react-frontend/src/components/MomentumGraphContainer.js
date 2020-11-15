@@ -27,7 +27,8 @@ function MomentumGraphContainer (props) {
   const momentumIndicatorsChartNode = useRef(null);
 
   useEffect(() => {
-    if (props.loads > 0) {
+    if (typeof(props.stockData) != 'undefined' ) {
+      if (props.stockData.length > 0) {
       const RSIparameters = {'N':props.nForRSI}
       const TSIparameters = {'displayTSI':props.displayTSI,'rTSI':props.rForTSI,'sTSI':props.sForTSI}
       const UOparameters = {'displayUO':props.displayUO,'sForUO':props.sForUO,'mForUO':props.mForUO,'lenForUO':props.lenForUO,'wsForUO':props.wsForUO,'wmForUO':props.wmForUO,'wlForUO':props.wlForUO}
@@ -40,13 +41,14 @@ function MomentumGraphContainer (props) {
     
       props.fetchMomentumData(JSON.stringify([props.stockData,RSIparameters,TSIparameters,UOparameters,STOCHparameters,StochSignalparameters,WilliamsRparameters,AOparameters,KAMAparameters,ROCparameters]))
 
-    }
+    }}
     
   }, [props.stockData,props.displayRSI,props.nForRSI,props.displayTSI,props.sForTSI,props.rForTSI,props.displayUO,props.sForUO,props.mForUO,props.lenForUO,props.wsForUO,props.wmForUO,props.wlForUO,props.displaySTOCH,props.nForSTOCH,props.dnForSTOCH,
   props.displayStochSignal,props.nForStochSignal,props.dnForStochSignal,props.displayWR,props.lbpForWR,props.displayAO,props.sForAO,props.lenForAO,props.displayKama,props.nForKama,props.pow1ForKama,props.pow2ForKama,
   props.displayROC,props.nForROC])
 
-  if (props.momentumLoads > 0) {
+  if (typeof(props.momentumData) != 'undefined') {
+    if (props.momentumData.length > 2) {
     function createMomentumIndicatorsChart(momentumIndicatorsChartNode) {
       const Initialdata = props.momentumData
       const InitialtrendData = props.trendData
@@ -377,19 +379,19 @@ function MomentumGraphContainer (props) {
 
     }
     createMomentumIndicatorsChart(momentumIndicatorsChartNode)
-  }
-      
   
+      
+  }}
 
 
 
 
-  return props.stockData.loading ? (
+  return props.loading ? (
 
 
     <h2>Loading</h2>
-  ) : props.stockData.error ? (
-    <h2>{props.stockData.error}</h2>
+  ) : props.error ? (
+    <h2>{props.error}</h2>
   ) : (
     <div>
         <React.Fragment>
@@ -402,6 +404,8 @@ function MomentumGraphContainer (props) {
 const mapStateToProps = state => {
   return {
     stockData: state.stockDataFromRootReducer.stockData,
+    loading: state.stockDataFromRootReducer.loading,
+    error: state.stockDataFromRootReducer.error,
     trendData: state.trendFromRootReducer.trendData,
     loads: state.stockDataFromRootReducer.loads,
     momentumLoads: state.momentumFromRootReducer.momentumLoads,
