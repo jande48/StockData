@@ -458,7 +458,7 @@ function LineCandleGraphContainer (props) {
 
     <h2>Loading</h2>
   ) : props.error ? (
-    <h2>{props.error}</h2>
+    <h2><Header as='h2' textAlign='center' inverted color="#e0e1e2">Whoops. We can't get stock data now.</Header></h2>
   ) : (
     <div>
         <React.Fragment>

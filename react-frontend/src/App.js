@@ -13,6 +13,7 @@ import { Grid, Accordion, Header, Icon} from "semantic-ui-react"
 import MomentumMenuContainer from './components/MomentumMenuContainer'
 import TrendMenuContainer from './components/TrendMenuContainer'
 import MomentumGraphContainer from './components/MomentumGraphContainer'
+import EarningContainer from './components/EarningContainer'
 import momentumReducer from './redux/momentum/momentumReducer'
 
 
@@ -63,7 +64,8 @@ function App () {
             <LineCandleGraphContainer /><br/>
             <VolumeGraphContainer/><br/>
             <MomentumGraphContainer/><br />
-            <CompanyFinancialsContainer/>
+            <CompanyFinancialsContainer/><br />
+            <EarningContainer/>
           </Grid.Column>
         </Grid>
         

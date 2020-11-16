@@ -7,6 +7,9 @@ import {
   FETCH_FINANCIALS_DATA_REQUEST,
   FETCH_FINANCIALS_DATA_SUCCESS,
   FETCH_FINANCIALS_DATA_FAILURE,
+  FETCH_EARNINGS_DATA_REQUEST,
+  FETCH_EARNINGS_DATA_SUCCESS,
+  FETCH_EARNINGS_DATA_FAILURE,
   //REQUEST_API_CALL_INFO
 } from './stockDataTypes'
 
@@ -72,7 +75,6 @@ export function fetchFinancialsData(APIstring) {
   }
 }
 
-
 export const fetchFinancialsDataRequest = () => {
   return {
     type: FETCH_FINANCIALS_DATA_REQUEST,
@@ -89,6 +91,42 @@ export const fetchFinancialsDataSuccess = data => {
 export const fetchFinancialsDataFailure = error => {
   return {
     type: FETCH_FINANCIALS_DATA_FAILURE,
+    payload: error
+  }
+}
+
+export function fetchEarningsData(APIstring) {
+  return function (dispatch) {
+    axios({
+      method: 'get',
+      url: "/get_earnings_data/"+APIstring,
+    })
+      .then(response => {
+        const EarningsData = response.data 
+        dispatch(fetchEarningsDataSuccess(EarningsData))
+      })
+      .catch(error => {
+        dispatch(fetchEarningsDataFailure(error.message))
+      })
+  }
+}
+
+export const fetchEarningsDataRequest = () => {
+  return {
+    type: FETCH_EARNINGS_DATA_REQUEST,
+  }
+}
+
+export const fetchEarningsDataSuccess = data => {
+  return {
+    type: FETCH_EARNINGS_DATA_SUCCESS,
+    payload: data
+  }
+}
+
+export const fetchEarningsDataFailure = error => {
+  return {
+    type: FETCH_EARNINGS_DATA_FAILURE,
     payload: error
   }
 }

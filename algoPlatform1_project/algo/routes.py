@@ -359,7 +359,7 @@ def get_fianancial_data(ticker):
     # financialParameters = ('grossProfit','operatingRevenue','totalRevenue','totalAssets','totalLiabilities','totalCash','netIncome','cashFlow','totalDebt','shortTermDebt','longTermDebt')
     financials.append(companyIEX)
     financials.append(companyFinModPrep[0])
-    print(financials)
+    # print(financials)
     # financials[0]['grossProfit'] = financials[0]['grossProfit']/1000000
     # financials[0]['operatingRevenue'] = financials[0]['operatingRevenue']/1000000
     # financials[0]['totalRevenue'] = financials[0]['totalRevenue']/1000000
@@ -377,7 +377,7 @@ def get_fianancial_data(ticker):
 def get_earnings_data(ticker):
     stock = Stock(ticker, token=IEX_api_key)
     earnings = stock.get_earnings(last=4)
-    company = stock.get_company()
+    #company = stock.get_company()
     return(json.dumps(earnings))
 
 @algo.route("/calculate_Volitility_Indicators/", methods=['GET','POST'])

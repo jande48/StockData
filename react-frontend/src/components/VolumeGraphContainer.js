@@ -206,13 +206,7 @@ function VolumeGraphContainer (props) {
     return svg.node();
   }
 
-  return props.loading ? (
-
-
-    <h2>Loading</h2>
-  ) : props.error ? (
-    <h2>{props.error}</h2>
-  ) : (
+  return  (
     <div>
         <React.Fragment>
             <svg ref={showVolumeNode}></svg>

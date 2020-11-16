@@ -45,26 +45,69 @@ function CompanyFinancialsContainer (props) {
         if (props.financialsData.length > 1) {
             description = props.financialsData[1]['description']
             grossProfit = props.financialsData[0]['grossProfit']
+            operatingRevenue = props.financialsData[0]['operatingRevenue']
+            totalRevenue = props.financialsData[0]['totalRevenue']
+            totalAssets = props.financialsData[0]['totalAssets']
+            totalLiabilities = props.financialsData[0]['totalLiabilities']
+            totalCash = props.financialsData[0]['totalCash']
+            netIncome = props.financialsData[0]['netIncome']
+            totalDebt = props.financialsData[0]['totalDebt']
+            cashFlow = props.financialsData[0]['cashFlow']
         }
     }
 
+    function formatNumbers(input) {
+        return(
+            input > 1000000000000 ? String(Math.round(input / 1000000000000 * 10) / 10)+" T" : (input > 1000000000 ? String(Math.round(input / 1000000000 * 10) / 10)+" B" : (input > 100000 ? String(Math.round(input / 1000000 * 10 ) / 10)+" M" : input))
+        )
+    }
     
-  return props.loading ? (
+    return props.loading ? ( 
 
 
     <Header as='h3' inverted color="#e0e1e2">Loading</Header>
-  ) : props.FinancialsError ? (
-    <h2>{props.financialsError}</h2>
-  ) :  (
+  ) : props.financialsError ? (
+    <h2><Header as='h2' textAlign='center' inverted color="#e0e1e2">Whoops. We can't get company info now.</Header></h2>
+  ) : (typeof(props.financialsData) === 'undefined') ? '' : (props.financialsData.length < 1) ? '' : (
     <div>
         <React.Fragment>
             <Grid columns='equal'>
                 <Grid.Row>
-                    <p style={{color:"#e0e1e2"}}>{displayMoreText ? description : description.slice(0,390) }<a href="#" onClick={(e) => {setDisplayMoreText(!displayMoreText)}}>{displayMoreText ? ' -Less' : ' +More'}</a></p>
+                    <Grid.Column>
+                        <p style={{color:"#e0e1e2"}}>{displayMoreText ? description : description.slice(0,500) }<a href="#" onClick={(e) => {setDisplayMoreText(!displayMoreText)}}>{displayMoreText ? ' -Less' : ' +More'}</a></p>
+                    </Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
-                    <Grid.Column textAlign='left'>
-                        <p style={{color:"#e0e1e2"}}>Total Debt: ${grossProfit > 100000000 ? String(Math.round(grossProfit / 1000000000 * 10) / 10)+" B" : (grossProfit > 100000 ? String(Math.round(grossProfit / 1000000 * 10 ) / 10)+" M" : grossProfit)}</p>
+                    <Grid.Column textAlign='center'>
+                        <p style={{color:"#e0e1e2"}}>Gross Profit: ${formatNumbers(grossProfit)}</p>
+                    </Grid.Column>
+                    <Grid.Column textAlign='center'>
+                        <p style={{color:"#e0e1e2"}}>Total Assets: ${formatNumbers(totalAssets)}</p>
+                    </Grid.Column>
+                    <Grid.Column textAlign='center'>
+                        <p style={{color:"#e0e1e2"}}>Total Revenue: ${formatNumbers(totalRevenue)}</p>
+                    </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                    <Grid.Column textAlign='center'>
+                        <p style={{color:"#e0e1e2"}}>Operating Revenue: ${formatNumbers(operatingRevenue)}</p>
+                    </Grid.Column>
+                    <Grid.Column textAlign='center'>
+                        <p style={{color:"#e0e1e2"}}>Total Liabilities: ${formatNumbers(totalLiabilities)}</p>
+                    </Grid.Column>
+                    <Grid.Column textAlign='center'>
+                        <p style={{color:"#e0e1e2"}}>Net Income: ${formatNumbers(netIncome)}</p>
+                    </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                    <Grid.Column textAlign='center'>
+                        <p style={{color:"#e0e1e2"}}>Total Cash: ${formatNumbers(totalCash)}</p>
+                    </Grid.Column>
+                    <Grid.Column textAlign='center'>
+                        <p style={{color:"#e0e1e2"}}>Total Debt: ${formatNumbers(totalDebt)}</p>
+                    </Grid.Column>
+                    <Grid.Column textAlign='center'>
+                        <p style={{color:"#e0e1e2"}}>Cash Flow: ${formatNumbers(cashFlow)}</p>
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
