@@ -106,9 +106,15 @@ function LineCandleGraphContainer (props) {
                     if (objects[i]['dataInd'][j][objects[i]['name']] > max) {
                         max = objects[i]['dataInd'][j][objects[i]['name']] 
                     }
+                    if (objects[i]['name'] === 'close' && data[j]['low'] < min) {
+                      min = data[j]['low']
+                    }
+                    if (objects[i]['name'] === 'close' && data[j]['high'] > max) {
+                      max = data[j]['high'] 
+                  }
+                    }
                   }
                   
-                }
               }
             
             
@@ -182,7 +188,7 @@ function LineCandleGraphContainer (props) {
             }
           }
           // ["#1b9e77","#d95f02","#7570b3","#e7298a","#66a61e","#e6ab02","#a6761d","#666666"]
-        const close = new Indicator('close',"#e0e1e2",data,props.displayLine,'axisLeft');
+        const close = new Indicator('close','#e0e1e2',data,props.displayLine,'axisLeft')
         const sma = new Indicator('sma',"#d62728",trendData,props.displaySMA,'axisLeft')
         const macd = new Indicator('macd',"#ff7f0e",trendData,props.displayMACD,'axisRight')
         const ema = new Indicator('ema',"#9467bd",trendData,props.displayEMA,'axisLeft')

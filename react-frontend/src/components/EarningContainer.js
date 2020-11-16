@@ -64,7 +64,7 @@ function EarningContainer (props) {
         const xLabel = 'Fiscal Period';
         const yLabel = 'Earnings Per Share'
         const width = 700;
-        const height = 350;
+        const height = 220;
         svg.attr("viewBox", [0, 0, width, height])
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;

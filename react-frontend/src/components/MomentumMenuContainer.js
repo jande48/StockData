@@ -222,7 +222,7 @@ function MomentumMenuContainer(props) {
         
          <Grid.Row stretched>        
                 <Accordion as={Menu} vertical stretched fluid borderless inverted>
-                    <Menu.Item borderless>
+                    {/* <Menu.Item borderless>
                         <Accordion.Title
                             active={activeRSIAccodianMenuItem === 0}
                             //content={RSIAccordionTitle}
@@ -234,7 +234,7 @@ function MomentumMenuContainer(props) {
                             inverted
                         >{RSIAccordionTitle}</Accordion.Title>
                         <Accordion.Content borderless active={activeRSIAccodianMenuItem === 0} >{<RSIcontentPanel/>}</Accordion.Content>
-                    </Menu.Item>
+                    </Menu.Item> */}
                     <Menu.Item borderless>
                         <Accordion.Title
                             active={activeTSIAccodianMenuItem === 0}

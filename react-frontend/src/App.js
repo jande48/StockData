@@ -13,12 +13,14 @@ import { Grid, Accordion, Header, Icon} from "semantic-ui-react"
 import MomentumMenuContainer from './components/MomentumMenuContainer'
 import TrendMenuContainer from './components/TrendMenuContainer'
 import MomentumGraphContainer from './components/MomentumGraphContainer'
+import PopularMenuContainer from './components/PopularMenuContainer'
 import EarningContainer from './components/EarningContainer'
 import momentumReducer from './redux/momentum/momentumReducer'
 
 
 function App () {
-  const [activeMomentumAccodian, setMomentumAccordion] = useState(0)
+  const [activePopularAccodian, setPopularAccordion] = useState(0)
+  const [activeMomentumAccodian, setMomentumAccordion] = useState(-1)
   const [activeTrendAccodian, setTrendAccordion] = useState(-1)
   return (
     <Provider store={store}>
@@ -29,11 +31,19 @@ function App () {
               <SelectDatesFromMenuContainer /><br/>
               <SelectCustomDatesContainer /><br/>
               <SelectLineOrCandleContainer /><br/>
-              {/* <Header inverted as='h2' textAlign='center'>
-                Indicators
-              </Header> */}
               <Grid.Row color='black' inverted stretched>
               <Accordion inverted stretched fitted color='black'>
+                <Accordion.Title
+                  inverted
+                  active={activePopularAccodian === 0}
+                  index={0}
+                  borderless
+                  onClick={(e,index) => {
+                      setPopularAccordion(index.index === activePopularAccodian ? -1 : index.index)
+                      }}>
+                    <Header as='h3' textAlign='left' inverted><Icon name='dropdown' />Popular</Header>
+                </Accordion.Title>
+                <Accordion.Content borderless active={activePopularAccodian === 0} >{<PopularMenuContainer />}</Accordion.Content>
                 <Accordion.Title
                   inverted
                   active={activeMomentumAccodian === 0}

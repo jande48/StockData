@@ -286,29 +286,6 @@ function TrendMenuContainer(props) {
                 <Accordion as={Menu} vertical stretched fluid borderless inverted>
                 <Menu.Item borderless>
                     <Accordion.Title
-                        inverted
-                        active={activeSMAAccordionMenuItem === 0}
-                        index={0}
-                        borderless
-                        onClick={(e,index) => {
-                            setActiveSMAAccordionMenuItem(index.index === activeSMAAccordionMenuItem ? -1 : index.index)
-                            }}
-                    >{SMAAccordionTitle}</Accordion.Title>
-                    <Accordion.Content borderless active={activeSMAAccordionMenuItem === 0} >{<SMAcontentpanel />}</Accordion.Content>
-                </Menu.Item>
-                <Menu.Item borderless>
-                    <Accordion.Title
-                        active={activeMACDAccordionMenuItem === 0}
-                        index={0}
-                        borderless
-                        onClick={(e,index) => {
-                            setActiveMACDAccordionMenuItem(index.index === activeMACDAccordionMenuItem ? -1 : index.index)
-                            }}
-                    >{MACDAccordionTitle}</Accordion.Title>
-                    <Accordion.Content borderless active={activeMACDAccordionMenuItem === 0} >{<MACDcontentPanel />}</Accordion.Content>
-                </Menu.Item>
-                <Menu.Item borderless>
-                    <Accordion.Title
                         active={activeEMAAccodianMenuItem === 0}
                         index={0}
                         borderless
