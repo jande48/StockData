@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import { addPercentChange, fetchStockData } from '../redux'
+import { addPercentChange } from '../redux'
 import {Header, Grid, Image} from 'semantic-ui-react'
 import { createVolumeBarChart } from './charts/volumeBarChart.js'
-import { fetchTrendData } from '../redux';
+import { createLineCandleStickChart} from './charts/lineCandleStickChart.js'
+//import { fetchTrendData } from '../redux';
 import '../App.css'
 import 'react-datepicker/dist/react-datepicker.css'
 import * as d3 from "d3"
@@ -24,48 +25,47 @@ import {
 
 function LineCandleGraphContainer (props) {
 
-    const stockPriceLineChartNode = useRef(null);
-    const showVolumeNode = useRef(null);
-    const momentumIndicatorsChartNode = useRef(null);
+    const stockChartNode = useRef(null);
 
     function convertDatesToString(initialDate) {
 		const convertedDate = String(initialDate.getFullYear())+"-"+String(initialDate.getMonth() + 1)+"-"+String(initialDate.getDate())
 		return convertedDate
 	}
-  useEffect(() => {
-    const SMAp = {'displaySMA':props.displaySMA,'nForSMA':props.nForSMA}
-    const EMAp = {'displayEMA':props.displayEMA,'nForEMA':props.nForEMA}
-    const MACDp = {'displayMACD':props.displayMACD,'nFastForMACD':props.nFastForMACD,'nSlowForMACD':props.nSlowForMACD}
-    const MACDsignalp = {'displayMACDsignal':props.displayMACDsignal,'nSlowForMACDsignal':props.nSlowForMACDsignal,'nFastForMACDsignal':props.nFastForMACDsignal,'nSignForMACDsignal':props.nSignForMACDsignal}
-    const ADXp = {'displayADX':props.displayADX,'nForADX':props.nForADX}
-    const ADXPp = {'displayADXP':props.displayADXP,'nForADXP':props.nForADXP}
-    const ADXNp = {'displayADXN':props.displayADXN,'nForADXN':props.nForADXN}
-    // const BBSMAp = {'displayBBSMA':props.displayBBSMA, 'nForBBSMA':props.nForBBSMA, 'nDevForBBSMA': props.nDevForBBSMA}
-    const VIPOSp = {'displayVIPOS':props.displayVIPOS,'nForVIPOS':props.nForVIPOS}
-    const VINEGp = {'displayVINEG':props.displayVINEG,'nForVINEG':props.nForVINEG}
-    const TRIXp = {'displayTRIX':props.displayTRIX,'nForTRIX':props.nForTRIX}
-    const MIp = {'displayMI':props.displayMI,'nForMI':props.nForMI,'n2ForMI':props.n2ForMI}
-    //const CCIp = {'displayCCI':props.displayCCI,'nForCCI':props.nForCCI,'cForCCI':props.cForCCI}
-    const DPOp = {'displayDPO':props.displayDPO,'nForDPO':props.nForDPO}
+  // useEffect(() => {
+  //   const SMAp = {'displaySMA':props.displaySMA,'nForSMA':props.nForSMA}
+  //   const EMAp = {'displayEMA':props.displayEMA,'nForEMA':props.nForEMA}
+  //   const MACDp = {'displayMACD':props.displayMACD,'nFastForMACD':props.nFastForMACD,'nSlowForMACD':props.nSlowForMACD}
+  //   const MACDsignalp = {'displayMACDsignal':props.displayMACDsignal,'nSlowForMACDsignal':props.nSlowForMACDsignal,'nFastForMACDsignal':props.nFastForMACDsignal,'nSignForMACDsignal':props.nSignForMACDsignal}
+  //   const ADXp = {'displayADX':props.displayADX,'nForADX':props.nForADX}
+  //   const ADXPp = {'displayADXP':props.displayADXP,'nForADXP':props.nForADXP}
+  //   const ADXNp = {'displayADXN':props.displayADXN,'nForADXN':props.nForADXN}
+  //   // const BBSMAp = {'displayBBSMA':props.displayBBSMA, 'nForBBSMA':props.nForBBSMA, 'nDevForBBSMA': props.nDevForBBSMA}
+  //   const VIPOSp = {'displayVIPOS':props.displayVIPOS,'nForVIPOS':props.nForVIPOS}
+  //   const VINEGp = {'displayVINEG':props.displayVINEG,'nForVINEG':props.nForVINEG}
+  //   const TRIXp = {'displayTRIX':props.displayTRIX,'nForTRIX':props.nForTRIX}
+  //   const MIp = {'displayMI':props.displayMI,'nForMI':props.nForMI,'n2ForMI':props.n2ForMI}
+  //   //const CCIp = {'displayCCI':props.displayCCI,'nForCCI':props.nForCCI,'cForCCI':props.cForCCI}
+  //   const DPOp = {'displayDPO':props.displayDPO,'nForDPO':props.nForDPO}
 
-    props.fetchStockData(String(props.tickers+"/"+convertDatesToString(props.startDate)+"/"+convertDatesToString(props.endDate)))
-    props.fetchTrendData(JSON.stringify([props.stockData,SMAp,EMAp,MACDp,MACDsignalp,ADXp,ADXPp,ADXNp,VIPOSp,VINEGp,TRIXp,MIp, DPOp]))
+  //   //props.fetchStockData(String(props.tickers+"/"+convertDatesToString(props.startDate)+"/"+convertDatesToString(props.endDate)))
+  //   props.fetchTrendData(JSON.stringify([props.stockData,SMAp,EMAp,MACDp,MACDsignalp,ADXp,ADXPp,ADXNp,VIPOSp,VINEGp,TRIXp,MIp, DPOp]))
     
-  }, [props.tickers,props.startDate,props.endDate,props.displaySMA,props.nForSMA,props.displayEMA,props.nForEMA,props.displayMACD,props.nFastForMACD,props.nSlowForMACD,
-    props.displayMACDsignal,props.nSlowForMACDsignal,props.nFastForMACDsignal,props.nSignForMACDsignal,props.displayADX,props.nForADX,
-    props.displayADXP,props.nForADXP,props.displayADXN,props.nForADXN,props.displayVIPOS,props.nForVIPOS,props.displayVINEG,props.nForVINEG,
-    props.displayTRIX,props.nForTRIX,props.displayMI,props.nForMI,props.n2ForMI,props.displayDPO,props.nForDPO])
+  // }, [props.tickers,props.displaySMA,props.nForSMA,props.displayEMA,props.nForEMA,props.displayMACD,props.nFastForMACD,props.nSlowForMACD,
+  //   props.displayMACDsignal,props.nSlowForMACDsignal,props.nFastForMACDsignal,props.nSignForMACDsignal,props.displayADX,props.nForADX,
+  //   props.displayADXP,props.nForADXP,props.displayADXN,props.nForADXN,props.displayVIPOS,props.nForVIPOS,props.displayVINEG,props.nForVINEG,
+  //   props.displayTRIX,props.nForTRIX,props.displayMI,props.nForMI,props.n2ForMI,props.displayDPO,props.nForDPO])
   
   props.addPercentChange(calcPercentChange())
 
   if (typeof(props.stockData) != 'undefined') {
   if (props.stockData.length > 1) {
-    createStockPriceLineChart(stockPriceLineChartNode)
-    createVolumeBarChart(props.stockData,showVolumeNode)
+    createStockPriceLineChart(stockChartNode,props.stockData)
+    //createLineCandleStickChart(props.stockData,stockPriceLineChartNode,props.startDate,props.trendData,props.displayLine,props.displaySMA,props.displayMACD,props.displayEMA,props.displayMACDsignal,props.displayADX,props.displayADXP,props.displayADXN,props.displayVIPOS,props.displayVINEG,props.displayTRIX,props.displayMI,props.displayDPO)
+    //createVolumeBarChart(props.stockData,showVolumeNode)
     }}
 
-    function createStockPriceLineChart(stockPriceLineChartNode) {
-        const Initialdata = props.stockData
+    function createStockPriceLineChart(stockPriceLineChartNode, Initialdata) {
+        //const Initialdata = props.stockData
 
         function sliceDataStartDate(data) {
           var startingIndex = 0
@@ -462,9 +462,9 @@ function LineCandleGraphContainer (props) {
   return props.loading ? (
 
 
-    <h2>Loading</h2>
+    <Header as='h3' inverted color="#e0e1e2" textAlign='center'>Loading Stock Data</Header>
   ) : props.error ? (
-    <h2><Header as='h2' textAlign='center' inverted color="#e0e1e2">Whoops. We can't get stock data now.</Header></h2>
+    <Header as='h2' textAlign='center' inverted color="#e0e1e2">Whoops. We can't get stock data now.</Header>
   ) : (
     <div>
         <React.Fragment>
@@ -481,7 +481,7 @@ function LineCandleGraphContainer (props) {
           </Grid.Row>
           </Grid>
            
-            <svg ref={stockPriceLineChartNode}></svg>
+            <svg ref={stockChartNode}></svg>
         </React.Fragment>
     </div>
   )
@@ -495,6 +495,7 @@ const mapStateToProps = state => {
     stockData: state.stockDataFromRootReducer.stockData,
     loading: state.stockDataFromRootReducer.loading,
     error: state.stockDataFromRootReducer.error,
+    errorMessage: state.stockDataFromRootReducer.errorMessage,
     fetchStockData: state.stockDataFromRootReducer.fetchStockData,
     displayLine: state.chartsFromRootReducer.displayLine,
     displaySMA: state.trendFromRootReducer.displaySMA,
@@ -544,8 +545,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     //requestAPIstockData: (APIstring) => dispatch(requestAPIstockData(APIstring)),
-    fetchStockData: (APIstring) => dispatch(fetchStockData(APIstring)),
-    fetchTrendData: (APIstring) => dispatch(fetchTrendData(APIstring)),
+    //fetchStockData: (APIstring) => dispatch(fetchStockData(APIstring)),
+    //fetchTrendData: (APIstring) => dispatch(fetchTrendData(APIstring)),
     addPercentChange: (percentChange) => dispatch(addPercentChange(percentChange))
   }
 }

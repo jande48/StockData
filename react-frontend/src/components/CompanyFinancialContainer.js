@@ -62,10 +62,10 @@ function CompanyFinancialsContainer (props) {
         )
     }
     
-    return props.loading ? ( 
+    return props.financialsLoading ? ( 
 
 
-    <Header as='h3' inverted color="#e0e1e2">Loading</Header>
+        <Header as='h3' inverted color="#e0e1e2" textAlign='center'>Loading Company Info</Header>
   ) : props.financialsError ? (
     <h2><Header as='h2' textAlign='center' inverted color="#e0e1e2">Whoops. We can't get company info now.</Header></h2>
   ) : (typeof(props.financialsData) === 'undefined') ? '' : (props.financialsData.length < 1) ? '' : (
@@ -121,7 +121,7 @@ const mapStateToProps = state => {
   return {
     financialsData: state.stockDataFromRootReducer.financialsData,
     financialsError: state.stockDataFromRootReducer.financialsError,
-    loading: state.stockDataFromRootReducer.loading,
+    financialsLoading: state.stockDataFromRootReducer.financialsLoading,
     startDate: state.datesFromRootReducer.startDate,
     tickers: state.tickersFromRootReducer.tickers,
   }

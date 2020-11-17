@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import { connect } from 'react-redux'
 import { addEndDate, addStartDate } from '../redux'
 import {  Menu, Grid} from "semantic-ui-react"
- 
+import { fetchStockData } from '../redux'
 
 
 
@@ -13,15 +13,28 @@ function SelectDatesFromMenuContainer(props) {
   const [startDate, setStartDate] = useState(currentDateInit);
   const [endDate, setEndDate] = useState(new Date())
 
+  function convertDatesToString(initialDate) {
+		const convertedDate = String(initialDate.getFullYear())+"-"+String(initialDate.getMonth() + 1)+"-"+String(initialDate.getDate())
+		return convertedDate
+	}
+
+  useEffect(() => {
+      props.addStartDateDispatch(startDate)
+      props.addEndDateDispatch(endDate)
+      props.fetchStockData(String(props.tickers+"/"+convertDatesToString(startDate)+"/"+convertDatesToString(endDate)))
+  },[startDate,endDate])
 
   function handleDateClick(minusDays, name) {
       setActiveItemDateMenu(name)
       var currentDate = new Date() //theRealCurrentDate2;
       var dateOffset = (24*60*60*1000) * minusDays; 
       var newDate = currentDate.setTime(currentDate.getTime() - ((24*60*60*1000) * minusDays));
-      setStartDate( currentDate);
-      props.addStartDateDispatch(currentDate)
-      props.addEndDateDispatch(endDate)
+      console.log(minusDays)
+      console.log(currentDate)
+      setStartDate(currentDate);
+      
+      //props.addStartDateDispatch(currentDate)
+      //props.addEndDateDispatch(endDate)
       // getAndSetStockData(ticker,currentDate,endDate) 
       // getAndSetFinancials(ticker);
       // getAndSetEarnings(ticker);
@@ -66,22 +79,21 @@ function SelectDatesFromMenuContainer(props) {
   )
 }
 
-// const mapStateToProps = state => {
-//   return {
-//     startDate: state.datesFromRootReducer.startDate,
-//     endDate: state.datesFromRootReducer.endDate
-//   }
-// }
+const mapStateToProps = state => {
+  return {
+    tickers: state.tickersFromRootReducer.tickers,
+  }
+}
 
 const mapDispatchToProps = dispatch => {
   return {
     addStartDateDispatch: startDate => dispatch(addStartDate(startDate)),
-    addEndDateDispatch: endDate => dispatch(addEndDate(endDate))
+    addEndDateDispatch: endDate => dispatch(addEndDate(endDate)),
+    fetchStockData: (APIstring) => dispatch(fetchStockData(APIstring)),
   }
 }
 
 export default connect(
-  //mapStateToProps,
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(SelectDatesFromMenuContainer)

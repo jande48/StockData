@@ -180,10 +180,10 @@ function EarningContainer (props) {
         createEarningsChart(props.earningsData)
     }
     
-    return props.loading ? ( 
+    return props.earningsLoading ? ( 
 
 
-    <Header as='h3' inverted color="#e0e1e2">Loading</Header>
+    <Header as='h3' inverted color="#e0e1e2" textAlign='center'>Loading Earnings</Header>
   ) : props.earningsError ? (
     <h2><Header as='h2' textAlign='center' inverted color="#e0e1e2">Whoops. We can't get earnings info now.</Header></h2>
   ) :  (
@@ -208,7 +208,7 @@ const mapStateToProps = state => {
     earningsData: state.stockDataFromRootReducer.earningsData,
     earningsError: state.stockDataFromRootReducer.earningsError,
     earningsData: state.stockDataFromRootReducer.earningsData,
-    loading: state.stockDataFromRootReducer.loading,
+    EarningLoading: state.stockDataFromRootReducer.earningLoading,
     startDate: state.datesFromRootReducer.startDate,
     tickers: state.tickersFromRootReducer.tickers,
   }

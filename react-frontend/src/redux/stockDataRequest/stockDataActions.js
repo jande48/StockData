@@ -25,6 +25,7 @@ import {
 // https://redux.js.org/advanced/async-actions
 export function fetchStockData(apiString) {
   return function (dispatch) {
+      dispatch(fetchStockDataRequest())
     axios({
       method: 'get',
       url: "/get_stock_data/"+apiString,
@@ -61,6 +62,7 @@ export const fetchStockDataFailure = error => {
 
 export function fetchFinancialsData(APIstring) {
   return function (dispatch) {
+    dispatch(fetchFinancialsDataRequest())
     axios({
       method: 'get',
       url: "/get_financial_data/"+APIstring,
@@ -97,6 +99,7 @@ export const fetchFinancialsDataFailure = error => {
 
 export function fetchEarningsData(APIstring) {
   return function (dispatch) {
+    dispatch(fetchEarningsDataRequest())
     axios({
       method: 'get',
       url: "/get_earnings_data/"+APIstring,

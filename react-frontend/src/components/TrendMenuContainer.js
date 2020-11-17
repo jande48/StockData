@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { connect } from 'react-redux'
 import { displaySMA, displayEMA, displayMACD, displayMACDsignal, displayADX, displayADXP, displayADXN, displayVIPOS, displayVINEG,
     displayTRIX, displayMI, displayDPO, } from '../redux'
@@ -15,11 +15,35 @@ import VINEGcontentPanel from './accordion/trend/VINEGcontentpanel'
 import TRIXcontentPanel from './accordion/trend/TRIXcontentpanel'
 import MIcontentPanel from './accordion/trend/MIcontentpanel'
 import DPOcontentPanel from './accordion/trend/DPOcontentpanel'
+import { fetchTrendData } from '../redux';
 //import CCIcontentPanel from './accordion/trend/CCIcontentpanel'
 
 function TrendMenuContainer(props) {
     
+    useEffect(() => {
+        const SMAp = {'displaySMA':props.displaySMA,'nForSMA':props.nForSMA}
+        const EMAp = {'displayEMA':props.displayEMA,'nForEMA':props.nForEMA}
+        const MACDp = {'displayMACD':props.displayMACD,'nFastForMACD':props.nFastForMACD,'nSlowForMACD':props.nSlowForMACD}
+        const MACDsignalp = {'displayMACDsignal':props.displayMACDsignal,'nSlowForMACDsignal':props.nSlowForMACDsignal,'nFastForMACDsignal':props.nFastForMACDsignal,'nSignForMACDsignal':props.nSignForMACDsignal}
+        const ADXp = {'displayADX':props.displayADX,'nForADX':props.nForADX}
+        const ADXPp = {'displayADXP':props.displayADXP,'nForADXP':props.nForADXP}
+        const ADXNp = {'displayADXN':props.displayADXN,'nForADXN':props.nForADXN}
+        // const BBSMAp = {'displayBBSMA':props.displayBBSMA, 'nForBBSMA':props.nForBBSMA, 'nDevForBBSMA': props.nDevForBBSMA}
+        const VIPOSp = {'displayVIPOS':props.displayVIPOS,'nForVIPOS':props.nForVIPOS}
+        const VINEGp = {'displayVINEG':props.displayVINEG,'nForVINEG':props.nForVINEG}
+        const TRIXp = {'displayTRIX':props.displayTRIX,'nForTRIX':props.nForTRIX}
+        const MIp = {'displayMI':props.displayMI,'nForMI':props.nForMI,'n2ForMI':props.n2ForMI}
+        //const CCIp = {'displayCCI':props.displayCCI,'nForCCI':props.nForCCI,'cForCCI':props.cForCCI}
+        const DPOp = {'displayDPO':props.displayDPO,'nForDPO':props.nForDPO}
     
+        //props.fetchStockData(String(props.tickers+"/"+convertDatesToString(props.startDate)+"/"+convertDatesToString(props.endDate)))
+        props.fetchTrendData(JSON.stringify([props.stockData,SMAp,EMAp,MACDp,MACDsignalp,ADXp,ADXPp,ADXNp,VIPOSp,VINEGp,TRIXp,MIp, DPOp]))
+        
+      }, [props.stockData,props.displaySMA,props.nForSMA,props.displayEMA,props.nForEMA,props.displayMACD,props.nFastForMACD,props.nSlowForMACD,
+        props.displayMACDsignal,props.nSlowForMACDsignal,props.nFastForMACDsignal,props.nSignForMACDsignal,props.displayADX,props.nForADX,
+        props.displayADXP,props.nForADXP,props.displayADXN,props.nForADXN,props.displayVIPOS,props.nForVIPOS,props.displayVINEG,props.nForVINEG,
+        props.displayTRIX,props.nForTRIX,props.displayMI,props.nForMI,props.n2ForMI,props.displayDPO,props.nForDPO])
+
     const [activeSMAAccordionMenuItem, setActiveSMAAccordionMenuItem] = useState(-1)
     const [activeMACDAccordionMenuItem, setActiveMACDAccordionMenuItem] = useState(-1)
     const [activeEMAAccodianMenuItem, setActiveEMAAccodianMenuItem] = useState(-1)
@@ -408,7 +432,7 @@ function TrendMenuContainer(props) {
 
 const mapStateToProps = state => {
   return {
-    
+    stockData: state.stockDataFromRootReducer.stockData,
     displaySMA: state.trendFromRootReducer.displaySMA,
     nForSMA: state.trendFromRootReducer.nForSMA,
     displayEMA: state.trendFromRootReducer.displayEMA,
@@ -418,7 +442,8 @@ const mapStateToProps = state => {
     nSlowForMACD: state.trendFromRootReducer.nSlowForMACD,
     displayMACDsignal: state.trendFromRootReducer.displayMACDsignal,
     nFastForMACDsignal: state.trendFromRootReducer.nFastForMACDsignal,
-    nSlowForMACDsignal: state.trendFromRootReducer.nSlowForMACDsigna,
+    nSlowForMACDsignal: state.trendFromRootReducer.nSlowForMACDsignal,
+    nSignForMACDsignal: state.trendFromRootReducer.nSignForMACDsignal,
     displayADX: state.trendFromRootReducer.displayADX,
     nForADX: state.trendFromRootReducer.nForADX,
     displayADXP: state.trendFromRootReducer.displayADXP,
@@ -458,7 +483,7 @@ const mapDispatchToProps = dispatch => {
     displayTRIXdispatch: x => dispatch(displayTRIX(x)),
     displayMIdispatch: x => dispatch(displayMI(x)),
     displayDPOdispatch: x => dispatch(displayDPO(x)),
-
+    fetchTrendData: (APIstring) => dispatch(fetchTrendData(APIstring)),
   }
 }
 

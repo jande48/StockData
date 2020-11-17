@@ -19,7 +19,7 @@ import {
 function VolumeGraphContainer (props) {
 
 
-    const showVolumeNode = useRef(null);
+  const showVolumeNode = useRef(null);
 
 
   if (typeof(props.stockData) != 'undefined' ) {

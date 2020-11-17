@@ -14,7 +14,8 @@ import {
 const initialState = {
   loading: false,
   stockData: [],
-  error: '',
+  error: false,
+  errorMessage: '',
   financialsLoading: false,
   financialsData: [],
   financialsError: '',
@@ -48,7 +49,7 @@ const StockDataReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         stockData: action.payload,
-        error: '',
+        error: false,
         loads: (oldLoads+1)
       }
     case FETCH_STOCK_DATA_FAILURE:
@@ -56,7 +57,8 @@ const StockDataReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         stockData: [],
-        error: action.payload
+        error: true,
+        errorMessage: action.payload
       }
     case FETCH_FINANCIALS_DATA_REQUEST:
       return {

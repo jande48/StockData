@@ -1,10 +1,10 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { connect } from 'react-redux'
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { addEndDate, addStartDate } from '../redux'
 import { Header, Grid} from "semantic-ui-react"
-
+import { fetchStockData } from '../redux'
 
 
 function SelectCustomDatesContainer(props) {
@@ -20,6 +20,13 @@ function SelectCustomDatesContainer(props) {
   // const [endDate, setEndDate] = useState(new Date())
   // var currentDate2 = new Date();
   // const maxDateAllowed = currentDate2.setTime(currentDate.getTime() - (24*60*60*1000) * 365);
+  function convertDatesToString(initialDate) {
+		const convertedDate = String(initialDate.getFullYear())+"-"+String(initialDate.getMonth() + 1)+"-"+String(initialDate.getDate())
+		return convertedDate
+	}
+  useEffect(() => {
+    props.fetchStockData(String(props.tickers+"/"+convertDatesToString(startDate)+"/"+convertDatesToString(endDate)))
+  },[startDate,endDate])
 
   function handleStartDateClick(date) {
 		if (date !== startDate) {
@@ -118,23 +125,22 @@ function SelectCustomDatesContainer(props) {
   )
 }
 
-// const mapStateToProps = state => {
-//   return {
-//     startDate: state.datesFromRootReducer.startDate,
-//     endDate: state.datesFromRootReducer.endDate
-//   }
-// }
+const mapStateToProps = state => {
+  return {
+    tickers: state.tickersFromRootReducer.tickers,
+  }
+}
 
 const mapDispatchToProps = dispatch => {
   return {
     addStartDateDispatch: startDate => dispatch(addStartDate(startDate)),
-    addEndDateDispatch: endDate => dispatch(addEndDate(endDate))
+    addEndDateDispatch: endDate => dispatch(addEndDate(endDate)),
+    fetchStockData: (APIstring) => dispatch(fetchStockData(APIstring)),
   }
 }
 
 export default connect(
-  // mapStateToProps,
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(SelectCustomDatesContainer)
 
