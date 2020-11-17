@@ -26,7 +26,7 @@ function SelectCustomDatesContainer(props) {
 	}
   useEffect(() => {
     props.fetchStockData(String(props.tickers+"/"+convertDatesToString(startDate)+"/"+convertDatesToString(endDate)))
-  },[startDate,endDate])
+  },[props.tickers,startDate,endDate])
 
   function handleStartDateClick(date) {
 		if (date !== startDate) {

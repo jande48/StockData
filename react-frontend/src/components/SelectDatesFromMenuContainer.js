@@ -19,20 +19,32 @@ function SelectDatesFromMenuContainer(props) {
 	}
 
   useEffect(() => {
-      props.addStartDateDispatch(startDate)
-      props.addEndDateDispatch(endDate)
-      props.fetchStockData(String(props.tickers+"/"+convertDatesToString(startDate)+"/"+convertDatesToString(endDate)))
-  },[startDate,endDate])
+
+      const d = startDate.getTime();
+
+      if (props.stockData.length != 'undefined') {
+        if(props.stockData.length > 0) {
+          var dateSplit = props.stockData[0]['date'].split("-")
+          var stockDataDateOne = new Date(String(parseInt(dateSplit[0])),String(parseInt(dateSplit[1])),String(parseInt(dateSplit[2])))
+          if (d < stockDataDateOne.getTime()) {
+            props.fetchStockData(String(props.tickers+"/"+convertDatesToString(startDate)+"/"+convertDatesToString(endDate)))
+          }
+        }
+      }
+    
+     
+      
+  },[props.tickers,startDate,endDate])
 
   function handleDateClick(minusDays, name) {
       setActiveItemDateMenu(name)
       var currentDate = new Date() //theRealCurrentDate2;
       var dateOffset = (24*60*60*1000) * minusDays; 
       var newDate = currentDate.setTime(currentDate.getTime() - ((24*60*60*1000) * minusDays));
-      console.log(minusDays)
-      console.log(currentDate)
+
       setStartDate(currentDate);
-      
+      props.addStartDateDispatch(currentDate)
+      props.addEndDateDispatch(endDate)
       //props.addStartDateDispatch(currentDate)
       //props.addEndDateDispatch(endDate)
       // getAndSetStockData(ticker,currentDate,endDate) 
@@ -82,6 +94,9 @@ function SelectDatesFromMenuContainer(props) {
 const mapStateToProps = state => {
   return {
     tickers: state.tickersFromRootReducer.tickers,
+    startDateProps: state.datesFromRootReducer.startDate,
+    endDateProps: state.datesFromRootReducer.endDate,
+    stockData: state.stockDataFromRootReducer.stockData,
   }
 }
 

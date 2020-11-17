@@ -90,7 +90,6 @@ function LineCandleGraphContainer (props) {
         }
 
         const data = sliceDataStartDate(Initialdata)
-      
         const InitialtrendData = props.trendData
         const trendData = sliceDataStartDate(InitialtrendData)
         

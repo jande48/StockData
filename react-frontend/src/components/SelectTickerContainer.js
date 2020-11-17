@@ -1,7 +1,8 @@
 import React, {useState, useRef, useCallback} from 'react'
 import { connect } from 'react-redux'
-import { addCompanyName, addTicker, displayEMA, fetchCompInfoData, fetchCompInfoDataRequest, fetchCompanyNameFromTicker } from '../redux'
+import { addCompanyName, addTicker, displayEMA, fetchCompInfoData, fetchCompInfoDataRequest, fetchCompanyNameFromTicker, fetchStockData } from '../redux'
 import { Input, Form, Icon, Button, Grid, Search, Label, Header} from "semantic-ui-react"
+
 import _ from 'lodash'
 import './css/selectTickerCSS.css'
 
