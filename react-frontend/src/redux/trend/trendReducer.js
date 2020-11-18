@@ -35,6 +35,7 @@ const initialState = {
   displayDPO: false,
   nForDPO: 20,
   trendLoads: 0,
+  trendLoading: false,
   trendData: []
 }
 
@@ -156,12 +157,12 @@ const trendReducer = (state = initialState, action) => {
     case FETCH_TREND_DATA_REQUEST:
       return {
         ...state,
-        loading: true
+        trendLoading: true
       }
     case FETCH_TREND_DATA_SUCCESS:
       return {
         ...state,
-        loading: false,
+        trendLoading: false,
         trendData: action.payload,
         error: '',
         trendLoads: (oldLoads+1)
@@ -169,7 +170,7 @@ const trendReducer = (state = initialState, action) => {
     case FETCH_TREND_DATA_FAILURE:
       return {
         ...state,
-        loading: false,
+        trendLoading: false,
         trendData: [],
         error: action.payload
       }

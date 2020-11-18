@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
+import {Header, Grid} from 'semantic-ui-react'
+import { createLoadingSpinnerChart } from './charts/loadingSpinner.js'
 import '../App.css'
 import * as d3 from 'd3'
 import {
@@ -17,18 +19,22 @@ import {
   } from 'd3';
 
 function VolumeGraphContainer (props) {
-
-
   const showVolumeNode = useRef(null);
+  const loadingSpinnerNode = useRef(null);
+  const height = 70;
+        const width = 700;
+        const margin = ({top: 15, right: 20, bottom: 20, left: 50})
+  useEffect(() => {
 
-
-  if (typeof(props.stockData) != 'undefined' ) {
-    
-    if (props.stockData.length > 0){
-    createVolumeBarChart(showVolumeNode)
-    }}
+    createLoadingSpinnerChart(loadingSpinnerNode,width,height,margin)
+    if (typeof(props.stockData) != 'undefined' ) {
+      if (props.stockData.length > 0){
+      createVolumeBarChart(showVolumeNode)
+      }}
+    },[props.loading,props.startDate,props.endDate,props.stockData])
 
   function createVolumeBarChart(showVolumeNode) {
+    
     const Initialdata = props.stockData
     function convertDatesToString(initialDate) {
       const convertedDate = String(initialDate.getFullYear())+"-"+String(initialDate.getMonth() + 1)+"-"+String(initialDate.getDate())
@@ -58,6 +64,7 @@ function VolumeGraphContainer (props) {
     const data = sliceDataStartDate(Initialdata)
     const svg = select(showVolumeNode.current);
     svg.selectAll("g").remove()
+    svg.selectAll("circle").remove()
     const margin = ({top: 10, right: 20, bottom: 5, left: 50})
     const parseDate = d3.utcParse("%Y-%m-%d")
     const height = 70;
@@ -206,22 +213,70 @@ function VolumeGraphContainer (props) {
     return svg.node();
   }
 
-  return  (
+  
+
+
+  return props.loading ? (
+
+    <React.Fragment>
+      <svg ref={loadingSpinnerNode}></svg>
+    </React.Fragment>
+
+  ) : props.error ? (
+    <Header as='h2' textAlign='center' inverted color="#e0e1e2">Whoops. We can't get stock data now.</Header>
+  ) :  (
     <div>
-        <React.Fragment>
-            <svg ref={showVolumeNode}></svg>
-        </React.Fragment>
+      <React.Fragment>
+        <svg ref={showVolumeNode}></svg>
+      </React.Fragment>
     </div>
   )
 }
 
 const mapStateToProps = state => {
   return {
+
+    tickers: state.tickersFromRootReducer.tickers,
+    startDate: state.datesFromRootReducer.startDate,
+    endDate: state.datesFromRootReducer.endDate,
     stockData: state.stockDataFromRootReducer.stockData,
     loading: state.stockDataFromRootReducer.loading,
     error: state.stockDataFromRootReducer.error,
+    errorMessage: state.stockDataFromRootReducer.errorMessage,
+    fetchStockData: state.stockDataFromRootReducer.fetchStockData,
     displayLine: state.chartsFromRootReducer.displayLine,
-    startDate: state.datesFromRootReducer.startDate,
+    displaySMA: state.trendFromRootReducer.displaySMA,
+    nForSMA: state.trendFromRootReducer.nForSMA,
+    displayEMA: state.trendFromRootReducer.displayEMA,
+    nForEMA: state.trendFromRootReducer.nForEMA,
+    displayMACD: state.trendFromRootReducer.displayMACD,
+    nSlowForMACD: state.trendFromRootReducer.nSlowForMACD,
+    nFastForMACD: state.trendFromRootReducer.nFastForMACD,
+    trendData: state.trendFromRootReducer.trendData,
+    compName: state.tickersFromRootReducer.name,
+    percentChange: state.tickersFromRootReducer.percentChange,
+    displayMACDsignal: state.trendFromRootReducer.displayMACDsignal,
+    nSlowForMACDsignal: state.trendFromRootReducer.nSlowForMACDsignal,
+    nFastForMACDsignal: state.trendFromRootReducer.nFastForMACDsignal,
+    nSignForMACDsignal: state.trendFromRootReducer.nSignForMACDsignal,
+    displayADX: state.trendFromRootReducer.displayADX,
+    nForADX: state.trendFromRootReducer.nForADX,
+    displayADXP: state.trendFromRootReducer.displayADXP,
+    nForADXP: state.trendFromRootReducer.nForADXP,
+    displayADXN: state.trendFromRootReducer.displayADXN,
+    nForADXN: state.trendFromRootReducer.nForADXN,
+    displayVIPOS: state.trendFromRootReducer.displayVIPOS,
+    nForVIPOS: state.trendFromRootReducer.nForVIPOS,
+    displayVINEG: state.trendFromRootReducer.displayVINEG,
+    nForVINEG: state.trendFromRootReducer.nForVINEG,
+    displayTRIX: state.trendFromRootReducer.displayTRIX,
+    nForTRIX: state.trendFromRootReducer.nForTRIX,
+    displayMI: state.trendFromRootReducer.displayMI,
+    nForMI: state.trendFromRootReducer.nForMI,
+    n2ForMI: state.trendFromRootReducer.n2ForMI,
+    displayDPO: state.trendFromRootReducer.displayDPO,
+    nForDPO: state.trendFromRootReducer.nForDPO,
+    financials: state.stockDataFromRootReducer.financialsData,
   }
 }
 

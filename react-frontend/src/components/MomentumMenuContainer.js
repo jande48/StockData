@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { connect } from 'react-redux'
 import { displayRSI, displaySTOCH, displayStochSignal, displayTSI, displayUO, displayWR, displayAO, displayKama, displayROC  } from '../redux'
 import { Grid, Menu, Accordion, Checkbox, Icon, Header} from "semantic-ui-react"
@@ -11,6 +11,7 @@ import WRcontentPanel from './accordion/momentum/WRcontentpanel'
 import AOcontentPanel from './accordion/momentum/AOcontentpanel'
 import KamacontentPanel from './accordion/momentum/KAMAcontentpanel'
 import ROCcontentPanel from './accordion/momentum/ROCcontentpanel'
+import { fetchMomentumData } from '../redux';
 
 function MomentumMenuContainer(props) {
     
@@ -23,6 +24,28 @@ function MomentumMenuContainer(props) {
     const [activeAOAccodianMenuItem, setAOActiveAccordionMenuItem] = useState(-1)
     const [activeKAMAAccodianMenuItem, setKAMAActiveAccordionMenuItem] = useState(-1)
     const [activeROCAccodianMenuItem, setROCActiveAccordionMenuItem] = useState(-1)
+
+
+    useEffect(() => {
+        if (typeof(props.stockData) != 'undefined' ) {
+          if (props.stockData.length > 0) {
+          const RSIparameters = {'N':props.nForRSI}
+          const TSIparameters = {'displayTSI':props.displayTSI,'rTSI':props.rForTSI,'sTSI':props.sForTSI}
+          const UOparameters = {'displayUO':props.displayUO,'sForUO':props.sForUO,'mForUO':props.mForUO,'lenForUO':props.lenForUO,'wsForUO':props.wsForUO,'wmForUO':props.wmForUO,'wlForUO':props.wlForUO}
+          const STOCHparameters = {'displaySTOCH':props.displaySTOCH,'nForSTOCH':props.nForSTOCH, 'dnForSTOCH':props.dnForSTOCH}
+          const StochSignalparameters = {'displayStochSignal':props.displayStochSignal,'nForStochSignal':props.nForStochSignal,'dnForStochSignal':props.dnForStochSignal}
+          const WilliamsRparameters = {'displayWR':props.displayWR,'lbpForWR':props.lbpForWR}
+          const AOparameters = {'displayAO':props.displayAO,'sForAO':props.sForAO,'lenForAO':props.lenForAO}
+          const KAMAparameters = {'displayKama':props.displayKama,'nForKama':props.nForKama,'pow1ForKama':props.pow1ForKama,'pow2ForKama':props.pow2ForKama}
+          const ROCparameters = {'displayROC':props.displayROC,'nForROC':props.nForROC}
+        
+          props.fetchMomentumData(JSON.stringify([props.stockData,RSIparameters,TSIparameters,UOparameters,STOCHparameters,StochSignalparameters,WilliamsRparameters,AOparameters,KAMAparameters,ROCparameters]))
+    
+      
+        }}
+      }, [props.stockData,props.displayRSI,props.nForRSI,props.displayTSI,props.sForTSI,props.rForTSI,props.displayUO,props.sForUO,props.mForUO,props.lenForUO,props.wsForUO,props.wmForUO,props.wlForUO,props.displaySTOCH,props.nForSTOCH,props.dnForSTOCH,
+      props.displayStochSignal,props.nForStochSignal,props.dnForStochSignal,props.displayWR,props.lbpForWR,props.displayAO,props.sForAO,props.lenForAO,props.displayKama,props.nForKama,props.pow1ForKama,props.pow2ForKama,
+      props.displayROC,props.nForROC])
 
     const RSIAccordionTitle = (
         <Grid columns='equal' textAlign='bottom'>
@@ -409,14 +432,32 @@ function MomentumMenuContainer(props) {
 
 const mapStateToProps = state => {
   return {
-    
+    stockData: state.stockDataFromRootReducer.stockData,
+    displayRSI: state.momentumFromRootReducer.displayRSI,
+    fetchMomentumData: state.momentumFromRootReducer.fetchMomentumData,
     displayRSI: state.momentumFromRootReducer.displayRSI,
     nForRSI: state.momentumFromRootReducer.nForRSI,
     displayTSI: state.momentumFromRootReducer.displayTSI,
+    rForTSI: state.momentumFromRootReducer.rForTSI,
+    sForTSI: state.momentumFromRootReducer.sForTSI,
+    //displayMACD: state.trendFromRootReducer.displayMACD,
+    //nSlowForMACD: state.trendFromRootReducer.nSlowForMACD,
+    //nFastForMACD: state.trendFromRootReducer.nFastForMACD,
+    sForUO: state.momentumFromRootReducer.sForUO,
+    mForUO: state.momentumFromRootReducer.mForUO,
+    lenForUO: state.momentumFromRootReducer.lenForUO,
+    wsForUO: state.momentumFromRootReducer.wsForUO,
+    wmForUO: state.momentumFromRootReducer.wmForUO,
+    wlForUO: state.momentumFromRootReducer.wlForUO,
     displayUO: state.momentumFromRootReducer.displayUO,
     displaySTOCH: state.momentumFromRootReducer.displaySTOCH,
+    nForSTOCH: state.momentumFromRootReducer.nForSTOCH,
+    dnForSTOCH: state.momentumFromRootReducer.dnForSTOCH,
     displayStochSignal: state.momentumFromRootReducer.displayStochSignal,
+    nForStochSignal: state.momentumFromRootReducer.nForStochSignal,
+    dnForStochSignal: state.momentumFromRootReducer.dnForStochSignal,
     displayWR: state.momentumFromRootReducer.displayWR,
+    lbpForWR: state.momentumFromRootReducer.lbpForWR,
     displayAO: state.momentumFromRootReducer.displayAO,
     sForAO: state.momentumFromRootReducer.sForAO,
     lenForAO: state.momentumFromRootReducer.lenForAO,
@@ -426,6 +467,7 @@ const mapStateToProps = state => {
     pow2ForKama: state.momentumFromRootReducer.pow2ForKama,
     displayROC: state.momentumFromRootReducer.displayROC,
     nForROC: state.momentumFromRootReducer.nForROC,
+    startDate: state.datesFromRootReducer.startDate,
 
   }
 }
@@ -441,7 +483,7 @@ const mapDispatchToProps = dispatch => {
     displayAOdispatch: x => dispatch(displayAO(x)),
     displayKAMAdispatch: x => dispatch(displayKama(x)),
     displayROCdispatch: x => dispatch(displayROC(x)),
-    
+    fetchMomentumData: (APIstring) => dispatch(fetchMomentumData(APIstring))
   }
 }
 

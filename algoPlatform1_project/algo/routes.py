@@ -351,7 +351,7 @@ def get_fianancial_data(ticker):
     financials = stock.get_financials()
     companyIEX = stock.get_company()
     url = Request("https://financialmodelingprep.com/api/v3/profile/"+ticker+"?apikey="+Stock_Ticker_Lookup_key)
-    response = urlopen(url,data=None,timeout=0.5)
+    response = urlopen(url,data=None,timeout=2)
     companyFinModPrep = json.loads(response.read().decode("utf-8"))
     # def divideByMillion(financialParameter,newFinancials):
     #     newFinancials[0][financialParameter] = newFinancials[0][financialParameter]/1000000

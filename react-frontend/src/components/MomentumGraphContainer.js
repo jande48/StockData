@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-//import { fetchStockData } from '../redux'
+import { createLoadingSpinnerChart } from './charts/loadingSpinner.js'
+import {Header, Grid} from 'semantic-ui-react'
 import '../App.css'
 import 'react-datepicker/dist/react-datepicker.css'
 import * as d3 from "d3"
@@ -25,28 +26,13 @@ function MomentumGraphContainer (props) {
 
 
   const momentumIndicatorsChartNode = useRef(null);
+  const loadingSpinnerNode = useRef(null);
+  const height = 70;
+  const width = 700;
+  const margin = ({top: 5, right: 20, bottom: 5, left: 50})
 
   useEffect(() => {
-    if (typeof(props.stockData) != 'undefined' ) {
-      if (props.stockData.length > 0) {
-      const RSIparameters = {'N':props.nForRSI}
-      const TSIparameters = {'displayTSI':props.displayTSI,'rTSI':props.rForTSI,'sTSI':props.sForTSI}
-      const UOparameters = {'displayUO':props.displayUO,'sForUO':props.sForUO,'mForUO':props.mForUO,'lenForUO':props.lenForUO,'wsForUO':props.wsForUO,'wmForUO':props.wmForUO,'wlForUO':props.wlForUO}
-      const STOCHparameters = {'displaySTOCH':props.displaySTOCH,'nForSTOCH':props.nForSTOCH, 'dnForSTOCH':props.dnForSTOCH}
-      const StochSignalparameters = {'displayStochSignal':props.displayStochSignal,'nForStochSignal':props.nForStochSignal,'dnForStochSignal':props.dnForStochSignal}
-      const WilliamsRparameters = {'displayWR':props.displayWR,'lbpForWR':props.lbpForWR}
-      const AOparameters = {'displayAO':props.displayAO,'sForAO':props.sForAO,'lenForAO':props.lenForAO}
-      const KAMAparameters = {'displayKama':props.displayKama,'nForKama':props.nForKama,'pow1ForKama':props.pow1ForKama,'pow2ForKama':props.pow2ForKama}
-      const ROCparameters = {'displayROC':props.displayROC,'nForROC':props.nForROC}
-    
-      props.fetchMomentumData(JSON.stringify([props.stockData,RSIparameters,TSIparameters,UOparameters,STOCHparameters,StochSignalparameters,WilliamsRparameters,AOparameters,KAMAparameters,ROCparameters]))
-
-    }}
-    
-  }, [props.stockData,props.displayRSI,props.nForRSI,props.displayTSI,props.sForTSI,props.rForTSI,props.displayUO,props.sForUO,props.mForUO,props.lenForUO,props.wsForUO,props.wmForUO,props.wlForUO,props.displaySTOCH,props.nForSTOCH,props.dnForSTOCH,
-  props.displayStochSignal,props.nForStochSignal,props.dnForStochSignal,props.displayWR,props.lbpForWR,props.displayAO,props.sForAO,props.lenForAO,props.displayKama,props.nForKama,props.pow1ForKama,props.pow2ForKama,
-  props.displayROC,props.nForROC])
-
+  createLoadingSpinnerChart(loadingSpinnerNode,width,height,margin)
   if (typeof(props.momentumData) != 'undefined') {
     if (props.momentumData.length > 2) {
     function createMomentumIndicatorsChart(momentumIndicatorsChartNode) {
@@ -378,15 +364,22 @@ function MomentumGraphContainer (props) {
       return svg.node();
 
     }
+
     createMomentumIndicatorsChart(momentumIndicatorsChartNode)
   
       
   }}
 
+  },[props.loading,props.momentumLoading,props.stockData,props.startDate,props.endDate])
 
 
-
-  return (
+  return props.loading ? (
+    <React.Fragment>
+      <svg ref={loadingSpinnerNode}></svg>
+    </React.Fragment>
+  ) :props.error || props.momentumError ? (
+    <Header as='h2' textAlign='center' inverted color="#e0e1e2">Whoops. We can't get momentum data now.</Header>
+  ) : (
     <div>
         <React.Fragment>
             <svg ref={momentumIndicatorsChartNode}></svg>
@@ -398,7 +391,11 @@ function MomentumGraphContainer (props) {
 const mapStateToProps = state => {
   return {
     stockData: state.stockDataFromRootReducer.stockData,
+    startDate: state.datesFromRootReducer.startDate,
+    endDate: state.datesFromRootReducer.endDate,
     loading: state.stockDataFromRootReducer.loading,
+    momentumLoading: state.momentumFromRootReducer.momentumLoading,
+    momentumError: state.momentumFromRootReducer.momentumError,
     error: state.stockDataFromRootReducer.error,
     trendData: state.trendFromRootReducer.trendData,
     loads: state.stockDataFromRootReducer.loads,

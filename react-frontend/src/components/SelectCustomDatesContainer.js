@@ -76,7 +76,7 @@ function SelectCustomDatesContainer(props) {
           <Grid.Column>
             <DatePicker
             fluid 
-            selected={startDate} 
+            selected={props.startDateProps} 
             maxDate={new Date()} 
             onChange={date => handleStartDateClick(date)}
             placeholderText='MM/DD/YYYY'
@@ -92,7 +92,7 @@ function SelectCustomDatesContainer(props) {
           <Grid.Column color='black'>
             <DatePicker 
             fluid
-            selected={endDate} 
+            selected={props.endDateProps} 
             maxDate={new Date()} 
             onChange={date => handleEndDateClick(date)}
             placeholderText='MM/DD/YYYY'
@@ -128,6 +128,8 @@ function SelectCustomDatesContainer(props) {
 const mapStateToProps = state => {
   return {
     tickers: state.tickersFromRootReducer.tickers,
+    startDateProps: state.datesFromRootReducer.startDate,
+    endDateProps: state.datesFromRootReducer.endDate,
   }
 }
 

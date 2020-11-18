@@ -38,7 +38,8 @@ const initialState = {
   displayROC: false,
   nForROC: 14,
   momentumLoads: 0,
-  loading: false,
+  momentumLoading: false,
+  momentumError: false,
   momentumData: []
 }
 
@@ -164,22 +165,22 @@ const momentumReducer = (state = initialState, action) => {
     case FETCH_MOMENTUM_DATA_REQUEST:
       return {
         ...state,
-        loading: true
+        momentumLoading: true
       }
     case FETCH_MOMENTUM_DATA_SUCCESS:
       return {
         ...state,
-        loading: false,
+        momentumLoading: false,
         momentumData: action.payload,
-        error: '',
+        momentumError: '',
         momentumLoads: (oldLoads+1)
       }
     case FETCH_MOMENTUM_DATA_FAILURE:
       return {
         ...state,
-        loading: false,
+        momentumLoading: false,
         momentumData: [],
-        error: action.payload
+        momentumError: action.payload
       }
     default: return state
   }

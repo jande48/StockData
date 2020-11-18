@@ -178,7 +178,7 @@ export const nForDPO = (n) => {
 export function fetchTrendData(apiString) {
   //console.log(apiString)
   return function (dispatch) {
-
+    dispatch(fetchTrendDataRequest())
     fetch('/calculate_Trend_Indicators/', {
       method: 'POST', // or 'PUT'
       headers: {
