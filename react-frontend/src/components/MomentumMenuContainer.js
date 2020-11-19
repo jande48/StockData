@@ -47,155 +47,200 @@ function MomentumMenuContainer(props) {
       props.displayStochSignal,props.nForStochSignal,props.dnForStochSignal,props.displayWR,props.lbpForWR,props.displayAO,props.sForAO,props.lenForAO,props.displayKama,props.nForKama,props.pow1ForKama,props.pow2ForKama,
       props.displayROC,props.nForROC])
 
-    const RSIAccordionTitle = (
-        <Grid columns='equal' textAlign='bottom'>
-            <Grid.Row verticalAlign='top'>
-                <Grid.Column width={2}>
-                    <Checkbox borderless index={1} defaultChecked onClick={(event) => {
-                                event.stopPropagation()
-                                props.displayRSIdispatch(!props.displayRSI)
-                            }}>
-                    </Checkbox>
-                </Grid.Column>
-                <Grid.Column>
-                    <Header as='h5' inverted>Relative Strength Index</Header>
-                </Grid.Column>
-                <Grid.Column floated='right' width={2}>
-                    <Icon name={activeRSIAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
-                </Grid.Column>
-            </Grid.Row>
-        </Grid>)
+
+
+      class createTiles {
+        constructor(name,dispatch,display,activeState) {
+          this.name = name;
+          this.display = display;
+          this.dispatch = dispatch;
+          this.activeState =activeState;
+
+        }
+        // Getter
+        get tile() {
+          return this.createTile();
+        }
+
+        // Method
+        createTile() {
+            return(
+                <Grid columns='equal' textAlign='bottom'>
+                <Grid.Row verticalAlign='top'>
+                    <Grid.Column width={2}>
+                        <Checkbox borderless index={1} onClick={(event) => {
+                                    event.stopPropagation()
+                                    this.dispatch(!this.display)
+                                    //props.displayRSIdispatch(!props.displayRSI)
+                                }}>
+                        </Checkbox>
+                    </Grid.Column>
+                    <Grid.Column>
+                        <Header as='h5' inverted>{this.name}</Header>
+                    </Grid.Column>
+                    <Grid.Column floated='right' width={2}>
+                        <Icon name={this.activeState === 0 ? 'caret down' : 'caret left'}/>
+                    </Grid.Column>
+                </Grid.Row>
+            </Grid> 
+            )
+        }
+    }
+
+    const TSIAccordionClass = new createTiles('True Strength Index',props.displayTSIdispatch,props.displayTSI,activeTSIAccodianMenuItem)
+    const TSIAccordionTitle = TSIAccordionClass.createTile()
+
+    
         
-    const TSIAccordionTitle = (
-        <Grid columns='equal'>
-        <Grid.Column width={2}>
-                <Checkbox borderless index={1} onClick={(event) => {
-                            event.stopPropagation()
-                            props.displayTSIdispatch(!props.displayTSI)
-                        }}>
-                </Checkbox>
-        </Grid.Column>
-        <Grid.Column>
-            <h5>True Strength Index</h5>
-        </Grid.Column>
-        <Grid.Column floated='right' width={2}>
-            <Icon name={activeTSIAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
-        </Grid.Column>
-        </Grid>)
+    // const TSIAccordionTitle = (
+    //     <Grid columns='equal'>
+    //     <Grid.Column width={2}>
+    //             <Checkbox borderless index={1} onClick={(event) => {
+    //                         event.stopPropagation()
+    //                         props.displayTSIdispatch(!props.displayTSI)
+    //                     }}>
+    //             </Checkbox>
+    //     </Grid.Column>
+    //     <Grid.Column>
+    //         <h5>True Strength Index</h5>
+    //     </Grid.Column>
+    //     <Grid.Column floated='right' width={2}>
+    //         <Icon name={activeTSIAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
+    //     </Grid.Column>
+    //     </Grid>)
+    const UOAccordionClass = new createTiles('Ultimate Oscillator',props.displayUOdispatch,props.displayUO,activeUOAccodianMenuItem)
+    const UOAccordionTitle = UOAccordionClass.createTile()
 
-    const UOAccordionTitle = (
-        <Grid columns='equal'>
-        <Grid.Column width={2}>
-                <Checkbox borderless index={1} onClick={(event) => {
-                            event.stopPropagation()
-                            props.displayUOdispatch(!props.displayUO)
-                        }}>
-                </Checkbox>
-        </Grid.Column>
-        <Grid.Column>
-            <h5>Ultimate Oscillator</h5>
-        </Grid.Column>
-        <Grid.Column floated='right' width={2}>
-            <Icon name={activeUOAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
-        </Grid.Column>
-        </Grid>)
+    // const UOAccordionTitle = (
+    //     <Grid columns='equal'>
+    //     <Grid.Column width={2}>
+    //             <Checkbox borderless index={1} onClick={(event) => {
+    //                         event.stopPropagation()
+    //                         props.displayUOdispatch(!props.displayUO)
+    //                     }}>
+    //             </Checkbox>
+    //     </Grid.Column>
+    //     <Grid.Column>
+    //         <h5>Ultimate Oscillator</h5>
+    //     </Grid.Column>
+    //     <Grid.Column floated='right' width={2}>
+    //         <Icon name={activeUOAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
+    //     </Grid.Column>
+    //     </Grid>)
+    const STOCHAccordionClass = new createTiles('Stochcastic Oscillator',props.displaySTOCHdispatch,props.displaySTOCH,activeSTOCHAccodianMenuItem)
+    const STOCHAccordionTitle = STOCHAccordionClass.createTile()
 
-    const STOCHAccordionTitle = (
-        <Grid columns='equal'>
-        <Grid.Column width={2}>
-                <Checkbox borderless index={1} onClick={(event) => {
-                            event.stopPropagation()
-                            props.displaySTOCHdispatch(!props.displaySTOCH)
-                    }}>
-                </Checkbox>
-        </Grid.Column>
-        <Grid.Column>
-            <h5>Stochcastic Oscillator</h5>
-        </Grid.Column>
-        <Grid.Column floated='right' width={2}>
-            <Icon name={activeSTOCHAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
-        </Grid.Column>
-        </Grid>)
-    const STOCHSIGNALAccordionTitle = (
-        <Grid columns='equal'>
-        <Grid.Column width={2}>
-                <Checkbox borderless index={1} onClick={(event) => {
-                            event.stopPropagation()
-                            props.displaySTOCHSIGNALdispatch(!props.displayStochSignal)
-                    }}>
-                </Checkbox>
-        </Grid.Column>
-        <Grid.Column>
-            <h5>Stochcastic Signal Oscillator</h5>
-        </Grid.Column>
-        <Grid.Column floated='right' width={2}>
-            <Icon name={activeSTOCHSIGNALAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
-        </Grid.Column>
-        </Grid>)
-    const WRAccordionTitle = (
-        <Grid columns='equal'>
-        <Grid.Column width={2}>
-                <Checkbox borderless index={1} onClick={(event) => {
-                            event.stopPropagation()
-                            props.displayWRdispatch(!props.displayWR)
-                    }}>
-                </Checkbox>
-        </Grid.Column>
-        <Grid.Column>
-            <h5>Williams %R</h5>
-        </Grid.Column>
-        <Grid.Column floated='right' width={2}>
-            <Icon name={activeWRAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
-        </Grid.Column>
-        </Grid>)
-    const AOAccordionTitle = (
-        <Grid columns='equal'>
-        <Grid.Column width={2}>
-                <Checkbox borderless index={1} onClick={(event) => {
-                            event.stopPropagation()
-                            props.displayAOdispatch(!props.displayAO)
-                    }}>
-                </Checkbox>
-        </Grid.Column>
-        <Grid.Column>
-            <h5>Awesome Oscillator</h5>
-        </Grid.Column>
-        <Grid.Column floated='right' width={2}>
-            <Icon name={activeAOAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
-        </Grid.Column>
-        </Grid>)
-    const KAMAAccordionTitle = (
-        <Grid columns='equal'>
-        <Grid.Column width={2}>
-                <Checkbox borderless index={1} onClick={(event) => {
-                            event.stopPropagation()
-                            props.displayKAMAdispatch(!props.displayKama)
-                    }}>
-                </Checkbox>
-        </Grid.Column>
-        <Grid.Column>
-            <h5>Kaufman's Adaptive MA</h5>
-        </Grid.Column>
-        <Grid.Column floated='right' width={2}>
-            <Icon name={activeKAMAAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
-        </Grid.Column>
-        </Grid>)
-    const ROCAccordionTitle = (
-        <Grid columns='equal'>
-        <Grid.Column width={2}>
-                <Checkbox borderless index={1} onClick={(event) => {
-                            event.stopPropagation()
-                            props.displayROCdispatch(!props.displayROC)
-                    }}>
-                </Checkbox>
-        </Grid.Column>
-        <Grid.Column>
-            <h5>Rate of Change</h5>
-        </Grid.Column>
-        <Grid.Column floated='right' width={2}>
-            <Icon name={activeROCAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
-        </Grid.Column>
-        </Grid>)
+    // const STOCHAccordionTitle = (
+    //     <Grid columns='equal'>
+    //     <Grid.Column width={2}>
+    //             <Checkbox borderless index={1} onClick={(event) => {
+    //                         event.stopPropagation()
+    //                         props.displaySTOCHdispatch(!props.displaySTOCH)
+    //                 }}>
+    //             </Checkbox>
+    //     </Grid.Column>
+    //     <Grid.Column>
+    //         <h5>Stochcastic Oscillator</h5>
+    //     </Grid.Column>
+    //     <Grid.Column floated='right' width={2}>
+    //         <Icon name={activeSTOCHAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
+    //     </Grid.Column>
+    //     </Grid>)
+    const STOCHSIGNALAccordionClass = new createTiles('Stochcastic Signal Oscillator',props.displaySTOCHSIGNALdispatch,props.displayStochSignal,activeSTOCHSIGNALAccodianMenuItem)
+    const STOCHSIGNALAccordionTitle = STOCHSIGNALAccordionClass.createTile()
+
+    // const STOCHSIGNALAccordionTitle = (
+    //     <Grid columns='equal'>
+    //     <Grid.Column width={2}>
+    //             <Checkbox borderless index={1} onClick={(event) => {
+    //                         event.stopPropagation()
+    //                         props.displaySTOCHSIGNALdispatch(!props.displayStochSignal)
+    //                 }}>
+    //             </Checkbox>
+    //     </Grid.Column>
+    //     <Grid.Column>
+    //         <h5>Stochcastic Signal Oscillator</h5>
+    //     </Grid.Column>
+    //     <Grid.Column floated='right' width={2}>
+    //         <Icon name={activeSTOCHSIGNALAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
+    //     </Grid.Column>
+    //     </Grid>)
+    const WRAccordionClass = new createTiles('Williams %R',props.displayWRdispatch,props.displayWR,activeWRAccodianMenuItem)
+    const WRAccordionTitle = WRAccordionClass.createTile()
+
+    // const WRAccordionTitle = (
+    //     <Grid columns='equal'>
+    //     <Grid.Column width={2}>
+    //             <Checkbox borderless index={1} onClick={(event) => {
+    //                         event.stopPropagation()
+    //                         props.displayWRdispatch(!props.displayWR)
+    //                 }}>
+    //             </Checkbox>
+    //     </Grid.Column>
+    //     <Grid.Column>
+    //         <h5>Williams %R</h5>
+    //     </Grid.Column>
+    //     <Grid.Column floated='right' width={2}>
+    //         <Icon name={activeWRAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
+    //     </Grid.Column>
+    //     </Grid>)
+    const AOAccordionClass = new createTiles('Awesome Oscillator',props.displayAOdispatch,props.displayAO,activeAOAccodianMenuItem)
+    const AOAccordionTitle = AOAccordionClass.createTile()
+
+    // const AOAccordionTitle = (
+    //     <Grid columns='equal'>
+    //     <Grid.Column width={2}>
+    //             <Checkbox borderless index={1} onClick={(event) => {
+    //                         event.stopPropagation()
+    //                         props.displayAOdispatch(!props.displayAO)
+    //                 }}>
+    //             </Checkbox>
+    //     </Grid.Column>
+    //     <Grid.Column>
+    //         <h5>Awesome Oscillator</h5>
+    //     </Grid.Column>
+    //     <Grid.Column floated='right' width={2}>
+    //         <Icon name={activeAOAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
+    //     </Grid.Column>
+    //     </Grid>)
+    const KAMAAccordionClass = new createTiles('Kaufmans Adaptive MA',props.displayKAMAdispatch,props.displayKama,activeKAMAAccodianMenuItem)
+    const KAMAAccordionTitle = KAMAAccordionClass.createTile()
+
+    // const KAMAAccordionTitle = (
+    //     <Grid columns='equal'>
+    //     <Grid.Column width={2}>
+    //             <Checkbox borderless index={1} onClick={(event) => {
+    //                         event.stopPropagation()
+    //                         props.displayKAMAdispatch(!props.displayKama)
+    //                 }}>
+    //             </Checkbox>
+    //     </Grid.Column>
+    //     <Grid.Column>
+    //         <h5>Kaufman's Adaptive MA</h5>
+    //     </Grid.Column>
+    //     <Grid.Column floated='right' width={2}>
+    //         <Icon name={activeKAMAAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
+    //     </Grid.Column>
+    //     </Grid>)
+    const ROCAccordionClass = new createTiles('Rate of Change',props.displayROCdispatch,props.displayROC,activeROCAccodianMenuItem)
+    const ROCAccordionTitle = ROCAccordionClass.createTile()
+
+    // const ROCAccordionTitle = (
+    //     <Grid columns='equal'>
+    //     <Grid.Column width={2}>
+    //             <Checkbox borderless index={1} onClick={(event) => {
+    //                         event.stopPropagation()
+    //                         props.displayROCdispatch(!props.displayROC)
+    //                 }}>
+    //             </Checkbox>
+    //     </Grid.Column>
+    //     <Grid.Column>
+    //         <h5>Rate of Change</h5>
+    //     </Grid.Column>
+    //     <Grid.Column floated='right' width={2}>
+    //         <Icon name={activeROCAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>            
+    //     </Grid.Column>
+    //     </Grid>)
 
 
     const momentumNtradingDayOptions = [
@@ -298,7 +343,7 @@ function MomentumMenuContainer(props) {
                             index={0}
                             borderless
                             onClick={(e,index) => {
-                                setSTOCHSIGNALActiveAccordionMenuItem(index.index === activeSTOCHAccodianMenuItem ? -1 : index.index)
+                                setSTOCHSIGNALActiveAccordionMenuItem(index.index === activeSTOCHSIGNALAccodianMenuItem ? -1 : index.index)
                                 }}
                         >{STOCHSIGNALAccordionTitle}</Accordion.Title>
                         <Accordion.Content borderless active={activeSTOCHSIGNALAccodianMenuItem === 0} >{<STOCHSIGNALcontentPanel />}</Accordion.Content>
