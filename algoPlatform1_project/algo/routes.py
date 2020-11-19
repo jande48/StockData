@@ -380,8 +380,8 @@ def get_earnings_data(ticker):
     #company = stock.get_company()
     return(json.dumps(earnings))
 
-@algo.route("/calculate_Volitility_Indicators/", methods=['GET','POST'])
-def calculate_Volitility_Indicators():
+@algo.route("/calculate_Volatility_Indicators/", methods=['GET','POST'])
+def calculate_Volitality_Indicators():
     JSON_sent = request.get_json()
     df = pd.DataFrame(JSON_sent[0])
 
@@ -393,16 +393,16 @@ def calculate_Volitility_Indicators():
         indicator_ATR = average_true_range(high=df['high'],low=df['low'],close=df['close'],n=nForATR)
         df['atr'] = indicator_ATR
 
-    # Bollinger Band SMA
+    # # Bollinger Band SMA
     BBSMAchecked = JSON_sent[2]['displayBBSMA']
     nForBBSMA = JSON_sent[2]['nForBBSMA']
-    nDev = JSON_sent[2]['ndevBBSMA']
+    #nDev = JSON_sent[2]['ndevBBSMA']
 
     if BBSMAchecked:
         indicator_BBSMA = bollinger_mavg(close=df['close'],n=nForBBSMA)
         df['bbsma'] = indicator_BBSMA
 
-    # Bollinger Band Upper
+    # # Bollinger Band Upper
     BBUpperChecked = JSON_sent[3]['displayBBUpper']
     nForBBUpper = JSON_sent[3]['nForBBUpper']
     ndevBBUpper = JSON_sent[3]['ndevBBUpper']
@@ -411,149 +411,150 @@ def calculate_Volitility_Indicators():
         indicator_BBUpper = bollinger_hband(close=df['close'],n=nForBBUpper,ndev=ndevBBUpper)
         df['BBupper'] = indicator_BBUpper
 
-    # Bollinger Band Lower
-    BBLowerChecked = JSON_sent[4]['displayBBLower']
-    nForBBLower = JSON_sent[4]['nForBBLower']
-    ndevBBLower = JSON_sent[4]['ndevBBLower']
+    # # Bollinger Band Lower
+    # BBLowerChecked = JSON_sent[4]['displayBBLower']
+    # nForBBLower = JSON_sent[4]['nForBBLower']
+    # ndevBBLower = JSON_sent[4]['ndevBBLower']
 
-    if BBLowerChecked:
-        indicator_BBLower = bollinger_lband(close=df['close'],n=nForBBLower,ndev=ndevBBLower)
-        df['BBlower'] = indicator_BBLower 
+    # if BBLowerChecked:
+    #     indicator_BBLower = bollinger_lband(close=df['close'],n=nForBBLower,ndev=ndevBBLower)
+    #     df['BBlower'] = indicator_BBLower 
 
-    # Bollinger Channal Band Width
-    BBCBWchecked = JSON_sent[5]['displayBBCBW']
-    nForBBCBW = JSON_sent[5]['nForBBCBW']
-    ndevBBCBW = JSON_sent[5]['ndevBBCBW']
+    # # Bollinger Channal Band Width
+    # BBCBWchecked = JSON_sent[5]['displayBBCBW']
+    # nForBBCBW = JSON_sent[5]['nForBBCBW']
+    # ndevBBCBW = JSON_sent[5]['ndevBBCBW']
 
-    if BBCBWchecked:
-        indicator_BBCBW = bollinger_wband(close=df['close'],n=nForBBCBW,ndev=ndevBBCBW)
-        df['BBCBW'] = indicator_BBCBW 
+    # if BBCBWchecked:
+    #     indicator_BBCBW = bollinger_wband(close=df['close'],n=nForBBCBW,ndev=ndevBBCBW)
+    #     df['BBCBW'] = indicator_BBCBW 
 
-    # Bollinger Channal Percentage Band
-    BBCPBchecked = JSON_sent[6]['displayBBCPB']
-    nForBBCPB = JSON_sent[6]['nForBBCPB']
-    ndevBBCPB = JSON_sent[6]['ndevBBCPB']
+    # # Bollinger Channal Percentage Band
+    # BBCPBchecked = JSON_sent[6]['displayBBCPB']
+    # nForBBCPB = JSON_sent[6]['nForBBCPB']
+    # ndevBBCPB = JSON_sent[6]['ndevBBCPB']
 
-    if BBCPBchecked:
-        indicator_BBCPB = bollinger_pband(close=df['close'],n=nForBBCPB,ndev=ndevBBCPB)
-        df['BBCPB'] = indicator_BBCPB 
+    # if BBCPBchecked:
+    #     indicator_BBCPB = bollinger_pband(close=df['close'],n=nForBBCPB,ndev=ndevBBCPB)
+    #     df['BBCPB'] = indicator_BBCPB 
 
-    # Bollinger High Band Indicator
-    BBHBIchecked = JSON_sent[7]['displayBBHBI']
-    nForBBHBI = JSON_sent[7]['nForBBHBI']
-    ndevBBHBI = JSON_sent[7]['ndevBBHBI']
+    # # Bollinger High Band Indicator
+    # BBHBIchecked = JSON_sent[7]['displayBBHBI']
+    # nForBBHBI = JSON_sent[7]['nForBBHBI']
+    # ndevBBHBI = JSON_sent[7]['ndevBBHBI']
 
-    if BBHBIchecked:
-        indicator_BBHBI = bollinger_hband_indicator(close=df['close'],n=nForBBHBI,ndev=ndevBBHBI)
-        df['BBHBI'] = indicator_BBHBI 
+    # if BBHBIchecked:
+    #     indicator_BBHBI = bollinger_hband_indicator(close=df['close'],n=nForBBHBI,ndev=ndevBBHBI)
+    #     df['BBHBI'] = indicator_BBHBI 
 
-    # Bollinger Low Band Indicator
-    BBLBIchecked = JSON_sent[8]['displayBBLBI']
-    nForBBLBI = JSON_sent[8]['nForBBLBI']
-    ndevBBLBI = JSON_sent[8]['ndevBBLBI']
+    # # Bollinger Low Band Indicator
+    # BBLBIchecked = JSON_sent[8]['displayBBLBI']
+    # nForBBLBI = JSON_sent[8]['nForBBLBI']
+    # ndevBBLBI = JSON_sent[8]['ndevBBLBI']
 
-    if BBLBIchecked:
-        indicator_BBLBI = bollinger_lband_indicator(close=df['close'],n=nForBBLBI,ndev=ndevBBLBI)
-        df['BBLBI'] = indicator_BBLBI 
+    # if BBLBIchecked:
+    #     indicator_BBLBI = bollinger_lband_indicator(close=df['close'],n=nForBBLBI,ndev=ndevBBLBI)
+    #     df['BBLBI'] = indicator_BBLBI 
 
-    # Keltner Channel Central
-    KeltnerCchecked = JSON_sent[9]['displayKeltnerC']
-    nForKeltnerC = JSON_sent[9]['nForKeltnerC']
+    # # Keltner Channel Central
+    # KeltnerCchecked = JSON_sent[9]['displayKeltnerC']
+    # nForKeltnerC = JSON_sent[9]['nForKeltnerC']
 
-    if KeltnerCchecked:
-        indicator_keltnerC = keltner_channel_mband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerC)
-        df['keltnerC'] = indicator_keltnerC
+    # if KeltnerCchecked:
+    #     indicator_keltnerC = keltner_channel_mband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerC)
+    #     df['keltnerC'] = indicator_keltnerC
 
-    # Keltner Channel High
-    KeltnerHchecked = JSON_sent[10]['displayKeltnerH']
-    nForKeltnerH = JSON_sent[10]['nForKeltnerH']
+    # # Keltner Channel High
+    # KeltnerHchecked = JSON_sent[10]['displayKeltnerH']
+    # nForKeltnerH = JSON_sent[10]['nForKeltnerH']
 
-    if KeltnerHchecked:
-        indicator_keltnerH = keltner_channel_hband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerH)
-        df['keltnerH'] = indicator_keltnerH
+    # if KeltnerHchecked:
+    #     indicator_keltnerH = keltner_channel_hband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerH)
+    #     df['keltnerH'] = indicator_keltnerH
 
-    # Keltner Channel Low
-    KeltnerLchecked = JSON_sent[11]['displayKeltnerL']
-    nForKeltnerL = JSON_sent[11]['nForKeltnerL']
+    # # Keltner Channel Low
+    # KeltnerLchecked = JSON_sent[11]['displayKeltnerL']
+    # nForKeltnerL = JSON_sent[11]['nForKeltnerL']
 
-    if KeltnerLchecked:
-        indicator_keltnerL = keltner_channel_lband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerL)
-        df['keltnerL'] = indicator_keltnerL
+    # if KeltnerLchecked:
+    #     indicator_keltnerL = keltner_channel_lband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerL)
+    #     df['keltnerL'] = indicator_keltnerL
 
-    # Keltner Channel Band Width
-    KeltnerBWchecked = JSON_sent[12]['displayKeltnerBW']
-    nForKeltnerBW = JSON_sent[12]['nForKeltnerBW']
+    # # Keltner Channel Band Width
+    # KeltnerBWchecked = JSON_sent[12]['displayKeltnerBW']
+    # nForKeltnerBW = JSON_sent[12]['nForKeltnerBW']
 
-    if KeltnerBWchecked:
-        indicator_keltnerBW = keltner_channel_wband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerBW)
-        df['keltnerBW'] = indicator_keltnerBW
+    # if KeltnerBWchecked:
+    #     indicator_keltnerBW = keltner_channel_wband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerBW)
+    #     df['keltnerBW'] = indicator_keltnerBW
 
-    # Keltner Channel Percentage Band
-    KeltnerPBchecked = JSON_sent[13]['displayKeltnerPB']
-    nForKeltnerPB = JSON_sent[13]['nForKeltnerPB']
+    # # Keltner Channel Percentage Band
+    # KeltnerPBchecked = JSON_sent[13]['displayKeltnerPB']
+    # nForKeltnerPB = JSON_sent[13]['nForKeltnerPB']
 
-    if KeltnerPBchecked:
-        indicator_keltnerPB = keltner_channel_pband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerPB)
-        df['keltnerPB'] = indicator_keltnerPB
+    # if KeltnerPBchecked:
+    #     indicator_keltnerPB = keltner_channel_pband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerPB)
+    #     df['keltnerPB'] = indicator_keltnerPB
 
-    # Keltner Channel High Band
-    KeltnerHBchecked = JSON_sent[14]['displayKeltnerHB']
-    nForKeltnerHB = JSON_sent[14]['nForKeltnerHB']
+    # # Keltner Channel High Band
+    # KeltnerHBchecked = JSON_sent[14]['displayKeltnerHB']
+    # nForKeltnerHB = JSON_sent[14]['nForKeltnerHB']
 
-    if KeltnerHBchecked:
-        indicator_keltnerHB = keltner_channel_hband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerHB)
-        df['keltnerHB'] = indicator_keltnerHB
+    # if KeltnerHBchecked:
+    #     indicator_keltnerHB = keltner_channel_hband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerHB)
+    #     df['keltnerHB'] = indicator_keltnerHB
 
-    # Keltner Channel Low Band
-    KeltnerLBchecked = JSON_sent[15]['displayKeltnerLB']
-    nForKeltnerLB = JSON_sent[15]['nForKeltnerLB']
+    # # Keltner Channel Low Band
+    # KeltnerLBchecked = JSON_sent[15]['displayKeltnerLB']
+    # nForKeltnerLB = JSON_sent[15]['nForKeltnerLB']
 
-    if KeltnerLBchecked:
-        indicator_keltnerLB = keltner_channel_lband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerLB)
-        df['keltnerLB'] = indicator_keltnerLB
+    # if KeltnerLBchecked:
+    #     indicator_keltnerLB = keltner_channel_lband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerLB)
+    #     df['keltnerLB'] = indicator_keltnerLB
 
-    # Donchian Channel High Band
-    DonchianHBchecked = JSON_sent[16]['displayDonchianHB']
-    nForDonchianHB = JSON_sent[16]['nForDonchianHB']
+    # # Donchian Channel High Band
+    # DonchianHBchecked = JSON_sent[16]['displayDonchianHB']
+    # nForDonchianHB = JSON_sent[16]['nForDonchianHB']
 
-    if DonchianHBchecked:
-        indicator_donchianHB = donchian_channel_hband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianHB)
-        df['donchianHB'] = indicator_donchianHB
+    # if DonchianHBchecked:
+    #     indicator_donchianHB = donchian_channel_hband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianHB)
+    #     df['donchianHB'] = indicator_donchianHB
 
-    # Donchian Channel Low Band
-    DonchianHBchecked = JSON_sent[17]['displayDonchianHB']
-    nForDonchianHB = JSON_sent[17]['nForDonchianHB']
+    # # Donchian Channel Low Band
+    # DonchianHBchecked = JSON_sent[17]['displayDonchianHB']
+    # nForDonchianHB = JSON_sent[17]['nForDonchianHB']
 
-    if DonchianLBchecked:
-        indicator_donchianLB = donchian_channel_lband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianLB)
-        df['donchianLB'] = indicator_donchianLB
+    # if DonchianLBchecked:
+    #     indicator_donchianLB = donchian_channel_lband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianLB)
+    #     df['donchianLB'] = indicator_donchianLB
 
-    # Donchian Channel Mid Band
-    DonchianMBchecked = JSON_sent[18]['displayDonchianMB']
-    nForDonchianMB = JSON_sent[18]['nForDonchianMB']
+    # # Donchian Channel Mid Band
+    # DonchianMBchecked = JSON_sent[18]['displayDonchianMB']
+    # nForDonchianMB = JSON_sent[18]['nForDonchianMB']
 
-    if DonchianMBchecked:
-        indicator_donchianMB = donchian_channel_mband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianMB)
-        df['donchianMB'] = indicator_donchianMB
+    # if DonchianMBchecked:
+    #     indicator_donchianMB = donchian_channel_mband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianMB)
+    #     df['donchianMB'] = indicator_donchianMB
 
-    # Donchian Channel Band Width
-    DonchianBWchecked = JSON_sent[19]['displayDonchianBW']
-    nForDonchianBW = JSON_sent[19]['nForDonchianBW']
+    # # Donchian Channel Band Width
+    # DonchianBWchecked = JSON_sent[19]['displayDonchianBW']
+    # nForDonchianBW = JSON_sent[19]['nForDonchianBW']
 
-    if DonchianBWchecked:
-        indicator_donchianBW = donchian_channel_wband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianBW)
-        df['donchianBW'] = indicator_donchianBW
+    # if DonchianBWchecked:
+    #     indicator_donchianBW = donchian_channel_wband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianBW)
+    #     df['donchianBW'] = indicator_donchianBW
 
-    # Donchian Channel Percentage Band
-    DonchianPBchecked = JSON_sent[20]['displayDonchianPB']
-    nForDonchianPB = JSON_sent[20]['nForDonchianPB']
+    # # Donchian Channel Percentage Band
+    # DonchianPBchecked = JSON_sent[20]['displayDonchianPB']
+    # nForDonchianPB = JSON_sent[20]['nForDonchianPB']
 
-    if DonchianPBchecked:
-        indicator_donchianPB = donchian_channel_pband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianPB)
-        df['donchianPB'] = indicator_donchianPB
+    # if DonchianPBchecked:
+    #     indicator_donchianPB = donchian_channel_pband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianPB)
+    #     df['donchianPB'] = indicator_donchianPB
 
     df.fillna(0, inplace=True)
     return (json.dumps(df.to_dict('records')))
+
 
 @algo.route("/calculate_Trend_Indicators/", methods=['GET','POST'])
 def calculate_Trend_Indicators():
@@ -957,7 +958,7 @@ def calculate_Momentum_Indicators():
         df['wr'] = indicator_wr
     
     if aoChecked:
-        indicator_ao = ao(high=df['high'],low=df['low'],s=sForUO,len=lenForUO)
+        indicator_ao = ao(high=df['high'],low=df['low'],s=sForAO,len=lenForAO)
         df['ao'] = indicator_ao
 
     if kamaChecked:

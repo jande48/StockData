@@ -58,39 +58,6 @@ function TrendMenuContainer(props) {
     const [activeDPOAccodianMenuItem, setActiveDPOAccodianMenuItem] = useState(-1)
 
 
-    const [activeTSIAccodianMenuItem, setTSIActiveAccordionMenuItem] = useState(-1)
-    const [activeUOAccodianMenuItem, setUOActiveAccordionMenuItem] = useState(-1)
-    const [activeSTOCHAccodianMenuItem, setSTOCHActiveAccordionMenuItem] = useState(-1)
-    const [activeSTOCHSIGNALAccodianMenuItem, setSTOCHSIGNALActiveAccordionMenuItem] = useState(-1)
-    const [activeWRAccodianMenuItem, setWRActiveAccordionMenuItem] = useState(-1)
-    const [activeAOAccodianMenuItem, setAOActiveAccordionMenuItem] = useState(-1)
-    const [activeKAMAAccodianMenuItem, setKAMAActiveAccordionMenuItem] = useState(-1)
-    const [activeROCAccodianMenuItem, setROCActiveAccordionMenuItem] = useState(-1)
-
-
-    // useEffect(() => {
-    //     if (typeof(props.stockData) != 'undefined' ) {
-    //       if (props.stockData.length > 0) {
-    //       const RSIparameters = {'N':props.nForRSI}
-    //       const TSIparameters = {'displayTSI':props.displayTSI,'rTSI':props.rForTSI,'sTSI':props.sForTSI}
-    //       const UOparameters = {'displayUO':props.displayUO,'sForUO':props.sForUO,'mForUO':props.mForUO,'lenForUO':props.lenForUO,'wsForUO':props.wsForUO,'wmForUO':props.wmForUO,'wlForUO':props.wlForUO}
-    //       const STOCHparameters = {'displaySTOCH':props.displaySTOCH,'nForSTOCH':props.nForSTOCH, 'dnForSTOCH':props.dnForSTOCH}
-    //       const StochSignalparameters = {'displayStochSignal':props.displayStochSignal,'nForStochSignal':props.nForStochSignal,'dnForStochSignal':props.dnForStochSignal}
-    //       const WilliamsRparameters = {'displayWR':props.displayWR,'lbpForWR':props.lbpForWR}
-    //       const AOparameters = {'displayAO':props.displayAO,'sForAO':props.sForAO,'lenForAO':props.lenForAO}
-    //       const KAMAparameters = {'displayKama':props.displayKama,'nForKama':props.nForKama,'pow1ForKama':props.pow1ForKama,'pow2ForKama':props.pow2ForKama}
-    //       const ROCparameters = {'displayROC':props.displayROC,'nForROC':props.nForROC}
-        
-    //       props.fetchTendData(JSON.stringify([props.stockData,RSIparameters,TSIparameters,UOparameters,STOCHparameters,StochSignalparameters,WilliamsRparameters,AOparameters,KAMAparameters,ROCparameters]))
-    
-      
-    //     }}
-    //   }, [props.stockData,props.displayRSI,props.nForRSI,props.displayTSI,props.sForTSI,props.rForTSI,props.displayUO,props.sForUO,props.mForUO,props.lenForUO,props.wsForUO,props.wmForUO,props.wlForUO,props.displaySTOCH,props.nForSTOCH,props.dnForSTOCH,
-    //   props.displayStochSignal,props.nForStochSignal,props.dnForStochSignal,props.displayWR,props.lbpForWR,props.displayAO,props.sForAO,props.lenForAO,props.displayKama,props.nForKama,props.pow1ForKama,props.pow2ForKama,
-    //   props.displayROC,props.nForROC])
-
-
-
       class createTiles {
         constructor(name,dispatch,display,activeState,setActiveState,content) {
           this.name = name;

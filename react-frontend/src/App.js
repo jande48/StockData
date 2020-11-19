@@ -15,6 +15,7 @@ import TrendMenuContainer from './components/TrendMenuContainer'
 import MomentumGraphContainer from './components/MomentumGraphContainer'
 import PopularMenuContainer from './components/PopularMenuContainer'
 import EarningContainer from './components/EarningContainer'
+import VolatilityMenuContainer from './components/VolatilityMenuContainer'
 import momentumReducer from './redux/momentum/momentumReducer'
 
 
@@ -22,6 +23,7 @@ function App () {
   const [activePopularAccodian, setPopularAccordion] = useState(0)
   const [activeMomentumAccodian, setMomentumAccordion] = useState(-1)
   const [activeTrendAccodian, setTrendAccordion] = useState(-1)
+  const [activeVolatilityAccodian, setVolatilityAccordion] = useState(-1)
   return (
     <Provider store={store}>
         <Grid celled inverted>
@@ -66,6 +68,17 @@ function App () {
                     <Header as='h3' textAlign='left' inverted><Icon name='dropdown' />Trend</Header>
                 </Accordion.Title>
                 <Accordion.Content borderless active={activeTrendAccodian === 1} >{<TrendMenuContainer />}</Accordion.Content>
+                <Accordion.Title
+                  inverted
+                  active={activeVolatilityAccodian=== 1}
+                  index={1}
+                  borderless
+                  onClick={(e,index) => {
+                      setVolatilityAccordion(index.index === activeVolatilityAccodian ? -1 : index.index)
+                      }}>
+                    <Header as='h3' textAlign='left' inverted><Icon name='dropdown' />Volatility</Header>
+                </Accordion.Title>
+                <Accordion.Content borderless active={activeVolatilityAccodian === 1} >{<VolatilityMenuContainer />}</Accordion.Content>
               </Accordion>
               </Grid.Row>
             </Grid.Row>

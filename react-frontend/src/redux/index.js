@@ -7,3 +7,4 @@ export { fetchTrendData,  displaySMA, nForSMA, displayEMA, nForEMA, displayMACD,
     displayADX, nForADX, displayADXP, nForADXP, displayADXN, nForADXN, displayVIPOS, nForVIPOS, displayVINEG, nForVINEG,
     displayTRIX, nForTRIX, displayMI, nForMI, n2ForMI, displayDPO, nForDPO, } from './trend/trendActions'
 export {fetchStockData, fetchFinancialsData, fetchEarningsData} from './stockDataRequest/stockDataActions'
+export {displayATR,nForATR,displayBBSMA,nForBBSMA,displayBBUpper,nForBBUpper,ndevBBUpper, fetchVolatilityData} from './volatility/volatilityActions'

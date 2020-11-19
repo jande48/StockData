@@ -1,9 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { sForAO, lenForAO } from '../../../redux'
+import { nForBBUpper, ndevBBUpper } from '../../../redux'
 import { Grid, Menu, Form, Select} from "semantic-ui-react"
 
-function AOcontentPanel(props) {
+function BBUppercontentPanel(props) {
   
   class createTiles {
     constructor(name,placeholder,dispatch) {
@@ -17,10 +17,9 @@ function AOcontentPanel(props) {
     }
 
 }
-  const short = new createTiles('Short Period (s):','5',props.sForAOdispatch)
-  const long = new createTiles('Long Period (l):','34',props.lenForAOdispatch)
-
-  const objectList = [short,long]
+  const nclass = new createTiles('Period (n):','20',props.nForBBUpperdispatch)
+  const ndev = new createTiles('Standard Deviation:','2',props.ndevBBUpperdispatch)
+  const objectList = [nclass,ndev]
 
     const momentumNtradingDayOptions = [
         { key: 'one', text: '1', value: 1 },
@@ -79,40 +78,21 @@ function AOcontentPanel(props) {
             </Grid.Column>
         </Grid.Row>
         ))}  
-        {/* <Grid.Row>
-            <Grid.Column>
-                <br/>'Long Period (l):'
-            </Grid.Column>
-            <Grid.Column width={4}>
-                <Form.Field
-                    control={Select}
-                    options={momentumNtradingDayOptions}
-                    placeholder='34'
-                    compact
-                    onChange ={(e,selectedOption) => {
-                        props.lenForAOdispatch(selectedOption.value)
-                        }}
-                />
-            </Grid.Column>
-        </Grid.Row>
-         */}
-        
         </Grid>
         )
 }
 
 const mapStateToProps = state => {
   return {
-    sForAO: state.momentumFromRootReducer.sForAO,
-    lenForAO: state.momentumFromRootReducer.lenForAO,
-
+    nForBBUpper: state.volatilityFromtRootReducer.nForBBUpper,
+    ndevBBUpper: state.volatilityFromtRootReducer.ndevForBBUpper,
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    sForAOdispatch: x => dispatch(sForAO(x)),
-    lenForAOdispatch: x => dispatch(lenForAO(x)),
+    nForBBUpperdispatch: x => dispatch(nForBBUpper(x)),
+    ndevBBUpperdispatch: x => dispatch(ndevBBUpper(x)),
   }
 }
 
@@ -120,4 +100,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(AOcontentPanel)
+)(BBUppercontentPanel)

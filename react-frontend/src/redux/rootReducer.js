@@ -5,6 +5,7 @@ import momentumReducer from './momentum/momentumReducer'
 import trendReducer from './trend/trendReducer'
 import tickerReducer from './tickers/tickerReducer'
 import stockDataReducer from './stockDataRequest/stockDataReducer'
+import volatilityReducer from './volatility/volatilityReducer'
 
 const rootReducer = combineReducers({
   tickersFromRootReducer: tickerReducer,
@@ -12,7 +13,8 @@ const rootReducer = combineReducers({
   chartsFromRootReducer: chartsReducer,
   momentumFromRootReducer: momentumReducer,
   trendFromRootReducer: trendReducer,
-  stockDataFromRootReducer: stockDataReducer
+  stockDataFromRootReducer: stockDataReducer,
+  volatilityFromtRootReducer: volatilityReducer,
 
 })
 
