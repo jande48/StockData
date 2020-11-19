@@ -220,6 +220,7 @@ function LineCandleGraphContainer (props) {
               .tickFormat(d3.utcFormat("%-m/%-d")))
           //.call(g => g.select(".domain").remove())
 
+
       svg.append("text")
           .attr("class", "axisWhite")
           .attr("text-anchor", "middle")
