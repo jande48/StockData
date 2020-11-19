@@ -15,7 +15,6 @@ import { fetchMomentumData } from '../redux';
 
 function MomentumMenuContainer(props) {
     
-    const [activeRSIAccodianMenuItem, setRSIActiveAccordionMenuItem] = useState(-1)
     const [activeTSIAccodianMenuItem, setTSIActiveAccordionMenuItem] = useState(-1)
     const [activeUOAccodianMenuItem, setUOActiveAccordionMenuItem] = useState(-1)
     const [activeSTOCHAccodianMenuItem, setSTOCHActiveAccordionMenuItem] = useState(-1)

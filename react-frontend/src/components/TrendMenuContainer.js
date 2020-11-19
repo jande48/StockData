@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import { connect } from 'react-redux'
 import { displaySMA, displayEMA, displayMACD, displayMACDsignal, displayADX, displayADXP, displayADXN, displayVIPOS, displayVINEG,
     displayTRIX, displayMI, displayDPO, } from '../redux'
-import { Grid, Menu, Accordion, Checkbox, Icon } from "semantic-ui-react"
+import { Grid, Menu, Accordion, Checkbox, Icon, Header } from "semantic-ui-react"
 import SMAcontentpanel from './accordion/momentum/SMAcontentpanel'
 import EMAcontentPanel from './accordion/momentum/EMAcontentpanel'
 import MACDcontentPanel from './accordion/momentum/MACDcontentpanel'
@@ -56,211 +56,103 @@ function TrendMenuContainer(props) {
     const [activeTRIXAccodianMenuItem, setActiveTRIXAccodianMenuItem] = useState(-1)
     const [activeMIAccodianMenuItem, setActiveMIAccodianMenuItem] = useState(-1)
     const [activeDPOAccodianMenuItem, setActiveDPOAccodianMenuItem] = useState(-1)
-    //const [activeCCIAccodianMenuItem, setActiveCCIAccodianMenuItem] = useState(-1)
 
-    const SMAAccordionTitle = (
-        <Grid columns='equal'>
-        <Grid.Column width={2}>
-                <Checkbox borderless index={1} onClick={(event) => {
-                            event.stopPropagation()
-                            props.displaySMAdispatch(!props.displaySMA)
-                        }}>
-                </Checkbox>
-        </Grid.Column>
-        <Grid.Column>
-            <h5>Simple Moving Average</h5>
-        </Grid.Column>
-        <Grid.Column floated='right' width={2}>
-                <Icon name={activeSMAAccordionMenuItem === 0 ? 'caret down' : 'caret left'}/>
-        </Grid.Column>
-        </Grid>)
+
+    const [activeTSIAccodianMenuItem, setTSIActiveAccordionMenuItem] = useState(-1)
+    const [activeUOAccodianMenuItem, setUOActiveAccordionMenuItem] = useState(-1)
+    const [activeSTOCHAccodianMenuItem, setSTOCHActiveAccordionMenuItem] = useState(-1)
+    const [activeSTOCHSIGNALAccodianMenuItem, setSTOCHSIGNALActiveAccordionMenuItem] = useState(-1)
+    const [activeWRAccodianMenuItem, setWRActiveAccordionMenuItem] = useState(-1)
+    const [activeAOAccodianMenuItem, setAOActiveAccordionMenuItem] = useState(-1)
+    const [activeKAMAAccodianMenuItem, setKAMAActiveAccordionMenuItem] = useState(-1)
+    const [activeROCAccodianMenuItem, setROCActiveAccordionMenuItem] = useState(-1)
+
+
+    // useEffect(() => {
+    //     if (typeof(props.stockData) != 'undefined' ) {
+    //       if (props.stockData.length > 0) {
+    //       const RSIparameters = {'N':props.nForRSI}
+    //       const TSIparameters = {'displayTSI':props.displayTSI,'rTSI':props.rForTSI,'sTSI':props.sForTSI}
+    //       const UOparameters = {'displayUO':props.displayUO,'sForUO':props.sForUO,'mForUO':props.mForUO,'lenForUO':props.lenForUO,'wsForUO':props.wsForUO,'wmForUO':props.wmForUO,'wlForUO':props.wlForUO}
+    //       const STOCHparameters = {'displaySTOCH':props.displaySTOCH,'nForSTOCH':props.nForSTOCH, 'dnForSTOCH':props.dnForSTOCH}
+    //       const StochSignalparameters = {'displayStochSignal':props.displayStochSignal,'nForStochSignal':props.nForStochSignal,'dnForStochSignal':props.dnForStochSignal}
+    //       const WilliamsRparameters = {'displayWR':props.displayWR,'lbpForWR':props.lbpForWR}
+    //       const AOparameters = {'displayAO':props.displayAO,'sForAO':props.sForAO,'lenForAO':props.lenForAO}
+    //       const KAMAparameters = {'displayKama':props.displayKama,'nForKama':props.nForKama,'pow1ForKama':props.pow1ForKama,'pow2ForKama':props.pow2ForKama}
+    //       const ROCparameters = {'displayROC':props.displayROC,'nForROC':props.nForROC}
         
-    const MACDAccordionTitle = (
-        <Grid columns='equal'>
-        <Grid.Column width={2}>
-                <Checkbox borderless index={1} onClick={(event) => {
-                            event.stopPropagation()
-                            props.displayMACDdispatch(!props.displayMACD)
-
-
-                        }}>
-                </Checkbox>
-        </Grid.Column>
-        <Grid.Column>
-            <h5>MACD</h5>
-        </Grid.Column>
-        <Grid.Column floated='right' width={2}>
-                <Icon name={activeMACDAccordionMenuItem === 0 ? 'caret down' : 'caret left'}/>
-        </Grid.Column>
-        </Grid>)
-
-    const EMAAccordionTitle = (
-        <Grid columns='equal'>
-        <Grid.Column width={2}>
-                <Checkbox borderless index={1} onClick={(event) => {
-                            event.stopPropagation()
-                            props.displayEMAdispatch(!props.displayEMA)
-
-
-                        }}>
-                </Checkbox>
-        </Grid.Column>
-        <Grid.Column>
-            <h5>Exponential Moving Average</h5>
-        </Grid.Column>
-        <Grid.Column floated='right' width={2}>
-                <Icon name={activeEMAAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
-        </Grid.Column>
-        </Grid>)
-
-    const MACDSIGNALAccordionTitle = (
-      <Grid columns='equal'>
-      <Grid.Column width={2}>
-              <Checkbox borderless index={1} onClick={(event) => {
-                          event.stopPropagation()
-                          props.displayMACDsignaldispatch(!props.displayMACDsignal)
-
-
-                      }}>
-              </Checkbox>
-      </Grid.Column>
-      <Grid.Column>
-          <h5>MACD Signal</h5>
-      </Grid.Column>
-      <Grid.Column floated='right' width={2}>
-                <Icon name={activeMACDSIGNALAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
-        </Grid.Column>
-      </Grid>)
-    const ADXAccordionTitle = (
-      <Grid columns='equal'>
-      <Grid.Column width={2}>
-              <Checkbox borderless index={1} onClick={(event) => {
-                          event.stopPropagation()
-                          props.displayADXdispatch(!props.displayADX)
-                      }}>
-              </Checkbox>
-      </Grid.Column>
-      <Grid.Column>
-          <h5>Average Directional Movement</h5>
-      </Grid.Column>
-      <Grid.Column floated='right' width={2}>
-                <Icon name={activeADXAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
-        </Grid.Column>
-      </Grid>)
-    const ADXPAccordionTitle = (
-      <Grid columns='equal'>
-      <Grid.Column width={2}>
-              <Checkbox borderless index={1} onClick={(event) => {
-                          event.stopPropagation()
-                          props.displayADXPdispatch(!props.displayADXP)
-                      }}>
-              </Checkbox>
-      </Grid.Column>
-      <Grid.Column>
-          <h5>ADM - Positive</h5>
-      </Grid.Column>
-      <Grid.Column floated='right' width={2}>
-                <Icon name={activeADXPAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
-        </Grid.Column>
-      </Grid>)
-    const ADXNAccordionTitle = (
-      <Grid columns='equal'>
-      <Grid.Column width={2}>
-              <Checkbox borderless index={1} onClick={(event) => {
-                          event.stopPropagation()
-                          props.displayADXNdispatch(!props.displayADXN)
-                      }}>
-              </Checkbox>
-      </Grid.Column>
-      <Grid.Column>
-          <h5>ADM - Negative</h5>
-      </Grid.Column>
-      <Grid.Column floated='right' width={2}>
-                <Icon name={activeADXNAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
-        </Grid.Column>
-      </Grid>)
-    const VIPOSAccordionTitle = (
-        <Grid columns='equal'>
-        <Grid.Column width={2}>
-                <Checkbox borderless index={1} onClick={(event) => {
-                            event.stopPropagation()
-                            props.displayVIPOSNdispatch(!props.displayVIPOS)
-                        }}>
-                </Checkbox>
-        </Grid.Column>
-        <Grid.Column>
-            <h5>Vortex Indicator - Positive</h5>
-        </Grid.Column>
-        <Grid.Column floated='right' width={2}>
-                <Icon name={activeVIPOSAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
-        </Grid.Column>
-        </Grid>)
-    const VINEGAccordionTitle = (
-        <Grid columns='equal'>
-        <Grid.Column width={2}>
-                <Checkbox borderless index={1} onClick={(event) => {
-                            event.stopPropagation()
-                            props.displayVINEGdispatch(!props.displayVINEG)
-                        }}>
-                </Checkbox>
-        </Grid.Column>
-        <Grid.Column>
-            <h5>Vortex Indicator - Negative</h5>
-        </Grid.Column>
-        <Grid.Column floated='right' width={2}>
-                <Icon name={activeVINEGAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
-        </Grid.Column>
-        </Grid>)
-    const TRIXAccordionTitle = (
-        <Grid columns='equal'>
-        <Grid.Column width={2}>
-                <Checkbox borderless index={1} onClick={(event) => {
-                            event.stopPropagation()
-                            props.displayTRIXdispatch(!props.displayTRIX)
-                        }}>
-                </Checkbox>
-        </Grid.Column>
-        <Grid.Column>
-            <h5>TRIX</h5>
-        </Grid.Column>
-        <Grid.Column floated='right' width={2}>
-                <Icon name={activeTRIXAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
-        </Grid.Column>
-        </Grid>)
-    const MIAccordionTitle = (
-        <Grid columns='equal'>
-        <Grid.Column width={2}>
-                <Checkbox borderless index={1} onClick={(event) => {
-                            event.stopPropagation()
-                            props.displayMIdispatch(!props.displayMI)
-                        }}>
-                </Checkbox>
-        </Grid.Column>
-        <Grid.Column>
-            <h5>Mass Index</h5>
-        </Grid.Column>
-        <Grid.Column floated='right' width={2}>
-                <Icon name={activeMIAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
-        </Grid.Column>
-        </Grid>)
-    const DPOAccordionTitle = (
-        <Grid columns='equal'>
-        <Grid.Column width={2}>
-                <Checkbox borderless index={1} onClick={(event) => {
-                            event.stopPropagation()
-                            props.displayDPOdispatch(!props.displayDPO)
-                        }}>
-                </Checkbox>
-        </Grid.Column>
-        <Grid.Column>
-            <h5>Detrended Price Oscillator</h5>
-        </Grid.Column>
-        <Grid.Column floated='right' width={2}>
-                <Icon name={activeDPOAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
-        </Grid.Column>
-        </Grid>)
-
+    //       props.fetchTendData(JSON.stringify([props.stockData,RSIparameters,TSIparameters,UOparameters,STOCHparameters,StochSignalparameters,WilliamsRparameters,AOparameters,KAMAparameters,ROCparameters]))
     
+      
+    //     }}
+    //   }, [props.stockData,props.displayRSI,props.nForRSI,props.displayTSI,props.sForTSI,props.rForTSI,props.displayUO,props.sForUO,props.mForUO,props.lenForUO,props.wsForUO,props.wmForUO,props.wlForUO,props.displaySTOCH,props.nForSTOCH,props.dnForSTOCH,
+    //   props.displayStochSignal,props.nForStochSignal,props.dnForStochSignal,props.displayWR,props.lbpForWR,props.displayAO,props.sForAO,props.lenForAO,props.displayKama,props.nForKama,props.pow1ForKama,props.pow2ForKama,
+    //   props.displayROC,props.nForROC])
+
+
+
+      class createTiles {
+        constructor(name,dispatch,display,activeState,setActiveState,content) {
+          this.name = name;
+          this.display = display;
+          this.dispatch = dispatch;
+          this.activeState =activeState;
+          this.setActiveState = setActiveState
+          this.content = content;
+
+        }
+        // Getter
+        get tile() {
+          return this.createTile();
+        }
+
+        // Method
+        createTile() {
+            return(
+                <Grid columns='equal' textAlign='bottom'>
+                <Grid.Row verticalAlign='top'>
+                    <Grid.Column width={2}>
+                        <Checkbox borderless index={1} onClick={(event) => {
+                                    event.stopPropagation()
+                                    this.dispatch(!this.display)
+                                }}>
+                        </Checkbox>
+                    </Grid.Column>
+                    <Grid.Column>
+                        <Header as='h5' inverted>{this.name}</Header>
+                    </Grid.Column>
+                    <Grid.Column floated='right' width={2}>
+                        <Icon name={this.activeState === 0 ? 'caret down' : 'caret left'}/>
+                    </Grid.Column>
+                </Grid.Row>
+            </Grid> 
+            )
+        }
+    }
+
+    const EMAAccordionClass = new createTiles('Exponential Moving Average',props.displayEMAdispatch,props.displayEMA,activeEMAAccodianMenuItem,
+    setActiveEMAAccodianMenuItem,<EMAcontentPanel />)
+    const MACDsignalAccordionClass = new createTiles('MACD Signal',props.displayMACDsignaldispatch,props.displayMACDsignal,activeMACDSIGNALAccodianMenuItem,
+    setActiveMACDSIGNALAccodianMenuItem,<MACDSIGNALcontentPanel />)
+    const ADXAccordionClass = new createTiles('Average Directional Movement',props.displayADXdispatch,props.displayADX,activeADXAccodianMenuItem,
+    setActiveADXAccodianMenuItem,<ADXcontentPanel />)
+    const ADXPAccordionClass = new createTiles('ADM - Positive',props.displayADXPdispatch,props.displayADXP,activeADXPAccodianMenuItem,
+    setActiveADXPAccodianMenuItem,<ADXPcontentPanel />)
+    const ADXNAccordionClass = new createTiles('ADM - Negative',props.displayADXNdispatch,props.displayADXN,activeADXNAccodianMenuItem,
+    setActiveADXNAccodianMenuItem,<ADXNcontentPanel />)
+    const VIPOSAccordionClass = new createTiles('Vortex Indicator - Positive',props.displayVIPOSNdispatch,props.displayVIPOS,activeVIPOSAccodianMenuItem,
+    setActiveVIPOSAccodianMenuItem,<VIPOScontentPanel />)
+    const VINEGAccordionClass = new createTiles('Vortex Indicator - Negative',props.displayVINEGdispatch,props.displayVINEG,activeVINEGAccodianMenuItem,
+    setActiveVINEGAccodianMenuItem,<VINEGcontentPanel />)
+    const TRIXAccordionClass = new createTiles('TRIX',props.displayTRIXdispatch,props.displayTRIX,activeTRIXAccodianMenuItem,
+    setActiveTRIXAccodianMenuItem,<TRIXcontentPanel />)
+    const MIAccordionClass = new createTiles('Mass Index',props.displayMIdispatch,props.displayMI,activeMIAccodianMenuItem,
+    setActiveMIAccodianMenuItem,<MIcontentPanel />)
+    const DPOAccordionClass = new createTiles('Detrended Price Oscillator',props.displayDPOdispatch,props.displayDPO,activeDPOAccodianMenuItem,
+    setActiveDPOAccodianMenuItem,<DPOcontentPanel />)
+    
+    const objectList = [EMAAccordionClass,MACDsignalAccordionClass,ADXAccordionClass,ADXPAccordionClass,ADXNAccordionClass,VIPOSAccordionClass,
+        VINEGAccordionClass,TRIXAccordionClass,MIAccordionClass,DPOAccordionClass]
 
     const momentumNtradingDayOptions = [
 		{ key: 'one', text: '1', value: 1 },
@@ -308,116 +200,21 @@ function TrendMenuContainer(props) {
         <Grid>
         <Grid.Row stretched>    
                 <Accordion as={Menu} vertical stretched fluid borderless inverted>
-                <Menu.Item borderless>
-                    <Accordion.Title
-                        active={activeEMAAccodianMenuItem === 0}
-                        index={0}
-                        borderless
-                        onClick={(e,index) => {
-                            setActiveEMAAccodianMenuItem(index.index === activeEMAAccodianMenuItem ? -1 : index.index)
-                            }}
-                    >{EMAAccordionTitle}</Accordion.Title>
-                    <Accordion.Content borderless active={activeEMAAccodianMenuItem === 0} >{<EMAcontentPanel />}</Accordion.Content>
-                </Menu.Item>
-                <Menu.Item borderless>
-                    <Accordion.Title
-                        active={activeMACDSIGNALAccodianMenuItem === 0}
-                        index={0}
-                        borderless
-                        onClick={(e,index) => {
-                            setActiveMACDSIGNALAccodianMenuItem(index.index === activeMACDSIGNALAccodianMenuItem ? -1 : index.index)
-                            }}
-                    >{MACDSIGNALAccordionTitle}</Accordion.Title>
-                    <Accordion.Content borderless active={activeMACDSIGNALAccodianMenuItem === 0} >{<MACDSIGNALcontentPanel />}</Accordion.Content>
-                </Menu.Item>
-                <Menu.Item borderless>
-                    <Accordion.Title
-                        active={activeADXAccodianMenuItem === 0}
-                        index={0}
-                        borderless
-                        onClick={(e,index) => {
-                            setActiveADXAccodianMenuItem(index.index === activeADXAccodianMenuItem ? -1 : index.index)
-                            }}
-                    >{ADXAccordionTitle}</Accordion.Title>
-                    <Accordion.Content borderless active={activeADXAccodianMenuItem === 0} >{<ADXcontentPanel />}</Accordion.Content>
-                </Menu.Item>
-                <Menu.Item borderless>
-                    <Accordion.Title
-                        active={activeADXPAccodianMenuItem === 0}
-                        index={0}
-                        borderless
-                        onClick={(e,index) => {
-                            setActiveADXPAccodianMenuItem(index.index === activeADXPAccodianMenuItem ? -1 : index.index)
-                            }}
-                    >{ADXPAccordionTitle}</Accordion.Title>
-                    <Accordion.Content borderless active={activeADXPAccodianMenuItem === 0} >{<ADXPcontentPanel />}</Accordion.Content>
-                </Menu.Item>
-                <Menu.Item borderless>
-                    <Accordion.Title
-                        active={activeADXNAccodianMenuItem === 0}
-                        index={0}
-                        borderless
-                        onClick={(e,index) => {
-                            setActiveADXNAccodianMenuItem(index.index === activeADXNAccodianMenuItem ? -1 : index.index)
-                            }}
-                    >{ADXNAccordionTitle}</Accordion.Title>
-                    <Accordion.Content borderless active={activeADXNAccodianMenuItem === 0} >{<ADXNcontentPanel />}</Accordion.Content>
-                </Menu.Item>
-                <Menu.Item borderless>
-                    <Accordion.Title
-                        active={activeVIPOSAccodianMenuItem === 0}
-                        index={0}
-                        borderless
-                        onClick={(e,index) => {
-                            setActiveVIPOSAccodianMenuItem(index.index === activeVIPOSAccodianMenuItem ? -1 : index.index)
-                            }}
-                    >{VIPOSAccordionTitle}</Accordion.Title>
-                    <Accordion.Content borderless active={activeVIPOSAccodianMenuItem === 0} >{<VIPOScontentPanel />}</Accordion.Content>
-                </Menu.Item>
-                <Menu.Item borderless>
-                    <Accordion.Title
-                        active={activeVINEGAccodianMenuItem === 0}
-                        index={0}
-                        borderless
-                        onClick={(e,index) => {
-                            setActiveVINEGAccodianMenuItem(index.index === activeVINEGAccodianMenuItem ? -1 : index.index)
-                            }}
-                    >{VINEGAccordionTitle}</Accordion.Title>
-                    <Accordion.Content borderless active={activeVINEGAccodianMenuItem === 0} >{<VINEGcontentPanel />}</Accordion.Content>
-                </Menu.Item>
-                <Menu.Item borderless>
-                    <Accordion.Title
-                        active={activeTRIXAccodianMenuItem === 0}
-                        index={0}
-                        borderless
-                        onClick={(e,index) => {
-                            setActiveTRIXAccodianMenuItem(index.index === activeTRIXAccodianMenuItem ? -1 : index.index)
-                            }}
-                    >{TRIXAccordionTitle}</Accordion.Title>
-                    <Accordion.Content borderless active={activeTRIXAccodianMenuItem === 0} >{<TRIXcontentPanel />}</Accordion.Content>
-                </Menu.Item>
-                <Menu.Item borderless>
-                    <Accordion.Title
-                        active={activeMIAccodianMenuItem === 0}
-                        index={0}
-                        borderless
-                        onClick={(e,index) => {
-                            setActiveMIAccodianMenuItem(index.index === activeMIAccodianMenuItem ? -1 : index.index)
-                            }}
-                    >{MIAccordionTitle}</Accordion.Title>
-                    <Accordion.Content borderless active={activeMIAccodianMenuItem === 0} >{<MIcontentPanel />}</Accordion.Content>
-                </Menu.Item>
-                <Menu.Item borderless>
-                    <Accordion.Title
-                        active={activeDPOAccodianMenuItem === 0}
-                        index={0}
-                        borderless
-                        onClick={(e,index) => {
-                            setActiveDPOAccodianMenuItem(index.index === activeDPOAccodianMenuItem ? -1 : index.index)
-                            }}
-                    >{DPOAccordionTitle}</Accordion.Title>
-                    <Accordion.Content borderless active={activeDPOAccodianMenuItem === 0} >{<DPOcontentPanel />}</Accordion.Content>
-                </Menu.Item>
+                {objectList.map( el => (
+                    <Menu.Item borderless>
+                        <Accordion.Title
+                            active={el.activeState === 0}
+                            //content={RSIAccordionTitle}
+                            index={0}
+                            //borderless
+                            onClick={(e,index) => {
+                                el.setActiveState(index.index === el.activeState ? -1 : index.index)
+                                }}
+                            inverted
+                        >{el.createTile()}</Accordion.Title>
+                        <Accordion.Content borderless active={el.activeState=== 0} >{el.content}</Accordion.Content>
+                    </Menu.Item> 
+                        ))}  
                 
                    
                 </Accordion>
@@ -496,3 +293,286 @@ export default connect(
 
 
 
+
+// const EMAAccordionTitle = (
+//     <Grid columns='equal'>
+//     <Grid.Column width={2}>
+//             <Checkbox borderless index={1} onClick={(event) => {
+//                         event.stopPropagation()
+//                         props.displayEMAdispatch(!props.displayEMA)
+
+
+//                     }}>
+//             </Checkbox>
+//     </Grid.Column>
+//     <Grid.Column>
+//         <h5>Exponential Moving Average</h5>
+//     </Grid.Column>
+//     <Grid.Column floated='right' width={2}>
+//             <Icon name={activeEMAAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
+//     </Grid.Column>
+//     </Grid>)
+
+// const MACDSIGNALAccordionTitle = (
+//   <Grid columns='equal'>
+//   <Grid.Column width={2}>
+//           <Checkbox borderless index={1} onClick={(event) => {
+//                       event.stopPropagation()
+//                       props.displayMACDsignaldispatch(!props.displayMACDsignal)
+
+
+//                   }}>
+//           </Checkbox>
+//   </Grid.Column>
+//   <Grid.Column>
+//       <h5>MACD Signal</h5>
+//   </Grid.Column>
+//   <Grid.Column floated='right' width={2}>
+//             <Icon name={activeMACDSIGNALAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
+//     </Grid.Column>
+//   </Grid>)
+// const ADXAccordionTitle = (
+//   <Grid columns='equal'>
+//   <Grid.Column width={2}>
+//           <Checkbox borderless index={1} onClick={(event) => {
+//                       event.stopPropagation()
+//                       props.displayADXdispatch(!props.displayADX)
+//                   }}>
+//           </Checkbox>
+//   </Grid.Column>
+//   <Grid.Column>
+//       <h5>Average Directional Movement</h5>
+//   </Grid.Column>
+//   <Grid.Column floated='right' width={2}>
+//             <Icon name={activeADXAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
+//     </Grid.Column>
+//   </Grid>)
+
+// const ADXPAccordionTitle = (
+//     <Grid columns='equal'>
+//     <Grid.Column width={2}>
+//             <Checkbox borderless index={1} onClick={(event) => {
+//                         event.stopPropagation()
+//                         props.displayADXPdispatch(!props.displayADXP)
+//                     }}>
+//             </Checkbox>
+//     </Grid.Column>
+//     <Grid.Column>
+//         <h5>ADM - Positive</h5>
+//     </Grid.Column>
+//     <Grid.Column floated='right' width={2}>
+//               <Icon name={activeADXPAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
+//       </Grid.Column>
+//     </Grid>)
+//   const ADXNAccordionTitle = (
+//     <Grid columns='equal'>
+//     <Grid.Column width={2}>
+//             <Checkbox borderless index={1} onClick={(event) => {
+//                         event.stopPropagation()
+//                         props.displayADXNdispatch(!props.displayADXN)
+//                     }}>
+//             </Checkbox>
+//     </Grid.Column>
+//     <Grid.Column>
+//         <h5>ADM - Negative</h5>
+//     </Grid.Column>
+//     <Grid.Column floated='right' width={2}>
+//               <Icon name={activeADXNAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
+//       </Grid.Column>
+//     </Grid>)
+// const VIPOSAccordionTitle = (
+//     <Grid columns='equal'>
+//     <Grid.Column width={2}>
+//             <Checkbox borderless index={1} onClick={(event) => {
+//                         event.stopPropagation()
+//                         props.displayVIPOSNdispatch(!props.displayVIPOS)
+//                     }}>
+//             </Checkbox>
+//     </Grid.Column>
+//     <Grid.Column>
+//         <h5>Vortex Indicator - Positive</h5>
+//     </Grid.Column>
+//     <Grid.Column floated='right' width={2}>
+//             <Icon name={activeVIPOSAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
+//     </Grid.Column>
+//     </Grid>)
+// const VINEGAccordionTitle = (
+//     <Grid columns='equal'>
+//     <Grid.Column width={2}>
+//             <Checkbox borderless index={1} onClick={(event) => {
+//                         event.stopPropagation()
+//                         props.displayVINEGdispatch(!props.displayVINEG)
+//                     }}>
+//             </Checkbox>
+//     </Grid.Column>
+//     <Grid.Column>
+//         <h5>Vortex Indicator - Negative</h5>
+//     </Grid.Column>
+//     <Grid.Column floated='right' width={2}>
+//             <Icon name={activeVINEGAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
+//     </Grid.Column>
+//     </Grid>)
+
+
+
+// const TRIXAccordionTitle = (
+//     <Grid columns='equal'>
+//     <Grid.Column width={2}>
+//             <Checkbox borderless index={1} onClick={(event) => {
+//                         event.stopPropagation()
+//                         props.displayTRIXdispatch(!props.displayTRIX)
+//                     }}>
+//             </Checkbox>
+//     </Grid.Column>
+//     <Grid.Column>
+//         <h5>TRIX</h5>
+//     </Grid.Column>
+//     <Grid.Column floated='right' width={2}>
+//             <Icon name={activeTRIXAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
+//     </Grid.Column>
+//     </Grid>)
+// const MIAccordionTitle = (
+//     <Grid columns='equal'>
+//     <Grid.Column width={2}>
+//             <Checkbox borderless index={1} onClick={(event) => {
+//                         event.stopPropagation()
+//                         props.displayMIdispatch(!props.displayMI)
+//                     }}>
+//             </Checkbox>
+//     </Grid.Column>
+//     <Grid.Column>
+//         <h5>Mass Index</h5>
+//     </Grid.Column>
+//     <Grid.Column floated='right' width={2}>
+//             <Icon name={activeMIAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
+//     </Grid.Column>
+//     </Grid>)
+// const DPOAccordionTitle = (
+//     <Grid columns='equal'>
+//     <Grid.Column width={2}>
+//             <Checkbox borderless index={1} onClick={(event) => {
+//                         event.stopPropagation()
+//                         props.displayDPOdispatch(!props.displayDPO)
+//                     }}>
+//             </Checkbox>
+//     </Grid.Column>
+//     <Grid.Column>
+//         <h5>Detrended Price Oscillator</h5>
+//     </Grid.Column>
+//     <Grid.Column floated='right' width={2}>
+//             <Icon name={activeDPOAccodianMenuItem === 0 ? 'caret down' : 'caret left'}/>
+//     </Grid.Column>
+//     </Grid>)
+
+
+
+// <Menu.Item borderless>
+//                     <Accordion.Title
+//                         active={activeEMAAccodianMenuItem === 0}
+//                         index={0}
+//                         borderless
+//                         onClick={(e,index) => {
+//                             setActiveEMAAccodianMenuItem(index.index === activeEMAAccodianMenuItem ? -1 : index.index)
+//                             }}
+//                     >{EMAAccordionTitle}</Accordion.Title>
+//                     <Accordion.Content borderless active={activeEMAAccodianMenuItem === 0} >{<EMAcontentPanel />}</Accordion.Content>
+//                 </Menu.Item>
+//                 <Menu.Item borderless>
+//                     <Accordion.Title
+//                         active={activeMACDSIGNALAccodianMenuItem === 0}
+//                         index={0}
+//                         borderless
+//                         onClick={(e,index) => {
+//                             setActiveMACDSIGNALAccodianMenuItem(index.index === activeMACDSIGNALAccodianMenuItem ? -1 : index.index)
+//                             }}
+//                     >{MACDSIGNALAccordionTitle}</Accordion.Title>
+//                     <Accordion.Content borderless active={activeMACDSIGNALAccodianMenuItem === 0} >{<MACDSIGNALcontentPanel />}</Accordion.Content>
+//                 </Menu.Item>
+//                 <Menu.Item borderless>
+//                     <Accordion.Title
+//                         active={activeADXAccodianMenuItem === 0}
+//                         index={0}
+//                         borderless
+//                         onClick={(e,index) => {
+//                             setActiveADXAccodianMenuItem(index.index === activeADXAccodianMenuItem ? -1 : index.index)
+//                             }}
+//                     >{ADXAccordionTitle}</Accordion.Title>
+//                     <Accordion.Content borderless active={activeADXAccodianMenuItem === 0} >{<ADXcontentPanel />}</Accordion.Content>
+//                 </Menu.Item>
+//                 <Menu.Item borderless>
+//                     <Accordion.Title
+//                         active={activeADXPAccodianMenuItem === 0}
+//                         index={0}
+//                         borderless
+//                         onClick={(e,index) => {
+//                             setActiveADXPAccodianMenuItem(index.index === activeADXPAccodianMenuItem ? -1 : index.index)
+//                             }}
+//                     >{ADXPAccordionTitle}</Accordion.Title>
+//                     <Accordion.Content borderless active={activeADXPAccodianMenuItem === 0} >{<ADXPcontentPanel />}</Accordion.Content>
+//                 </Menu.Item>
+//                 <Menu.Item borderless>
+//                     <Accordion.Title
+//                         active={activeADXNAccodianMenuItem === 0}
+//                         index={0}
+//                         borderless
+//                         onClick={(e,index) => {
+//                             setActiveADXNAccodianMenuItem(index.index === activeADXNAccodianMenuItem ? -1 : index.index)
+//                             }}
+//                     >{ADXNAccordionTitle}</Accordion.Title>
+//                     <Accordion.Content borderless active={activeADXNAccodianMenuItem === 0} >{<ADXNcontentPanel />}</Accordion.Content>
+//                 </Menu.Item>
+//                 <Menu.Item borderless>
+//                     <Accordion.Title
+//                         active={activeVIPOSAccodianMenuItem === 0}
+//                         index={0}
+//                         borderless
+//                         onClick={(e,index) => {
+//                             setActiveVIPOSAccodianMenuItem(index.index === activeVIPOSAccodianMenuItem ? -1 : index.index)
+//                             }}
+//                     >{VIPOSAccordionTitle}</Accordion.Title>
+//                     <Accordion.Content borderless active={activeVIPOSAccodianMenuItem === 0} >{<VIPOScontentPanel />}</Accordion.Content>
+//                 </Menu.Item>
+//                 <Menu.Item borderless>
+//                     <Accordion.Title
+//                         active={activeVINEGAccodianMenuItem === 0}
+//                         index={0}
+//                         borderless
+//                         onClick={(e,index) => {
+//                             setActiveVINEGAccodianMenuItem(index.index === activeVINEGAccodianMenuItem ? -1 : index.index)
+//                             }}
+//                     >{VINEGAccordionTitle}</Accordion.Title>
+//                     <Accordion.Content borderless active={activeVINEGAccodianMenuItem === 0} >{<VINEGcontentPanel />}</Accordion.Content>
+//                 </Menu.Item>
+//                 <Menu.Item borderless>
+//                     <Accordion.Title
+//                         active={activeTRIXAccodianMenuItem === 0}
+//                         index={0}
+//                         borderless
+//                         onClick={(e,index) => {
+//                             setActiveTRIXAccodianMenuItem(index.index === activeTRIXAccodianMenuItem ? -1 : index.index)
+//                             }}
+//                     >{TRIXAccordionTitle}</Accordion.Title>
+//                     <Accordion.Content borderless active={activeTRIXAccodianMenuItem === 0} >{<TRIXcontentPanel />}</Accordion.Content>
+//                 </Menu.Item>
+//                 <Menu.Item borderless>
+//                     <Accordion.Title
+//                         active={activeMIAccodianMenuItem === 0}
+//                         index={0}
+//                         borderless
+//                         onClick={(e,index) => {
+//                             setActiveMIAccodianMenuItem(index.index === activeMIAccodianMenuItem ? -1 : index.index)
+//                             }}
+//                     >{MIAccordionTitle}</Accordion.Title>
+//                     <Accordion.Content borderless active={activeMIAccodianMenuItem === 0} >{<MIcontentPanel />}</Accordion.Content>
+//                 </Menu.Item>
+//                 <Menu.Item borderless>
+//                     <Accordion.Title
+//                         active={activeDPOAccodianMenuItem === 0}
+//                         index={0}
+//                         borderless
+//                         onClick={(e,index) => {
+//                             setActiveDPOAccodianMenuItem(index.index === activeDPOAccodianMenuItem ? -1 : index.index)
+//                             }}
+//                     >{DPOAccordionTitle}</Accordion.Title>
+//                     <Accordion.Content borderless active={activeDPOAccodianMenuItem === 0} >{<DPOcontentPanel />}</Accordion.Content>
+//                 </Menu.Item>
