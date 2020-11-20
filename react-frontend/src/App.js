@@ -16,6 +16,7 @@ import MomentumGraphContainer from './components/MomentumGraphContainer'
 import PopularMenuContainer from './components/PopularMenuContainer'
 import EarningContainer from './components/EarningContainer'
 import VolatilityMenuContainer from './components/VolatilityMenuContainer'
+import HeaderTickerPriceContainer from './components/HeaderTickerPriceContainer'
 import momentumReducer from './redux/momentum/momentumReducer'
 
 
@@ -84,6 +85,7 @@ function App () {
             </Grid.Row>
           </Grid.Column>
           <Grid.Column width = {12}>
+            <HeaderTickerPriceContainer /><br />
             <LineCandleGraphContainer /><br/>
             <VolumeGraphContainer/><br/>
             <MomentumGraphContainer/><br />

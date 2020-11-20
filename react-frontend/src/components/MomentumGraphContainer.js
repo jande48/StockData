@@ -195,9 +195,13 @@ function MomentumGraphContainer (props) {
           .attr('class','axisWhite')
           .call(d3.axisBottom(x)
               .tickValues(d3.utcMonday
-                  .every(data.length > 2 ? (data.length > 15 ? 4 : 2) : 1)
-                  .range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
-              .tickFormat(d3.utcFormat("")))
+                .every(data.length > 2 ? (data.length > 250 ? 8 : (data.length > 150 ? 4 : (data.length > 80 ? 2 : 1))) : 1)
+                .range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
+              .tickFormat(d3.utcFormat("%-m/%-d")))
+              // .tickValues(d3.utcMonday
+              //     .every(data.length > 2 ? (data.length > 15 ? 4 : 2) : 1)
+              //     .range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
+              // .tickFormat(d3.utcFormat("")))
           //.call(g => g.select(".domain").remove())
 
       var yAxis = g => g

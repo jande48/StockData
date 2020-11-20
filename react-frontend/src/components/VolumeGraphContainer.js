@@ -21,9 +21,9 @@ import {
 function VolumeGraphContainer (props) {
   const showVolumeNode = useRef(null);
   const loadingSpinnerNode = useRef(null);
-  const height = 70;
-        const width = 700;
-        const margin = ({top: 15, right: 20, bottom: 20, left: 50})
+  const height = 103;
+  const width = 700;
+  const margin = ({top: 10, right: 20, bottom: 38, left: 50})
   useEffect(() => {
 
     createLoadingSpinnerChart(loadingSpinnerNode,width,height,margin)
@@ -90,9 +90,13 @@ function VolumeGraphContainer (props) {
         .attr('class','axisWhite')
         .call(d3.axisBottom(x)
             .tickValues(d3.utcMonday
-                .every(data.length > 2 ? (data.length > 15 ? 4 : 2) : 1)
-                .range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
+              .every(data.length > 2 ? (data.length > 250 ? 8 : (data.length > 150 ? 4 : (data.length > 80 ? 2 : 1))) : 1)
+              .range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
             .tickFormat(d3.utcFormat("")))
+            // .tickValues(d3.utcMonday
+            //     .every(data.length > 2 ? (data.length > 15 ? 4 : 2) : 1)
+            //     .range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
+            // .tickFormat(d3.utcFormat("")))
         //.call(g => g.select(".domain").remove())
     
 
@@ -121,6 +125,8 @@ function VolumeGraphContainer (props) {
         
     svg.append("g")
         .call(yAxis);
+    
+    
 
     var div = d3.select("body").append("div")
       .attr("class", "tooltip-donut")

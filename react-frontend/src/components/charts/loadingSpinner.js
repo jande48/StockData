@@ -18,6 +18,8 @@ import {
 
 
 export function createLoadingSpinnerChart(loadingSpinnerNode, width, height, margin) {
+    const data = [{'date':'2020-07-29'},{'date':'2020-07-30'},{'date':'2020-07-31'},{'date':'2020-08-02'},{'date':'2020-08-03'}]
+    const parseDate = d3.utcParse("%Y-%m-%d")
     const svg = select(loadingSpinnerNode.current);
       svg.selectAll("g").remove()
   
@@ -34,7 +36,11 @@ export function createLoadingSpinnerChart(loadingSpinnerNode, width, height, mar
       const xAxis = g => g
           .attr("transform", `translate(0,${height - margin.bottom})`)
           .attr('class','axisWhite')
-          .call(d3.axisBottom(x))
+          .call(d3.axisBottom(x)
+            .tickValues(d3.utcMonday
+              .every(data.length > 2 ? (data.length > 250 ? 8 : (data.length > 150 ? 4 : (data.length > 80 ? 2 : 1))) : 1)
+            .range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
+          .tickFormat(d3.utcFormat("")))
 
       const yAxis = g => g
           .attr("transform", `translate(${margin.left},0)`)
@@ -54,10 +60,15 @@ export function createLoadingSpinnerChart(loadingSpinnerNode, width, height, mar
       svg.append("g")
           .call(yAxis)
           
-
+      // svg.append('g')
+      //     .attr("stroke-linecap", "round")
+      //     .attr("stroke",  '#1b1c1d')
+      //     .selectAll("g")
+      //     .data(data)
+      //     .join("g")
       // main circle
-      const CX = width / 2;
-      const CY = height / 2;
+      const CX = (width) / 2;
+      const CY = (height-margin.bottom-margin.top) / 2;
       const R = 12;
       // little circles
       const r = 1.2;
