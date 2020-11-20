@@ -412,13 +412,13 @@ def calculate_Volitality_Indicators():
         df['BBupper'] = indicator_BBUpper
 
     # # Bollinger Band Lower
-    # BBLowerChecked = JSON_sent[4]['displayBBLower']
-    # nForBBLower = JSON_sent[4]['nForBBLower']
-    # ndevBBLower = JSON_sent[4]['ndevBBLower']
+    BBLowerChecked = JSON_sent[4]['displayBBLower']
+    nForBBLower = JSON_sent[4]['nForBBLower']
+    ndevBBLower = JSON_sent[4]['ndevBBLower']
 
-    # if BBLowerChecked:
-    #     indicator_BBLower = bollinger_lband(close=df['close'],n=nForBBLower,ndev=ndevBBLower)
-    #     df['BBlower'] = indicator_BBLower 
+    if BBLowerChecked:
+        indicator_BBLower = bollinger_lband(close=df['close'],n=nForBBLower,ndev=ndevBBLower)
+        df['BBlower'] = indicator_BBLower 
 
     # # Bollinger Channal Band Width
     # BBCBWchecked = JSON_sent[5]['displayBBCBW']
@@ -457,12 +457,12 @@ def calculate_Volitality_Indicators():
     #     df['BBLBI'] = indicator_BBLBI 
 
     # # Keltner Channel Central
-    # KeltnerCchecked = JSON_sent[9]['displayKeltnerC']
-    # nForKeltnerC = JSON_sent[9]['nForKeltnerC']
+    KeltnerCchecked = JSON_sent[5]['displayKeltnerC']
+    nForKeltnerC = JSON_sent[5]['nForKeltnerC']
 
-    # if KeltnerCchecked:
-    #     indicator_keltnerC = keltner_channel_mband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerC)
-    #     df['keltnerC'] = indicator_keltnerC
+    if KeltnerCchecked:
+        indicator_keltnerC = keltner_channel_mband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerC)
+        df['keltnerC'] = indicator_keltnerC
 
     # # Keltner Channel High
     # KeltnerHchecked = JSON_sent[10]['displayKeltnerH']
@@ -553,6 +553,8 @@ def calculate_Volitality_Indicators():
     #     df['donchianPB'] = indicator_donchianPB
 
     df.fillna(0, inplace=True)
+    #export_df = df.drop(columns=['open', 'high', 'low', 'close', 'volume'])
+    #print('The printed df in Trend', df)
     return (json.dumps(df.to_dict('records')))
 
 

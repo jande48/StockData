@@ -1,8 +1,10 @@
   
 import { DISPLAY_ATR, N_FOR_ATR, DISPLAY_BBSMA, N_FOR_BBSMA,DISPLAY_BBUPPER,N_FOR_BBUPPER,NDEV_FOR_BBUPPER,
+  DISPLAY_BBLOWER,N_FOR_BBLOWER,NDEV_FOR_BBLOWER,DISPLAY_KELTNERC,N_FOR_KLETNERC,
   FETCH_VOLATILITY_DATA_REQUEST,
   FETCH_VOLATILITY_DATA_SUCCESS,
-  FETCH_VOLATILITY_DATA_FAILURE } from './volatilityTypes'
+  FETCH_VOLATILITY_DATA_FAILURE, 
+  } from './volatilityTypes'
 import axios from 'axios'
 
 
@@ -47,6 +49,36 @@ export const nForBBUpper = (n) => {
 export const ndevBBUpper = (n) => {
   return {
     type: NDEV_FOR_BBUPPER,
+    payload: n
+  }
+}
+export const displayBBLower = (n) => {
+  return {
+    type: DISPLAY_BBLOWER,
+    payload: n
+  }
+}
+export const nForBBLower = (n) => {
+  return {
+    type: N_FOR_BBLOWER,
+    payload: n
+  }
+}
+export const displayKeltnerC = (n) => {
+  return {
+    type: DISPLAY_KELTNERC,
+    payload: n
+  }
+}
+export const nForKeltnerC = (n) => {
+  return {
+    type: N_FOR_KLETNERC,
+    payload: n
+  }
+}
+export const ndevBBLower = (n) => {
+  return {
+    type: NDEV_FOR_BBLOWER,
     payload: n
   }
 }

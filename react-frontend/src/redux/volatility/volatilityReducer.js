@@ -1,4 +1,5 @@
 import { DISPLAY_ATR, N_FOR_ATR, DISPLAY_BBSMA, N_FOR_BBSMA, DISPLAY_BBUPPER, N_FOR_BBUPPER, NDEV_FOR_BBUPPER,
+  DISPLAY_BBLOWER,N_FOR_BBLOWER,NDEV_FOR_BBLOWER,DISPLAY_KELTNERC,N_FOR_KLETNERC,
   FETCH_VOLATILITY_DATA_REQUEST,
   FETCH_VOLATILITY_DATA_SUCCESS,
   FETCH_VOLATILITY_DATA_FAILURE } from './volatilityTypes'
@@ -11,7 +12,12 @@ const initialState = {
   displayBBUpper: false,
   nForBBUpper: 20,
   ndevForBBUpper: 2,
+  displayBBLower: false,
+  nForBBLower: 20,
+  ndevForBBLower: 2,
   volatilityLoads: 0,
+  displayKeltnerC: false,
+  nForKeltnerC: 20,
   volatilityLoading: false,
   volatilityError: false,
   volatilityData: []
@@ -47,6 +53,26 @@ const volatilityReducer = (state = initialState, action) => {
     case NDEV_FOR_BBUPPER: return {
       ...state,
       ndevForBBUpper: action.payload
+    }
+    case DISPLAY_BBLOWER: return {
+      ...state,
+      displayBBLower: action.payload
+    }
+    case N_FOR_BBLOWER: return {
+      ...state,
+      nForBBUpper: action.payload
+    }
+    case NDEV_FOR_BBLOWER: return {
+      ...state,
+      ndevForBBUpper: action.payload
+    }
+    case DISPLAY_KELTNERC: return {
+      ...state,
+      displayKeltnerC: action.payload
+    }
+    case N_FOR_KLETNERC: return {
+      ...state,
+      nForKeltnerC: action.payload
     }
     case FETCH_VOLATILITY_DATA_REQUEST:
       return {

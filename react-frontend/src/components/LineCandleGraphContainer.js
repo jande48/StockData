@@ -38,7 +38,9 @@ function LineCandleGraphContainer (props) {
         }}
       },[props.stockData,props.startDate,props.endDate,props.loading,props.momentumLoading,props.trendLoading,props.displayLine,props.displaySMA,props.displayEMA,props.displayMACD,props.displayMACDsignal,
         props.displayADX,props.displayADXN,props.displayADXP,props.displayVIPOS,props.displayVINEG,props.displayTRIX,
-        props.displayMI,props.displayDPO])
+        props.displayMI,props.displayDPO,props.displayATR,props.nForATR,props.displayBBSMA,props.displayBBSMA,props.displayBBUpper,
+        props.nForBBUpper,props.ndevBBUpper,props.displayBBLower,props.nForBBLower,props.ndevBBLower,props.displayKeltnerC,
+        props.nForKeltnerC,props.volatilityData])
 
     function convertDatesToString(initialDate) {
 		const convertedDate = String(initialDate.getFullYear())+"-"+String(initialDate.getMonth() + 1)+"-"+String(initialDate.getDate())
@@ -79,6 +81,8 @@ function LineCandleGraphContainer (props) {
       const data = sliceDataStartDate(Initialdata)
       const InitialtrendData = props.trendData
       const trendData = sliceDataStartDate(InitialtrendData)
+      const InitialVolatilityData = props.volatilityData
+      const volatilityData = sliceDataStartDate(InitialVolatilityData)
       
       function findMixMaxObjects(objects,leftOrRight) {
           var min = objects[0]['dataInd'][0]['close']
@@ -188,9 +192,13 @@ function LineCandleGraphContainer (props) {
       const mi = new Indicator('mi',"#666666",trendData,props.displayMI,'axisRight')
       //const cci = new Indicator('cci',"#1b9e77",trendData,props.displayCCI,'axisRight')
       const dpo = new Indicator('dpo',"#1b9e77",trendData,props.displayDPO,'axisRight')
-      // const bbsma = new Indicator('bbsma',"#66a61e",trendData,props.displayBBSMA,'axisLeft')
-      
-      const objectList = [close,sma,macd,ema,macdSignal,adx,adxp,adxn,vipos,vineg,trix,mi,dpo]
+      // ["#7fc97f","#beaed4","#fdc086","#ffff99","#386cb0","#f0027f","#bf5b17","#666666"]
+      const bbsma = new Indicator('bbsma',"#7fc97f",volatilityData,props.displayBBSMA,'axisLeft')
+      const atr = new Indicator('atr',"#beaed4",volatilityData,props.displayATR,'axisRight')
+      const BBupper = new Indicator('BBupper',"#fdc086",volatilityData,props.displayBBUpper,'axisLeft')
+      const BBlower = new Indicator('BBlower',"#ffff99",volatilityData,props.displayBBLower,'axisLeft')
+      const KeltnerC = new Indicator('keltnerC',"#386cb0",volatilityData,props.displayKeltnerC,'axisLeft')
+      const objectList = [close,sma,macd,ema,macdSignal,adx,adxp,adxn,vipos,vineg,trix,mi,dpo,bbsma,atr,BBlower,BBupper,KeltnerC]
 
 
       const x = scaleBand()
@@ -344,6 +352,12 @@ function LineCandleGraphContainer (props) {
       const miline = mi.d3line
       //const cciline = cci.d3line
       const dpoline = dpo.d3line
+      const atrline = atr.d3line
+      const bbsmaline = bbsma.d3line
+      const BBupperline = BBupper.d3line
+      const BBlowerline = BBlower.d3line
+      const keltnerCline = KeltnerC.d3line
+      
 
       var showRightAxis = false
       for (var i = 0; i < objectList.length; i++) {
@@ -568,6 +582,19 @@ const mapStateToProps = state => {
     displayDPO: state.trendFromRootReducer.displayDPO,
     nForDPO: state.trendFromRootReducer.nForDPO,
     financials: state.stockDataFromRootReducer.financialsData,
+    displayATR: state.volatilityFromtRootReducer.displayATR,
+    nForATR: state.volatilityFromtRootReducer.nForATR,
+    displayBBSMA: state.volatilityFromtRootReducer.displayBBSMA,
+    nForBBSMA: state.volatilityFromtRootReducer.nForBBSMA,
+    displayBBUpper: state.volatilityFromtRootReducer.displayBBUpper,
+    nForBBUpper: state.volatilityFromtRootReducer.nForBBUpper,
+    ndevBBUpper: state.volatilityFromtRootReducer.ndevForBBUpper,
+    displayBBLower: state.volatilityFromtRootReducer.displayBBLower,
+    nForBBLower: state.volatilityFromtRootReducer.nForBBLower,
+    ndevBBLower: state.volatilityFromtRootReducer.ndevForBBLower,
+    displayKeltnerC: state.volatilityFromtRootReducer.displayKeltnerC,
+    nForKeltnerC: state.volatilityFromtRootReducer.nForKeltnerC,
+    volatilityData: state.volatilityFromtRootReducer.volatilityData,
     // displayCCI: state.trendFromRootReducer.displayCCI,
     // nForCCI: state.trendFromRootReducer.nForCCI,
     // cForCCI: state.trendFromRootReducer.cForCCI,

@@ -1,18 +1,23 @@
 import React, {useState, useEffect} from 'react'
 import { connect } from 'react-redux'
-import { displayATR, displayBBSMA, displayBBUpper  } from '../redux'
+import { displayATR, displayBBSMA, displayBBUpper, displayBBLower, displayKeltnerC } from '../redux'
 import { Grid, Menu, Accordion, Checkbox, Icon, Header} from "semantic-ui-react"
-import ATRcontentPanel from './accordion/volatility/ATRcontentpanel'
+
 
 import { fetchVolatilityData } from '../redux';
 import ATRcontentpanel from './accordion/volatility/ATRcontentpanel'
 import BBSMAcontentpanel from './accordion/volatility/BBSMAcontentpanel'
 import BBUppercontentpanel from './accordion/volatility/BBUppercontentpanel'
+import BBLowercontentpanel from './accordion/volatility/BBLowercontentpanel'
+import KCcontentpanel from './accordion/volatility/KCcontentpanel'
+
 function MomentumMenuContainer(props) {
     
     const [activeATRAccodianMenuItem, setATRActiveAccordionMenuItem] = useState(-1)
     const [activeBBSMAAccodianMenuItem, setBBSMAActiveAccordionMenuItem] = useState(-1)
     const [activeBBUpperAccodianMenuItem, setBBUpperActiveAccordionMenuItem] = useState(-1)
+    const [activeBBLowerAccodianMenuItem, setBBLowerActiveAccordionMenuItem] = useState(-1)
+    const [activeKCAccodianMenuItem, setKCActiveAccordionMenuItem] = useState(-1)
 
     useEffect(() => {
         if (typeof(props.stockData) != 'undefined' ) {
@@ -20,11 +25,14 @@ function MomentumMenuContainer(props) {
           const ATRparameters = {'displayATR':props.displayATR,'nForATR':props.nForATR}
           const BBSMAparameters = {'displayBBSMA':props.displayBBSMA,'nForBBSMA':props.nForBBSMA}
           const BBUpperparameters = {'displayBBUpper':props.displayBBUpper,'nForBBUpper':props.nForBBUpper,'ndevBBUpper':props.ndevBBUpper}
-          props.fetchVolatilityData(JSON.stringify([props.stockData,ATRparameters,BBSMAparameters,BBUpperparameters]))
+          const BBLowerparameters = {'displayBBLower':props.displayBBLower,'nForBBLower':props.nForBBLower,'ndevBBLower':props.ndevBBLower}
+          const KCparameters = {'displayKeltnerC':props.displayKeltnerC,'nForKeltnerC':props.nForKeltnerC}
+          
+          props.fetchVolatilityData(JSON.stringify([props.stockData,ATRparameters,BBSMAparameters,BBUpperparameters,BBLowerparameters,KCparameters]))
   
         }}
       }, [props.stockData,props.displayATR,props.nForATR,props.displayBBSMA,props.displayBBSMA,props.displayBBUpper,props.nForBBUpper,
-      props.ndevBBUpper])
+        props.ndevBBUpper,props.displayBBLower,props.nForBBLower,props.ndevBBLower,props.displayKeltnerC,props.nForKeltnerC])
 
 
 
@@ -74,9 +82,13 @@ function MomentumMenuContainer(props) {
     setBBSMAActiveAccordionMenuItem,<BBSMAcontentpanel/>)
     const BBUpperAccordionClass = new createTiles('Bollinger Upper Band',props.displayBBUpperdispatch,props.displayBBUpper,activeBBUpperAccodianMenuItem,
     setBBUpperActiveAccordionMenuItem,<BBUppercontentpanel/>)
+    const BBLowerAccordionClass = new createTiles('Bollinger Lower Band',props.displayBBLowerdispatch,props.displayBBLower,activeBBLowerAccodianMenuItem,
+    setBBLowerActiveAccordionMenuItem,<BBLowercontentpanel/>)
+    const KCAccordionClass = new createTiles('Keltner C Mid Band',props.displayKeltnerCdispatch,props.displayKeltnerC,activeKCAccodianMenuItem,
+    setKCActiveAccordionMenuItem,<KCcontentpanel/>)
     
 
-    const objectList = [ BBSMAAccordionClass,ATRAccordionClass,BBUpperAccordionClass]
+    const objectList = [ ATRAccordionClass,BBSMAAccordionClass,BBUpperAccordionClass, BBLowerAccordionClass, KCAccordionClass]
 
     const momentumNtradingDayOptions = [
 		{ key: 'one', text: '1', value: 1 },
@@ -158,6 +170,11 @@ const mapStateToProps = state => {
     displayBBUpper: state.volatilityFromtRootReducer.displayBBUpper,
     nForBBUpper: state.volatilityFromtRootReducer.nForBBUpper,
     ndevBBUpper: state.volatilityFromtRootReducer.ndevForBBUpper,
+    displayBBLower: state.volatilityFromtRootReducer.displayBBLower,
+    nForBBLower: state.volatilityFromtRootReducer.nForBBLower,
+    ndevBBLower: state.volatilityFromtRootReducer.ndevForBBLower,
+    displayKeltnerC: state.volatilityFromtRootReducer.displayKeltnerC,
+    nForKeltnerC: state.volatilityFromtRootReducer.nForKeltnerC,
     startDate: state.datesFromRootReducer.startDate,
 
   }
@@ -169,8 +186,8 @@ const mapDispatchToProps = dispatch => {
     displayATRdispatch: x => dispatch(displayATR(x)),
     displayBBSMAdispatch: x => dispatch(displayBBSMA(x)),
     displayBBUpperdispatch: x => dispatch(displayBBUpper(x)),
-
-
+    displayBBLowerdispatch: x => dispatch(displayBBLower(x)),
+    displayKeltnerCdispatch: x => dispatch(displayKeltnerC(x)),
     
   }
 }
