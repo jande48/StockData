@@ -335,6 +335,18 @@ def get_ticker_company_name(user_input):
                 dataset[i][j]['startingStrIndex'] = noSpacesAPI2.index(user_input_matching.upper()) 
                 out.append(dataset[i][j])
 
+            if dataset[i][j]['symbol'] is not None:
+                noSpacesAPIsym =re.sub(r'\W+', '',dataset[i][j]['symbol'] )
+                noSpacesAPIsym2 = noSpacesAPIsym.upper()
+            try:
+                noSpacesAPIsym2.index(user_input_matching.upper())
+            except ValueError:
+                print("Not found!")
+            else:
+                dataset[i][j]['startingStrIndex'] = noSpacesAPIsym2.index(user_input_matching.upper()) 
+                out.append(dataset[i][j])
+        
+    print(out)
     out.sort(key = lambda out: out['startingStrIndex']) 
     return json.dumps(out)
 
