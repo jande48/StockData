@@ -238,6 +238,19 @@ function LineCandleGraphContainer (props) {
           .attr('transform',`translate(10,${height/2}) rotate(-90)`)
           .text("Price ($)")
           
+      const tooltip = svg.append("text")
+          .attr("class", "axisWhite")
+          .attr("id","tooltip")
+          .attr("text-anchor", "middle")
+          .attr("font-size",'50px')
+          .style('fill','white')
+          .attr('x',margin.left+(width/2))
+          .attr('y',height)
+          .style("opacity", 1)
+          // .data(data)
+          // .join("text")
+
+          
 
       const yAxis = g => g
           .attr("transform", `translate(${margin.left},0)`)
@@ -271,13 +284,72 @@ function LineCandleGraphContainer (props) {
               .selectAll("g")
               .data(data)
               .join("g")
-              // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
+              // .on("mouseover", function(e,data){
+              //   // svg.selectAll("#tooltip")
+              //   //   .text(data.close)
+              //   //   .style("opacity", 1)
+      
+              //   // // Get current event info
+              //   // console.log(e);
+              //   // console.log(data)
+                
+              //   // Get x & y co-ordinates
+              //   //console.log(d3.mouse(this));
+              // })
+              // .on("mousemove", function(e,data){
+              //   svg.selectAll("#tooltip")
+              //     .text(data.close)
+              //     .style("opacity", 1)
+      
+              //   // Get current event info
+              //   console.log(e);
+              //   console.log(data)
+                
+              //   // Get x & y co-ordinates
+              //   //console.log(d3.mouse(this));
+              // })
+              // .on("mouseout", function(){
+              //   svg.selectAll("#tooltip")
+              //     .style("opacity", 0)
+              // })
+                // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
   
           const lineGenerator = line()
               .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
               .y(d => y(d.close))
               .curve(curveLinear);
-  
+
+          // const Tooltip = svg.append("g")
+          //     .style("opacity", 0)
+          //     .attr("class", "tooltip")
+          //     .style("background-color", "white")
+          //     .style("border", "solid")
+          //     .style("border-width", "2px")
+          //     .style("border-radius", "5px")
+          //     .style("padding", "5px")
+              
+          //     // Three function that change the tooltip when user hover / move / leave a cell
+          // var mouseover = function(d) {
+          //   Tooltip
+          //     .style("opacity", 1)
+          //     .html("The exact value of<br>this cell is: " + d.close)
+          //     .style("left", (svg.mouse(this)[0]+70) + "px")
+          //     .style("top", (svg.mouse(this)[1]) + "px")
+          //   d3.select(this)
+          //     .style("stroke", "black")
+          //     .style("opacity", 1)
+          // }
+          // var mousemove = function(d) {
+          //   Tooltip
+              
+          // }
+          // var mouseleave = function(d) {
+          //   Tooltip
+          //     .style("opacity", 0)
+          //   d3.select(this)
+          //     .style("stroke", "none")
+          //     .style("opacity", 0.8)
+          // }
           g.append('path')
               .attr('class', 'line-path')
               .attr('d', lineGenerator(data))
@@ -285,9 +357,34 @@ function LineCandleGraphContainer (props) {
               .attr('fill','none')
               .attr('stroke-width',1)
               .attr('stroke-linecap','round')
-
-          // Add the spinner if loading
-          
+              // .on("mouseover", function(e,d){
+              //   // svg.selectAll("#tooltip")
+              //   //   .text(data.close)
+              //   //   .style("opacity", 1)
+      
+              //   // // Get current event info
+              //   // console.log(e);
+              //   // console.log(data)
+                
+              //   // Get x & y co-ordinates
+              //   //console.log(d3.mouse(this));
+              // })
+              // .on("mousemove", function(e,d){
+              //   svg.selectAll("#tooltip")
+              //     // .text(d.close)
+              //     // .style("opacity", 1)
+      
+              //   // Get current event info
+              //   console.log(e);
+              //   console.log(d)
+                
+              //   // Get x & y co-ordinates
+              //   //console.log(d3.mouse(this));
+              // })
+              // .on("mouseout", function(){
+              //   svg.selectAll("#tooltip")
+              //     .style("opacity", 0)
+              // })
 
 
 
