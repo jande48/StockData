@@ -6,7 +6,7 @@ from flask_mail import Mail
 import os
 from algoPlatform1_project.config import Config
 
-app = Flask(__name__)
+application = app = Flask(__name__)
 
 app.config['SECRET_KEY'] = os.environ.get('AlgoPlatformSecretKey')
 
@@ -14,7 +14,7 @@ ENV = 'dev'
 
 if ENV == 'dev':
     app.debug = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('LOCAL_SQL_DB_STOCK_DATA')#'postgresql://postgres:goforit@localhost/stockData1'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('LOCAL_SQL_DB_STOCK_DATA')
 else:
     app.debug = False
     app.config['SQLALCHEMY_DATABASE_URI'] = ''

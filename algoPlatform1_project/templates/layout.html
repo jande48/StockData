@@ -5,6 +5,8 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -14,6 +16,7 @@
     <meta name="theme-color" content="#000000" />
 
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -21,27 +24,11 @@
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     
     {% if title %}
-        <title>Stock Data - {{ title }}</title>
+        <title>Stock Data Analysis - {{ title }}</title>
     {% else %}
-        <title>Stock Data</title>
+        <title>Stock Data Analysis</title>
     {% endif %}
-    <!--
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link href="https://fonts.googleapis.com/css?family=Raleway:100,300,400,500,700,900" rel="stylesheet">
-
-    {% if title %}
-        <title>AlgoDIY - {{ title }}</title>
-    {% else %}
-        <title>AlgoDIY</title>
-    {% endif %}
-<!--
-SOFTY PINKO
-https://templatemo.com/tm-535-softy-pinko
--->
-
+    
     <!-- Additional CSS Files -->
     <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/font-awesome.css')}}">
@@ -53,7 +40,7 @@ https://templatemo.com/tm-535-softy-pinko
     <link rel="stylesheet" href="../static/css/main.css"> -->
     </head>
     
-    <body style="margin-top: 0px;">
+    <body style="margin-top: 0px; background-color:#1b1c1d;>
 
     <!-- ***** Preloader Start ***** -->
     <div id="preloader">
@@ -62,22 +49,78 @@ https://templatemo.com/tm-535-softy-pinko
             <div></div>
             <div></div>
         </div>
-    </div>  
+    </div>
     <!-- ***** Preloader End ***** -->
     
     
     <!-- ***** Header Area Start ***** -->
-    <header class="header-area header-sticky">
-        <div class="container">
+    <!-- <header class="header-area header-sticky"> -->
+        <div id='navMenu' class="ui pointing menu inverted" style="margin-top: 0px;">
+            
+            {% if active == 'home' %}
+            <a class="active item" href="/" id="home">
+                Home
+              </a>
+            {% else %}
+            <a class="item" href="/" id="home">
+                Home
+              </a>
+            {% endif %}
+            {% if active == 'fourm' %}
+            <a class="item active" href="{{url_for('posts.fourm')}}" id="fourm">
+              Fourm
+            </a>
+            {% else %}
+            <a class="item" href="{{url_for('posts.fourm')}}" id="fourm">
+                Fourm
+              </a>
+            {% endif %}
+            <div class="right menu">
+                {% if current_user.is_authenticated %}
+                <a class="item" href="{{url_for('users.account')}}" id="account">
+                    Account
+                </a>
+                <a class="item" href="{{url_for('users.logout')}}"  id="logout">
+                    Logout
+                </a>
+                {% else %}
+                {% if active == 'login' %}
+                <a class="active item" href="{{url_for('users.login')}}" id="login">
+                    Login
+                </a>
+                {% else %}
+                <a class="item" href="{{url_for('users.login')}}" id="login">
+                    Login
+                </a>
+                {% endif %}
+                {% if active == 'signup' %}
+                <a class="active item" href="{{url_for('users.register')}}" id="signup">
+                    Sign Up
+                </a>
+                {% else %}
+                <a class="item" href="{{url_for('users.register')}}" id="signup">
+                    Sign Up
+                </a>
+                {% endif %}
+                {% endif %}
+                
+              <!-- <div class="item">
+                <div class="ui transparent icon input">
+                  <input type="text" placeholder="Search...">
+                  <i class="search link icon"></i>
+                </div>
+              </div> -->
+            </div>
+          </div>
+        <!-- <div class="container">
             <div class="row">
                 <div class="col-12">
                     <nav class="main-nav">
-                        <!-- ***** Logo Start ***** -->
+                        
                         <a href="#" class="logo">
                             <img src="../static/images/AlgoDIY_logo2.jpg" alt="Stock Data"/>
                         </a>
-                        <!-- ***** Logo End ***** -->
-                        <!-- ***** Menu Start ***** -->
+                   
                         <ul class="nav">
                             <li><a href="#welcome" class="active">Home</a></li>
                             <li><a href="{{ url_for('main.home') }}">Create Algo</a></li>
@@ -96,12 +139,12 @@ https://templatemo.com/tm-535-softy-pinko
                         <a class='menu-trigger'>
                             <span>Menu</span>
                         </a>
-                        <!-- ***** Menu End ***** -->
+                     
                     </nav>
                 </div>
             </div>
-        </div>
-    </header>
+        </div> -->
+    <!-- </header> -->
     <!-- ***** Header Area End ***** -->
 
     <!-- <div class="ui sidebar left inverted menu" data-example-default>
@@ -113,7 +156,8 @@ https://templatemo.com/tm-535-softy-pinko
     
     </div> -->
         
-        <div class="container"  style="margin-top: 140px;">
+        <!-- <div class="container"  style="margin-top: 20px; margin-left: 0px; margin-right: 0px;"> -->
+        <div>
             <!-- <br><br><br><br>
             <h2 style="margin-top: 100;" class="ui header medium">Default Sidebar</h2>
             <button class="ui button" data-example-target="data-example-default">Toggle Sidebar</button>
@@ -135,7 +179,22 @@ https://templatemo.com/tm-535-softy-pinko
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-        
+        <script>
+            // Add active class to the current button (highlight it)
+            var header = document.getElementById("navMenu");
+            console.log(header)
+            var btns = header.getElementsByClassName("item");
+            console.log(btns)
+            for (var i = 0; i < btns.length; i++) {
+            btns[i].addEventListener("click", function() {
+            var current = document.getElementsByClassName("item active");
+            if (current.length > 0) { 
+                current[0].className = current[0].className.replace("item active", "item");
+            }
+            this.className = "item active";
+            });
+            }
+        </script>
     </body>
     <!-- ***** Block Content Start ***** -->
     
@@ -157,7 +216,7 @@ https://templatemo.com/tm-535-softy-pinko
             </div>
             <div class="row">
                 <div class="col-lg-12">
-                    <p class="copyright">Copyright &copy; 2020 Softy Pinko Company - Design: TemplateMo</p>
+                    <p class="copyright">Copyright &copy; 2020 Stock Data Analysis</p>
                 </div>
             </div>
         </div>
