@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<div class="content-section">
+<div class="content-section" style="background-color: #e9e8e6;">
     <form class="ui form" method="POST" action="">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
@@ -61,11 +61,11 @@
             </div>
         </fieldset>
         <div class="form-group">
-            {{ form.submit(class="btn btn-outline-info") }}   
+            {{ form.submit(class="btn btn-outline-success") }}   
         </div>
     </form>
     <div class="border-top pt-3">
-        <h3 class="text-muted" style="margin-bottom: 30px;">Already Have an Account? <a href="{{ url_for('users.login') }}">Sign In</a></h3>
+        <h5 class="text-muted ml-2" style="margin-bottom: 30px;">Already Have an Account? <a href="{{ url_for('users.login') }}" style="color:green">Sign In</a></h3>
     </div>
 </div>
 

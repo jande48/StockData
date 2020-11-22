@@ -69,16 +69,22 @@ function LineCandleGraphContainer (props) {
         }
         for (var i = 0; i < data.length; i++) {
           var dateSplit = data[i]['date'].split("-")
-          if ((String(parseInt(dateSplit[0]))+"-"+String(parseInt(dateSplit[1]))+"-"+String(parseInt(dateSplit[2]))) == convertDatesToString(startingDate)) {
+          var indexDate = new Date(parseInt(dateSplit[0]),parseInt(dateSplit[1]),parseInt(dateSplit[2]))
+          if (indexDate.getTime() > startingDate.getTime()) {
             startingIndex = i
             break
-          } 
+          }
+          // if ((String(parseInt(dateSplit[0]))+"-"+String(parseInt(dateSplit[1]))+"-"+String(parseInt(dateSplit[2]))) == convertDatesToString(startingDate)) {
+          //   startingIndex = i
+          //   break
+          // } 
         }
         const exportData = data.slice(startingIndex)
         return exportData
       }
 
       const data = sliceDataStartDate(Initialdata)
+      console.log(data)
       const InitialtrendData = props.trendData
       const trendData = sliceDataStartDate(InitialtrendData)
       const InitialVolatilityData = props.volatilityData

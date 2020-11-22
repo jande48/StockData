@@ -12,17 +12,82 @@
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-
     <title>Stock Data</title>
     <script>window.token="{{token}}"</script>
   </head>
 
   <body>
+    <div id='navMenu' class="ui pointing menu inverted" style="margin-top: 0px;">
+      {% if active == 'home' %}
+      <a class="active item" href="/" id="home">
+          Home
+        </a>
+      {% else %}
+      <a class="item" href="/" id="home">
+          Home
+        </a>
+      {% endif %}
+      {% if active == 'fourm' %}
+      <a class="item active" href="{{url_for('posts.fourm')}}" id="fourm">
+        Fourm
+      </a>
+      {% else %}
+      <a class="item" href="{{url_for('posts.fourm')}}" id="fourm">
+          Fourm
+        </a>
+      {% endif %}
+      <div class="right menu">
+          {% if current_user.is_authenticated %}
+          <a class="item" href="{{url_for('users.account')}}" id="account">
+              Account
+          </a>
+          <a class="item" href="{{url_for('users.logout')}}"  id="logout">
+              Logout
+          </a>
+          {% else %}
+          {% if active == 'login' %}
+          <a class="active item" href="{{url_for('users.login')}}" id="login">
+              Login
+          </a>
+          {% else %}
+          <a class="item" href="{{url_for('users.login')}}" id="login">
+              Login
+          </a>
+          {% endif %}
+          {% if active == 'signup' %}
+          <a class="active item" href="{{url_for('users.register')}}" id="signup">
+              Sign Up
+          </a>
+          {% else %}
+          <a class="item" href="{{url_for('users.register')}}" id="signup">
+              Sign Up
+          </a>
+          {% endif %}
+          {% endif %}
+      </div>
+    </div>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-   
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>    
+    <script>
+      // Add active class to the current button (highlight it)
+      var header = document.getElementById("navMenu");
+      console.log(header)
+      var btns = header.getElementsByClassName("item");
+      console.log(btns)
+      for (var i = 0; i < btns.length; i++) {
+      btns[i].addEventListener("click", function() {
+      var current = document.getElementsByClassName("item active");
+      if (current.length > 0) { 
+          current[0].className = current[0].className.replace("item active", "item");
+      }
+      this.className = "item active";
+      });
+      }
+  </script>
   </body>
-
 </html> 
 <!-- {% extends "layout.html" %}
 {% block content %}

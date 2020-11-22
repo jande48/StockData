@@ -7,9 +7,9 @@ main = Blueprint('main', __name__)
 
 @main.route("/")
 def my_index():
-    return render_template("index.html",token="Hello Flask React", active="home")
+    return render_template("index.html",token="Stock Data Analysis", active="home")
 
 @main.route("/home")
 def home():
-    return render_template("create_algo.html")
+    return render_template("index.html",token="Stock Data Analysis", active="home")
 

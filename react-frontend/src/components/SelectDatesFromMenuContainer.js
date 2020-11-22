@@ -39,6 +39,7 @@ function SelectDatesFromMenuContainer(props) {
   function handleDateClick(minusDays, name) {
       setActiveItemDateMenu(name)
       var currentDate = new Date() //theRealCurrentDate2;
+
       var dateOffset = (24*60*60*1000) * minusDays; 
       var newDate = currentDate.setTime(currentDate.getTime() - ((24*60*60*1000) * minusDays));
 

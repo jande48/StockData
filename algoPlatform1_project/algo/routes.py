@@ -361,28 +361,20 @@ def get_fianancial_data(ticker):
 
     stock = Stock(ticker, token=IEX_api_key)
     financials = stock.get_financials()
+    print('This is financials from IEX: ',financials)
     companyIEX = stock.get_company()
+    print("This is company info from IEX: ",companyIEX)
     url = Request("https://financialmodelingprep.com/api/v3/profile/"+ticker+"?apikey="+Stock_Ticker_Lookup_key)
     response = urlopen(url,data=None,timeout=2)
     companyFinModPrep = json.loads(response.read().decode("utf-8"))
+    print("This is company from finacials modeling prep: ", companyFinModPrep)
     # def divideByMillion(financialParameter,newFinancials):
     #     newFinancials[0][financialParameter] = newFinancials[0][financialParameter]/1000000
 
     # financialParameters = ('grossProfit','operatingRevenue','totalRevenue','totalAssets','totalLiabilities','totalCash','netIncome','cashFlow','totalDebt','shortTermDebt','longTermDebt')
     financials.append(companyIEX)
     financials.append(companyFinModPrep[0])
-    # print(financials)
-    # financials[0]['grossProfit'] = financials[0]['grossProfit']/1000000
-    # financials[0]['operatingRevenue'] = financials[0]['operatingRevenue']/1000000
-    # financials[0]['totalRevenue'] = financials[0]['totalRevenue']/1000000
-    # financials[0]['totalAssets'] = financials[0]['totalAssets']/1000000
-    # financials[0]['totalLiabilities'] = financials[0]['totalLiabilities']/1000000
-    # financials[0]['totalCash'] = financials[0]['totalCash']/1000000
-    # financials[0]['netIncome'] = financials[0]['researchAndDevelopment']/1000000
-    # financials[0]['cashFlow'] = financials[0]['cashFlow']/1000000
-    # financials[0]['totalDebt'] = financials[0]['totalDebt']/1000000
-    # financials[0]['shortTermDebt'] = financials[0]['shortTermDebt']/1000000
-    # financials[0]['longTermDebt'] = financials[0]['longTermDebt']/1000000
+
     return (json.dumps(financials))
 
 @algo.route("/get_earnings_data/<ticker>", methods=['GET'])
