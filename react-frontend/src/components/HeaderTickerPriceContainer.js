@@ -15,23 +15,21 @@ function HeaderTickerPriceContainer (props) {
       if (props.stockData.length > 1 && !props.momentumLoading && !props.loading && !props.trendLoading) {
         props.addPercentChange(calcPercentChange())
         }}
-      },[props.stockData,props.loading,props.momentumLoading,props.trendLoading])
+      },[props.stockData,props.loading,props.momentumLoading,props.trendLoading,props.endDateForPercentChange,props.stockPriceForPercentChange])
 
 
-  
+  var endingStockPrice = props.stockPriceForPercentChange 
+  if (endingStockPrice == 0 && typeof(props.stockData) != 'undefined' && props.stockData.length > 1) {
+    endingStockPrice = props.stockData[props.stockData.length -1]['close']
+  }
 
   
   function calcPercentChange() {
       var exportDefault = 0
       if (typeof(props.stockData) != 'undefined'){
       if (props.stockData.length > 2) {
-          var endingStockPrice = props.stockPriceForPercentChange 
-          if (endingStockPrice == 0) {
-            endingStockPrice = props.stockData[props.stockData.length -1]['close']
-          }
-          console.log(props.stockData[props.stockData.length -1]['close'])
-          console.log(props.stockData[0]['open'])
-          const percentChange = ((props.stockData[props.stockData.length -1]['close'] - props.stockData[0]['open'])/props.stockData[0]['open'])*100
+          
+          const percentChange = ((props.stockPriceForPercentChange - props.stockData[0]['open'])/props.stockData[0]['open'])*100
           const percentChangeFormatted = percentChange.toFixed(2)
           return percentChangeFormatted
 
@@ -44,7 +42,7 @@ function HeaderTickerPriceContainer (props) {
     splicedStartDateConst = props.splicedStartDate.split('-')
   }
   
-
+  var endDateVar = props.endDateForPercentChange
 
   return  props.loading ? (
     <React.Fragment>
@@ -71,12 +69,12 @@ function HeaderTickerPriceContainer (props) {
           <Grid.Row stretched  color='black'>
             <Grid.Column  color='black'>
             {/* <Image src={(typeof(props.financials)!='undefined') ? (props.financials.length>0 ? props.financials[2]['image'] : '') : ''} size='mini' spaced='right' verticalAlign='top' /> */}
-              <Header as='h2' textAlign='left' inverted color="#e0e1e2"> { typeof(props.stockData) === 'undefined' ? '' : (props.stockData.length > 0 ?  props.compName + ' - '+ props.tickers + ' ($' + props.stockData[props.stockData.length-1]['close'] + ')' : '')}</Header>
+              <Header as='h2' textAlign='left' inverted color="#e0e1e2"> { typeof(props.stockData) === 'undefined' ? '' : (props.stockData.length > 0 ?  props.compName + ' - '+ props.tickers + ' ($' + endingStockPrice + ')' : '')}</Header>
             </Grid.Column>
             <Grid.Column color='black'>
                 <Header as='h2' textAlign='right' color={(props.percentChange > 0) ? 'green' : 'red'}>{((props.percentChange==0) ? '' : (props.percentChange > 0) ? '+' + String(props.percentChange) + '%': String(props.percentChange)+'%')}
                 <Label>{String(parseInt(splicedStartDateConst[1]))+"/"+String(parseInt(splicedStartDateConst[2]))+"/"+splicedStartDateConst[0].slice(2)
-                +" - "+String(props.endDateForPercentChange.getMonth())+"/"+String(props.endDateForPercentChange.getDay())+"/"+props.endDateForPercentChange.getFullYear().toString().substr(-2)}</Label>
+                +" - "+String(endDateVar.getMonth())+"/"+String(endDateVar.getDay())+"/"+endDateVar.getFullYear().toString().substr(-2)}</Label>
                 </Header>
                 
             </Grid.Column>

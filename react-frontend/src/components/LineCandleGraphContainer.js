@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import { addPercentChange, addSplicedStartDate } from '../redux'
+import { addPercentChange, addSplicedStartDate, addStockPriceForPercentChange, addEndDateForPercentChange } from '../redux'
 import {Header, Grid} from 'semantic-ui-react'
 import { createLoadingSpinnerChart } from './charts/loadingSpinner.js'
 import '../App.css'
@@ -257,7 +257,33 @@ function LineCandleGraphContainer (props) {
           .data(data)
           .join("g")
       
-      
+      const invisibleRectForTooltip = svg.append("g")
+          // .attr("stroke", "black")
+          .selectAll("g")
+          .data(data)
+          .join("g")
+          .attr("transform", data => `translate(${x(parseDate(data.date))},0)`);
+  
+      invisibleRectForTooltip.append("rect")
+          .attr('x',0)
+          .attr('y',0)
+          .attr('width', d=>(x.bandwidth()))
+          .attr('height',height - margin.top)
+          .attr("fill", 'green')
+          .style("opacity",'0')
+          .attr('transform',d=>(`translate(${x.bandwidth()},${height - margin.top}) rotate(180)`))
+          .on('mouseover',function(e,d){
+            d3.select(this).style('opacity','0.5')
+            var endingDateSplit = d.date.split('-')
+            console.log(endingDateSplit)
+            var dateFromSplit = new Date(parseInt(endingDateSplit[0]),parseInt(endingDateSplit[1]),parseInt(endingDateSplit[2]))
+            console.log(typeof(dateFromSplit))
+            props.addEndDateForPercentChange(dateFromSplit)
+            props.addStockPriceForPercentChange(d.close)
+          })
+          .on('mouseout',function(e,d){
+            d3.select(this).style('opacity','0')
+          })
       // var mousePerLine = tooltip.selectAll('.mouse-per-line')
       //     .data(data)
       //     .enter()
@@ -801,7 +827,9 @@ const mapDispatchToProps = dispatch => {
     //fetchStockData: (APIstring) => dispatch(fetchStockData(APIstring)),
     //fetchTrendData: (APIstring) => dispatch(fetchTrendData(APIstring)),
     addPercentChange: (percentChange) => dispatch(addPercentChange(percentChange)),
-    addSplicedStartDate: (startingDate) => dispatch(addSplicedStartDate(startingDate))
+    addSplicedStartDate: (startingDate) => dispatch(addSplicedStartDate(startingDate)),
+    addStockPriceForPercentChange: (stockPrice) => dispatch(addStockPriceForPercentChange(stockPrice)),
+    addEndDateForPercentChange: (endingDate) => dispatch(addEndDateForPercentChange(endingDate))
   }
 }
 
