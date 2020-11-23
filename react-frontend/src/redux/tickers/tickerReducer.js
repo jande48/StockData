@@ -1,4 +1,6 @@
-import { ADD_TICKER, FETCH_COMP_INFO_REQUEST, FETCH_COMP_INFO_SUCCESS, FETCH_COMP_INFO_FAILURE, COMPANY_NAME, ADD_PERCENT_CHANGE  } from './tickerTypes'
+import { ADD_TICKER, FETCH_COMP_INFO_REQUEST, FETCH_COMP_INFO_SUCCESS,
+   FETCH_COMP_INFO_FAILURE, COMPANY_NAME, ADD_PERCENT_CHANGE, STOCK_PRICE_FOR_PERCENT_CHANGE,
+   END_DATE_FOR_PERCENT_CHANGE, SPLICED_START_DATE  } from './tickerTypes'
 
 const initialState = {
   tickers: 'AAPL',
@@ -8,6 +10,9 @@ const initialState = {
   query: '',
   name: 'Apple, Inc',
   percentChange: 0,
+  stockPriceForPercentChange: 0,
+  endDateForPercentChange: (new Date()),
+  splicedStartDate: (new Date()),
 }
 
 const tickerReducer = (state = initialState, action) => {
@@ -48,6 +53,20 @@ const tickerReducer = (state = initialState, action) => {
         ...state,
         percentChange: action.payload
       }
+    case STOCK_PRICE_FOR_PERCENT_CHANGE:
+      return {
+        ...state,
+        stockPriceForPercentChange: action.payload
+      }
+    case END_DATE_FOR_PERCENT_CHANGE: return {
+        ...state,
+        endDateForPercentChange: action.payload
+      }
+    case SPLICED_START_DATE: return {
+        ...state,
+        splicedStartDate: action.payload
+      }
+
     default: return state
   }
 }

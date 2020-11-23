@@ -24,6 +24,11 @@ body {
   /* stroke: #e0e1e2; */
 }
 
+.g_main {
+  cursor:pointer;
+  pointer-events: all;
+}
+
 .App {
   text-align: center;
 }

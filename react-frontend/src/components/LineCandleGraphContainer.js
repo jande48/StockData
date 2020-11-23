@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import { addPercentChange } from '../redux'
+import { addPercentChange, addSplicedStartDate } from '../redux'
 import {Header, Grid} from 'semantic-ui-react'
 import { createLoadingSpinnerChart } from './charts/loadingSpinner.js'
 import '../App.css'
@@ -47,7 +47,7 @@ function LineCandleGraphContainer (props) {
 		return convertedDate
 	  }
   
-  props.addPercentChange(calcPercentChange())
+  //props.addPercentChange(calcPercentChange())
 
   
 
@@ -68,11 +68,11 @@ function LineCandleGraphContainer (props) {
           var dateOffset = (24*60*60*1000) * 1; 
           startingDate.setTime(startingDate.getTime()-dateOffset)
         }
-        console.log(startingDate.getTime())
+        //console.log(startingDate.getTime())
         for (var i = 0; i < data.length; i++) {
           var dateSplit = data[i]['date'].split("-")
           var indexDate = new Date(parseInt(dateSplit[0]),(parseInt(dateSplit[1])-1),parseInt(dateSplit[2]))
-          console.log(indexDate.getTime())
+
           if (indexDate.getTime() > startingDate.getTime()) {
             startingIndex = i
             break
@@ -83,11 +83,14 @@ function LineCandleGraphContainer (props) {
           // } 
         }
         const exportData = data.slice(startingIndex)
+        if (typeof(exportData) != 'undefined' && exportData.length > 1){
+          props.addSplicedStartDate(exportData[0]['date'])
+        }
         return exportData
       }
 
       const data = sliceDataStartDate(Initialdata)
-      console.log(data)
+      //console.log(data)
       const InitialtrendData = props.trendData
       const trendData = sliceDataStartDate(InitialtrendData)
       const InitialVolatilityData = props.volatilityData
@@ -246,17 +249,49 @@ function LineCandleGraphContainer (props) {
           .style('fill','#e0e1e2')
           .attr('transform',`translate(10,${height/2}) rotate(-90)`)
           .text("Price ($)")
-          
-      const tooltip = svg.append("text")
+         
+      const tooltip = svg.append("g")
           .attr("class", "axisWhite")
           .attr("id","tooltip")
+          .selectAll("g")
+          .data(data)
+          .join("g")
+      
+      
+      // var mousePerLine = tooltip.selectAll('.mouse-per-line')
+      //     .data(data)
+      //     .enter()
+      //     .append("g")
+      //     .attr("class", "mouse-per-line");
+
+      tooltip.append("text")
           .attr("text-anchor", "middle")
           .attr("font-size",'50px')
           .style('fill','white')
           .attr('x',margin.left+(width/2))
           .attr('y',height)
-          .style("opacity", 1)
-          // .data(data)
+          .style("opacity", '0')
+          .text(function(d) {
+            //console.log(d)
+            //console.log(d.close)
+            return d.close
+          })
+      // const tooltip = svg.append("text")
+      //     .attr("class", "axisWhite")
+      //     .attr("id","tooltip")
+      //     .attr("text-anchor", "middle")
+      //     .attr("font-size",'50px')
+      //     .style('fill','white')
+      //     .attr('x',margin.left+(width/2))
+      //     .attr('y',height)
+      //     .style("opacity", 1)
+      //     .text(function(d) { 
+      //       console.log(d)
+      //       if (typeof(d) != 'undefined' && typeof(d.close) != 'undefined'){
+              
+      //         return d.close;
+      //       }
+      //        })
           // .join("text")
 
           
@@ -285,27 +320,25 @@ function LineCandleGraphContainer (props) {
 
       if (props.displayLine) {
           
-          svg.selectAll("g").selectAll(".candleStick").remove()
-  
+          // svg.selectAll("g").selectAll(".candleStick").remove()
+          // svg.on("mouseover", function() { 
+          //   console.log('mouseover',d3.svg.mouse(this))
+          // }).on("mousemove", function() {
+          //   console.log('mousemove');
+          //   var x = d3.mouse(this)[0];
+          //   hoverLine.attr("x1", x).attr("x2", x).style("opacity", 1);
+          // }).on("mouseout", function() {
+          //   console.log('mouseout');
+          //   hoverLine.style("opacity", 1e-6);
+          // });
           const g = svg.append("g")
               .attr("stroke-linecap", "round")
               .attr("stroke", "#e0e1e2")
               .selectAll("g")
               .data(data)
               .join("g")
+              
               // .on("mouseover", function(e,data){
-              //   // svg.selectAll("#tooltip")
-              //   //   .text(data.close)
-              //   //   .style("opacity", 1)
-      
-              //   // // Get current event info
-              //   // console.log(e);
-              //   // console.log(data)
-                
-              //   // Get x & y co-ordinates
-              //   //console.log(d3.mouse(this));
-              // })
-              // .on("mousemove", function(e,data){
               //   svg.selectAll("#tooltip")
               //     .text(data.close)
               //     .style("opacity", 1)
@@ -314,14 +347,27 @@ function LineCandleGraphContainer (props) {
               //   console.log(e);
               //   console.log(data)
                 
+              //   Get x & y co-ordinates
+              //   console.log(d3.mouse(this));
+              // })
+              // .on("mousemove", function(){
+              //   d3.selectAll("#tooltip")
+              //     .text(data)
+              //     .style("opacity", "1");
+              //   // svg.selectAll("#tooltip")
+              //   //   .text(data)
+              //   //   .style("opacity", 1)
+      
+              //   // Get current event info
+                
               //   // Get x & y co-ordinates
               //   //console.log(d3.mouse(this));
               // })
               // .on("mouseout", function(){
-              //   svg.selectAll("#tooltip")
-              //     .style("opacity", 0)
+              //   d3.selectAll("#tooltip")
+              //     .style("opacity", "0");
               // })
-                // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
+              //.attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
   
           const lineGenerator = line()
               .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
@@ -366,6 +412,20 @@ function LineCandleGraphContainer (props) {
               .attr('fill','none')
               .attr('stroke-width',1)
               .attr('stroke-linecap','round')
+              .on('mousemove',function(e){
+                  //var m = d3.svg.mouse(this);
+                  //console.log(e)
+                  //d3.select('#tooltip').selectAll('text').style('opacity', 1).text(d)
+                  
+                // console.log(d3.select(this).attr('d'))
+                // tooltip.selectAll("text")
+                //   .style("opacity", '0')
+              }
+                  )
+              .on('mouseout',function(){
+                d3.select('#tooltip').selectAll('text').style('opacity', 0)
+              }
+                  )
               // .on("mouseover", function(e,d){
               //   // svg.selectAll("#tooltip")
               //   //   .text(data.close)
@@ -394,7 +454,59 @@ function LineCandleGraphContainer (props) {
               //   svg.selectAll("#tooltip")
               //     .style("opacity", 0)
               // })
+            // var mouseG = svg.append("g")
+            //   .attr("class", "mouse-over-effects");
+        
+            // mouseG.append("path") // this is the black vertical line to follow mouse
+            //   .attr("class", "mouse-line")
+            //   .style("stroke", "white")
+            //   .style("stroke-width", "1px")
+            //   .style("opacity", "0");
 
+            // var mousePerLine = mouseG.selectAll('.mouse-per-line')
+            //   .append("g")
+            //   .attr("class", "mouse-per-line");
+        
+            // mousePerLine.append("circle")
+            //   .attr("r", 7)
+            //   .style("stroke", 'white')
+            //   .style("fill", "none")
+            //   .style("stroke-width", "1px")
+            //   .style("opacity", "0");
+
+            // mousePerLine.append("text")
+            //   .attr("transform", "translate(10,3)");
+
+            // mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
+            //   .attr('width', width) // can't catch mouse events on a g element
+            //   .attr('height', height)
+            //   .attr('fill', 'none')
+            //   .attr('pointer-events', 'all')
+            //   .on('mouseout', function() { // on mouse out hide line, circles and text
+            //     d3.select(".mouse-line")
+            //       .style("opacity", "0");
+            //     d3.selectAll(".mouse-per-line circle")
+            //       .style("opacity", "0");
+            //     d3.selectAll(".mouse-per-line text")
+            //       .style("opacity", "0");
+            //   })
+            //   .on('mouseover', function() { // on mouse in show line, circles and text
+            //     d3.select(".mouse-line")
+            //       .style("opacity", "1");
+            //     d3.selectAll(".mouse-per-line circle")
+            //       .style("opacity", "1");
+            //     d3.selectAll(".mouse-per-line text")
+            //       .style("opacity", "1");
+            //   })
+            //   .on('mousemove', function() { // mouse moving over canvas
+
+            //     d3.select(".mouse-line")
+            //       .style("opacity", "1");
+            //     d3.selectAll(".mouse-per-line circle")
+            //       .style("opacity", "1");
+            //     d3.selectAll(".mouse-per-line text")
+            //       .style("opacity", "1");
+            //       })
 
 
 
@@ -582,18 +694,18 @@ function LineCandleGraphContainer (props) {
       return svg.node();
       }
 
-  function calcPercentChange() {
-      var exportDefault = 0
-      if (typeof(props.stockData) != 'undefined'){
-      if (props.stockData.length > 2) {
-          const percentChange = ((props.stockData[props.stockData.length -1]['close'] - props.stockData[props.stockData.length -2]['close'])/props.stockData[props.stockData.length -1]['close'])*100
-          const percentChangeFormatted = percentChange.toFixed(2)
-          return percentChangeFormatted
+  // function calcPercentChange() {
+  //     var exportDefault = 0
+  //     if (typeof(props.stockData) != 'undefined'){
+  //     if (props.stockData.length > 2) {
+  //         const percentChange = ((props.stockData[props.stockData.length -1]['close'] - props.stockData[props.stockData.length -2]['close'])/props.stockData[props.stockData.length -1]['close'])*100
+  //         const percentChangeFormatted = percentChange.toFixed(2)
+  //         return percentChangeFormatted
 
-      }else{
-          return exportDefault
-      }}
-  }
+  //     }else{
+  //         return exportDefault
+  //     }}
+  // }
 
   
 
@@ -688,7 +800,8 @@ const mapDispatchToProps = dispatch => {
     //requestAPIstockData: (APIstring) => dispatch(requestAPIstockData(APIstring)),
     //fetchStockData: (APIstring) => dispatch(fetchStockData(APIstring)),
     //fetchTrendData: (APIstring) => dispatch(fetchTrendData(APIstring)),
-    addPercentChange: (percentChange) => dispatch(addPercentChange(percentChange))
+    addPercentChange: (percentChange) => dispatch(addPercentChange(percentChange)),
+    addSplicedStartDate: (startingDate) => dispatch(addSplicedStartDate(startingDate))
   }
 }
 

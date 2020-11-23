@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import { connect } from 'react-redux'
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { addEndDate, addStartDate } from '../redux'
+import { addEndDate, addStartDate, addEndDateForPercentChange } from '../redux'
 import { Header, Grid} from "semantic-ui-react"
 import { fetchStockData } from '../redux'
 
@@ -42,6 +42,7 @@ function SelectCustomDatesContainer(props) {
 		if (date !== endDate) {
       setEndDate(date)
       props.addEndDateDispatch(date)
+      props.addEndDateForPercentChange(date)
 		}
 		// getAndSetStockData(ticker,date,endDate)
 		// getAndSetFinancials(ticker);
@@ -138,6 +139,7 @@ const mapDispatchToProps = dispatch => {
     addStartDateDispatch: startDate => dispatch(addStartDate(startDate)),
     addEndDateDispatch: endDate => dispatch(addEndDate(endDate)),
     fetchStockData: (APIstring) => dispatch(fetchStockData(APIstring)),
+    addEndDateForPercentChange: endDate => dispatch(addEndDateForPercentChange(endDate))
   }
 }
 

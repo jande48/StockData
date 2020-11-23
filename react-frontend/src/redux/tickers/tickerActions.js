@@ -1,5 +1,6 @@
   
-import { ADD_TICKER, FETCH_COMP_INFO_REQUEST, FETCH_COMP_INFO_SUCCESS, FETCH_COMP_INFO_FAILURE, COMPANY_NAME, ADD_PERCENT_CHANGE } from './tickerTypes'
+import { ADD_TICKER, FETCH_COMP_INFO_REQUEST, FETCH_COMP_INFO_SUCCESS, FETCH_COMP_INFO_FAILURE, COMPANY_NAME, 
+  ADD_PERCENT_CHANGE, STOCK_PRICE_FOR_PERCENT_CHANGE,END_DATE_FOR_PERCENT_CHANGE, SPLICED_START_DATE } from './tickerTypes'
 import axios from 'axios'
 import _ from 'lodash'
 
@@ -14,6 +15,24 @@ export const addPercentChange = (percentChange = 0) => {
   return {
     type: ADD_PERCENT_CHANGE,
     payload: percentChange
+  }
+}
+export const addStockPriceForPercentChange = (stockPrice = 0) => {
+  return {
+    type: STOCK_PRICE_FOR_PERCENT_CHANGE,
+    payload: stockPrice
+  }
+}
+export const addEndDateForPercentChange = (endDate) => {
+  return {
+    type: END_DATE_FOR_PERCENT_CHANGE,
+    payload: endDate
+  }
+}
+export const addSplicedStartDate = (startDate) => {
+  return {
+    type: SPLICED_START_DATE,
+    payload: startDate
   }
 }
 

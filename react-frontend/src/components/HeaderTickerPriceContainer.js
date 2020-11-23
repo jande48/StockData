@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { addPercentChange } from '../redux'
-import {Header, Grid} from 'semantic-ui-react'
+import { addPercentChange, addStockPriceForPercentChange } from '../redux'
+import {Header, Grid, Label} from 'semantic-ui-react'
 import '../App.css'
 
 
@@ -25,7 +25,13 @@ function HeaderTickerPriceContainer (props) {
       var exportDefault = 0
       if (typeof(props.stockData) != 'undefined'){
       if (props.stockData.length > 2) {
-          const percentChange = ((props.stockData[props.stockData.length -1]['close'] - props.stockData[props.stockData.length -2]['close'])/props.stockData[props.stockData.length -1]['close'])*100
+          var endingStockPrice = props.stockPriceForPercentChange 
+          if (endingStockPrice == 0) {
+            endingStockPrice = props.stockData[props.stockData.length -1]['close']
+          }
+          console.log(props.stockData[props.stockData.length -1]['close'])
+          console.log(props.stockData[0]['open'])
+          const percentChange = ((props.stockData[props.stockData.length -1]['close'] - props.stockData[0]['open'])/props.stockData[0]['open'])*100
           const percentChangeFormatted = percentChange.toFixed(2)
           return percentChangeFormatted
 
@@ -33,7 +39,10 @@ function HeaderTickerPriceContainer (props) {
           return exportDefault
       }}
   }
-
+  var splicedStartDateConst = "2020-11-01"
+  if (typeof(props.splicedStartDate) != 'undefined' &&  props.splicedStartDate.length > 1){
+    splicedStartDateConst = props.splicedStartDate.split('-')
+  }
   
 
 
@@ -48,6 +57,7 @@ function HeaderTickerPriceContainer (props) {
             <Grid.Column color='black'>
                 <Header as='h2' textAlign='right' color={(props.percentChange > 0) ? 'green' : 'red'}>{((props.percentChange==0) ? '' : (props.percentChange > 0) ? '+' + String(props.percentChange) + '%': String(props.percentChange)+'%')}
                 </Header>
+                
             </Grid.Column>
           </Grid.Row>
       </Grid>
@@ -65,7 +75,10 @@ function HeaderTickerPriceContainer (props) {
             </Grid.Column>
             <Grid.Column color='black'>
                 <Header as='h2' textAlign='right' color={(props.percentChange > 0) ? 'green' : 'red'}>{((props.percentChange==0) ? '' : (props.percentChange > 0) ? '+' + String(props.percentChange) + '%': String(props.percentChange)+'%')}
+                <Label>{String(parseInt(splicedStartDateConst[1]))+"/"+String(parseInt(splicedStartDateConst[2]))+"/"+splicedStartDateConst[0].slice(2)
+                +" - "+String(props.endDateForPercentChange.getMonth())+"/"+String(props.endDateForPercentChange.getDay())+"/"+props.endDateForPercentChange.getFullYear().toString().substr(-2)}</Label>
                 </Header>
+                
             </Grid.Column>
           </Grid.Row>
           </Grid>
@@ -88,13 +101,16 @@ const mapStateToProps = state => {
     trendData: state.trendFromRootReducer.trendData,
     compName: state.tickersFromRootReducer.name,
     percentChange: state.tickersFromRootReducer.percentChange,
-    
+    stockPriceForPercentChange: state.tickersFromRootReducer.stockPriceForPercentChange,
+    endDateForPercentChange: state.tickersFromRootReducer.endDateForPercentChange,
+    splicedStartDate: state.tickersFromRootReducer.splicedStartDate,
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    addPercentChange: (percentChange) => dispatch(addPercentChange(percentChange))
+    addPercentChange: (percentChange) => dispatch(addPercentChange(percentChange)),
+    //addStockPriceForPercentChange: (stockPrice) => dispatch(addStockPriceForPercentChange(stockPrice))
   }
 }
 

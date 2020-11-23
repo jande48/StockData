@@ -52,11 +52,11 @@ function VolumeGraphContainer (props) {
         var dateOffset = (24*60*60*1000) * 1; 
         startingDate.setTime(startingDate.getTime()-dateOffset)
       }
-      console.log(startingDate.getTime())
+
       for (var i = 0; i < data.length; i++) {
         var dateSplit = data[i]['date'].split("-")
         var indexDate = new Date(parseInt(dateSplit[0]),(parseInt(dateSplit[1])-1),parseInt(dateSplit[2]))
-        console.log(indexDate.getTime())
+
         if (indexDate.getTime() > startingDate.getTime()) {
           startingIndex = i
           break

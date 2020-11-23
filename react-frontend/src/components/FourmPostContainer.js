@@ -32,9 +32,7 @@ function LineCandleGraphContainer (props) {
 
   return  
     <div>
-        <React.Fragment>
-            <svg ref={stockChartNode}></svg>
-        </React.Fragment>
+
     </div>
   )
 }
