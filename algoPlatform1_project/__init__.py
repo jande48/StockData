@@ -5,11 +5,12 @@ from flask_login import LoginManager
 from flask_mail import Mail
 import os
 from algoPlatform1_project.config import Config
+from boto.s3.connection import S3Connection
 
 application = app = Flask(__name__)
 
 #app.config['SECRET_KEY'] = os.environ.get('AlgoPlatformSecretKey')
-
+app.config['SECRET_KEY'] =  S3Connection(os.environ['SECRET_KEY'])
 ENV = 'prod'
 
 if ENV == 'dev':
@@ -28,8 +29,11 @@ login_manager.login_message_category = 'info'
 app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_HOST_USER')
-app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_HOST_PASSWORD_2')
+#app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_HOST_USER')
+app.config['MAIL_USERNAME'] =  S3Connection(os.environ['MAIL_USERNAME'])
+#app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_HOST_PASSWORD_2')
+app.config['MAIL_PASSWORD'] =  S3Connection(os.environ['MAIL_PASSWORD'])
+
 mail = Mail(app)
 
 
