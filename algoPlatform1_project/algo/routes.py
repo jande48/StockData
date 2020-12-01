@@ -17,9 +17,7 @@ from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError
 
 IEX_secret_api_key = os.environ.get('IEX_CLOUD_SECRET_API_KEY')
-#IEX_secret_api_key = os.environ.get('IEX_CLOUD_SANDBOX_SECREY_API_KEY')
 IEX_api_key =  os.environ.get('IEX_CLOUD_API_KEY') 
-#IEX_api_key =  os.environ.get('IEX_CLOUD_SANDBOX_API_KEY') 
 Stock_Ticker_Lookup_key = os.environ.get('StockTickerCompanyNameAPIkey')
 
 from flask import Blueprint
