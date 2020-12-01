@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import { addPercentChange, addSplicedStartDate, addStockPriceForPercentChange, addEndDateForPercentChange } from '../redux'
+import { addPercentChange, addSplicedStartDate, addStockPriceForPercentChange, addEndDateForPercentChange, addSplicedIndexStockData } from '../redux'
 import {Header, Grid} from 'semantic-ui-react'
 import { createLoadingSpinnerChart } from './charts/loadingSpinner.js'
 import '../App.css'
@@ -85,6 +85,7 @@ function LineCandleGraphContainer (props) {
         const exportData = data.slice(startingIndex)
         if (typeof(exportData) != 'undefined' && exportData.length > 1){
           props.addSplicedStartDate(exportData[0]['date'])
+          props.addSplicedIndexStockData(startingIndex)
         }
         return exportData
       }
@@ -829,7 +830,8 @@ const mapDispatchToProps = dispatch => {
     addPercentChange: (percentChange) => dispatch(addPercentChange(percentChange)),
     addSplicedStartDate: (startingDate) => dispatch(addSplicedStartDate(startingDate)),
     addStockPriceForPercentChange: (stockPrice) => dispatch(addStockPriceForPercentChange(stockPrice)),
-    addEndDateForPercentChange: (endingDate) => dispatch(addEndDateForPercentChange(endingDate))
+    addEndDateForPercentChange: (endingDate) => dispatch(addEndDateForPercentChange(endingDate)),
+    addSplicedIndexStockData: (index) => dispatch(addSplicedIndexStockData(index))
   }
 }
 

@@ -22,7 +22,7 @@ function EarningContainer (props) {
     const earningsChartNode = useRef(null);
 
     useEffect(() => {
-
+       
         props.fetchEarningsData(String(props.tickers))
 
         }, [props.tickers])

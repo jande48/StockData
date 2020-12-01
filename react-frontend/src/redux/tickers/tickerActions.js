@@ -1,6 +1,7 @@
   
 import { ADD_TICKER, FETCH_COMP_INFO_REQUEST, FETCH_COMP_INFO_SUCCESS, FETCH_COMP_INFO_FAILURE, COMPANY_NAME, 
-  ADD_PERCENT_CHANGE, STOCK_PRICE_FOR_PERCENT_CHANGE,END_DATE_FOR_PERCENT_CHANGE, SPLICED_START_DATE } from './tickerTypes'
+  ADD_PERCENT_CHANGE, STOCK_PRICE_FOR_PERCENT_CHANGE,END_DATE_FOR_PERCENT_CHANGE, SPLICED_START_DATE,
+  SPLICED_INDEX_STOCK_DATA } from './tickerTypes'
 import axios from 'axios'
 import _ from 'lodash'
 
@@ -35,14 +36,18 @@ export const addSplicedStartDate = (startDate) => {
     payload: startDate
   }
 }
-
 export const addCompanyName = (name = 'Apple, Inc') => {
   return {
     type: COMPANY_NAME,
     payload: name
   }
 }
-
+export const addSplicedIndexStockData = (index = 0) => {
+  return {
+    type: SPLICED_INDEX_STOCK_DATA,
+    payload: index
+  }
+}
 export function fetchCompanyNameFromTicker(APIstring) {
   return function (dispatch) {
     axios({

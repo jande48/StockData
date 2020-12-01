@@ -46,11 +46,7 @@ function SelectDatesFromMenuContainer(props) {
       setStartDate(currentDate);
       props.addStartDateDispatch(currentDate)
       props.addEndDateDispatch(endDate)
-      //props.addStartDateDispatch(currentDate)
-      //props.addEndDateDispatch(endDate)
-      // getAndSetStockData(ticker,currentDate,endDate) 
-      // getAndSetFinancials(ticker);
-      // getAndSetEarnings(ticker);
+
       }
 
   return (

@@ -3,6 +3,7 @@
     "d3": "^6.2.0",
     "lodash": "^4.17.20",
     "redux-devtools-extension": "^2.13.8",
+    "semantic-ui-react": "^2.0.1",
     "spin.js": "^4.1.0"
   }
 }

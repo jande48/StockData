@@ -28,8 +28,13 @@ function HeaderTickerPriceContainer (props) {
       var exportDefault = 0
       if (typeof(props.stockData) != 'undefined'){
       if (props.stockData.length > 2) {
-          
-          const percentChange = ((props.stockPriceForPercentChange - props.stockData[0]['open'])/props.stockData[0]['open'])*100
+          var startingStockPrice = props.stockPriceForPercentChange
+          console.log(startingStockPrice)
+          if (startingStockPrice === 0) {
+            startingStockPrice = props.stockData[parseInt(props.stockData.length-1)]['close']
+            console.log(startingStockPrice)
+          }
+          const percentChange = ((startingStockPrice - props.stockData[parseInt(props.splicedIndexStockData)]['open'])/props.stockData[parseInt(props.splicedIndexStockData)]['open'])*100
           const percentChangeFormatted = percentChange.toFixed(2)
           return percentChangeFormatted
 
@@ -69,7 +74,7 @@ function HeaderTickerPriceContainer (props) {
           <Grid.Row stretched  color='black'>
             <Grid.Column  color='black'>
             {/* <Image src={(typeof(props.financials)!='undefined') ? (props.financials.length>0 ? props.financials[2]['image'] : '') : ''} size='mini' spaced='right' verticalAlign='top' /> */}
-              <Header as='h2' textAlign='left' inverted color="#e0e1e2"> { typeof(props.stockData) === 'undefined' ? '' : (props.stockData.length > 0 ?  props.compName + ' - '+ props.tickers + ' ($' + endingStockPrice + ')' : '')}</Header>
+              <Header as='h2' textAlign='left' inverted color="#e0e1e2"> { typeof(props.stockData) === 'undefined' ? '' : (props.stockData.length > 0 ?  props.compName + ' - '+ props.tickers + ' ($' + endingStockPrice.toFixed(2) + ')' : '')}</Header>
             </Grid.Column>
             <Grid.Column color='black'>
                 <Header as='h2' textAlign='right' color={(props.percentChange > 0) ? 'green' : 'red'}>{((props.percentChange==0) ? '' : (props.percentChange > 0) ? '+' + String(props.percentChange) + '%': String(props.percentChange)+'%')}
@@ -102,6 +107,7 @@ const mapStateToProps = state => {
     stockPriceForPercentChange: state.tickersFromRootReducer.stockPriceForPercentChange,
     endDateForPercentChange: state.tickersFromRootReducer.endDateForPercentChange,
     splicedStartDate: state.tickersFromRootReducer.splicedStartDate,
+    splicedIndexStockData: state.tickersFromRootReducer.splicedIndexStockData,
   }
 }
 

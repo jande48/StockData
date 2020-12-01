@@ -60,11 +60,7 @@ def get_stock_data(ticker,startDate,endDate):
 
     historicalData = get_historical_data(ticker, start=startDateForAPI.date(), end=endDateForAPI.date(), token=IEX_api_key)
     Historical_Data = flatten_json(historicalData)
-    # text_file = open("AAPLdata.txt", "w")
-    # n = text_file.write(str(Historical_Data))
-    # text_file.close()
-    # with open('AAPLdata.txt', 'w') as outfile:
-    #     json.dump(Historical_Data, outfile)
+
     df = pd.DataFrame(Historical_Data)
     df = ta.utils.dropna(df)
 
@@ -329,7 +325,6 @@ def get_fianancial_data(ticker):
 def get_earnings_data(ticker):
     stock = Stock(ticker, token=IEX_api_key)
     earnings = stock.get_earnings(last=4)
-    #company = stock.get_company()
     return(json.dumps(earnings))
 
 @algo.route("/calculate_Volatility_Indicators/", methods=['GET','POST'])
