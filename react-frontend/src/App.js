@@ -17,6 +17,7 @@ import PopularMenuContainer from './components/PopularMenuContainer'
 import EarningContainer from './components/EarningContainer'
 import VolatilityMenuContainer from './components/VolatilityMenuContainer'
 import HeaderTickerPriceContainer from './components/HeaderTickerPriceContainer'
+import PostFormContainer from './components/PostFormContainer'
 import momentumReducer from './redux/momentum/momentumReducer'
 
 
@@ -90,7 +91,8 @@ function App () {
             <VolumeGraphContainer/><br/>
             <MomentumGraphContainer/><br />
             <CompanyFinancialsContainer/><br />
-            <EarningContainer/>
+            <EarningContainer/><br />
+            <PostFormContainer/>
           </Grid.Column>
         </Grid>
         

@@ -1,7 +1,7 @@
   
 import { ADD_TICKER, FETCH_COMP_INFO_REQUEST, FETCH_COMP_INFO_SUCCESS, FETCH_COMP_INFO_FAILURE, COMPANY_NAME, 
   ADD_PERCENT_CHANGE, STOCK_PRICE_FOR_PERCENT_CHANGE,END_DATE_FOR_PERCENT_CHANGE, SPLICED_START_DATE,
-  SPLICED_INDEX_STOCK_DATA } from './tickerTypes'
+  SPLICED_INDEX_STOCK_DATA, USER_AUTHENTICATED} from './tickerTypes'
 import axios from 'axios'
 import _ from 'lodash'
 
@@ -24,6 +24,7 @@ export const addStockPriceForPercentChange = (stockPrice = 0) => {
     payload: stockPrice
   }
 }
+
 export const addEndDateForPercentChange = (endDate) => {
   return {
     type: END_DATE_FOR_PERCENT_CHANGE,
@@ -45,6 +46,12 @@ export const addCompanyName = (name = 'Apple, Inc') => {
 export const addSplicedIndexStockData = (index = 0) => {
   return {
     type: SPLICED_INDEX_STOCK_DATA,
+    payload: index
+  }
+}
+export const addUserAuthenticated = (index = false) => {
+  return {
+    type: USER_AUTHENTICATED,
     payload: index
   }
 }

@@ -10,7 +10,10 @@ function HeaderTickerPriceContainer (props) {
 
 
     useEffect(() => {
-    
+    var endingStockPrice = props.stockPriceForPercentChange 
+    if (endingStockPrice == 0 && typeof(props.stockData) != 'undefined' && props.stockData.length > 1) {
+      endingStockPrice = props.stockData[props.stockData.length -1]['close']
+    }
     if (typeof(props.stockData) != 'undefined') {
       if (props.stockData.length > 1 && !props.momentumLoading && !props.loading && !props.trendLoading) {
         props.addPercentChange(calcPercentChange())
@@ -29,10 +32,8 @@ function HeaderTickerPriceContainer (props) {
       if (typeof(props.stockData) != 'undefined'){
       if (props.stockData.length > 2) {
           var startingStockPrice = props.stockPriceForPercentChange
-          console.log(startingStockPrice)
           if (startingStockPrice === 0) {
             startingStockPrice = props.stockData[parseInt(props.stockData.length-1)]['close']
-            console.log(startingStockPrice)
           }
           const percentChange = ((startingStockPrice - props.stockData[parseInt(props.splicedIndexStockData)]['open'])/props.stockData[parseInt(props.splicedIndexStockData)]['open'])*100
           const percentChangeFormatted = percentChange.toFixed(2)

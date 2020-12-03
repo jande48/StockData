@@ -15,15 +15,12 @@ from algoPlatform1_project.models import User, Post, Watchlist, sp_OHLC_data, sp
 from flask_login import login_user, current_user, logout_user, login_required
 from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError
-#from boto.s3.connection import S3Connection
+
 
 
 IEX_secret_api_key = os.environ.get('IEX_CLOUD_SECRET_API_KEY')
-#IEX_secret_api_key =  S3Connection(os.environ['IEX_secret_api_key'])
 IEX_api_key =  os.environ.get('IEX_CLOUD_API_KEY') 
-#IEX_api_key =  S3Connection(os.environ['IEX_api_key'])
 Stock_Ticker_Lookup_key = os.environ.get('StockTickerCompanyNameAPIkey')
-#Stock_Ticker_Lookup_key =  S3Connection(os.environ['Stock_Ticker_Lookup_key'])
 
 from flask import Blueprint
 algo = Blueprint('algo',__name__)

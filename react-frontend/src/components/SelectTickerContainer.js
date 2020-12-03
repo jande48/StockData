@@ -8,11 +8,11 @@ import './css/selectTickerCSS.css'
 
 function SelectTickerContainer(props) {
   const [newTicker, setNewTicker] = useState('')
-  const timeoutRef = useRef()
+  //const timeoutRef = useRef()
 
   const handleSearchChange = useCallback((e, data) => {
     
-    clearTimeout(timeoutRef.current)
+    //clearTimeout(timeoutRef.current)
     let re = new RegExp('^[a-z0-9]+$')
     var regex_user_input = data.value.replace(/\W/g, '_').toUpperCase();
     fetchCompInfoDataRequest(regex_user_input)
@@ -51,13 +51,14 @@ function SelectTickerContainer(props) {
               onResultSelect={(e, data) =>{
                 props.addCompanyName(data.result.name)
                 props.addTickerDispatch(data.result.symbol)
+                
                 }
               }
               placeholder='Search company or ticker'
               onSearchChange={handleSearchChange}
               resultRenderer={resultRenderer}
               results={props.compInfo}
-              //value={newTicker}
+              //value={props.tickers}
             inverted/>
           </Grid.Column>
           <Grid.Column width={3}>

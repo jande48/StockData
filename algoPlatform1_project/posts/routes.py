@@ -16,14 +16,14 @@ def fourm():
     posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
     return render_template('fourm.html', posts=posts, active='fourm')
 
-
+@posts.route("/post/checkUser/", methods=['GET','POST'])
 
 @posts.route("/post/new", methods=['GET', 'POST'])
 @login_required
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(title=form.title.data, content=form.content.data, author=current_user)
+        post = Post(title=form.title.data, content=form.content.data, author=current_user, charData=form.chartDataJSON.data)
         db.session.add(post)
         db.session.commit()
         flash('Your post has been created!', 'success')

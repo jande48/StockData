@@ -276,9 +276,7 @@ function LineCandleGraphContainer (props) {
           .on('mouseover',function(e,d){
             d3.select(this).style('opacity','0.5')
             var endingDateSplit = d.date.split('-')
-            console.log(endingDateSplit)
             var dateFromSplit = new Date(parseInt(endingDateSplit[0]),parseInt(endingDateSplit[1]),parseInt(endingDateSplit[2]))
-            console.log(typeof(dateFromSplit))
             props.addEndDateForPercentChange(dateFromSplit)
             props.addStockPriceForPercentChange(d.close)
           })

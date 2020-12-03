@@ -5,13 +5,13 @@ from flask_login import LoginManager
 from flask_mail import Mail
 import os
 from algoPlatform1_project.config import Config
-#from boto.s3.connection import S3Connection
+
 
 application = app = Flask(__name__)
 
 app.config['SECRET_KEY'] = os.environ.get('AlgoPlatformSecretKey')
-#app.config['SECRET_KEY'] =  S3Connection(os.environ['SECRET_KEY'])
-ENV = 'prod'
+
+ENV = 'dev'
 
 if ENV == 'dev':
     app.debug = True
