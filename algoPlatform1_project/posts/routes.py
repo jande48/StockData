@@ -1,11 +1,12 @@
 from flask import (render_template, url_for, flash,
                    redirect, request, abort, Blueprint)
 from flask_login import current_user, login_required
-from algoPlatform1_project import db
+from algoPlatform1_project import db, app
 from algoPlatform1_project.models import Post
 from algoPlatform1_project.posts.forms import PostForm
+import jwt, os, json
 
-
+app.config['SECRET_KEY'] = os.environ.get('AlgoPlatformSecretKey')
 posts = Blueprint('posts',__name__)
 
 
@@ -16,20 +17,25 @@ def fourm():
     posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
     return render_template('fourm.html', posts=posts, active='fourm')
 
-@posts.route("/post/checkUser/", methods=['GET','POST'])
 
-@posts.route("/post/new", methods=['GET', 'POST'])
+@posts.route("/post/new/", methods=['GET', 'POST'])
 @login_required
 def new_post():
-    form = PostForm()
-    if form.validate_on_submit():
-        post = Post(title=form.title.data, content=form.content.data, author=current_user, charData=form.chartDataJSON.data)
+    if current_user.is_authenticated:
+        req_data = request.get_json()
+        title = req_data['title']
+        content = req_data['content']
+        chartData = req_data['chartData']
+        print(json.loads(chartData))
+        post = Post(title=title,content=content,author=current_user,chartData=json.loads(chartData))
         db.session.add(post)
         db.session.commit()
-        flash('Your post has been created!', 'success')
-        return redirect(url_for('posts.fourm'))
-    return render_template('create_post.html', title='New Post',
-                           form=form, legend='New Post')
+        response = {'type':'success'}
+        return response
+    response = {'type':'failure'}
+    return response
+
+
 
 
 @posts.route("/post/<int:post_id>")
@@ -68,3 +74,18 @@ def delete_post(post_id):
     db.session.commit()
     flash('Your post has been deleted!', 'success')
     return redirect(url_for('posts.fourm'))
+
+
+
+
+
+
+# form = PostForm()
+# if form.validate_on_submit():
+#     post = Post(title=form.title.data, content=form.content.data, author=current_user, charData=form.chartDataJSON.data)
+#     db.session.add(post)
+#     db.session.commit()
+#     flash('Your post has been created!', 'success')
+#     return redirect(url_for('posts.fourm'))
+# return render_template('create_post.html', title='New Post',
+#                        form=form, legend='New Post')

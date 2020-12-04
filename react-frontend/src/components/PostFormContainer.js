@@ -1,80 +1,97 @@
-import React, { useState, Component, useCallback } from 'react'
+import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import { Form, Message } from 'semantic-ui-react'
-
+import { Form, Message, Header } from 'semantic-ui-react'
+import { fetchUserAuth, createNewPost } from '../redux'
 import '../App.css'
+import setAuthorizationToken from '../utils/setAuthorizationToken'
 
 
 function PostFormContainer (props) {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('')
-
+    const [showWarning, setShowWarning] = useState(false)
     const handleTitleChange = (e, data) => setTitle(data.value)
     const handleContentChange = (e, data) => setContent(data.value)
 
+    useEffect(() => {
+      props.fetchUserAuth(2)
+    },[])
 
-    
+    //setAuthorizationToken(localStorage.jwtToken)
 
 
     function handleSubmit() {
+        if (props.userAuth['isAuthenticated']) {
+          var chartData = {'hello': 1}
+          const payload = {
+            'title': title,
+            'content': content,
+            'user_id': props.userAuth['username'],
+            'chartData': JSON.stringify({'charts':props.charts,'dates':props.dates,'momentum':props.momentum,'stockData':props.stockData,'trend':props.trend,'volatility':props.volatility})
+          }
+          props.createNewPost(payload)
+        } else {
+          setShowWarning(true)
+        }
         
-        console.log(title)
-        console.log(content)
     }
 
 return (
 
 <div>
-        <Form inverted onSubmit={handleSubmit}>
+  { showWarning ? 
+  <Message warning>
+      <Message.Header>Please <a style={{color: "green"}} href="/login">login</a> or <a style={{color: "green"}} href="/register">sign up</a> to post content</Message.Header>
+  </Message>
+  : ''}
+  { props.postResponse['type'] == 'success' ? 
+  <Message success>
+      <Message.Header>Your post has been shared! See it on the <a style={{color: "green"}} href="/fourm">Forum</a></Message.Header>
+  </Message>
+  : ''}
+  <Header inverted as='h3'>Share these charts and your insight on the forum: </Header>
+  <Form inverted onSubmit={handleSubmit}>
 
-            <Form.Input
-              placeholder='Title'
-              name='title'
-              value={title}
-              onChange={handleTitleChange}
-            />
-            <Form.TextArea
-              placeholder='Share you insights and Due Diligence with the community'
-              name='content'
-              value={content}
-              onChange={handleContentChange}
-            />
-            <Form.Button content='Submit' />
-            <Message warning>
-                <Message.Header>Please login or sign up to post content</Message.Header>
-            </Message>
-)
-        </Form>
-      </div>
+    <Form.Input
+      placeholder='Title'
+      name='title'
+      value={title}
+      onChange={handleTitleChange}
+    />
+    <Form.TextArea
+      placeholder='Share you insights and get feedback from the community'
+      name='content'
+      value={content}
+      onChange={handleContentChange}
+    />
+    <Form.Button inverted color='green' floated='right' content='Submit' /><br/>
+    
+
+  </Form><br/>
+</div>
 
 )
 }
 
 const mapStateToProps = state => {
     return {
-      tickers: state.tickersFromRootReducer.tickers,
-      startDate: state.datesFromRootReducer.startDate,
-      endDate: state.datesFromRootReducer.endDate,
-      stockData: state.stockDataFromRootReducer.stockData,
-      loading: state.stockDataFromRootReducer.loading,
-      trendLoading: state.trendFromRootReducer.trendLoading,
-      momentumLoading: state.momentumFromRootReducer.momentumLoading,
-      error: state.stockDataFromRootReducer.error,
-      errorMessage: state.stockDataFromRootReducer.errorMessage,
-      trendData: state.trendFromRootReducer.trendData,
-      compName: state.tickersFromRootReducer.name,
-      percentChange: state.tickersFromRootReducer.percentChange,
-      stockPriceForPercentChange: state.tickersFromRootReducer.stockPriceForPercentChange,
-      endDateForPercentChange: state.tickersFromRootReducer.endDateForPercentChange,
-      splicedStartDate: state.tickersFromRootReducer.splicedStartDate,
-      splicedIndexStockData: state.tickersFromRootReducer.splicedIndexStockData,
+      userAuth: state.usersFromRootReducer.userAuth,
+      postResponse: state.usersFromRootReducer.postResponse,
+      charts: state.chartsFromRootReducer,
+      dates: state.datesFromRootReducer,
+      momentum: state.momentumFromRootReducer,
+      stockData: state.stockDataFromRootReducer,
+      trend: state.trendFromRootReducer,
+      volatility: state.volatilityFromRootReducer,
+
     }
   }
   
   const mapDispatchToProps = dispatch => {
     return {
-      //addPercentChange: (percentChange) => dispatch(addPercentChange(percentChange)),
-      //addStockPriceForPercentChange: (stockPrice) => dispatch(addStockPriceForPercentChange(stockPrice))
+      fetchUserAuth: (x) => dispatch(fetchUserAuth(x)),
+      createNewPost: (data) => dispatch(createNewPost(data)),
+
     }
   }
   

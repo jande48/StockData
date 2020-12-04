@@ -14,23 +14,7 @@
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>Stock Data</title>
     <script>window.token="{{token}}"</script>
-    <script type="module" src="../../react-frontend/src/redux/store.js"></script>
-    <script type="module" src="../../react-frontend/src/redux/index.js"></script>
     
-    {% if current_user.is_authenticated %}
-    <script>
-      // import { store } from './src/redux/store.js';
-      // const addUserAuthenticated = (index = false) => {
-      //   return {
-      //     type: USER_AUTHENTICATED,
-      //     payload: index
-      //   }
-      // }
-      store.dispatch(addUserAuthenticated(true))
-      console.log('hello world')
-    </script>
-      
-    {% endif %}
     
     <!-- <link async rel="stylesheet" href="//cdn.jsdelivr.net/npm/semantic-ui@${props.versions.sui}/dist/semantic.min.css"/> -->
   </head>
@@ -48,7 +32,7 @@
       {% endif %}
       {% if active == 'fourm' %}
       <a class="item active" href="{{url_for('posts.fourm')}}" id="fourm">
-        Fourm
+        Forum
       </a>
       {% else %}
       <a class="item" href="{{url_for('posts.fourm')}}" id="fourm">
@@ -95,9 +79,7 @@
     <script>
       // Add active class to the current button (highlight it)
       var header = document.getElementById("navMenu");
-      console.log(header)
       var btns = header.getElementsByClassName("item");
-      console.log(btns)
       for (var i = 0; i < btns.length; i++) {
       btns[i].addEventListener("click", function() {
       var current = document.getElementsByClassName("item active");

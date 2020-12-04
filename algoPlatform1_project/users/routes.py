@@ -8,7 +8,9 @@ from algoPlatform1_project.users.forms import (RegistrationForm, LoginForm, Upda
                                    RequestResetForm, ResetPasswordForm)
 from algoPlatform1_project.users.utils import save_picture, send_reset_email
 from flask import Blueprint
+import jwt, os
 
+app.config['SECRET_KEY'] = os.environ.get('AlgoPlatformSecretKey')
 users = Blueprint('users',__name__)
 
 
@@ -41,6 +43,25 @@ def login():
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form, active="login")
+
+
+@users.route("/users/auth/", methods=['GET','POST'])
+def user_auth():
+    if current_user.is_authenticated:
+        payload = {'isAuthenticated': True,
+                   'username': current_user.username,
+                   'email': current_user.email}
+        return jwt.encode(
+            payload,
+            app.config['SECRET_KEY']
+        )
+    else:
+        payload = {'isAuthenticated': False}
+        return jwt.encode(
+            payload,
+            app.config['SECRET_KEY']
+        )
+
 
 @users.route("/logout")
 def logout():

@@ -19,13 +19,16 @@ import VolatilityMenuContainer from './components/VolatilityMenuContainer'
 import HeaderTickerPriceContainer from './components/HeaderTickerPriceContainer'
 import PostFormContainer from './components/PostFormContainer'
 import momentumReducer from './redux/momentum/momentumReducer'
-
+import setAuthorizationToken from './utils/setAuthorizationToken'
 
 function App () {
   const [activePopularAccodian, setPopularAccordion] = useState(0)
   const [activeMomentumAccodian, setMomentumAccordion] = useState(-1)
   const [activeTrendAccodian, setTrendAccordion] = useState(-1)
   const [activeVolatilityAccodian, setVolatilityAccordion] = useState(-1)
+
+  setAuthorizationToken(localStorage.jwtToken)
+
   return (
     <Provider store={store}>
         <Grid celled inverted>
@@ -90,9 +93,10 @@ function App () {
             <LineCandleGraphContainer /><br/>
             <VolumeGraphContainer/><br/>
             <MomentumGraphContainer/><br />
+            <PostFormContainer/><br />
             <CompanyFinancialsContainer/><br />
             <EarningContainer/><br />
-            <PostFormContainer/>
+            
           </Grid.Column>
         </Grid>
         
