@@ -9,6 +9,14 @@ body {
   background-color: #1b1c1d;
 }
 
+.lightGrayBackground {
+  background-color: #3d3e3f;
+  border-radius: 10px;
+}
+
+.lightGrayBackground text {
+  fill: #feffff;
+}
 .axisWhite text{
   fill: 	#636669;
   /* fill: #e0e1e2; */

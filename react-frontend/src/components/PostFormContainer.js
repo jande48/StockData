@@ -22,6 +22,7 @@ function PostFormContainer (props) {
 
     function handleSubmit() {
         if (props.userAuth['isAuthenticated']) {
+          
           var chartData = {'hello': 1}
           const payload = {
             'title': title,
@@ -30,6 +31,7 @@ function PostFormContainer (props) {
             'chartData': JSON.stringify({'charts':props.charts,'dates':props.dates,'momentum':props.momentum,'stockData':props.stockData,'trend':props.trend,'volatility':props.volatility})
           }
           props.createNewPost(payload)
+
         } else {
           setShowWarning(true)
         }
@@ -49,7 +51,7 @@ return (
       <Message.Header>Your post has been shared! See it on the <a style={{color: "green"}} href="/fourm">Forum</a></Message.Header>
   </Message>
   : ''}
-  <Header inverted as='h3'>Share these charts and your insight on the forum: </Header>
+  <Header inverted as='h3'>Share your insight on the forum: </Header>
   <Form inverted onSubmit={handleSubmit}>
 
     <Form.Input

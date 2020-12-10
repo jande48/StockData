@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import { addPercentChange, addSplicedStartDate, addStockPriceForPercentChange, addEndDateForPercentChange, addSplicedIndexStockData } from '../redux'
+import { addPercentChange, addSplicedStartDate, addStockPriceForPercentChange, addEndDateForPercentChange, addSplicedIndexStockData, addActiveNav } from '../redux'
 import {Header, Grid} from 'semantic-ui-react'
 import { createLoadingSpinnerChart } from './charts/loadingSpinner.js'
 import '../App.css'
@@ -31,6 +31,7 @@ function LineCandleGraphContainer (props) {
         const margin = ({top: 15, right: 20, bottom: 20, left: 50})
 
     useEffect(() => {
+    props.addActiveNav('home')
     createLoadingSpinnerChart(loadingSpinnerNode,width,height,margin)
     if (typeof(props.stockData) != 'undefined') {
       if (props.stockData.length > 1 && !props.momentumLoading && !props.loading && !props.trendLoading) {
@@ -744,7 +745,7 @@ function LineCandleGraphContainer (props) {
   ) : (
     <div>
         <React.Fragment>
-            <svg ref={stockChartNode}></svg>
+            <svg id="lineCandlestickSVG" ref={stockChartNode}></svg>
         </React.Fragment>
     </div>
   )
@@ -829,7 +830,8 @@ const mapDispatchToProps = dispatch => {
     addSplicedStartDate: (startingDate) => dispatch(addSplicedStartDate(startingDate)),
     addStockPriceForPercentChange: (stockPrice) => dispatch(addStockPriceForPercentChange(stockPrice)),
     addEndDateForPercentChange: (endingDate) => dispatch(addEndDateForPercentChange(endingDate)),
-    addSplicedIndexStockData: (index) => dispatch(addSplicedIndexStockData(index))
+    addSplicedIndexStockData: (index) => dispatch(addSplicedIndexStockData(index)),
+    addActiveNav: (x) => dispatch(addActiveNav(x)),
   }
 }
 

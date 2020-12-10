@@ -26,7 +26,7 @@ def new_post():
         title = req_data['title']
         content = req_data['content']
         chartData = req_data['chartData']
-        print(json.loads(chartData))
+        print(chartData)
         post = Post(title=title,content=content,author=current_user,chartData=json.loads(chartData))
         db.session.add(post)
         db.session.commit()
