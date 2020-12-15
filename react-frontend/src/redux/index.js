@@ -9,4 +9,4 @@ export { fetchTrendData,  displaySMA, nForSMA, displayEMA, nForEMA, displayMACD,
     displayTRIX, nForTRIX, displayMI, nForMI, n2ForMI, displayDPO, nForDPO, } from './trend/trendActions'
 export {fetchStockData, fetchFinancialsData, fetchEarningsData} from './stockDataRequest/stockDataActions'
 export {displayATR,nForATR,displayBBSMA,nForBBSMA,displayBBUpper,nForBBUpper,ndevBBUpper,displayBBLower,nForBBLower,ndevBBLower,displayKeltnerC,nForKeltnerC, fetchVolatilityData} from './volatility/volatilityActions'
-export {fetchUserAuth, createNewPost, fetchLogin, fetchLogout, addActiveNav, fetchRegister, addEmailInUse, fetchUpdateAccount} from './users/usersActions'
+export {fetchUserAuth, createNewPost, fetchLogin, fetchLogout, addActiveNav, fetchRegister, addEmailInUse, fetchUpdateAccount, fetchUpdatePhoto, addPhotoUpdated, addEmailUpdated, addPasswordUpdated, addLoginFailed, fetchPasswordReset} from './users/usersActions'

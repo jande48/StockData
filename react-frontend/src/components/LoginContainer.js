@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { Form, Message, Header, Input, Grid, Checkbox, Icon } from 'semantic-ui-react'
 import { fetchLogin } from '../redux'
-import { Redirect } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 import '../App.css'
 import setAuthorizationToken from '../utils/setAuthorizationToken'
 
@@ -76,10 +76,14 @@ return (
       <Checkbox label='Remember me' onChange={handleRememberMeChange}/>
       </Form.Field>
       <Form.Button inverted color='green' floated='right' content='Login' />
-      <Message attached='bottom' warning>
+      { props.loginFailed ? 
+      <Message negative>
+        <Message.Header>Incorrect email or password. Would you like to <Link to="/resetPassword"><a href="#">Reset Password?</a></Link></Message.Header>
+      </Message> : ''}
+      {/* <Message attached='bottom' warning>
       <Icon name='help' />
       Already signed up?<a href='#'>Login here</a>instead.
-      </Message>
+      </Message> */}
       <br/>
       
 
@@ -96,6 +100,7 @@ return (
 const mapStateToProps = state => {
     return {
       isAuthenticated: state.usersFromRootReducer.isAuthenticated,
+      loginFailed: state.usersFromRootReducer.loginFailed,
       
 
     }

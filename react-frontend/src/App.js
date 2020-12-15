@@ -10,6 +10,7 @@ import LoginContainer from './components/LoginContainer'
 import LogoutContainer from './components/LogoutContainer'
 import RegisterContainer from './components/RegisterContainer'
 import AccountContainer from './components/AccountContainer'
+import ResetPasswordContainer from './components/ResetPasswordContainer'
 
 function App () {
 
@@ -23,6 +24,7 @@ function App () {
           <Route path="/logout" component={LogoutContainer} /> 
           <Route path="/register" component={RegisterContainer} /> 
           <Route path="/account" component={AccountContainer} /> 
+          <Route path="/resetPassword" component={ResetPasswordContainer} /> 
           <Route path="/" component={AppComponent} />
         </Switch>
         

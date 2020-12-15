@@ -1,4 +1,5 @@
-import { USER_AUTHENTICATED, POST_RESPONSE, IS_AUTHENTICATED, ACTIVE_NAV, EMAIL_IN_USE} from './usersTypes'
+import { USER_AUTHENTICATED, POST_RESPONSE, IS_AUTHENTICATED, ACTIVE_NAV, EMAIL_IN_USE, PHOTO_UPDATED, EMAIL_UPDATED, PASSWORD_UPDATED,
+  LOGIN_FAILED, PASSWORD_RESET} from './usersTypes'
 
 const initialState = {
     isAuthenticated: false,
@@ -6,6 +7,11 @@ const initialState = {
     postResponse: {},
     activeNav: 'home',
     emailAlreadyUsed: false,
+    photoUpdated: false,
+    emailUpdated: false,
+    passwordUpdated: false,
+    loginFailed: false,
+    passwordReset: false,
   }
 
 
@@ -31,6 +37,26 @@ switch (action.type) {
     case EMAIL_IN_USE: return {
       ...state,
       emailAlreadyUsed: action.payload
+    }
+    case PHOTO_UPDATED: return {
+      ...state,
+      photoUpdated: action.payload
+    }
+    case EMAIL_UPDATED: return {
+      ...state,
+      emailUpdated: action.payload
+    }
+    case PASSWORD_UPDATED: return {
+      ...state,
+      passwordUpdated: action.payload
+    }
+    case LOGIN_FAILED: return {
+      ...state,
+      loginFailed: action.payload
+    }
+    case PASSWORD_RESET: return {
+      ...state,
+      passwordReset: action.payload
     }
     default: return state
 }

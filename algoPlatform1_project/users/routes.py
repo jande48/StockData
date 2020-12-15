@@ -79,7 +79,11 @@ def user_login():
             payload,
             app.config['SECRET_KEY']
         )
-        
+    payload = {'isAuthenticated': False}
+    return jwt.encode(
+            payload,
+            app.config['SECRET_KEY']
+        )
 @users.route("/users/logout/", methods=['GET','POST'])
 def user_logout():
     logout_user()
@@ -119,29 +123,74 @@ def users_register():
     payload,
     app.config['SECRET_KEY']
     )
-    
-@users.route("/users/updateAccount/", methods=['POST'])
+
+@users.route("/users/updatePhoto/", methods=['POST'])
 @login_required
-def users_update_account():
-    JSON_sent = request.get_json()
-    print(JSON_sent)
-    if 'file' in JSON_sent.keys():
-        print(JSON_sent['file'])
-        picture_file = save_picture(JSON_sent['file'])
+def users_update_photo():
+    file = request.files['file']
+    if file:
+        picture_file = save_picture(file)
         current_user.image_file = picture_file
-    if 'email' in JSON_sent.keys():
-        current_user.email = JSON_sent['email']
-    db.session.commit()
-    payload = {
+        db.session.commit()
+        payload = {
         'isAuthenticated': True,
         'username': current_user.username,
         'email': current_user.email,
         'image_file': current_user.image_file
         }
+        return jwt.encode(
+        payload,
+        app.config['SECRET_KEY']
+        )
+@users.route("/users/updateAccount/", methods=['POST'])
+@login_required
+def users_update_account():
+    JSON_sent = request.get_json()
+    payload = {
+        'isAuthenticated': True,
+        'username': current_user.username,
+        'email': current_user.email,
+        'image_file': current_user.image_file,
+        'updateEmail': False,
+        'updatePassword': False
+        }
+    # if 'file' in JSON_sent.keys():
+    #     print(JSON_sent['file'])
+    #     picture_file = save_picture(JSON_sent['file'])
+    #     current_user.image_file = picture_file
+    if JSON_sent['email'] != '':
+        current_user.email = str(JSON_sent['email'])
+        payload['updateEmail'] = True
+        payload['email'] = str(JSON_sent['email'])
+        db.session.commit()
+    
+    if JSON_sent['password'] != '':
+        hashed_password = bcrypt.generate_password_hash(JSON_sent['password']).decode('utf-8')
+        current_user.password = hashed_password
+        payload['updatePassword'] = True
+        db.session.commit()
+
     return jwt.encode(
     payload,
     app.config['SECRET_KEY']
     )
+
+
+@users.route("/users/reset_password/", methods=['GET', 'POST'])
+def user_reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
+    JSON_sent = request.get_json()
+    print(JSON_sent['email'])
+    user = User.query.filter_by(email=str(JSON_sent['email'])).first()
+    print(user)
+    send_reset_email(user)
+    payload = 'success'
+    return jwt.encode(
+    payload,
+    app.config['SECRET_KEY']
+    )
+
 
 
 # @users.route("users/account", methods=['GET', 'POST'])
@@ -199,7 +248,6 @@ def user_posts(username):
         .order_by(Post.date_posted.desc())\
         .paginate(page=page, per_page=5)
     return render_template('user_posts.html', posts=posts, user=user)
-
 
 
 @users.route("/reset_password", methods=['GET', 'POST'])
