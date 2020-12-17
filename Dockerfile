@@ -4,7 +4,7 @@ RUN apt-get update -y
 
 RUN apt-get install python3-pip -y
 
-RUN apt-get install gunicorn2 -y
+RUN apt-get install gunicorn -y
 
 COPY requirements.txt requirements.txt
 
