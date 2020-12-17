@@ -2,7 +2,7 @@ FROM ubuntu:18.04
 
 RUN apt-get update -y
 
-RUN apt-get install python2-pip -y
+RUN apt-get install python3-pip -y
 
 RUN apt-get install gunicorn2 -y
 
