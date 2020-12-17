@@ -49,26 +49,3 @@ from algoPlatform1_project.errors.handlers import errors
 app.register_blueprint(errors)
 
 
-
-# def create_app(config_class=Config):
-#     app = Flask(__name__)
-#     app.config.from_object(Config)
-
-#     db.init_app(app)
-#     bcrypt.init_app(app)
-#     login_manager.init_app(app)
-#     mail.init_app(app)
-
-#     from algoPlatform1_project.users.routes import users
-#     from algoPlatform1_project.posts.routes import posts
-#     from algoPlatform1_project.main.routes import main
-#     app.register_blueprint(users)
-#     app.register_blueprint(posts)
-#     app.register_blueprint(main)
-
-#     return app
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
-
-

@@ -75,15 +75,12 @@ return (
       <Form.Field>
       <Checkbox label='Remember me' onChange={handleRememberMeChange}/>
       </Form.Field>
+      <Link to="/resetPassword"><a href="#">Reset Password</a></Link>
       <Form.Button inverted color='green' floated='right' content='Login' />
       { props.loginFailed ? 
       <Message negative>
         <Message.Header>Incorrect email or password. Would you like to <Link to="/resetPassword"><a href="#">Reset Password?</a></Link></Message.Header>
       </Message> : ''}
-      {/* <Message attached='bottom' warning>
-      <Icon name='help' />
-      Already signed up?<a href='#'>Login here</a>instead.
-      </Message> */}
       <br/>
       
 

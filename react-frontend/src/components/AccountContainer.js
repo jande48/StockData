@@ -115,6 +115,10 @@ return (
             <Message positive>
               <Message.Header>Your password has been updated!</Message.Header>
             </Message> : ''}
+      { props.userAuth['usernameTaken'] ? 
+            <Message negative>
+              <Message.Header>There's another user with that email!</Message.Header>
+            </Message> : ''}
       <Form inverted onSubmit={handleSubmit}>
           <Grid>
               <Grid.Column width={3}><Image src={"../static/profile_pics/"+props.userAuth['image_file']} size='small' circular  /></Grid.Column>

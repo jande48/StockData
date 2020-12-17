@@ -152,17 +152,23 @@ def users_update_account():
         'email': current_user.email,
         'image_file': current_user.image_file,
         'updateEmail': False,
-        'updatePassword': False
+        'updatePassword': False,
+        'usernameTaken': False,
         }
     # if 'file' in JSON_sent.keys():
     #     print(JSON_sent['file'])
     #     picture_file = save_picture(JSON_sent['file'])
     #     current_user.image_file = picture_file
+    user = User.query.filter_by(email=JSON_sent['email']).first()
+
     if JSON_sent['email'] != '':
-        current_user.email = str(JSON_sent['email'])
-        payload['updateEmail'] = True
-        payload['email'] = str(JSON_sent['email'])
-        db.session.commit()
+        if user is None:
+            current_user.email = str(JSON_sent['email'])
+            payload['updateEmail'] = True
+            payload['email'] = str(JSON_sent['email'])
+            db.session.commit()
+        else:
+            payload['usernameTaken'] = True
     
     if JSON_sent['password'] != '':
         hashed_password = bcrypt.generate_password_hash(JSON_sent['password']).decode('utf-8')
@@ -181,9 +187,7 @@ def user_reset_request():
     if current_user.is_authenticated:
         return redirect(url_for('main.home'))
     JSON_sent = request.get_json()
-    print(JSON_sent['email'])
     user = User.query.filter_by(email=str(JSON_sent['email'])).first()
-    print(user)
     send_reset_email(user)
     payload = 'success'
     return jwt.encode(

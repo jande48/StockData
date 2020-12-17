@@ -19,6 +19,7 @@ import EarningContainer from './EarningContainer'
 import VolatilityMenuContainer from './VolatilityMenuContainer'
 import HeaderTickerPriceContainer from './HeaderTickerPriceContainer'
 import PostFormContainer from './PostFormContainer'
+import ToolTipContainer from './ToolTipContainer'
 import setAuthorizationToken from '../utils/setAuthorizationToken'
 
 function AppComponent () {
@@ -93,6 +94,7 @@ function AppComponent () {
             <LineCandleGraphContainer /><br/>
             <VolumeGraphContainer/><br/>
             <MomentumGraphContainer/><br />
+            <ToolTipContainer/><br />
             <PostFormContainer/><br />
             <CompanyFinancialsContainer/><br />
             <EarningContainer/><br />

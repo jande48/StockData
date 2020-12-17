@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import { addPercentChange, addSplicedStartDate, addStockPriceForPercentChange, addEndDateForPercentChange, addSplicedIndexStockData, addActiveNav } from '../redux'
+import { addPercentChange, addSplicedStartDate, addStockPriceForPercentChange, addEndDateForPercentChange, addSplicedIndexStockData, 
+  addActiveNav, addOnMouseOverTicker, addDateMouseOverTicker } from '../redux'
 import {Header, Grid} from 'semantic-ui-react'
 import { createLoadingSpinnerChart } from './charts/loadingSpinner.js'
 import '../App.css'
@@ -21,14 +22,15 @@ import {
     transition,
     curveLinear,
   } from 'd3';
+import { DATE_MOUSE_OVER_TICKER } from '../redux/tickers/tickerTypes'
 
 function LineCandleGraphContainer (props) {
 
     const stockChartNode = useRef(null);
     const loadingSpinnerNode = useRef(null);
-        const height = 220;
-        const width = 700;
-        const margin = ({top: 15, right: 20, bottom: 20, left: 50})
+    const height = 220;
+    const width = 700;
+    const margin = ({top: 15, right: 20, bottom: 20, left: 50})
 
     useEffect(() => {
     props.addActiveNav('home')
@@ -47,12 +49,6 @@ function LineCandleGraphContainer (props) {
 		const convertedDate = String(initialDate.getFullYear())+"-"+String(initialDate.getMonth() + 1)+"-"+String(initialDate.getDate())
 		return convertedDate
 	  }
-  
-  //props.addPercentChange(calcPercentChange())
-
-  
-
-
 
   function createStockPriceLineChart(stockPriceLineChartNode, Initialdata) {
       //const Initialdata = props.stockData
@@ -78,10 +74,6 @@ function LineCandleGraphContainer (props) {
             startingIndex = i
             break
           }
-          // if ((String(parseInt(dateSplit[0]))+"-"+String(parseInt(dateSplit[1]))+"-"+String(parseInt(dateSplit[2]))) == convertDatesToString(startingDate)) {
-          //   startingIndex = i
-          //   break
-          // } 
         }
         const exportData = data.slice(startingIndex)
         if (typeof(exportData) != 'undefined' && exportData.length > 1){
@@ -92,7 +84,6 @@ function LineCandleGraphContainer (props) {
       }
 
       const data = sliceDataStartDate(Initialdata)
-      //console.log(data)
       const InitialtrendData = props.trendData
       const trendData = sliceDataStartDate(InitialtrendData)
       const InitialVolatilityData = props.volatilityData
@@ -137,61 +128,61 @@ function LineCandleGraphContainer (props) {
       const parseDate = d3.utcParse("%Y-%m-%d")
       const margin = ({top: 15, right: 20, bottom: 20, left: 50})
 
-
+          
       class Indicator {
-          constructor(name,color,dataForInd,display,axis) {
-            this.name = name;
-            this.color = color;
-            this.dataInd = dataForInd;
-            this.svg = svg;
-            this.display =display;
-            this.axis = axis;
-            this.g = this.svg.append("g")
-            this.lineGenerator = line()
-          }
-          // Getter
-          get d3line() {
-            return this.calcD3LinePara();
-          }
-  
-          // Method
-          calcD3LinePara() {
-            if (this.display) {
-            this.g
-              .attr("stroke-linecap", "round")
-              .attr("stroke",this.color)
-              .selectAll("g")
-              .data(this.dataInd)
-              .join("g")
-      
-              if (this.axis == 'axisLeft') {
-                this.lineGenerator
-                  .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-                  .y(d => y(d[this.name]))
-                  .curve(curveLinear);
-              }else{
-                this.lineGenerator
-                  .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-                  .y(d => yRight(d[this.name]))
-                  .curve(curveLinear);
-              }
-            
-  
-            this.g.append('path')
-              .attr('class', 'line-path')
-              .attr("id", this.name)
-              .attr('d', this.lineGenerator(this.dataInd))
-              .attr('fill','none')
-              .attr('stroke-width',1)
-              .attr('stroke-linecap','round')
-            
-              return this.g
+        constructor(name,color,dataForInd,display,axis) {
+          this.name = name;
+          this.color = color;
+          this.dataInd = dataForInd;
+          this.svg = svg;
+          this.display =display;
+          this.axis = axis;
+          this.g = this.svg.append("g")
+          this.lineGenerator = line()
+        }
+        // Getter
+        get d3line() {
+          return this.calcD3LinePara();
+        }
+
+        // Method
+        calcD3LinePara() {
+          if (this.display) {
+          this.g
+            .attr("stroke-linecap", "round")
+            .attr("stroke",this.color)
+            .selectAll("g")
+            .data(this.dataInd)
+            .join("g")
+
+            if (this.axis == 'axisLeft') {
+              this.lineGenerator
+                .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
+                .y(d => y(d[this.name]))
+                .curve(curveLinear);
             }else{
-              return svg.selectAll("g").selectAll("."+this.name).remove()
+              this.lineGenerator
+                .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
+                .y(d => yRight(d[this.name]))
+                .curve(curveLinear);
             }
+          
+
+          this.g.append('path')
+            .attr('class', 'line-path')
+            .attr("id", this.name)
+            .attr('d', this.lineGenerator(this.dataInd))
+            .attr('fill','none')
+            .attr('stroke-width',1)
+            .attr('stroke-linecap','round')
+          
+            return this.g
+          }else{
+            return svg.selectAll("g").selectAll("."+this.name).remove()
           }
         }
-        // ["#1b9e77","#d95f02","#7570b3","#e7298a","#66a61e","#e6ab02","#a6761d","#666666"]
+      }
+
       const close = new Indicator('close','#e0e1e2',data,props.displayLine,'axisLeft')
       const sma = new Indicator('sma',"#d62728",trendData,props.displaySMA,'axisLeft')
       const macd = new Indicator('macd',"#ff7f0e",trendData,props.displayMACD,'axisRight')
@@ -214,6 +205,12 @@ function LineCandleGraphContainer (props) {
       const KeltnerC = new Indicator('keltnerC',"#386cb0",volatilityData,props.displayKeltnerC,'axisLeft')
       const objectList = [close,sma,macd,ema,macdSignal,adx,adxp,adxn,vipos,vineg,trix,mi,dpo,bbsma,atr,BBlower,BBupper,KeltnerC]
 
+      const xForToolTip = scaleBand()
+          .domain(d3.utcDay
+              .range(parseDate(data[0].date), +parseDate(data[data.length - 1].date) + 1)
+              .filter(d => d.getUTCDay() !== 0 && d.getUTCDay() !== 6))
+          .range([margin.left, width - margin.right])
+          
 
       const x = scaleBand()
           .domain(d3.utcDay
@@ -269,7 +266,7 @@ function LineCandleGraphContainer (props) {
       invisibleRectForTooltip.append("rect")
           .attr('x',0)
           .attr('y',0)
-          .attr('width', d=>(x.bandwidth()))
+          .attr('width', d=>(xForToolTip.bandwidth()))
           .attr('height',height - margin.top)
           .attr("fill", 'green')
           .style("opacity",'0')
@@ -280,9 +277,12 @@ function LineCandleGraphContainer (props) {
             var dateFromSplit = new Date(parseInt(endingDateSplit[0]),parseInt(endingDateSplit[1]),parseInt(endingDateSplit[2]))
             props.addEndDateForPercentChange(dateFromSplit)
             props.addStockPriceForPercentChange(d.close)
+            props.addOnMouseOverTicker(true)
+            props.addDateMouseOverTicker(d.date)
           })
           .on('mouseout',function(e,d){
             d3.select(this).style('opacity','0')
+            props.addOnMouseOverTicker(false)
           })
       // var mousePerLine = tooltip.selectAll('.mouse-per-line')
       //     .data(data)
@@ -717,7 +717,7 @@ function LineCandleGraphContainer (props) {
         createLegendLeft(objectList)
         createLegendRight(objectList)
 
-      return svg.node();
+      return svg.node()
       }
 
   // function calcPercentChange() {
@@ -732,9 +732,24 @@ function LineCandleGraphContainer (props) {
   //         return exportDefault
   //     }}
   // }
+  var endDateVar = 'Jacob'
+  var endDateVar2 = ''
 
+  // if (typeof(props.endDateForPercentChange) != 'undefined') {
+  //   endDateVar = props.endDateForPercentChange
+  //   endDateVar2 = String(endDateVar.getFullYear())+"-"+String(endDateVar.getMonth())+"-"+String(endDateVar.getDay())
+  // }
   
 
+  function getIndex(data,date) {
+    data.forEach(function (el, i) {
+      
+      if (el['date']==date){
+        return i
+      }
+    })
+    return (data.length -1)
+  }
 
   return  props.loading ? (
     <React.Fragment>
@@ -809,6 +824,8 @@ const mapStateToProps = state => {
     displayKeltnerC: state.volatilityFromtRootReducer.displayKeltnerC,
     nForKeltnerC: state.volatilityFromtRootReducer.nForKeltnerC,
     volatilityData: state.volatilityFromtRootReducer.volatilityData,
+    onMouseOverTicker: state.tickersFromRootReducer.onMouseOverTicker,
+    dateMouseOverTicker: state.tickersFromRootReducer.dateMouseOverTicker,
     // displayCCI: state.trendFromRootReducer.displayCCI,
     // nForCCI: state.trendFromRootReducer.nForCCI,
     // cForCCI: state.trendFromRootReducer.cForCCI,
@@ -832,6 +849,8 @@ const mapDispatchToProps = dispatch => {
     addEndDateForPercentChange: (endingDate) => dispatch(addEndDateForPercentChange(endingDate)),
     addSplicedIndexStockData: (index) => dispatch(addSplicedIndexStockData(index)),
     addActiveNav: (x) => dispatch(addActiveNav(x)),
+    addOnMouseOverTicker: (x) => dispatch(addOnMouseOverTicker(x)),
+    addDateMouseOverTicker: (x) => dispatch(addDateMouseOverTicker(x)),
   }
 }
 
@@ -858,520 +877,3 @@ export default connect(
 
 
 
-
-
-
-
-
-
-// if (props.displayMACD) {
-            //     const gMACD = svg.append("g")
-            //         .attr("stroke-linecap", "round")
-            //         .attr("stroke", "blue")
-            //         .selectAll("g")
-            //         .data(trendData)
-            //         .join("g")
-            //         // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-        
-            //     const lineGeneratorMACD = line()
-            //         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            //         .y(d => y(d.macd))
-            //         .curve(curveLinear);
-        
-            //     gMACD.append('path')
-            //         .attr('class', 'line-path')
-            //         .attr('d', lineGeneratorMACD(trendData))
-            //         .attr('id','macd')
-            //         .attr('fill','none')
-            //         .attr('stroke-width',3)
-            //         .attr('stroke-linecap','round')
-            // }else{
-            //     svg.selectAll("g").selectAll(".macd").remove()
-            // }
-            // if (displayMACDsignal) {
-            //     const gMACDsignal = svg.append("g")
-            //         .attr("stroke-linecap", "round")
-            //         .attr("stroke", "yellow")
-            //         .selectAll("g")
-            //         .data(data)
-            //         .join("g")
-            //         // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-        
-            //     const lineGeneratorMACDsignal = line()
-            //         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            //         .y(d => y(d.macdSignal))
-            //         .curve(curveLinear);
-        
-            //     gMACDsignal.append('path')
-            //         .attr('class', 'line-path')
-            //         .attr('d', lineGeneratorMACDsignal(data))
-            //         .attr('id','macdSignal')
-            //         .attr('fill','none')
-            //         .attr('stroke-width',3)
-            //         .attr('stroke-linecap','round')
-            // }else{
-            //     svg.selectAll("g").selectAll(".macdSignal").remove()
-            // }
-            // if (displayAIdown) {
-            //     const gAIdown = svg.append("g")
-            //         .attr("stroke-linecap", "round")
-            //         .attr("stroke", "green")
-            //         .selectAll("g")
-            //         .data(data)
-            //         .join("g")
-            //         // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-        
-            //     const lineGeneratorAIdown = line()
-            //         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            //         .y(d => y(d.AIdown))
-            //         .curve(curveLinear);
-        
-            //     gAIdown.append('path')
-            //         .attr('class', 'line-path')
-            //         .attr('d', lineGeneratorAIdown(data))
-            //         .attr('id','AIdown')
-            //         .attr('fill','none')
-            //         .attr('stroke-width',3)
-            //         .attr('stroke-linecap','round')
-            // }else{
-            //     svg.selectAll("g").selectAll(".AIdown").remove()
-            // }
-            // if (displayAIup) {
-            //     const gAIup = svg.append("g")
-            //         .attr("stroke-linecap", "round")
-            //         .attr("stroke", "lightgreen")
-            //         .selectAll("g")
-            //         .data(data)
-            //         .join("g")
-            //         // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-        
-            //     const lineGeneratorAIup = line()
-            //         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            //         .y(d => y(d.AIup))
-            //         .curve(curveLinear);
-        
-            //     gAIup.append('path')
-            //         .attr('class', 'line-path')
-            //         .attr('d', lineGeneratorAIup(data))
-            //         .attr('id','AIup')
-            //         .attr('fill','none')
-            //         .attr('stroke-width',3)
-            //         .attr('stroke-linecap','round')
-            // }else{
-            //     svg.selectAll("g").selectAll(".AIup").remove()
-            // }
-            // if (displayIchimuku) {
-            //     const gIchimuku = svg.append("g")
-            //         .attr("stroke-linecap", "round")
-            //         .attr("stroke", "lightblue")
-            //         .selectAll("g")
-            //         .data(data)
-            //         .join("g")
-            //         // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-        
-            //     const lineGeneratorIchimuku = line()
-            //         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            //         .y(d => y(d.ichimoku))
-            //         .curve(curveLinear);
-        
-            //     gIchimuku.append('path')
-            //         .attr('class', 'line-path')
-            //         .attr('d', lineGeneratorIchimuku(data))
-            //         .attr('id','Ichimuku')
-            //         .attr('fill','none')
-            //         .attr('stroke-width',3)
-            //         .attr('stroke-linecap','round')
-            // }else{
-            //     svg.selectAll("g").selectAll(".Ichimuku").remove()
-            // }
-            // if (displayDPO) {
-            //     const gDPO = svg.append("g")
-            //         .attr("stroke-linecap", "round")
-            //         .attr("stroke", "red")
-            //         .selectAll("g")
-            //         .data(data)
-            //         .join("g")
-            //         // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-        
-            //     const lineGeneratorDPO = line()
-            //         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            //         .y(d => y(d.dpo))
-            //         .curve(curveLinear);
-        
-            //     gDPO.append('path')
-            //         .attr('class', 'line-path')
-            //         .attr('d', lineGeneratorDPO(data))
-            //         .attr('id','dpo')
-            //         .attr('fill','none')
-            //         .attr('stroke-width',3)
-            //         .attr('stroke-linecap','round')
-            // }else{
-            //     svg.selectAll("g").selectAll(".dpo").remove()
-            // }
-            // if (displayCCI) {
-            //     const gCCI = svg.append("g")
-            //         .attr("stroke-linecap", "round")
-            //         .attr("stroke", "pink")
-            //         .selectAll("g")
-            //         .data(data)
-            //         .join("g")
-            //         // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-        
-            //     const lineGeneratorCCI = line()
-            //         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            //         .y(d => y(d.cci))
-            //         .curve(curveLinear);
-        
-            //     gCCI.append('path')
-            //         .attr('class', 'line-path')
-            //         .attr('d', lineGeneratorCCI(data))
-            //         .attr('id','cci')
-            //         .attr('fill','none')
-            //         .attr('stroke-width',3)
-            //         .attr('stroke-linecap','round')
-            // }else{
-            //     svg.selectAll("g").selectAll(".cci").remove()
-            // }
-            // if (displaySMA) {
-            //     const gSMA = svg.append("g")
-            //         .attr("stroke-linecap", "round")
-            //         .attr("stroke", "purple")
-            //         .selectAll("g")
-            //         .data(data)
-            //         .join("g")
-            //         // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-        
-            //     const lineGeneratorSMA = line()
-            //         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            //         .y(d => y(d.sma))
-            //         .curve(curveLinear);
-        
-            //     gSMA.append('path')
-            //         .attr('class', 'line-path')
-            //         .attr('d', lineGeneratorSMA(data))
-            //         .attr('id','sma')
-            //         .attr('fill','none')
-            //         .attr('stroke-width',3)
-            //         .attr('stroke-linecap','round')
-            // }else{
-            //     svg.selectAll("g").selectAll(".sma").remove()
-            // }
-            // if (displayADX) {
-            //     const gADX = svg.append("g")
-            //         .attr("stroke-linecap", "round")
-            //         .attr("stroke", "orange")
-            //         .selectAll("g")
-            //         .data(data)
-            //         .join("g")
-            //         // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-        
-            //     const lineGeneratorADX = line()
-            //         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            //         .y(d => y(d.adx))
-            //         .curve(curveLinear);
-        
-            //     gADX.append('path')
-            //         .attr('class', 'line-path')
-            //         .attr('d', lineGeneratorADX(data))
-            //         .attr('id','adx')
-            //         .attr('fill','none')
-            //         .attr('stroke-width',3)
-            //         .attr('stroke-linecap','round')
-            // }else{
-            //     svg.selectAll("g").selectAll(".adx").remove()
-            // }
-            // if (displayADXpos) {
-            //     const gADXpos = svg.append("g")
-            //         .attr("stroke-linecap", "round")
-            //         .attr("stroke", "lightorange")
-            //         .selectAll("g")
-            //         .data(data)
-            //         .join("g")
-            //         // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-        
-            //     const lineGeneratorADXpos = line()
-            //         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            //         .y(d => y(d.adxPositive))
-            //         .curve(curveLinear);
-        
-            //     gADXpos.append('path')
-            //         .attr('class', 'line-path')
-            //         .attr('d', lineGeneratorADXpos(data))
-            //         .attr('id','adxPos')
-            //         .attr('fill','none')
-            //         .attr('stroke-width',3)
-            //         .attr('stroke-linecap','round')
-            // }else{
-            //     svg.selectAll("g").selectAll(".adxPos").remove()
-            // }
-            // if (displayADXneg) {
-            //     const gADXneg = svg.append("g")
-            //         .attr("stroke-linecap", "round")
-            //         .attr("stroke", "darkorange")
-            //         .selectAll("g")
-            //         .data(data)
-            //         .join("g")
-            //         // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-        
-            //     const lineGeneratorADXneg = line()
-            //         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            //         .y(d => y(d.adxNegative))
-            //         .curve(curveLinear);
-        
-            //     gADXneg.append('path')
-            //         .attr('class', 'line-path')
-            //         .attr('d', lineGeneratorADXneg(data))
-            //         .attr('id','adxNeg')
-            //         .attr('fill','none')
-            //         .attr('stroke-width',3)
-            //         .attr('stroke-linecap','round')
-            // }else{
-            //     svg.selectAll("g").selectAll(".adxNeg").remove()
-            // }
-            // if (displayVIneg) {
-            //     const gVIneg = svg.append("g")
-            //         .attr("stroke-linecap", "round")
-            //         .attr("stroke", "steelblue")
-            //         .selectAll("g")
-            //         .data(data)
-            //         .join("g")
-            //         // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-        
-            //     const lineGeneratorVIneg = line()
-            //         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            //         .y(d => y(d.VInegative))
-            //         .curve(curveLinear);
-        
-            //     gVIneg.append('path')
-            //         .attr('class', 'line-path')
-            //         .attr('d', lineGeneratorVIneg(data))
-            //         .attr('id','VIneg')
-            //         .attr('fill','none')
-            //         .attr('stroke-width',3)
-            //         .attr('stroke-linecap','round')
-            // }else{
-            //     svg.selectAll("g").selectAll(".VIneg").remove()
-            // }
-            // if (displayVIpos) {
-            //     const gVIpos = svg.append("g")
-            //         .attr("stroke-linecap", "round")
-            //         .attr("stroke", "rgb(12,240,233)")
-            //         .selectAll("g")
-            //         .data(data)
-            //         .join("g")
-            //         // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-        
-            //     const lineGeneratorVIpos = line()
-            //         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            //         .y(d => y(d.VIpositive))
-            //         .curve(curveLinear);
-        
-            //     gVIpos.append('path')
-            //         .attr('class', 'line-path')
-            //         .attr('d', lineGeneratorVIpos(data))
-            //         .attr('id','VIpos')
-            //         .attr('fill','none')
-            //         .attr('stroke-width',3)
-            //         .attr('stroke-linecap','round')
-            // }else{
-            //     svg.selectAll("g").selectAll(".VIpos").remove()
-            // }
-            // if (displayTRIX) {
-            //     const gTRIX = svg.append("g")
-            //         .attr("stroke-linecap", "round")
-            //         .attr("stroke", "rgba(198, 45, 205, 0.8)")
-            //         .selectAll("g")
-            //         .data(data)
-            //         .join("g")
-            //         // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-        
-            //     const lineGeneratorTRIX = line()
-            //         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            //         .y(d => y(d.trix))
-            //         .curve(curveLinear);
-        
-            //     gTRIX.append('path')
-            //         .attr('class', 'line-path')
-            //         .attr('d', lineGeneratorTRIX(data))
-            //         .attr('id','trix')
-            //         .attr('fill','none')
-            //         .attr('stroke-width',3)
-            //         .attr('stroke-linecap','round')
-            // }else{
-            //     svg.selectAll("g").selectAll(".trix").remove()
-            // }
-            // if (displayMassIndex) {
-            //     const gMI = svg.append("g")
-            //         .attr("stroke-linecap", "round")
-            //         .attr("stroke", "darkred")
-            //         .selectAll("g")
-            //         .data(data)
-            //         .join("g")
-            //         // .attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-        
-            //     const lineGeneratorMI = line()
-            //         .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
-            //         .y(d => y(d.massIndex))
-            //         .curve(curveLinear);
-        
-            //     gMI.append('path')
-            //         .attr('class', 'line-path')
-            //         .attr('d', lineGeneratorMI(data))
-            //         .attr('id','mi')
-            //         .attr('fill','none')
-            //         .attr('stroke-width',3)
-            //         .attr('stroke-linecap','round')
-            // }else{
-            //     svg.selectAll("g").selectAll(".mi").remove()
-            // }
-        
-        
-        // displayIchimuku,displayDPO,displayCCI,displaySMA,displayMACD,displayMACDsignal,displayADX,displayADXpos,displayADXneg,displayVIpos,displayVIneg,displayTRIX,displayMassIndex
-        //   
-
-
- // var min = 0
-            // var max = 0
-            // //console.log(displayEMA)
-            // for (var i = 0; i < data.length; i++) {
-            //     if (data[i]['close'] < min) {
-            //         min = data[i]['close']
-            //     }
-            //     if (data[i]['close'] > max) {
-            //         max = data[i]['close']
-            //     }
-            //     if (displayEMA) {
-            //         if (data[i]['ema'] < min) {
-            //             min = data[i]['ema']
-            //         }
-            //         if (data[i]['ema'] > max) {
-            //             max = data[i]['ema']
-            //         }
-            //     }
-            //     if (displayAIdown) {
-                   
-            //         if (data[i]['AIdown'] < min) {
-            //             min = data[i]['AIdown']
-            //         }
-            //         if (data[i]['AIdown'] > max) {
-            //             max = data[i]['AIdown']
-            //         }
-            //     }
-        
-                
-            //     if (displayAIup) {
-            //         if (data[i]['AIup'] < min) {
-            //             min = data[i]['AIup']
-            //         }
-            //         if (data[i]['AIupuo'] > max) {
-            //             max = data[i]['AIup']
-            //         }
-            //     }
-            //     if (displayIchimuku) {
-            //         if (data[i]['ichimoku'] < min) {
-            //             min = data[i]['ichimoku']
-            //         }
-            //         if (data[i]['ichimoku'] > max) {
-            //             max = data[i]['ichimoku']
-            //         }
-            //     }
-            //     if (displayDPO) {
-            //         if (data[i]['dpo'] < min) {
-            //             min = data[i]['dpo']
-            //         }
-            //         if (data[i]['dpo'] > max) {
-            //             max = data[i]['dpo']
-            //         }
-            //     }
-            //     if (displayCCI) {
-            //         if (data[i]['cci'] < min) {
-            //             min = data[i]['cci']
-            //         }
-            //         if (data[i]['cci'] > max) {
-            //             max = data[i]['cci']
-            //         }
-            //     }
-            //     if (displaySMA) {
-            //         if (data[i]['sma'] < min) {
-            //             min = data[i]['sma']
-            //         }
-            //         if (data[i]['sma'] > max) {
-            //             max = data[i]['sma']
-            //         }
-            //     }
-            //     if (displayMACD) {
-            //         if (data[i]['macd'] < min) {
-            //             min = data[i]['macd']
-            //         }
-            //         if (data[i]['macd'] > max) {
-            //             max = data[i]['macd']
-            //         }
-            //     }
-            //     if (displayMACDsignal) {
-            //         if (data[i]['macdSignal'] < min) {
-            //             min = data[i]['macdSignal']
-            //         }
-            //         if (data[i]['macdSignal'] > max) {
-            //             max = data[i]['macdSignal']
-            //         }
-            //     }
-            //     if (displayADX) {
-            //         if (data[i]['adx'] < min) {
-            //             min = data[i]['adx']
-            //         }
-            //         if (data[i]['adx'] > max) {
-            //             max = data[i]['adx']
-            //         }
-            //     }
-            //     if (displayADXpos) {
-            //         if (data[i]['adxPositive'] < min) {
-            //             min = data[i]['adxPositive']
-            //         }
-            //         if (data[i]['adxPositive'] > max) {
-            //             max = data[i]['adxPositive']
-            //         }
-            //     }
-            //     if (displayADXneg) {
-            //         if (data[i]['adxNegative'] < min) {
-            //             min = data[i]['adxNegative']
-            //         }
-            //         if (data[i]['adxNegative'] > max) {
-            //             max = data[i]['adxNegative']
-            //         }
-            //     }
-            //     if (displayVIpos) {
-            //         if (data[i]['VIpositive'] < min) {
-            //             min = data[i]['VIpositive']
-            //         }
-            //         if (data[i]['VIpositive'] > max) {
-            //             max = data[i]['VIpositive']
-            //         }
-            //     }
-            //     if (displayVIneg) {
-            //         if (data[i]['VInegative'] < min) {
-            //             min = data[i]['VInegative']
-            //         }
-            //         if (data[i]['VInegative'] > max) {
-            //             max = data[i]['VInegative']
-            //         }
-            //     }
-            //     if (displayTRIX) {
-            //         if (data[i]['trix'] < min) {
-            //             min = data[i]['trix']
-            //         }
-            //         if (data[i]['trix'] > max) {
-            //             max = data[i]['trix']
-            //         }
-            //     }
-            //     if (displayMassIndex) {
-            //         if (data[i]['massIndex'] < min) {
-            //             min = data[i]['massIndex']
-            //         }
-            //         if (data[i]['massIndex'] > max) {
-            //             max = data[i]['massIndex']
-            //         }
-            //     }
-            // }
-            // if (min == 0 && max == 0) {
-            //     max = 80
-            // }

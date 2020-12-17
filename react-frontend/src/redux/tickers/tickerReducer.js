@@ -1,6 +1,7 @@
 import { ADD_TICKER, FETCH_COMP_INFO_REQUEST, FETCH_COMP_INFO_SUCCESS,
    FETCH_COMP_INFO_FAILURE, COMPANY_NAME, ADD_PERCENT_CHANGE, STOCK_PRICE_FOR_PERCENT_CHANGE,
-   END_DATE_FOR_PERCENT_CHANGE, SPLICED_START_DATE, SPLICED_INDEX_STOCK_DATA, USER_AUTHENTICATED } from './tickerTypes'
+   END_DATE_FOR_PERCENT_CHANGE, SPLICED_START_DATE, SPLICED_INDEX_STOCK_DATA, USER_AUTHENTICATED,
+   ON_MOUSE_OVER_TICKER, DATE_MOUSE_OVER_TICKER } from './tickerTypes'
 
 const initialState = {
   tickers: 'AAPL',
@@ -15,6 +16,8 @@ const initialState = {
   splicedStartDate: (new Date()),
   splicedIndexStockData: 0,
   userAuthenticated: false,
+  onMouseOverTicker: false,
+  dateMouseOverTicker: '',
 }
 
 const tickerReducer = (state = initialState, action) => {
@@ -76,6 +79,14 @@ const tickerReducer = (state = initialState, action) => {
     case USER_AUTHENTICATED: return {
         ...state,
         userAuthenticated: action.payload
+      }  
+    case ON_MOUSE_OVER_TICKER: return {
+        ...state,
+        onMouseOverTicker: action.payload
+      }  
+    case DATE_MOUSE_OVER_TICKER: return {
+        ...state,
+        dateMouseOverTicker: action.payload
       }  
     default: return state
   }

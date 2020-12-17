@@ -1,0 +1,16 @@
+version: '3'
+
+services: 
+  algoPlatform1_project:
+    build: ./
+    ports: 
+      - "5000:5000"
+    # environment:
+    #   - SERVER_NAME=0.0.0.0
+    # these are the environment variables key=pair
+    network_mode: host
+
+    
+
+
+

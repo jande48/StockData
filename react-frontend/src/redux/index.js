@@ -1,5 +1,5 @@
 export { addTicker, fetchCompInfoData, fetchCompInfoDataRequest, fetchCompanyNameFromTicker, addCompanyName, addPercentChange,addStockPriceForPercentChange, 
-    addEndDateForPercentChange, addSplicedStartDate, addSplicedIndexStockData, addUserAuthenticated } from './tickers/tickerActions'
+    addEndDateForPercentChange, addSplicedStartDate, addSplicedIndexStockData, addUserAuthenticated, addOnMouseOverTicker, addDateMouseOverTicker } from './tickers/tickerActions'
 export { addStartDate, addEndDate } from './dates/datesActions'
 export { addLineChart } from './charts/chartsActions'
 export { fetchMomentumData, displayRSI, nForRSI, displayTSI, rForTSI, sForTSI, sForUO, mForUO, lenForUO, wsForUO, wmForUO, wlForUO, displayUO, displaySTOCH, nForSTOCH, dnForSTOCH, 
