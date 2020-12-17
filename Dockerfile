@@ -6,6 +6,8 @@ RUN apt-get install python3-pip -y
 
 RUN apt-get install gunicorn -y
 
+RUN pip3 install flask
+
 COPY requirements.txt requirements.txt
 
 COPY algoPlatform1_project /opt/
