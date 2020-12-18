@@ -15,13 +15,20 @@ function ToolTipContainer (props) {
    const objectListTrend = [{'display':props.displaySMA,'data':'sma'},{'display':props.displayEMA,'data':'ema'},{'display':props.displayADX,'data':'adx'},{'display':props.displayADXN,'data':'adxn'},
   {'display':props.displayADXP,'data':'adxp'},{'display':props.displayDPO,'data':'dpo'},{'display':props.displayMI,'data':'mi'},{'display':props.displayTRIX,'data':'trix'},
   {'display':props.displayVINEG,'data':'vineg'},{'display':props.displayVIPOS,'data':'vipos'},{'display':props.displayMACDsignal,'data':'macds'},{'display':props.displayMACD,'data':'macd'}]
-  //console.log(props.indexMouseOver)
-  function makeDisplayList(objects) {
+  
+  const objectListMomentum = [{'display':props.displayAO,'data':'ao'},{'display':props.displayKama,'data':'kama'},{'display':props.displayROC,'data':'roc'},
+  {'display':props.displayRSI,'data':'rsi'},{'display':props.displaySTOCH,'data':'stoch'},{'display':props.displayStochSignal,'data':'stoch_signal'},
+  {'display':props.displayTSI,'data':'tsi'},{'display':props.displayUO,'data':'uo'},{'display':props.displayWR,'data':'wr'}]
+
+  const objectListVolatility = [{'display':props.displayATR,'data':'atr'},{'display':props.displayBBLower,'data':'BBlower'},{'display':props.displayBBSMA,'data':'bbsma'},
+  {'display':props.displayBBUpper,'data':'BBupper'},{'display':props.displayKeltnerC,'data':'keltnerC'}]
+
+  function makeDisplayList(objectsTrend,objectsMom,objectsVol) {
     var arrayOuter = []
     var arrayInner = []
     var indexAdded = props.splicedIndexStockData+props.indexMouseOver
     var index = 0
-    if (typeof(props.stockData[indexAdded]) != 'undefined') {
+    if (typeof(props.stockData[indexAdded]) != 'undefined' && typeof(props.momentumData[indexAdded]) != 'undefined') {
       arrayInner.push({'name':'Date','data':props.stockData[indexAdded]['date']})
       arrayInner.push({'name':'Open','data':props.stockData[indexAdded]['open']})
       arrayInner.push({'name':'High','data':props.stockData[indexAdded]['high']})
@@ -31,12 +38,7 @@ function ToolTipContainer (props) {
       arrayOuter.push(arrayInner)
       arrayInner = []
 
-    // arrayOuter.push([{'name':'Date','data':props.stockData[props.indexMouseOver]['date']},{'name':'Open','data':props.stockData[props.indexMouseOver]['open']},
-    // {'name':'High','data':props.stockData[props.indexMouseOver]['high']},{'name':'Low','data':props.stockData[props.indexMouseOver]['low']},
-    // {'name':'Close','data':props.stockData[props.indexMouseOver]['close']},{'name':'Vol','data':props.stockData[props.indexMouseOver]['volume']}])
-    
-    console.log(arrayOuter)
-    objects.forEach( function (el){
+    objectsTrend.forEach( function (el){
       if (index % 6 == 0 && index != 0) {
         arrayOuter.push(arrayInner)
         arrayInner = []
@@ -46,22 +48,33 @@ function ToolTipContainer (props) {
         index++
       }
     })
+    objectsMom.forEach( function (el){
+      if (index % 6 == 0 && index != 0) {
+        arrayOuter.push(arrayInner)
+        arrayInner = []
+      }
+      if (el['display']){
+        arrayInner.push({'name':el['data'].toUpperCase(),'data':props.momentumData[indexAdded][el['data']]})
+        index++
+      }
+    })
+    objectsVol.forEach( function (el){
+      if (index % 6 == 0 && index != 0) {
+        arrayOuter.push(arrayInner)
+        arrayInner = []
+      }
+      if (el['display']){
+        arrayInner.push({'name':el['data'].toUpperCase(),'data':props.volatilityData[indexAdded][el['data']]})
+        index++
+      }
+    })
     arrayOuter.push(arrayInner)
     return arrayOuter
   }
 
   }
-  var objects = makeDisplayList(objectListTrend)
-  console.log(objects)
-//   function makeDisplayList(objects) {
-//     var output = []
-//     for (let [index, val] of objects.entries()) {
-//       if (val['display']) {
-//           output.push({'name':String(val['data']).toUpperCase(),'data':props.stockData[getIndex(props.stockData,props.dateMouseOverTicker)][val['data']]})
-//       }   
-//       }
-//   return output
-// }
+  var objects = makeDisplayList(objectListTrend,objectListMomentum,objectListVolatility)
+
     useEffect(() => {
         if (typeof(props.stockData) != 'undefined') {
           if (props.stockData.length > 1 && !props.momentumLoading && !props.loading && !props.trendLoading) {
@@ -228,6 +241,17 @@ const mapStateToProps = state => {
     dateMouseOverTicker: state.tickersFromRootReducer.dateMouseOverTicker,
     indexMouseOver: state.tickersFromRootReducer.indexMouseOver,
     splicedIndexStockData: state.tickersFromRootReducer.splicedIndexStockData,
+    momentumData: state.momentumFromRootReducer.momentumData,
+    displayAO: state.momentumFromRootReducer.displayAO,
+    displayKama: state.momentumFromRootReducer.displayKama,
+    displayROC: state.momentumFromRootReducer.displayROC,
+    displayRSI: state.momentumFromRootReducer.displayRSI,
+    displaySTOCH: state.momentumFromRootReducer.displaySTOCH,
+    displayStochSignal: state.momentumFromRootReducer.displayStochSignal,
+    displayTSI: state.momentumFromRootReducer.displayTSI,
+    displayUO: state.momentumFromRootReducer.displayUO,
+    displayWR: state.momentumFromRootReducer.displayWR,
+    volatilityData: state.volatilityFromtRootReducer.volatilityData,
 
   }
 }
