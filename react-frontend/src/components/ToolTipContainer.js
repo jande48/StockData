@@ -12,15 +12,61 @@ import * as d3 from "d3"
 
 function ToolTipContainer (props) {
 
-    objectListTrend = [{'display':'displaySMA','data':'sma'},{'display':'displayEMA','data':'ema'},{'display':'displayADX','data':'adx'},{'display':'displayADXN','data':'adxn'},
-  {'display':'displayADXP','data':'adxp'},{'display':'displayDPO','data':'dpo'},{'display':'displayMI','data':'mi'},{'display':'displayTRIX','data':'trix'},
-  {'display':'displayVINEG','data':'vineg'},{'display':'displayVIPOS','data':'vipos'},{'display':'displayMACDsignal','data':'macds'},{'display':'displayMACD','data':'macd'}]
+   const objectListTrend = [{'display':props.displaySMA,'data':'sma'},{'display':props.displayEMA,'data':'ema'},{'display':props.displayADX,'data':'adx'},{'display':props.displayADXN,'data':'adxn'},
+  {'display':props.displayADXP,'data':'adxp'},{'display':props.displayDPO,'data':'dpo'},{'display':props.displayMI,'data':'mi'},{'display':props.displayTRIX,'data':'trix'},
+  {'display':props.displayVINEG,'data':'vineg'},{'display':props.displayVIPOS,'data':'vipos'},{'display':props.displayMACDsignal,'data':'macds'},{'display':props.displayMACD,'data':'macd'}]
+  //console.log(props.indexMouseOver)
+  function makeDisplayList(objects) {
+    var arrayOuter = []
+    var arrayInner = []
+    var indexAdded = props.splicedIndexStockData+props.indexMouseOver
+    var index = 0
+    if (typeof(props.stockData[indexAdded]) != 'undefined') {
+      arrayInner.push({'name':'Date','data':props.stockData[indexAdded]['date']})
+      arrayInner.push({'name':'Open','data':props.stockData[indexAdded]['open']})
+      arrayInner.push({'name':'High','data':props.stockData[indexAdded]['high']})
+      arrayInner.push({'name':'Low','data':props.stockData[indexAdded]['low']})
+      arrayInner.push({'name':'Close','data':props.stockData[indexAdded]['close']})
+      arrayInner.push({'name':'Vol','data':props.stockData[indexAdded]['volume']})
+      arrayOuter.push(arrayInner)
+      arrayInner = []
 
+    // arrayOuter.push([{'name':'Date','data':props.stockData[props.indexMouseOver]['date']},{'name':'Open','data':props.stockData[props.indexMouseOver]['open']},
+    // {'name':'High','data':props.stockData[props.indexMouseOver]['high']},{'name':'Low','data':props.stockData[props.indexMouseOver]['low']},
+    // {'name':'Close','data':props.stockData[props.indexMouseOver]['close']},{'name':'Vol','data':props.stockData[props.indexMouseOver]['volume']}])
+    
+    console.log(arrayOuter)
+    objects.forEach( function (el){
+      if (index % 6 == 0 && index != 0) {
+        arrayOuter.push(arrayInner)
+        arrayInner = []
+      }
+      if (el['display']){
+        arrayInner.push({'name':el['data'].toUpperCase(),'data':props.trendData[indexAdded][el['data']]})
+        index++
+      }
+    })
+    arrayOuter.push(arrayInner)
+    return arrayOuter
+  }
 
+  }
+  var objects = makeDisplayList(objectListTrend)
+  console.log(objects)
+//   function makeDisplayList(objects) {
+//     var output = []
+//     for (let [index, val] of objects.entries()) {
+//       if (val['display']) {
+//           output.push({'name':String(val['data']).toUpperCase(),'data':props.stockData[getIndex(props.stockData,props.dateMouseOverTicker)][val['data']]})
+//       }   
+//       }
+//   return output
+// }
     useEffect(() => {
         if (typeof(props.stockData) != 'undefined') {
           if (props.stockData.length > 1 && !props.momentumLoading && !props.loading && !props.trendLoading) {
-            var objects = makeDisplayList(objectListTrend)
+            // var objects = makeDisplayList(objectListTrend)
+            // console.log(objects)
             }}
           },[props.stockData,props.startDate,props.endDate,props.loading,props.momentumLoading,props.trendLoading,props.displayLine,props.displaySMA,props.displayEMA,props.displayMACD,props.displayMACDsignal,
             props.displayADX,props.displayADXN,props.displayADXP,props.displayVIPOS,props.displayVINEG,props.displayTRIX,
@@ -48,23 +94,12 @@ function ToolTipContainer (props) {
     }
     return (data.length -1)
   }
-
-  
-  function makeDisplayList(objects) {
-      var output = []
-      for (let [index, val] of objects.entries()) {
-        if (val['display']) {
-            output.push({'name':String(val['data']).toUpperCase(),'data':props.stockData[getIndex(props.stockData,props.dateMouseOverTicker)][val['data']]})
-        }   
-        }
-    return output
-  }
+console.log(typeof('wffgd'))
 
   return  (
     <div>
-
-        <Grid inverted columns='equal'>
-        <Grid.Row>
+      {props.onMouseOverTicker ? <Grid inverted columns='equal'>
+        {/* <Grid.Row>
           <Grid.Column inverted>
             <Header inverted as="h5"><Header.Content></Header.Content>
                 <Header.Subheader> 
@@ -107,9 +142,25 @@ function ToolTipContainer (props) {
                 </Header.Subheader>
             </Header>
           </Grid.Column>
-        </Grid.Row>
-
-        </Grid>
+        </Grid.Row> */}
+        {typeof(objects) != 'undefined' ? objects.map(el => (
+          <Grid.Row inverted>
+            {el.map( elInner => (
+              <Grid.Column inverted>
+                <Header inverted as="h5"><Header.Content></Header.Content>
+                  <Header.Subheader>
+                  {typeof(elInner['data']) !='undefined' ? typeof(elInner['data']) == 'string' ? String(elInner['name'])+": "+String(elInner['data']) : String(elInner['name'])+": "+String(elInner['data'].toFixed(2)) : ''}
+                  </Header.Subheader>
+                </Header>
+              </Grid.Column>
+              )
+            )}
+          </Grid.Row>
+        )) : ''}
+        </Grid> : ''}
+      
+      
+        
     </div>
   )
 }
@@ -122,6 +173,7 @@ const mapStateToProps = state => {
     stockData: state.stockDataFromRootReducer.stockData,
     loading: state.stockDataFromRootReducer.loading,
     trendLoading: state.trendFromRootReducer.trendLoading,
+    trendData: state.trendFromRootReducer.trendData,
     momentumLoading: state.momentumFromRootReducer.momentumLoading,
     error: state.stockDataFromRootReducer.error,
     errorMessage: state.stockDataFromRootReducer.errorMessage,
@@ -174,6 +226,8 @@ const mapStateToProps = state => {
     volatilityData: state.volatilityFromtRootReducer.volatilityData,
     onMouseOverTicker: state.tickersFromRootReducer.onMouseOverTicker,
     dateMouseOverTicker: state.tickersFromRootReducer.dateMouseOverTicker,
+    indexMouseOver: state.tickersFromRootReducer.indexMouseOver,
+    splicedIndexStockData: state.tickersFromRootReducer.splicedIndexStockData,
 
   }
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import { addPercentChange, addSplicedStartDate, addStockPriceForPercentChange, addEndDateForPercentChange, addSplicedIndexStockData, 
-  addActiveNav, addOnMouseOverTicker, addDateMouseOverTicker } from '../redux'
+  addActiveNav, addOnMouseOverTicker, addDateMouseOverTicker, addIndexMouseOver } from '../redux'
 import {Header, Grid} from 'semantic-ui-react'
 import { createLoadingSpinnerChart } from './charts/loadingSpinner.js'
 import '../App.css'
@@ -259,6 +259,7 @@ function LineCandleGraphContainer (props) {
       const invisibleRectForTooltip = svg.append("g")
           // .attr("stroke", "black")
           .selectAll("g")
+          .attr("id","invisibleTooltip")
           .data(data)
           .join("g")
           .attr("transform", data => `translate(${x(parseDate(data.date))},0)`);
@@ -271,7 +272,8 @@ function LineCandleGraphContainer (props) {
           .attr("fill", 'green')
           .style("opacity",'0')
           .attr('transform',d=>(`translate(${x.bandwidth()},${height - margin.top}) rotate(180)`))
-          .on('mouseover',function(e,d){
+          
+      invisibleRectForTooltip.on('mouseover',function(event,d){
             d3.select(this).style('opacity','0.5')
             var endingDateSplit = d.date.split('-')
             var dateFromSplit = new Date(parseInt(endingDateSplit[0]),parseInt(endingDateSplit[1]),parseInt(endingDateSplit[2]))
@@ -279,6 +281,10 @@ function LineCandleGraphContainer (props) {
             props.addStockPriceForPercentChange(d.close)
             props.addOnMouseOverTicker(true)
             props.addDateMouseOverTicker(d.date)
+            console.log(d)
+            const e = invisibleRectForTooltip.nodes();
+            const i = e.indexOf(this);
+            props.addIndexMouseOver(i)
           })
           .on('mouseout',function(e,d){
             d3.select(this).style('opacity','0')
@@ -851,6 +857,7 @@ const mapDispatchToProps = dispatch => {
     addActiveNav: (x) => dispatch(addActiveNav(x)),
     addOnMouseOverTicker: (x) => dispatch(addOnMouseOverTicker(x)),
     addDateMouseOverTicker: (x) => dispatch(addDateMouseOverTicker(x)),
+    addIndexMouseOver: (x) => dispatch(addIndexMouseOver(x)),
   }
 }
 

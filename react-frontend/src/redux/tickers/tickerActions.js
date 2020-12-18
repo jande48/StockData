@@ -1,7 +1,7 @@
   
 import { ADD_TICKER, FETCH_COMP_INFO_REQUEST, FETCH_COMP_INFO_SUCCESS, FETCH_COMP_INFO_FAILURE, COMPANY_NAME, 
   ADD_PERCENT_CHANGE, STOCK_PRICE_FOR_PERCENT_CHANGE,END_DATE_FOR_PERCENT_CHANGE, SPLICED_START_DATE,
-  SPLICED_INDEX_STOCK_DATA, USER_AUTHENTICATED, ON_MOUSE_OVER_TICKER, DATE_MOUSE_OVER_TICKER} from './tickerTypes'
+  SPLICED_INDEX_STOCK_DATA, USER_AUTHENTICATED, ON_MOUSE_OVER_TICKER, DATE_MOUSE_OVER_TICKER, INDEX_MOUSE_OVER} from './tickerTypes'
 import axios from 'axios'
 import _ from 'lodash'
 
@@ -64,6 +64,12 @@ export const addOnMouseOverTicker = (index = false) => {
 export const addDateMouseOverTicker = (index = false) => {
   return {
     type: DATE_MOUSE_OVER_TICKER,
+    payload: index
+  }
+}
+export const addIndexMouseOver = (index = 0) => {
+  return {
+    type: INDEX_MOUSE_OVER,
     payload: index
   }
 }
