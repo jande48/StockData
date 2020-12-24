@@ -272,8 +272,7 @@ function LineCandleGraphContainer (props) {
           .attr("fill", 'green')
           .style("opacity",'0')
           .attr('transform',d=>(`translate(${x.bandwidth()},${height - margin.top}) rotate(180)`))
-          
-      invisibleRectForTooltip.on('mouseover',function(event,d){
+          .on('mouseover',function(event,d){
             d3.select(this).style('opacity','0.5')
             var endingDateSplit = d.date.split('-')
             var dateFromSplit = new Date(parseInt(endingDateSplit[0]),parseInt(endingDateSplit[1]),parseInt(endingDateSplit[2]))
@@ -281,7 +280,7 @@ function LineCandleGraphContainer (props) {
             props.addStockPriceForPercentChange(d.close)
             props.addOnMouseOverTicker(true)
             props.addDateMouseOverTicker(d.date)
-            console.log(d)
+            const newI = props.stockData.findIndex(function(d){ return props.dateMouseOverTicker == d.date})
             const e = invisibleRectForTooltip.nodes();
             const i = e.indexOf(this);
             props.addIndexMouseOver(i)
@@ -777,6 +776,7 @@ const mapStateToProps = state => {
     tickers: state.tickersFromRootReducer.tickers,
     startDate: state.datesFromRootReducer.startDate,
     endDate: state.datesFromRootReducer.endDate,
+    dateMouseOverTicker: state.tickersFromRootReducer.dateMouseOverTicker,
     stockData: state.stockDataFromRootReducer.stockData,
     loading: state.stockDataFromRootReducer.loading,
     trendLoading: state.trendFromRootReducer.trendLoading,
@@ -832,23 +832,11 @@ const mapStateToProps = state => {
     volatilityData: state.volatilityFromtRootReducer.volatilityData,
     onMouseOverTicker: state.tickersFromRootReducer.onMouseOverTicker,
     dateMouseOverTicker: state.tickersFromRootReducer.dateMouseOverTicker,
-    // displayCCI: state.trendFromRootReducer.displayCCI,
-    // nForCCI: state.trendFromRootReducer.nForCCI,
-    // cForCCI: state.trendFromRootReducer.cForCCI,
-    // displayBBSMA: state.trendFromRootReducer.displayBBSMA,
-    // nForBBSMA: state.trendFromRootReducer.nForBBSMA,
-    // nDevForBBSMA: state.trendFromRootReducer.nDevForBBSMA,
-    
-
-
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    //requestAPIstockData: (APIstring) => dispatch(requestAPIstockData(APIstring)),
-    //fetchStockData: (APIstring) => dispatch(fetchStockData(APIstring)),
-    //fetchTrendData: (APIstring) => dispatch(fetchTrendData(APIstring)),
     addPercentChange: (percentChange) => dispatch(addPercentChange(percentChange)),
     addSplicedStartDate: (startingDate) => dispatch(addSplicedStartDate(startingDate)),
     addStockPriceForPercentChange: (stockPrice) => dispatch(addStockPriceForPercentChange(stockPrice)),

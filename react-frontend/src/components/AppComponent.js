@@ -8,6 +8,7 @@ import SelectDatesFromMenuContainer from './SelectDatesFromMenuContainer'
 import SelectCustomDatesContainer from './SelectCustomDatesContainer'
 import SelectLineOrCandleContainer from './SelectLineOrCandleContainer'
 import LineCandleGraphContainer from './LineCandleGraphContainer'
+import LineCandleGraphIndicatorContainer from './LineCandleGraphIndicatorContainer'
 import VolumeGraphContainer from './VolumeGraphContainer'
 import CompanyFinancialsContainer from './CompanyFinancialContainer'
 
@@ -91,9 +92,9 @@ function AppComponent () {
           </Grid.Column>
           <Grid.Column width = {12}>
             <HeaderTickerPriceContainer /><br />
-            <LineCandleGraphContainer /><br/>
+            <LineCandleGraphIndicatorContainer /><br/>
             <VolumeGraphContainer/><br/>
-            <MomentumGraphContainer/><br />
+            {/* <MomentumGraphContainer/><br /> */}
             <ToolTipContainer/><br />
             <PostFormContainer/><br />
             <CompanyFinancialsContainer/><br />

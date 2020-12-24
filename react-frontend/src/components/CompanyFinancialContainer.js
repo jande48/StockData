@@ -78,11 +78,11 @@ function CompanyFinancialsContainer (props) {
     <div>
         <React.Fragment>
             <Grid columns='equal'>
-                <Grid.Row>
+                {/* <Grid.Row>
                     <Grid.Column>
                         <p style={{color:"#e0e1e2"}}>{displayMoreText ? description : description.slice(0,500) }<a href="#" style={{color:'green'}} onClick={(e) => {setDisplayMoreText(!displayMoreText)}}>{displayMoreText ? ' -Less' : ' +More'}</a></p>
                     </Grid.Column>
-                </Grid.Row>
+                </Grid.Row> */}
                 <Grid.Row>
                     <Grid.Column textAlign='center'>
                         <p style={{color:"#e0e1e2"}}>Market Cap: ${formatNumbers(mktCap)}</p>

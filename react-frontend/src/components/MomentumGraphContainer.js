@@ -5,7 +5,8 @@ import {Header, Grid} from 'semantic-ui-react'
 import '../App.css'
 import 'react-datepicker/dist/react-datepicker.css'
 import * as d3 from "d3"
-import { fetchMomentumData } from '../redux';
+import { fetchMomentumData,addPercentChange, addSplicedStartDate, addStockPriceForPercentChange, addEndDateForPercentChange, addSplicedIndexStockData, 
+  addActiveNav, addOnMouseOverTicker, addDateMouseOverTicker, addIndexMouseOver  } from '../redux';
 import {
     select,
     csv,
@@ -183,19 +184,50 @@ function MomentumGraphContainer (props) {
               .filter(d => d.getUTCDay() !== 0 && d.getUTCDay() !== 6))
           .range([margin.left, width - margin.right])
           .padding(0.2)
-
+      const xForToolTip = scaleBand()
+          .domain(d3.utcDay
+              .range(parseDate(data[0].date), +parseDate(data[data.length - 1].date) + 1)
+              .filter(d => d.getUTCDay() !== 0 && d.getUTCDay() !== 6))
+          .range([margin.left, width - margin.right])
       var y = scaleLinear()
           //.domain([d3.min(data, d => d.rsi), d3.max(data, d => d.rsi)])
           //.domain(findMinMax(data))
           .domain(findMixMaxObjects(objectList,'axisLeft'))
           .rangeRound([height - margin.bottom, margin.top])
 
-      // if (props.displayMACD) {
-      //   var yRight = scaleLinear()
-      //     //.domain([min,max])
-      //     .domain(findMixMaxObjects(objectList,'axisRight'))
-      //     .rangeRound([height - margin.bottom, margin.top])
-      // }
+      const invisibleRectForTooltip = svg.append("g")
+          // .attr("stroke", "black")
+          .selectAll("g")
+          .attr("id","invisibleTooltip")
+          .data(data)
+          .join("g")
+          .attr("transform", data => `translate(${x(parseDate(data.date))},0)`);
+  
+      invisibleRectForTooltip.append("rect")
+          .attr('x',0)
+          .attr('y',0)
+          .attr('width', d=>(xForToolTip.bandwidth()))
+          .attr('height',height - margin.top)
+          .attr("fill", 'green')
+          .style("opacity",'0')
+          .attr('transform',d=>(`translate(${x.bandwidth()},${height - margin.top}) rotate(180)`))
+          .on('mouseover',function(event,d){
+            d3.select(this).style('opacity','0.5')
+            var endingDateSplit = d.date.split('-')
+            var dateFromSplit = new Date(parseInt(endingDateSplit[0]),parseInt(endingDateSplit[1]),parseInt(endingDateSplit[2]))
+            props.addEndDateForPercentChange(dateFromSplit)
+            props.addStockPriceForPercentChange(d.close)
+            props.addOnMouseOverTicker(true)
+            props.addDateMouseOverTicker(d.date)
+            console.log(d)
+            const e = invisibleRectForTooltip.nodes();
+            const i = e.indexOf(this);
+            props.addIndexMouseOver(i)
+          })
+          .on('mouseout',function(e,d){
+            d3.select(this).style('opacity','0')
+            props.addOnMouseOverTicker(false)
+          })
 
       const xAxis = g => g
           .attr("transform", `translate(0,${height - margin.bottom})`)
@@ -453,7 +485,16 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     //requestAPIstockData: (APIstring) => dispatch(requestAPIstockData(APIstring)),
-    fetchMomentumData: (APIstring) => dispatch(fetchMomentumData(APIstring))
+    fetchMomentumData: (APIstring) => dispatch(fetchMomentumData(APIstring)),
+    addPercentChange: (percentChange) => dispatch(addPercentChange(percentChange)),
+    addSplicedStartDate: (startingDate) => dispatch(addSplicedStartDate(startingDate)),
+    addStockPriceForPercentChange: (stockPrice) => dispatch(addStockPriceForPercentChange(stockPrice)),
+    addEndDateForPercentChange: (endingDate) => dispatch(addEndDateForPercentChange(endingDate)),
+    addSplicedIndexStockData: (index) => dispatch(addSplicedIndexStockData(index)),
+    addActiveNav: (x) => dispatch(addActiveNav(x)),
+    addOnMouseOverTicker: (x) => dispatch(addOnMouseOverTicker(x)),
+    addDateMouseOverTicker: (x) => dispatch(addDateMouseOverTicker(x)),
+    addIndexMouseOver: (x) => dispatch(addIndexMouseOver(x)),
   }
 }
 

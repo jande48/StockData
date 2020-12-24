@@ -27,13 +27,13 @@ function NavComponent (props) {
             Home
             </Menu.Item>
             </Link>
-            <Link to="/forum">
+            <Link to="/posts">
             <Menu.Item
             name='forum'
             active={props.activeNav === 'forum'}
             onClick={(e,data) => handleItemClick(data)}
             >
-            Forum
+            Posts
             </Menu.Item>
             </Link>
         {props.isAuthenticated ? 

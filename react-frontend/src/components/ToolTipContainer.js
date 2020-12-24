@@ -26,7 +26,15 @@ function ToolTipContainer (props) {
   function makeDisplayList(objectsTrend,objectsMom,objectsVol) {
     var arrayOuter = []
     var arrayInner = []
-    var indexAdded = props.splicedIndexStockData+props.indexMouseOver
+    // console.log(props.splicedIndexStockData)
+    // console.log(props.indexMouseOver)
+    // console.log(props.indexMouseOver+props.splicedIndexStockData)
+    function checkDate(date) {
+      return date['date'] == props.dateMouseOverTicker;
+    }
+    var indexAdded = props.stockData.findIndex(checkDate)
+
+    //var indexAdded = props.splicedIndexStockData+props.indexMouseOver
     var index = 0
     if (typeof(props.stockData[indexAdded]) != 'undefined' && typeof(props.momentumData[indexAdded]) != 'undefined') {
       arrayInner.push({'name':'Date','data':props.stockData[indexAdded]['date']})
@@ -78,21 +86,20 @@ function ToolTipContainer (props) {
     useEffect(() => {
         if (typeof(props.stockData) != 'undefined') {
           if (props.stockData.length > 1 && !props.momentumLoading && !props.loading && !props.trendLoading) {
-            // var objects = makeDisplayList(objectListTrend)
-            // console.log(objects)
+            var objects = makeDisplayList(objectListTrend,objectListMomentum,objectListVolatility)
             }}
           },[props.stockData,props.startDate,props.endDate,props.loading,props.momentumLoading,props.trendLoading,props.displayLine,props.displaySMA,props.displayEMA,props.displayMACD,props.displayMACDsignal,
             props.displayADX,props.displayADXN,props.displayADXP,props.displayVIPOS,props.displayVINEG,props.displayTRIX,
             props.displayMI,props.displayDPO,props.displayATR,props.nForATR,props.displayBBSMA,props.displayBBSMA,props.displayBBUpper,
             props.nForBBUpper,props.ndevBBUpper,props.displayBBLower,props.nForBBLower,props.ndevBBLower,props.displayKeltnerC,
-            props.nForKeltnerC,props.volatilityData])
+            props.nForKeltnerC,props.volatilityData,props.indexMouseOver,props.splicedIndexStockData])
 
     function convertDatesToString(initialDate) {
 		const convertedDate = String(initialDate.getFullYear())+"-"+String(initialDate.getMonth() + 1)+"-"+String(initialDate.getDate())
 		return convertedDate
 	  }
-
-
+    
+    
   function splitDate(date){
       var dateSplit = date.split("-")
       var formattedDate = String(parseInt(dateSplit[1])-1)+"/"+String(parseInt(dateSplit[2]))+"/"+String(parseInt(dateSplit[0]))
@@ -107,7 +114,6 @@ function ToolTipContainer (props) {
     }
     return (data.length -1)
   }
-console.log(typeof('wffgd'))
 
   return  (
     <div>

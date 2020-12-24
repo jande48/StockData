@@ -95,6 +95,7 @@ def user_logout():
     
 @users.route("/users/register/", methods=['GET','POST'])
 def users_register():
+
     JSON_sent = request.get_json()
     userCheck = User.query.filter_by(email=JSON_sent['email']).first()
     if userCheck:

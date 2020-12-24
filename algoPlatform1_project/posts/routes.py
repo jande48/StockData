@@ -2,7 +2,7 @@ from flask import (render_template, url_for, flash,
                    redirect, request, abort, Blueprint)
 from flask_login import current_user, login_required
 from algoPlatform1_project import db, app
-from algoPlatform1_project.models import Post
+from algoPlatform1_project.models import Post, User
 from algoPlatform1_project.posts.forms import PostForm
 import jwt, os, json
 
@@ -15,7 +15,20 @@ posts = Blueprint('posts',__name__)
 def fourm():
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+    
+    # def print_result(n):
+    #     return print(str(n['content']))
+
+    # result = map(print_result,posts)
     return render_template('fourm.html', posts=posts, active='fourm')
+
+@posts.route("/posts/<page>",methods=['GET'])
+def return_posts(page):
+    posts = Post.query[:10]
+    export = []
+    for p in posts:
+        export.append({'user':str(User.query.get(p.user_id).username),'date':str(p.date_posted.month)+'/'+str(p.date_posted.day)+'/'+str(p.date_posted.year)[-2:],'content':p.content,'chartData':p.chartData})
+    return json.dumps(export)
 
 
 @posts.route("/post/new/", methods=['GET', 'POST'])
@@ -23,11 +36,10 @@ def fourm():
 def new_post():
     if current_user.is_authenticated:
         req_data = request.get_json()
-        title = req_data['title']
+        #title = req_data['title']
         content = req_data['content']
         chartData = req_data['chartData']
-        print(chartData)
-        post = Post(title=title,content=content,author=current_user,chartData=json.loads(chartData))
+        post = Post(content=content,author=current_user,chartData=json.loads(chartData))
         db.session.add(post)
         db.session.commit()
         response = {'type':'success'}

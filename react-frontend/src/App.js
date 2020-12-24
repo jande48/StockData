@@ -20,7 +20,7 @@ function App () {
       <Router>
         <NavComponent/>
         <Switch>
-          <Route path="/forum" component={ForumComponent} /> 
+          <Route path="/posts" component={ForumComponent} /> 
           <Route path="/login" component={LoginContainer} /> 
           <Route path="/logout" component={LogoutContainer} /> 
           <Route path="/register" component={RegisterContainer} /> 

@@ -1,5 +1,5 @@
 import { USER_AUTHENTICATED, POST_RESPONSE, IS_AUTHENTICATED, ACTIVE_NAV, EMAIL_IN_USE, PHOTO_UPDATED, EMAIL_UPDATED, PASSWORD_UPDATED,
-  LOGIN_FAILED, PASSWORD_RESET} from './usersTypes'
+  LOGIN_FAILED, PASSWORD_RESET, PAGE_NUMBER, FORM_DATA_DISPLAY, SUBMIT_POST_SUCCESS, SUBMIT_POST_LOADING, SUBMIT_POST_FAILURE} from './usersTypes'
 
 const initialState = {
     isAuthenticated: false,
@@ -12,6 +12,11 @@ const initialState = {
     passwordUpdated: false,
     loginFailed: false,
     passwordReset: false,
+    pageNumber: 1,
+    formDataDisplay: {},
+    submitPostLoading: false,
+    submitPostSuccess: false,
+    submitPostFailure: false,
   }
 
 
@@ -57,6 +62,26 @@ switch (action.type) {
     case PASSWORD_RESET: return {
       ...state,
       passwordReset: action.payload
+    }
+    case PAGE_NUMBER: return {
+      ...state,
+      pageNumber: action.payload
+    }
+    case FORM_DATA_DISPLAY: return {
+      ...state,
+      formDataDisplay: action.payload
+    }
+    case SUBMIT_POST_FAILURE: return {
+      ...state,
+      submitPostFailure: action.payload
+    }
+    case SUBMIT_POST_SUCCESS: return {
+      ...state,
+      submitPostSuccess: action.payload
+    }
+    case SUBMIT_POST_LOADING: return {
+      ...state,
+      submitPostLoading: action.payload
     }
     default: return state
 }

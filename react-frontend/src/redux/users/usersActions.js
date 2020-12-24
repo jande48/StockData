@@ -1,9 +1,10 @@
 import { USER_AUTHENTICATED, POST_RESPONSE, IS_AUTHENTICATED, ACCOUNT_UPDATED, ACTIVE_NAV, EMAIL_IN_USE, PHOTO_UPDATED, EMAIL_UPDATED, 
-  PASSWORD_UPDATED, LOGIN_FAILED, PASSWORD_RESET} from './usersTypes'
+  PASSWORD_UPDATED, LOGIN_FAILED, PASSWORD_RESET, PAGE_NUMBER, FORM_DATA_DISPLAY, SUBMIT_POST_SUCCESS, SUBMIT_POST_LOADING, SUBMIT_POST_FAILURE} from './usersTypes'
 import axios from 'axios'
 import _ from 'lodash'
 import setAuthorizationToken from '../../utils/setAuthorizationToken'
 import jwt from 'jsonwebtoken'
+import { dispatch } from 'd3'
 
 
 
@@ -67,12 +68,60 @@ export const addPasswordReset = (index = false) => {
       payload: index
     }
   }
-export function createNewPost(data) {
+  export const addPageNumber = (index = 1) => {
+    return {
+      type: PAGE_NUMBER,
+      payload: index
+    }
+  }
+  export const addSubmitPostLoading = index  => {
+    return {
+      type: SUBMIT_POST_LOADING,
+      payload: index
+    }
+  }
+  export const addSubmitPostSuccess = index  => {
+    return {
+      type: SUBMIT_POST_SUCCESS,
+      payload: index
+    }
+  }
+  export const addSubmitPostFailure = index  => {
+    return {
+      type: SUBMIT_POST_FAILURE,
+      payload: index
+    }
+  }
+  export const addFormDataDisplay = (index = 1) => {
+    return {
+      type: FORM_DATA_DISPLAY,
+      payload: index
+    }
+  }
+  export function fetchPosts(data) {
     return function (dispatch) {
-        console.log('we got inside the create new post function')
+        axios({
+          method: 'get',
+          url: "/posts/"+data,
+        }).then(res => {
+            const response = res.data;
+            dispatch(addFormDataDisplay(response))
+        })
+    }
+}
+export function createNewPost(data) {
+    
+    return function (dispatch) {
+        dispatch(addSubmitPostLoading(true))
         axios.post('/post/new/',data).then(res => {
             const response = res.data;
-            dispatch(addPostResponse(response))
+            if (response['type'] == 'success'){
+              dispatch(addSubmitPostSuccess(true))
+            } else {
+              dispatch(addSubmitPostFailure(true))
+            }
+            dispatch(addSubmitPostLoading(false))
+            //dispatch(addPostResponse(response))
             
         })
     }
@@ -109,6 +158,7 @@ export function fetchLogin(data) {
 }
 export function fetchRegister(data) {
   return function (dispatch)  {
+      
       axios.post('/users/register/',data).then(res => {
           const response = jwt.decode(res.data);
           if (response['emailAlreadyUsed']) {

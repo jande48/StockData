@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
+import { addPercentChange, addSplicedStartDate, addStockPriceForPercentChange, addEndDateForPercentChange, addSplicedIndexStockData, 
+  addActiveNav, addOnMouseOverTicker, addDateMouseOverTicker, addIndexMouseOver } from '../redux'
 import {Header, Grid} from 'semantic-ui-react'
 import { createLoadingSpinnerChart } from './charts/loadingSpinner.js'
 import '../App.css'
@@ -87,7 +89,11 @@ function VolumeGraphContainer (props) {
             .filter(d => d.getUTCDay() !== 0 && d.getUTCDay() !== 6))
         .range([margin.left, width - margin.right])
         .padding(0.2)
-
+    const xForToolTip = scaleBand()
+        .domain(d3.utcDay
+            .range(parseDate(data[0].date), +parseDate(data[data.length - 1].date) + 1)
+            .filter(d => d.getUTCDay() !== 0 && d.getUTCDay() !== 6))
+        .range([margin.left, width - margin.right])
     // d3.min(data, d => d.volume)-(d3.max(data, d => d.volume)-d3.min(data, d => d.volume))/10
     const y = scaleLinear()
         .domain([0, d3.max(data, d => d.volume)])
@@ -165,7 +171,38 @@ function VolumeGraphContainer (props) {
         //.attr('transform',`translate(${x.bandwidth()},${innerHeight})  rotate(180)`)
         // .on('mouseover', handleMouseOverRect)
         // .on('mouseout', handleMouseOutRect)
+    const invisibleRectForTooltip = svg.append("g")
+        // .attr("stroke", "black")
+        .selectAll("g")
+        .attr("id","invisibleTooltip")
+        .data(data)
+        .join("g")
+        .attr("transform", data => `translate(${x(parseDate(data.date))},0)`);
 
+    invisibleRectForTooltip.append("rect")
+        .attr('x',0)
+        .attr('y',0)
+        .attr('width', d=>(xForToolTip.bandwidth()))
+        .attr('height',height - margin.top)
+        .attr("fill", 'green')
+        .style("opacity",'0')
+        .attr('transform',d=>(`translate(${x.bandwidth()},${height - margin.top}) rotate(180)`))
+        .on('mouseover',function(event,d){
+          d3.select(this).style('opacity','0.5')
+          var endingDateSplit = d.date.split('-')
+          var dateFromSplit = new Date(parseInt(endingDateSplit[0]),parseInt(endingDateSplit[1]),parseInt(endingDateSplit[2]))
+          props.addEndDateForPercentChange(dateFromSplit)
+          props.addStockPriceForPercentChange(d.close)
+          props.addOnMouseOverTicker(true)
+          props.addDateMouseOverTicker(d.date)
+          const e = invisibleRectForTooltip.nodes();
+          const i = e.indexOf(this);
+          props.addIndexMouseOver(i)
+        })
+        .on('mouseout',function(e,d){
+          d3.select(this).style('opacity','0')
+          props.addOnMouseOverTicker(false)
+        })
     function findIndexStockData(d) {
       for (var i = 0; i < data.length; i++) {
           if (d.open == data[i]['open'] && d.volume == data[i]['volume']) {
@@ -293,10 +330,22 @@ const mapStateToProps = state => {
     financials: state.stockDataFromRootReducer.financialsData,
   }
 }
-
+const mapDispatchToProps = dispatch => {
+  return {
+    addPercentChange: (percentChange) => dispatch(addPercentChange(percentChange)),
+    addSplicedStartDate: (startingDate) => dispatch(addSplicedStartDate(startingDate)),
+    addStockPriceForPercentChange: (stockPrice) => dispatch(addStockPriceForPercentChange(stockPrice)),
+    addEndDateForPercentChange: (endingDate) => dispatch(addEndDateForPercentChange(endingDate)),
+    addSplicedIndexStockData: (index) => dispatch(addSplicedIndexStockData(index)),
+    addActiveNav: (x) => dispatch(addActiveNav(x)),
+    addOnMouseOverTicker: (x) => dispatch(addOnMouseOverTicker(x)),
+    addDateMouseOverTicker: (x) => dispatch(addDateMouseOverTicker(x)),
+    addIndexMouseOver: (x) => dispatch(addIndexMouseOver(x)),
+  }
+}
 export default connect(
   mapStateToProps,
-  null
+  mapDispatchToProps
 )(VolumeGraphContainer)
 
 
