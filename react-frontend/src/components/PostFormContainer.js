@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import { Form, Message, Header } from 'semantic-ui-react'
+import { Form, Message, Header, Checkbox, Grid } from 'semantic-ui-react'
+import { addIncludeVolumeChart } from '../redux'
 import {Link} from 'react-router-dom'
 import { fetchUserAuth, createNewPost, addSubmitPostFailure, addSubmitPostSuccess } from '../redux'
 import '../App.css'
 import setAuthorizationToken from '../utils/setAuthorizationToken'
+import { addIsAuthenticated } from '../redux/users/usersActions'
 
 function PostFormContainer (props) {
     const [title, setTitle] = useState('');
@@ -20,7 +22,9 @@ function PostFormContainer (props) {
     },[])
 
     //setAuthorizationToken(localStorage.jwtToken)
-
+    function handleIncludeVolume() {
+      props.addIncludeVolumeChart(!props.includeVolumeChart)
+    }
 
     function handleSubmit() {
         if (props.userAuth['isAuthenticated']) {
@@ -30,7 +34,7 @@ function PostFormContainer (props) {
             'title': title,
             'content': content,
             'user_id': props.userAuth['username'],
-            'chartData': JSON.stringify({'charts':props.charts,'dates':props.dates,'volatility':props.volatility,'momentum':props.momentum,'stockData':props.stockData,'trend':props.trend,'tickers':props.tickers}),
+            'chartData': JSON.stringify({'charts':props.charts,'dates':props.dates,'volatility':props.volatility,'momentum':props.momentum,'stockData':props.stockData,'trend':props.trend,'tickers':props.tickers,'includeVolume':props.includeVolumeChart}),
           }
           console.log(props.volatility)
           props.createNewPost(payload)
@@ -59,7 +63,7 @@ return (
       <Message.Header>Huh! We can't post that now. Please try later!</Message.Header>
   </Message>
   : ''}
-  <Header inverted as='h3'>Share your insight on the forum: </Header>
+  <Header inverted as='h3'>Share your insights: </Header>
   <Form inverted onSubmit={handleSubmit}>
 
     {/* <Form.Input
@@ -69,12 +73,16 @@ return (
       onChange={handleTitleChange}
     /> */}
     <Form.TextArea
-      placeholder='Share you insights and get feedback from the community'
+      placeholder="What's your opinion of this chart?"
       name='content'
       value={content}
       onChange={handleContentChange}
     />
-    {props.submitPostLoading ? <Form.Button loading secondary color='green' floated='right'/> : <Form.Button inverted color='green' floated='right' content='Submit' />}
+    <Form.Group widths='equal'>
+      <Form.Checkbox label='Include Volume Chart?' onClick={handleIncludeVolume} />
+      {props.submitPostLoading ? <Form.Button loading secondary color='green' floated='right'/> : <Form.Button inverted color='green' floated='right' content='Submit' />}
+    </Form.Group>
+    
     <br/>
     
 
@@ -156,6 +164,7 @@ const mapStateToProps = state => {
       submitPostFailure: state.usersFromRootReducer.submitPostFailure,
       submitPostLoading: state.usersFromRootReducer.submitPostLoading,
       submitPostSuccess: state.usersFromRootReducer.submitPostSuccess,
+      includeVolumeChart: state.usersFromRootReducer.includeVolumeChart,
       
 
     }
@@ -167,6 +176,7 @@ const mapStateToProps = state => {
       createNewPost: (data) => dispatch(createNewPost(data)),
       addSubmitPostSuccess: (data) => dispatch(addSubmitPostSuccess(data)),
       addSubmitPostFailure: (data) => dispatch(addSubmitPostFailure(data)),
+      addIncludeVolumeChart: (data) => dispatch(addIncludeVolumeChart(data))
 
     }
   }

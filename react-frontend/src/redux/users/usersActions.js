@@ -1,5 +1,6 @@
 import { USER_AUTHENTICATED, POST_RESPONSE, IS_AUTHENTICATED, ACCOUNT_UPDATED, ACTIVE_NAV, EMAIL_IN_USE, PHOTO_UPDATED, EMAIL_UPDATED, 
-  PASSWORD_UPDATED, LOGIN_FAILED, PASSWORD_RESET, PAGE_NUMBER, FORM_DATA_DISPLAY, SUBMIT_POST_SUCCESS, SUBMIT_POST_LOADING, SUBMIT_POST_FAILURE} from './usersTypes'
+  PASSWORD_UPDATED, LOGIN_FAILED, PASSWORD_RESET, PAGE_NUMBER, FORM_DATA_DISPLAY, SUBMIT_POST_SUCCESS, SUBMIT_POST_LOADING, 
+  SUBMIT_POST_FAILURE,INCLUDE_VOLUME_CHART} from './usersTypes'
 import axios from 'axios'
 import _ from 'lodash'
 import setAuthorizationToken from '../../utils/setAuthorizationToken'
@@ -95,6 +96,12 @@ export const addPasswordReset = (index = false) => {
   export const addFormDataDisplay = (index = 1) => {
     return {
       type: FORM_DATA_DISPLAY,
+      payload: index
+    }
+  }
+  export const addIncludeVolumeChart = (index = true) => {
+    return {
+      type: INCLUDE_VOLUME_CHART,
       payload: index
     }
   }

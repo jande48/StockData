@@ -1,5 +1,6 @@
 import { USER_AUTHENTICATED, POST_RESPONSE, IS_AUTHENTICATED, ACTIVE_NAV, EMAIL_IN_USE, PHOTO_UPDATED, EMAIL_UPDATED, PASSWORD_UPDATED,
-  LOGIN_FAILED, PASSWORD_RESET, PAGE_NUMBER, FORM_DATA_DISPLAY, SUBMIT_POST_SUCCESS, SUBMIT_POST_LOADING, SUBMIT_POST_FAILURE} from './usersTypes'
+  LOGIN_FAILED, PASSWORD_RESET, PAGE_NUMBER, FORM_DATA_DISPLAY, SUBMIT_POST_SUCCESS, SUBMIT_POST_LOADING, SUBMIT_POST_FAILURE,
+  INCLUDE_VOLUME_CHART} from './usersTypes'
 
 const initialState = {
     isAuthenticated: false,
@@ -17,6 +18,7 @@ const initialState = {
     submitPostLoading: false,
     submitPostSuccess: false,
     submitPostFailure: false,
+    includeVolumeChart: true,
   }
 
 
@@ -82,6 +84,10 @@ switch (action.type) {
     case SUBMIT_POST_LOADING: return {
       ...state,
       submitPostLoading: action.payload
+    }
+    case INCLUDE_VOLUME_CHART: return {
+      ...state,
+      includeVolumeChart: action.payload
     }
     default: return state
 }

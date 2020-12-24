@@ -10,4 +10,4 @@ export { fetchTrendData,  displaySMA, nForSMA, displayEMA, nForEMA, displayMACD,
 export {fetchStockData, fetchFinancialsData, fetchEarningsData} from './stockDataRequest/stockDataActions'
 export {displayATR,nForATR,displayBBSMA,nForBBSMA,displayBBUpper,nForBBUpper,ndevBBUpper,displayBBLower,nForBBLower,ndevBBLower,displayKeltnerC,nForKeltnerC, fetchVolatilityData} from './volatility/volatilityActions'
 export {fetchUserAuth, createNewPost, fetchLogin, fetchLogout, addActiveNav, fetchRegister, addEmailInUse, fetchUpdateAccount, fetchUpdatePhoto, addPhotoUpdated, addEmailUpdated, 
-    addPasswordUpdated, addLoginFailed, fetchPasswordReset, fetchPosts, addSubmitPostFailure, addSubmitPostLoading, addSubmitPostSuccess} from './users/usersActions'
+    addPasswordUpdated, addLoginFailed, fetchPasswordReset, fetchPosts, addSubmitPostFailure, addSubmitPostLoading, addSubmitPostSuccess, addIncludeVolumeChart} from './users/usersActions'

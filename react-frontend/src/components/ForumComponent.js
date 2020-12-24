@@ -41,6 +41,8 @@ function ForumComponent (props) {
       props.formDataDisplay.map( (el, index) => (
           createStockPriceLineChart(stockChartNode[index],el.chartData),
           createVolumeBarChart(volumeNode[index],el.chartData)
+          
+          
           ))
     }
   },[props.formDataDisplay])
@@ -728,17 +730,17 @@ function ForumComponent (props) {
       <Grid.Column></Grid.Column>
       <Grid.Column width={12}>
     {typeof(props.formDataDisplay) != 'undefined' ? props.formDataDisplay.length > 0 ? props.formDataDisplay.map( (el, index) => (
-      <Grid.Row inverted>
+      <Grid.Row color={'#242525'}>
         <Header as='h3' inverted>
-          <Header.Content>{el.user} - <Label>{el.date}</Label></Header.Content>
-          <Header.Subheader>{el.content}</Header.Subheader>
+          <Header.Content>{el.chartData.tickers} - {el.user} <Label>{el.date}</Label></Header.Content>
+          <Header.Subheader>{el.content}</Header.Subheader></Header>
           <React.Fragment>
             <svg ref={stockChartNode[index]}></svg>
          </React.Fragment>
-         <React.Fragment>
+         {el.chartData['includeVolume'] ? <React.Fragment>
             <svg ref={volumeNode[index]}></svg>
-         </React.Fragment>
-        </Header>
+         </React.Fragment>: ''}
+        
       </Grid.Row>
     )) : '' : ''}
     </Grid.Column>
