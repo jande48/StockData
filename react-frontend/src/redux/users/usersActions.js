@@ -1,6 +1,6 @@
 import { USER_AUTHENTICATED, POST_RESPONSE, IS_AUTHENTICATED, ACCOUNT_UPDATED, ACTIVE_NAV, EMAIL_IN_USE, PHOTO_UPDATED, EMAIL_UPDATED, 
   PASSWORD_UPDATED, LOGIN_FAILED, PASSWORD_RESET, PAGE_NUMBER, FORM_DATA_DISPLAY, SUBMIT_POST_SUCCESS, SUBMIT_POST_LOADING, 
-  SUBMIT_POST_FAILURE,INCLUDE_VOLUME_CHART} from './usersTypes'
+  SUBMIT_POST_FAILURE,INCLUDE_VOLUME_CHART, REPLY, REPLY_FAILURE, REPLY_LOADING, REPLY_SUCCESS, FETCH_POST_SUCCESS} from './usersTypes'
 import axios from 'axios'
 import _ from 'lodash'
 import setAuthorizationToken from '../../utils/setAuthorizationToken'
@@ -105,6 +105,36 @@ export const addPasswordReset = (index = false) => {
       payload: index
     }
   }
+  export const addReply = (index ) => {
+    return {
+      type: REPLY,
+      payload: index
+    }
+  }
+  export const addReplyLoading = (index = false ) => {
+    return {
+      type: REPLY_LOADING,
+      payload: index
+    }
+  }
+  export const addReplySuccess = (index = false ) => {
+    return {
+      type: REPLY_SUCCESS,
+      payload: index
+    }
+  }
+  export const addReplyFailure = (index = false ) => {
+    return {
+      type: REPLY_FAILURE,
+      payload: index
+    }
+  }
+  export const addFetchPostSuccess = (index = false ) => {
+    return {
+      type: FETCH_POST_SUCCESS,
+      payload: index
+    }
+  }
   export function fetchPosts(data) {
     return function (dispatch) {
         axios({
@@ -113,8 +143,23 @@ export const addPasswordReset = (index = false) => {
         }).then(res => {
             const response = res.data;
             dispatch(addFormDataDisplay(response))
+            dispatch(addFetchPostSuccess(true))
         })
     }
+}
+export function createNewReply(data) {
+  return function (dispatch) {
+      dispatch(addReplyLoading(true))
+      axios.post('/post/reply/',data).then(res => {
+          const response = res.data;
+          if (response['type'] == 'success'){
+            dispatch(addReplySuccess(true))
+          } else {
+            dispatch(addReplyFailure(true))
+          }
+          dispatch(addReplyLoading(false))      
+      })
+  }
 }
 export function createNewPost(data) {
     

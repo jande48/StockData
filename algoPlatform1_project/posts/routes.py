@@ -27,9 +27,23 @@ def return_posts(page):
     posts = Post.query[:10]
     export = []
     for p in posts:
-        export.append({'user':str(User.query.get(p.user_id).username),'date':str(p.date_posted.month)+'/'+str(p.date_posted.day)+'/'+str(p.date_posted.year)[-2:],'content':p.content,'chartData':p.chartData})
+        export.append({'user':str(User.query.get(p.user_id).username),'date':str(p.date_posted.month)+'/'+str(p.date_posted.day)+'/'+str(p.date_posted.year)[-2:],'content':p.content,'id':p.id,'chartData':p.chartData})
+    #print(export)
+    #print(export.reverse())
     return json.dumps(export)
 
+@posts.route("/post/reply/", methods=['GET', 'POST'])
+@login_required
+def new_reply():
+    if current_user.is_authenticated:
+        req_data = request.get_json()
+        postToReply = Post.query(id=req_data['id'])
+        currentReplies = postToReply['replies']
+        print(currentReplies)
+        response = {'type':'success'}
+        return response
+    response = {'type':'failure'}
+    return response
 
 @posts.route("/post/new/", methods=['GET', 'POST'])
 @login_required

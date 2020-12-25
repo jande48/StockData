@@ -1,10 +1,10 @@
 import React, {useState, useEffect, useRef} from 'react'
 import { Provider,connect } from 'react-redux'
-import { fetchPosts } from '../redux'
+import { fetchPosts, createNewReply } from '../redux'
 import '../App.css'
 import store from '../redux/store'
 import LineCandleFormGraphContainer from './LineCandleFormGraphContainer'
-import { Grid, Header, Menu, Segment, Label} from "semantic-ui-react"
+import { Grid, Header, Menu, Segment, Label, Message, Form} from "semantic-ui-react"
 import * as d3 from "d3"
 
 import {
@@ -24,7 +24,9 @@ import {
 
 
 function ForumComponent (props) {
-  //const stockChartNode = useRef(null)
+  // const [reply, setReply] = useState('')
+  // const handleReplyChange = (e, data) => setReply(data.value)
+  // const [showWarning, setShowWarning] = useState([false,false,false,false,false,false,false,false,false,false])
   const stockChartNode = [useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null)];
   const volumeNode = [useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null)];
   const height = 220;
@@ -37,12 +39,11 @@ function ForumComponent (props) {
     if (props.pageNumber != pageNumber){
     props.fetchPosts(props.pageNumber)
     setPageNumber(props.pageNumber)}
-    if (typeof(props.formDataDisplay) != 'undefined' && props.formDataDisplay.length > 0) {
+    if (typeof(props.formDataDisplay) != 'undefined' && props.formDataDisplay.length > 0 ) {
+      
       props.formDataDisplay.map( (el, index) => (
           createStockPriceLineChart(stockChartNode[index],el.chartData),
           createVolumeBarChart(volumeNode[index],el.chartData)
-          
-          
           ))
     }
   },[props.formDataDisplay])
@@ -722,14 +723,29 @@ function ForumComponent (props) {
     return svg.node();
   }
   
-    
-     
+  // function handleReplySubmit(id,index) {
+  //   if (props.userAuth['isAuthenticated']) {
 
+  //     const payload = {
+  //       'reply': reply,
+  //       'id': id,
+  //     }
+
+  //     props.createReplyPost(payload)
+
+  //   } else {
+  //     setShowWarning(showWarning[index] == true)
+  //   }
+    
+  //}
+     
+//{props.fetchPostSuccess ? props.formDataDisplay.map( (el, index) => (
   return (
     <Grid columns='equal'>
       <Grid.Column></Grid.Column>
       <Grid.Column width={12}>
-    {typeof(props.formDataDisplay) != 'undefined' ? props.formDataDisplay.length > 0 ? props.formDataDisplay.map( (el, index) => (
+
+      {typeof(props.formDataDisplay) != 'undefined' ? props.formDataDisplay.length > 0 ? props.formDataDisplay.map( (el, index) => (
       <Grid.Row color={'#242525'}>
         <Header as='h3' inverted>
           <Header.Content>{el.chartData.tickers} - {el.user} <Label>{el.date}</Label></Header.Content>
@@ -740,7 +756,20 @@ function ForumComponent (props) {
          {el.chartData['includeVolume'] ? <React.Fragment>
             <svg ref={volumeNode[index]}></svg>
          </React.Fragment>: ''}
-        
+         <Header inverted as='h5'>Comments: </Header>
+         {/* { showWarning[index] ? 
+        <Message warning>
+            <Message.Header>Please <a style={{color: "green"}} href="/login">login</a> or <a style={{color: "green"}} href="/register">sign up</a> to post replies</Message.Header>
+        </Message>
+        : ''}
+        <Form inverted onSubmit={handleReplySubmit(el.id, index)}>
+          <Form.TextArea
+            placeholder="What's your opinion of this chart?"
+            name='content'
+            value={reply}
+            onChange={handleReplyChange}
+          />          
+        </Form><br/> */}
       </Grid.Row>
     )) : '' : ''}
     </Grid.Column>
@@ -756,13 +785,18 @@ const mapStateToProps = state => {
       tickers: state.tickersFromRootReducer.tickers,
       formDataDisplay: state.usersFromRootReducer.formDataDisplay,
       pageNumber: state.usersFromRootReducer.pageNumber,
+      replyLoading: state.usersFromRootReducer.replyLoading,
+      replySuccess: state.usersFromRootReducer.replySuccess,
+      replyFailure: state.usersFromRootReducer.replyFailure,
+      fetchPostSuccess: state.usersFromRootReducer.fetchPostSuccess,
     }
   }
   
 const mapDispatchToProps = dispatch => {
 return {
     //requestAPIstockData: (APIstring) => dispatch(requestAPIstockData(APIstring)),
-    fetchPosts: (page) => dispatch(fetchPosts(page))
+    fetchPosts: (page) => dispatch(fetchPosts(page)),
+    createNewReply: (reply) => dispatch(createNewReply(reply)),
     
 }
 }

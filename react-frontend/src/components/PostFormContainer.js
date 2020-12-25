@@ -36,7 +36,6 @@ function PostFormContainer (props) {
             'user_id': props.userAuth['username'],
             'chartData': JSON.stringify({'charts':props.charts,'dates':props.dates,'volatility':props.volatility,'momentum':props.momentum,'stockData':props.stockData,'trend':props.trend,'tickers':props.tickers,'includeVolume':props.includeVolumeChart}),
           }
-          console.log(props.volatility)
           props.createNewPost(payload)
 
         } else {

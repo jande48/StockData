@@ -708,6 +708,7 @@ function LineCandleGraphIndicatorContainer (props) {
               keysList.push({'name':objects[i]['name'],'color':objects[i]['color']})
             }
           }
+
           svg.selectAll("g").selectAll(".mydotsRight").remove()
           svg.selectAll("g").selectAll(".mylabelsRight").remove()
           const size = 10

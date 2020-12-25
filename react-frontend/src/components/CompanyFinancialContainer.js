@@ -44,21 +44,33 @@ function CompanyFinancialsContainer (props) {
     var totalDebt = 0
     var shortTermDebt = 0
     var longTermDebt = 0
-    if (typeof(props.financialsData) != 'undefined') {
+    if (typeof(props.financialsData) != 'undefined' && typeof(props.financialsData[0]) != 'undefined' && typeof(props.financialsData[1]) != 'undefined' && typeof(props.financialsData[2]) != 'undefined') {
         if (props.financialsData.length > 1) {
-            typeof(props.financialsData[1]['CEO']) != 'undefined' ? ceo = props.financialsData[1]['CEO'] : ''
-            typeof(props.financialsData[2]['mktCap']) != 'undefined' ? mktCap = props.financialsData[2]['mktCap'] : ''
-            typeof(props.financialsData[1]['description']) != 'undefined' ? dividend = props.financialsData[2]['lastDiv'] : ''
-            typeof(props.financialsData[1]['description']) != 'undefined' ? description = props.financialsData[1]['description'] : ''
-            typeof(props.financialsData[0]['grossProfit']) != 'undefined' ? grossProfit = props.financialsData[0]['grossProfit'] : ''
-            typeof(props.financialsData[0]['operatingRevenue']) != 'undefined' ? operatingRevenue = props.financialsData[0]['operatingRevenue'] : ''
-            typeof(props.financialsData[0]['totalRevenue']) != 'undefined' ? totalRevenue = props.financialsData[0]['totalRevenue'] : ''
-            typeof(props.financialsData[0]['totalAssets']) != 'undefined' ? totalAssets = props.financialsData[0]['totalAssets'] : ''
-            typeof(props.financialsData[0]['totalLiabilities']) != 'undefined' ? totalLiabilities = props.financialsData[0]['totalLiabilities'] : ''
-            typeof(props.financialsData[0]['totalCash']) != 'undefined' ? totalCash = props.financialsData[0]['totalCash'] : ''
-            typeof(props.financialsData[0]['netIncome']) != 'undefined' ? netIncome = props.financialsData[0]['netIncome'] : ''
-            typeof(props.financialsData[0]['totalDebt']) != 'undefined' ? totalDebt = props.financialsData[0]['totalDebt'] : ''
-            typeof(props.financialsData[0]['cashFlow']) != 'undefined' ? cashFlow = props.financialsData[0]['cashFlow'] : ''
+            ceo = props.financialsData[1]['CEO']
+            mktCap = props.financialsData[2]['mktCap'] 
+            dividend = props.financialsData[2]['lastDiv']
+            description = props.financialsData[1]['description']
+            grossProfit = props.financialsData[0]['grossProfit']
+            operatingRevenue = props.financialsData[0]['operatingRevenue']
+            totalRevenue = props.financialsData[0]['totalRevenue']
+            totalLiabilities = props.financialsData[0]['totalLiabilities']
+            totalCash = props.financialsData[0]['totalCash']
+            netIncome = props.financialsData[0]['netIncome']
+            totalDebt = props.financialsData[0]['totalDebt']
+            cashFlow = props.financialsData[0]['cashFlow']
+            // typeof(props.financialsData[1]['CEO']) != 'undefined' ? ceo = props.financialsData[1]['CEO'] : ''
+            // typeof(props.financialsData[2]['mktCap']) != 'undefined' ? mktCap = props.financialsData[2]['mktCap'] : ''
+            // typeof(props.financialsData[1]['description']) != 'undefined' ? dividend = props.financialsData[2]['lastDiv'] : ''
+            // typeof(props.financialsData[1]['description']) != 'undefined' ? description = props.financialsData[1]['description'] : ''
+            // typeof(props.financialsData[0]['grossProfit']) != 'undefined' ? grossProfit = props.financialsData[0]['grossProfit'] : ''
+            // typeof(props.financialsData[0]['operatingRevenue']) != 'undefined' ? operatingRevenue = props.financialsData[0]['operatingRevenue'] : ''
+            // typeof(props.financialsData[0]['totalRevenue']) != 'undefined' ? totalRevenue = props.financialsData[0]['totalRevenue'] : ''
+            // typeof(props.financialsData[0]['totalAssets']) != 'undefined' ? totalAssets = props.financialsData[0]['totalAssets'] : ''
+            // typeof(props.financialsData[0]['totalLiabilities']) != 'undefined' ? totalLiabilities = props.financialsData[0]['totalLiabilities'] : ''
+            // typeof(props.financialsData[0]['totalCash']) != 'undefined' ? totalCash = props.financialsData[0]['totalCash'] : ''
+            // typeof(props.financialsData[0]['netIncome']) != 'undefined' ? netIncome = props.financialsData[0]['netIncome'] : ''
+            // typeof(props.financialsData[0]['totalDebt']) != 'undefined' ? totalDebt = props.financialsData[0]['totalDebt'] : ''
+            // typeof(props.financialsData[0]['cashFlow']) != 'undefined' ? cashFlow = props.financialsData[0]['cashFlow'] : ''
         }
     }
 
