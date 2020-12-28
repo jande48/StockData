@@ -794,7 +794,7 @@ function ForumComponent (props) {
         : ''}
         
         <Form inverted>
-          <Form.TextArea
+          <Form.Input
             placeholder="What's your opinion of this chart?"
             name={el.id}
             value={activeID == el.id ? reply : ''}
