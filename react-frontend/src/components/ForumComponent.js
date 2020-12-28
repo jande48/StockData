@@ -1,13 +1,13 @@
 import React, {useState, useEffect, useRef} from 'react'
 import { Provider,connect } from 'react-redux'
-import { fetchPosts, createNewReply, addActiveNav } from '../redux'
+import { fetchPosts, createNewReply, addActiveNav, addFetchPostSuccess, addFormDataDisplay } from '../redux'
 import {Link} from 'react-router-dom'
 import '../App.css'
 import store from '../redux/store'
 import LineCandleFormGraphContainer from './LineCandleFormGraphContainer'
 import { Grid, Header, Menu, Segment, Label, Message, Form} from "semantic-ui-react"
 import * as d3 from "d3"
-
+import axios from 'axios'
 import {
     select,
     csv,
@@ -35,23 +35,37 @@ function ForumComponent (props) {
   const width = 700;
   const margin = ({top: 15, right: 20, bottom: 20, left: 50})
   const [pageNumber, setPageNumber] = useState(0)
-
+  
   
   useEffect(() => {
-    if (props.pageNumber != pageNumber){
     props.addActiveNav('forum')
-    props.fetchPosts(props.pageNumber)
-    setPageNumber(props.pageNumber)}
-    if (typeof(props.formDataDisplay) != 'undefined' && props.formDataDisplay.length > 0 ) {
-      
-      props.formDataDisplay.map( (el, index) => (
-          createStockPriceLineChart(stockChartNode[index],el.chartData),
-          createVolumeBarChart(volumeNode[index],el.chartData)
-          ))
-    }
-  },[props.formDataDisplay,props.replySuccess])
+    axios({
+      method: 'get',
+      url: "/posts/"+props.pageNumber,
+    }).then(res => {
+        const response = res.data;
+        props.addFormDataDisplay(response)
+        response.map( (el, index) => (
+        console.log('we got here 1'),
+        createStockPriceLineChart(stockChartNode[index],el.chartData),
+        createVolumeBarChart(volumeNode[index],el.chartData)
+        ))
+    })
+    // if (typeof(props.formDataDisplay) != 'undefined' && props.formDataDisplay.length > 0 ) {
+    //   props.formDataDisplay.map( (el, index) => (
+    //       console.log('we got here 1'),
+    //       createStockPriceLineChart(stockChartNode[index],el.chartData),
+    //       createVolumeBarChart(volumeNode[index],el.chartData)
+    //       ))
+    //   console.log('we got here 2')
+    //   }
+    
+    
+    
+  },[props.pageNumber,props.replySuccess])
 
   
+
   function createStockPriceLineChart(stockPriceLineChartNode, d) {
 
     function sliceDataStartDate(data) {
@@ -816,6 +830,8 @@ return {
     fetchPosts: (page) => dispatch(fetchPosts(page)),
     createNewReply: (reply) => dispatch(createNewReply(reply)),
     addActiveNav: (x) => dispatch(addActiveNav(x)),
+    addFetchPostSuccess: (x) => dispatch(addFetchPostSuccess(x)),
+    addFormDataDisplay: (x) => dispatch(addFormDataDisplay(x)),
     
 }
 }
@@ -824,3 +840,35 @@ return {
     mapStateToProps,
     mapDispatchToProps
   )(ForumComponent)
+// async function fetchPostThenMakeCharts() {
+    //   props.fetchPosts(props.pageNumber)
+    //   return new Promise ((resolve, reject) => {
+    //     var wait = setInterval(function(){
+    //       if (props.fetchPostSuccess){
+    //         clearInterval(wait)
+    //         resolve()
+    //       }
+    //     },2)
+
+    //     setTimeout(function (){
+    //       if (props.fetchPostSuccess){
+    //         resolve()}
+    //     },2000)
+    //   })      
+    // }
+
+    // fetchPostThenMakeCharts().then(
+    //   function(value) {props.formDataDisplay.map( (el, index) => (
+    //     createStockPriceLineChart(stockChartNode[index],el.chartData),
+    //     createVolumeBarChart(volumeNode[index],el.chartData)
+    //     ))},
+    //   function(error) {console.log(error)}
+      
+    //   // {(typeof(props.formDataDisplay) != 'undefined' && props.formDataDisplay.length > 0 ) ? }
+      
+    // )
+    // // if (props.pageNumber != pageNumber){
+    // // props.addActiveNav('forum')
+    // // props.fetchPosts(props.pageNumber)
+    // // setPageNumber(props.pageNumber)}
+    
