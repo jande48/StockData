@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import {Link} from 'react-router-dom'
 import { Form, Message, Header, Input, Grid, Icon } from 'semantic-ui-react'
-import { fetchRegister, addEmailInUse } from '../redux'
+import { fetchRegister, addEmailInUse, addActiveNav } from '../redux'
 import { Redirect } from "react-router-dom";
 import '../App.css'
 import { add } from 'lodash'
@@ -26,6 +26,7 @@ function RegisterContainer (props) {
         addEmailInUse(false)
         checkEmail()
         checkPasswords()
+        props.addActiveNav('register')
     },[email,password,password2])
 
     function checkPasswords() {
@@ -133,6 +134,7 @@ const mapStateToProps = state => {
     return {
       fetchRegister: (x) => dispatch(fetchRegister(x)),
       addEmailInUse: (x) => dispatch(addEmailInUse(x)),
+      addActiveNav: (x) => dispatch(addActiveNav(x)),
       //createNewPost: (data) => dispatch(createNewPost(data)),
 
     }

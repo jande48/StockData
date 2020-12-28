@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { Form, Message, Header, Input, Grid, Checkbox, Icon } from 'semantic-ui-react'
-import { fetchLogin } from '../redux'
+import { fetchLogin, addActiveNav } from '../redux'
 import { Redirect, Link } from "react-router-dom";
 import '../App.css'
 import setAuthorizationToken from '../utils/setAuthorizationToken'
@@ -19,6 +19,7 @@ function LoginContainer (props) {
     
     useEffect(() => {
       checkEmail()
+      props.addActiveNav('login')
     },[email])
 
 
@@ -106,6 +107,7 @@ const mapStateToProps = state => {
   const mapDispatchToProps = dispatch => {
     return {
       fetchLogin: (x) => dispatch(fetchLogin(x)),
+      addActiveNav: (x) => dispatch(addActiveNav(x)),
       //createNewPost: (data) => dispatch(createNewPost(data)),
 
     }

@@ -5,6 +5,8 @@ from algoPlatform1_project import db, app
 from algoPlatform1_project.models import Post, User
 from algoPlatform1_project.posts.forms import PostForm
 import jwt, os, json
+import datetime
+from sqlalchemy.orm.attributes import flag_modified
 
 app.config['SECRET_KEY'] = os.environ.get('AlgoPlatformSecretKey')
 posts = Blueprint('posts',__name__)
@@ -27,8 +29,9 @@ def return_posts(page):
     posts = Post.query[:10]
     export = []
     for p in posts:
-        export.append({'user':str(User.query.get(p.user_id).username),'date':str(p.date_posted.month)+'/'+str(p.date_posted.day)+'/'+str(p.date_posted.year)[-2:],'content':p.content,'id':p.id,'chartData':p.chartData})
-    #print(export)
+        export.insert(0,{'user':str(User.query.get(p.user_id).username),'date':str(p.date_posted.month)+'/'+str(p.date_posted.day)+'/'+str(p.date_posted.year)[-2:],'content':p.content,'id':p.id,'chartData':p.chartData,'replies':p.replies})
+
+   #print(export)
     #print(export.reverse())
     return json.dumps(export)
 
@@ -37,14 +40,36 @@ def return_posts(page):
 def new_reply():
     if current_user.is_authenticated:
         req_data = request.get_json()
-        postToReply = Post.query(id=req_data['id'])
-        currentReplies = postToReply['replies']
-        print(currentReplies)
+        postToReply = Post.query.filter_by(id=req_data['id']).first()
+        currentReplies = postToReply.replies
+        currentDate = datetime.date.today()
+        year = currentDate.year
+        if year > 1999:
+            year = year -1900
+        else: 
+            year = year -2000
+        if currentReplies is None:
+            postToReply.replies = [{'reply':req_data['reply'],'userWhoReplied':current_user.username,'dateReplied':str(currentDate.month)+'/'+str(currentDate.day)+'/'+str(year)}]
+            db.session.add(postToReply)
+            db.session.commit()
+        else:
+            addNewReply = postToReply.replies
+            addNewReply.insert(0,{'reply':req_data['reply'],'userWhoReplied':current_user.username,'dateReplied':str(currentDate.month)+'/'+str(currentDate.day)+'/'+str(year)})
+            postToReply.replies = addNewReply
+            flag_modified(postToReply, 'replies')
+            #db.session.add(postToReply)
+            #db.session.flush()
+            db.session.commit()
         response = {'type':'success'}
         return response
     response = {'type':'failure'}
     return response
 
+
+#postToReply.replies = json.dumps(json.loads(postToReply.replies).append({'reply':req_data['reply']}))
+#db.session.add(postToReply)
+#db.session.commit()
+#print(postToReply.replies.append({'test':'test'}))
 @posts.route("/post/new/", methods=['GET', 'POST'])
 @login_required
 def new_post():

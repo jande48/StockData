@@ -49,7 +49,7 @@ return (
 <div>
   { showWarning ? 
   <Message warning>
-      <Message.Header>Please <a style={{color: "green"}} href="/login">login</a> or <a style={{color: "green"}} href="/register">sign up</a> to post content</Message.Header>
+      <Message.Header>Please <Link to="/login"><a style={{color: "green"}} href="#">login</a></Link> or <Link to="/register"><a style={{color: "green"}} href="#">sign up</a></Link> to post content</Message.Header>
   </Message>
   : ''}
   { props.submitPostSuccess ? 

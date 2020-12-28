@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react'
 import { Provider,connect } from 'react-redux'
-import { fetchPosts, createNewReply } from '../redux'
+import { fetchPosts, createNewReply, addActiveNav } from '../redux'
+import {Link} from 'react-router-dom'
 import '../App.css'
 import store from '../redux/store'
 import LineCandleFormGraphContainer from './LineCandleFormGraphContainer'
@@ -24,9 +25,10 @@ import {
 
 
 function ForumComponent (props) {
-  // const [reply, setReply] = useState('')
-  // const handleReplyChange = (e, data) => setReply(data.value)
-  // const [showWarning, setShowWarning] = useState([false,false,false,false,false,false,false,false,false,false])
+  const [reply, setReply] = useState('')
+  const [activeID, setActiveID] = useState(0)
+  //const handleReplyChange = (e,data) => setReply(reply[parseInt(data.name)] = data.value)
+  const [showWarning, setShowWarning] = useState({'activeID':-1,'warning':false})
   const stockChartNode = [useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null)];
   const volumeNode = [useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null)];
   const height = 220;
@@ -37,6 +39,7 @@ function ForumComponent (props) {
   
   useEffect(() => {
     if (props.pageNumber != pageNumber){
+    props.addActiveNav('forum')
     props.fetchPosts(props.pageNumber)
     setPageNumber(props.pageNumber)}
     if (typeof(props.formDataDisplay) != 'undefined' && props.formDataDisplay.length > 0 ) {
@@ -46,7 +49,7 @@ function ForumComponent (props) {
           createVolumeBarChart(volumeNode[index],el.chartData)
           ))
     }
-  },[props.formDataDisplay])
+  },[props.formDataDisplay,props.replySuccess])
 
   
   function createStockPriceLineChart(stockPriceLineChartNode, d) {
@@ -723,23 +726,28 @@ function ForumComponent (props) {
     return svg.node();
   }
   
-  // function handleReplySubmit(id,index) {
-  //   if (props.userAuth['isAuthenticated']) {
+  function handleReplyChange (e,data) {
+    setActiveID(parseInt(data.name))
+    setReply(data.value)
+  }
 
-  //     const payload = {
-  //       'reply': reply,
-  //       'id': id,
-  //     }
+  function handleReplySubmit () {
+    if (props.isAuthenticated) {
 
-  //     props.createReplyPost(payload)
+      const payload = {
+        'reply': reply,
+        'id': activeID,
+      }
 
-  //   } else {
-  //     setShowWarning(showWarning[index] == true)
-  //   }
+      props.createNewReply(payload)
+
+    } else {
+      setShowWarning({'activeID':activeID,'warning':true})
+    }
     
-  //}
+  }
      
-//{props.fetchPostSuccess ? props.formDataDisplay.map( (el, index) => (
+
   return (
     <Grid columns='equal'>
       <Grid.Column></Grid.Column>
@@ -757,19 +765,29 @@ function ForumComponent (props) {
             <svg ref={volumeNode[index]}></svg>
          </React.Fragment>: ''}
          <Header inverted as='h5'>Comments: </Header>
-         {/* { showWarning[index] ? 
+        { (el.replies != 'null' && el.replies != 'undefined') ? 
+        el.replies.map( (replyEl) => (
+          <Header as='h5' inverted>
+            <Header.Content>{replyEl.userWhoReplied} - <Label>{replyEl.dateReplied}</Label></Header.Content>
+            <Header.Subheader>{replyEl.reply}</Header.Subheader>
+          </Header>
+        ))
+        : ''}
+        { (showWarning['activeID'] == el.id && showWarning['warning']) ? 
         <Message warning>
-            <Message.Header>Please <a style={{color: "green"}} href="/login">login</a> or <a style={{color: "green"}} href="/register">sign up</a> to post replies</Message.Header>
+            <Message.Header>Please <Link to="/login"><a style={{color: "green"}} href="#">login</a></Link> or <Link to="/register"><a style={{color: "green"}} href="#">sign up</a></Link> to post content</Message.Header>
         </Message>
         : ''}
-        <Form inverted onSubmit={handleReplySubmit(el.id, index)}>
+        
+        <Form inverted>
           <Form.TextArea
             placeholder="What's your opinion of this chart?"
-            name='content'
-            value={reply}
+            name={el.id}
+            value={activeID == el.id ? reply : ''}
             onChange={handleReplyChange}
-          />          
-        </Form><br/> */}
+          />
+        {props.replyLoading ? <Form.Button loading size='medium' floated='right'/> : <Form.Button inverted color='green' floated='right' content='Reply' onClick={handleReplySubmit}/>}     
+        </Form><br/>
       </Grid.Row>
     )) : '' : ''}
     </Grid.Column>
@@ -797,6 +815,7 @@ return {
     //requestAPIstockData: (APIstring) => dispatch(requestAPIstockData(APIstring)),
     fetchPosts: (page) => dispatch(fetchPosts(page)),
     createNewReply: (reply) => dispatch(createNewReply(reply)),
+    addActiveNav: (x) => dispatch(addActiveNav(x)),
     
 }
 }

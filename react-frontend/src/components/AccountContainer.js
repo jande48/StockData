@@ -1,7 +1,7 @@
 import React, { useEffect, useState, createRef } from 'react'
 import { connect } from 'react-redux'
 import { Form, Message, Header, Input, Grid, Image, Button } from 'semantic-ui-react'
-import { fetchUpdateAccount, fetchUpdatePhoto, addPhotoUpdated, addEmailUpdated, addPasswordUpdated } from '../redux'
+import { fetchUpdateAccount, fetchUpdatePhoto, addPhotoUpdated, addEmailUpdated, addPasswordUpdated, addActiveNav } from '../redux'
 import { Redirect } from "react-router-dom";
 import '../App.css'
 import setAuthorizationToken from '../utils/setAuthorizationToken'
@@ -25,6 +25,7 @@ function AccountContainer (props) {
       props.addEmailUpdated(false)
       props.addPhotoUpdated(false)
       props.addPasswordUpdated(false)
+      props.addActiveNav('account')
     },[email])
 
     function handleEmailChange (e, data) {
@@ -215,6 +216,7 @@ const mapStateToProps = state => {
       addPhotoUpdated: (x) => dispatch(addPhotoUpdated(x)),
       addEmailUpdated: (x) => dispatch(addEmailUpdated(x)),
       addPasswordUpdated: (x) => dispatch(addPasswordUpdated(x)),
+      addActiveNav: (x) => dispatch(addActiveNav(x))
     }
   }
   

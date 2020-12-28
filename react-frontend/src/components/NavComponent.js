@@ -17,7 +17,7 @@ function NavComponent (props) {
   return (
 
 
-        <Menu inverted>
+        <Menu inverted pointing>
             <Link to="/">
             <Menu.Item
             name='home'
@@ -37,7 +37,7 @@ function NavComponent (props) {
             </Menu.Item>
             </Link>
         {props.isAuthenticated ? 
-            <Menu inverted floated="right">
+            <Menu inverted pointing floated="right">
             <Link to="/account">
             <Menu.Item
             name='account'
@@ -58,7 +58,7 @@ function NavComponent (props) {
             </Link>
             </Menu>
         :
-            <Menu inverted floated="right">
+            <Menu inverted pointing floated="right">
             <Link to="/login">
             <Menu.Item
             name='login'
