@@ -11,7 +11,7 @@ application = app = Flask(__name__)
 
 app.config['SECRET_KEY'] = os.environ.get('AlgoPlatformSecretKey')
 
-ENV = 'prod'
+ENV = 'dev'
 
 if ENV == 'dev':
     app.debug = True
@@ -26,13 +26,12 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info'
-app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_HOST_USER')
-#app.config['MAIL_USERNAME'] =  S3Connection(os.environ['MAIL_USERNAME'])
-app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_HOST_PASSWORD_2')
-#app.config['MAIL_PASSWORD'] =  S3Connection(os.environ['MAIL_PASSWORD'])
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465 #465
+app.config['MAIL_USE_TLS'] = False #True
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_HOST_STONKTA')
+app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASSWORD_STONKTA')
 
 mail = Mail(app)
 

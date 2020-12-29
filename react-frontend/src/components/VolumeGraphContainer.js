@@ -25,7 +25,7 @@ function VolumeGraphContainer (props) {
   const loadingSpinnerNode = useRef(null);
   const height = 103;
   const width = 700;
-  const margin = ({top: 10, right: 20, bottom: 38, left: 50})
+  const margin = ({top: 10, right: 30, bottom: 38, left: 50})
   useEffect(() => {
 
     createLoadingSpinnerChart(loadingSpinnerNode,width,height,margin)
@@ -75,7 +75,7 @@ function VolumeGraphContainer (props) {
     const svg = select(showVolumeNode.current);
     svg.selectAll("g").remove()
     svg.selectAll("circle").remove()
-    const margin = ({top: 10, right: 20, bottom: 5, left: 50})
+    const margin = ({top: 10, right: 30, bottom: 5, left: 50})
     const parseDate = d3.utcParse("%Y-%m-%d")
     const height = 70;
     const width = 700;

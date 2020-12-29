@@ -30,7 +30,7 @@ function LineCandleGraphIndicatorContainer (props) {
     const loadingSpinnerNode = useRef(null);
     const height = 220;
     const width = 700;
-    const margin = ({top: 15, right: 20, bottom: 20, left: 50})
+    const margin = ({top: 15, right: 30, bottom: 20, left: 50})
 
     useEffect(() => {
     props.addActiveNav('home')
@@ -128,7 +128,7 @@ function LineCandleGraphIndicatorContainer (props) {
       const height = 220;
       const width = 700;
       const parseDate = d3.utcParse("%Y-%m-%d")
-      const margin = ({top: 15, right: 20, bottom: 20, left: 50})
+      const margin = ({top: 15, right: 30, bottom: 20, left: 50})
 
           
       class Indicator {

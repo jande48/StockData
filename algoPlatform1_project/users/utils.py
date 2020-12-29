@@ -20,6 +20,8 @@ def save_picture(form_picture):
     return picture_fn
 
 def send_reset_email(user):
+    print(os.environ.get('EMAIL_HOST_STONKTA'))
+    print(os.environ.get('EMAIL_PASSWORD_STONKTA'))
     token = user.get_reset_token()
     msg = Message('Password Reset Request',
                   sender='noreply@demo.com',

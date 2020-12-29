@@ -34,8 +34,8 @@ function AppComponent () {
   return (
     <Provider store={store}>
       {/* celled */}
-        <Grid inverted borderless> 
-          <Grid.Column width = {4} inverted borderless>
+        <Grid inverted> 
+          <Grid.Column width = {4} inverted>
             <Grid.Row stretched color='black'>
               <SelectTickerContainer /><br/>
               <SelectDatesFromMenuContainer /><br/>
@@ -91,7 +91,7 @@ function AppComponent () {
               </Grid.Row>
             </Grid.Row>
           </Grid.Column>
-          <Grid.Column width = {12} borderless>
+          <Grid.Column width = {12}>
             <HeaderTickerPriceContainer /><br />
             <LineCandleGraphIndicatorContainer /><br/>
             <VolumeGraphContainer/><br/>

@@ -804,6 +804,7 @@ function ForumComponent (props) {
         </Form><br/>
       </Grid.Row>
     )) : '' : ''}
+    
     </Grid.Column>
     <Grid.Column></Grid.Column>
     </Grid>

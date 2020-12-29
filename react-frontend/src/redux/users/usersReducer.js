@@ -1,6 +1,7 @@
 import { USER_AUTHENTICATED, POST_RESPONSE, IS_AUTHENTICATED, ACTIVE_NAV, EMAIL_IN_USE, PHOTO_UPDATED, EMAIL_UPDATED, PASSWORD_UPDATED,
   LOGIN_FAILED, PASSWORD_RESET, PAGE_NUMBER, FORM_DATA_DISPLAY, SUBMIT_POST_SUCCESS, SUBMIT_POST_LOADING, SUBMIT_POST_FAILURE,
-  INCLUDE_VOLUME_CHART, REPLY, REPLY_FAILURE, REPLY_LOADING, REPLY_SUCCESS, FETCH_POST_SUCCESS} from './usersTypes'
+  INCLUDE_VOLUME_CHART, REPLY, REPLY_FAILURE, REPLY_LOADING, REPLY_SUCCESS, FETCH_POST_SUCCESS, PASSWORD_RESET_LOADING, PASSWORD_RESET_FAILURE,
+  PASSWORD_RESET_SUCCESS} from './usersTypes'
 
 const initialState = {
     isAuthenticated: false,
@@ -24,6 +25,9 @@ const initialState = {
     replySuccess: false,
     replyFailure: false,
     fetchPostSuccess: false,
+    passwordResetLoading: false,
+    passwordResetSuccess: false,
+    passwordResetFailure: false,
   }
 
 
@@ -114,8 +118,20 @@ switch (action.type) {
       ...state,
       fetchPostSuccess: action.payload
     }
+    case PASSWORD_RESET_LOADING: return {
+      ...state,
+      passwordResetLoading: action.payload
+    }
+    case PASSWORD_RESET_SUCCESS: return {
+      ...state,
+      passwordResetSuccess: action.payload
+    }
+    case PASSWORD_RESET_FAILURE: return {
+      ...state,
+      passwordResetFailure: action.payload
+    }
     default: return state
-}
+    }
 
 }
 

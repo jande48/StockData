@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { Form, Message, Header, Input, Grid, Checkbox, Icon } from 'semantic-ui-react'
-import { fetchPasswordReset } from '../redux'
+import { fetchPasswordReset, addPasswordResetLoading, addPasswordResetSuccess, addPasswordResetFailure } from '../redux'
 import { Redirect } from "react-router-dom";
 import '../App.css'
 import setAuthorizationToken from '../utils/setAuthorizationToken'
+import { dispatch } from 'd3';
 
 
 
@@ -19,6 +20,9 @@ function ResetPasswordContainer (props) {
     
     useEffect(() => {
       checkEmail()
+      props.addPasswordResetFailure(false)
+      props.addPasswordResetLoading(false)
+      props.addPasswordResetSuccess(false)
     },[email])
 
 
@@ -59,6 +63,14 @@ return (
       <Message negative>
         <Message.Header>That doesn't seem like a vaild email.</Message.Header>
       </Message> : ''}
+      { props.passwordResetSuccess ? 
+      <Message success>
+        <Message.Header>Email sent! Please check your email or spam folder. (We're not SPAM!)</Message.Header>
+      </Message> : ''}
+      { props.passwordResetFailure ? 
+      <Message warning>
+        <Message.Header>Huh! We're having trouble sending a reset email right now.</Message.Header>
+      </Message> : ''}
       <Form.Field
         id='form-input-control-email'
         control={Input}
@@ -74,7 +86,8 @@ return (
       <Form.Field>
       <Checkbox label='Remember me' onChange={handleRememberMeChange}/>
       </Form.Field> */}
-      <Form.Button inverted color='green' floated='right' content='Email Password Reset' />
+      {props.passwordResetLoading ? <Form.Button loading inverted color='green' floated='right' content='Email Password Reset' /> : <Form.Button inverted color='green' floated='right' content='Email Password Reset' />}
+      
       {/* { props.loginFailed ? 
       <Message negative>
         <Message.Header>Incorrect email or password. Would you like to <a href="/reset_request.html">Reset Password</a></Message.Header>
@@ -100,6 +113,10 @@ const mapStateToProps = state => {
     return {
       isAuthenticated: state.usersFromRootReducer.isAuthenticated,
       passwordReset: state.usersFromRootReducer.passwordReset,
+      passwordResetFailure: state.usersFromRootReducer.passwordResetFailure,
+      passwordResetLoading: state.usersFromRootReducer.passwordResetLoading,
+      passwordResetSuccess: state.usersFromRootReducer.passwordResetSuccess,
+
       
 
     }
@@ -108,6 +125,9 @@ const mapStateToProps = state => {
   const mapDispatchToProps = dispatch => {
     return {
       fetchPasswordReset: (x) => dispatch(fetchPasswordReset(x)),
+      addPasswordResetFailure: (x) => dispatch(addPasswordResetFailure(x)),
+      addPasswordResetLoading: (x) => dispatch(addPasswordResetLoading(x)),
+      addPasswordResetSuccess: (x) => dispatch(addPasswordResetSuccess(x)),
       //createNewPost: (data) => dispatch(createNewPost(data)),
 
     }

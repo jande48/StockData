@@ -191,10 +191,8 @@ def user_reset_request():
     user = User.query.filter_by(email=str(JSON_sent['email'])).first()
     send_reset_email(user)
     payload = 'success'
-    return jwt.encode(
-    payload,
-    app.config['SECRET_KEY']
-    )
+    return payload
+
 
 
 
