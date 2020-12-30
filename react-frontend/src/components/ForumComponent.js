@@ -1,11 +1,11 @@
 import React, {useState, useEffect, useRef} from 'react'
 import { Provider,connect } from 'react-redux'
-import { fetchPosts, createNewReply, addActiveNav, addFetchPostSuccess, addFormDataDisplay } from '../redux'
+import { fetchPosts, createNewReply, addActiveNav, addFetchPostSuccess, addFormDataDisplay, addShowComments } from '../redux'
 import {Link} from 'react-router-dom'
 import '../App.css'
 import store from '../redux/store'
 import LineCandleFormGraphContainer from './LineCandleFormGraphContainer'
-import { Grid, Header, Menu, Segment, Label, Message, Form} from "semantic-ui-react"
+import { Grid, Header, Menu, Segment, Label, Message, Form, Button, Icon} from "semantic-ui-react"
 import * as d3 from "d3"
 import axios from 'axios'
 import {
@@ -27,15 +27,18 @@ import {
 function ForumComponent (props) {
   const [reply, setReply] = useState('')
   const [activeID, setActiveID] = useState(0)
+  const [showReply, setShowReply] = useState(false)
   //const handleReplyChange = (e,data) => setReply(reply[parseInt(data.name)] = data.value)
   const [showWarning, setShowWarning] = useState({'activeID':-1,'warning':false})
   const stockChartNode = [useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null)];
   const volumeNode = [useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null)];
+  const handleShowCommentsChange = (e,data) => props.addShowComments(!props.showComments)
+  const handleShowReplyChange = (e,data) => setShowReply(!showReply)
   const height = 220;
   const width = 700;
   const margin = ({top: 15, right: 20, bottom: 20, left: 50})
   const [pageNumber, setPageNumber] = useState(0)
-  
+  const [showComments, setShowComments] = useState(true)
   
   useEffect(() => {
     props.addActiveNav('forum')
@@ -760,39 +763,46 @@ function ForumComponent (props) {
     }
     
   }
-     
-
+     //{props.showComments ? <Button size='mini' inverted borderless onClick={handleShowCommentsChange}><Button.Content><Icon name="angle down"></Icon></Button.Content></Button> : <Button size='mini' inverted borderless onClick={handleShowCommentsChange}><Button.Content><Icon name="angle up"></Icon></Button.Content></Button>}
+//<Button size='mini' inverted><Button.Content><Icon name="arrow down"></Icon></Button.Content></Button>
   return (
     <Grid columns='equal'>
       <Grid.Column></Grid.Column>
-      <Grid.Column width={12}>
+      <Grid.Column width={14}>
 
       {typeof(props.formDataDisplay) != 'undefined' ? props.formDataDisplay.length > 0 ? props.formDataDisplay.map( (el, index) => (
       <Grid.Row color={'#242525'}>
-        <Header as='h3' inverted>
-          <Header.Content>{el.chartData.tickers} - {el.user} <Label>{el.date}</Label></Header.Content>
-          <Header.Subheader>{el.content}</Header.Subheader></Header>
+        <Grid borderless inverted>
+          <Grid.Column><Header as='h3' inverted>{el.chartData.tickers}</Header></Grid.Column>
+          <Grid.Column floated='right' width='5'><Header as='h4' floated='right' inverted><Header.Subheader>{el.user} - {el.date}</Header.Subheader></Header></Grid.Column>
+        </Grid>
+        <Header as='h4' inverted>{el.content}</Header>
+        {/* <Header as='h3' inverted>
+          <Header.Content>{el.chartData.tickers} <Header.Subheader>{el.user} - {el.date}</Header.Subheader></Header.Content>
+          <Header.Content>{el.content}</Header.Content></Header> */}
           <React.Fragment>
             <svg ref={stockChartNode[index]}></svg>
          </React.Fragment>
          {el.chartData['includeVolume'] ? <React.Fragment>
             <svg ref={volumeNode[index]}></svg>
          </React.Fragment>: ''}
-         <Header inverted as='h5'>Comments: </Header>
-        { (el.replies != 'null' && el.replies != 'undefined') ? 
+         <Header inverted as='h5'>
+          <Header.Subheader>{props.showComments ? <Icon inverted name="angle down" onClick={handleShowCommentsChange}></Icon> : <Icon inverted name="angle up" onClick={handleShowCommentsChange}></Icon>}Comments: {!showReply ?  <Button inverted color='green' floated='right' content='Reply' onClick={handleShowReplyChange}/> : ''}</Header.Subheader> </Header>
+        { props.showComments ? (el.replies != 'null' && el.replies != 'undefined') ? 
         el.replies.map( (replyEl) => (
           <Header as='h5' inverted>
-            <Header.Content>{replyEl.userWhoReplied} - <Label>{replyEl.dateReplied}</Label></Header.Content>
-            <Header.Subheader>{replyEl.reply}</Header.Subheader>
+            <Header.Subheader>{replyEl.userWhoReplied} - {replyEl.dateReplied}</Header.Subheader>
+            <Header.Content>{replyEl.reply}</Header.Content>
           </Header>
         ))
-        : ''}
+        : '' : ''}
         { (showWarning['activeID'] == el.id && showWarning['warning']) ? 
         <Message warning>
             <Message.Header>Please <Link to="/login"><a style={{color: "green"}} href="#">login</a></Link> or <Link to="/register"><a style={{color: "green"}} href="#">sign up</a></Link> to post content</Message.Header>
         </Message>
         : ''}
-        
+        {showReply ? 
+        <Header>
         <Form inverted>
           <Form.Input
             placeholder="What's your opinion of this chart?"
@@ -801,7 +811,8 @@ function ForumComponent (props) {
             onChange={handleReplyChange}
           />
         {props.replyLoading ? <Form.Button loading size='medium' floated='right'/> : <Form.Button inverted color='green' floated='right' content='Reply' onClick={handleReplySubmit}/>}     
-        </Form><br/>
+        </Form></Header> : '' }
+        
       </Grid.Row>
     )) : '' : ''}
     
@@ -822,6 +833,7 @@ const mapStateToProps = state => {
       replySuccess: state.usersFromRootReducer.replySuccess,
       replyFailure: state.usersFromRootReducer.replyFailure,
       fetchPostSuccess: state.usersFromRootReducer.fetchPostSuccess,
+      showComments: state.usersFromRootReducer.showComments,
     }
   }
   
@@ -833,6 +845,7 @@ return {
     addActiveNav: (x) => dispatch(addActiveNav(x)),
     addFetchPostSuccess: (x) => dispatch(addFetchPostSuccess(x)),
     addFormDataDisplay: (x) => dispatch(addFormDataDisplay(x)),
+    addShowComments: (x) => dispatch(addShowComments(x)),
     
 }
 }

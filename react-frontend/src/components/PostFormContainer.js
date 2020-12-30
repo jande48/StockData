@@ -14,6 +14,7 @@ function PostFormContainer (props) {
     const [showWarning, setShowWarning] = useState(false)
     const handleTitleChange = (e, data) => setTitle(data.value)
     const handleContentChange = (e, data) => setContent(data.value)
+    
 
     useEffect(() => {
       props.fetchUserAuth(2)
@@ -62,7 +63,7 @@ return (
       <Message.Header>Huh! We can't post that now. Please try later!</Message.Header>
   </Message>
   : ''}
-  <Header inverted as='h3'>Share your insights: </Header>
+  <Header inverted as='h3'>Share this chart and your insights: </Header>
   <Form inverted onSubmit={handleSubmit}>
 
     {/* <Form.Input

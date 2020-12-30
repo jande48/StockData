@@ -11,4 +11,4 @@ export {fetchStockData, fetchFinancialsData, fetchEarningsData} from './stockDat
 export {displayATR,nForATR,displayBBSMA,nForBBSMA,displayBBUpper,nForBBUpper,ndevBBUpper,displayBBLower,nForBBLower,ndevBBLower,displayKeltnerC,nForKeltnerC, fetchVolatilityData} from './volatility/volatilityActions'
 export {fetchUserAuth, createNewPost, fetchLogin, fetchLogout, addActiveNav, fetchRegister, addEmailInUse, fetchUpdateAccount, fetchUpdatePhoto, addPhotoUpdated, addEmailUpdated, 
     addPasswordUpdated, addLoginFailed, fetchPasswordReset, fetchPosts, addSubmitPostFailure, addSubmitPostLoading, addSubmitPostSuccess, addIncludeVolumeChart, createNewReply, addFetchPostSuccess, addFormDataDisplay,
-    addPasswordResetFailure, addPasswordResetSuccess, addPasswordResetLoading} from './users/usersActions'
+    addPasswordResetFailure, addPasswordResetSuccess, addPasswordResetLoading, addShowComments} from './users/usersActions'

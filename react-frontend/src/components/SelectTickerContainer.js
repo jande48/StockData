@@ -42,8 +42,8 @@ function SelectTickerContainer(props) {
   return (
     <div>
       <Grid columns='equal' centered>
-        <Grid.Row verticalAlign='top'>
-          <Grid.Column>
+        <Grid.Row verticalAlign='top' borderless>
+          <Grid.Column borderless>
           <Search
               input={{ fluid: true }}
               fluid
@@ -61,7 +61,7 @@ function SelectTickerContainer(props) {
               //value={props.tickers}
             inverted/>
           </Grid.Column>
-          <Grid.Column width={3}>
+          <Grid.Column borderless width={3}>
             <Button icon basic inverted color='green' onClick={(e) => {
                 props.addTickerDispatch(newTicker)
                 props.fetchCompanyNameFromTicker(newTicker)
