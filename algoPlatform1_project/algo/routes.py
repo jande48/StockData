@@ -269,15 +269,13 @@ def get_ticker_company_name(user_input):
             dataset.append(threaded_results[ids[i]])
 
     user_input_matching = user_input.replace("_","")
-    print('This is user input matching',user_input_matching)
-    print('This is dataset',dataset)
+
     for i in range(len(dataset)):
         for j in range(len(dataset[i])):
 
             if dataset[i][j]['name'] is not None:
                 noSpacesAPI =re.sub(r'\W+', '',dataset[i][j]['name'] )
                 noSpacesAPI2 = noSpacesAPI.upper()
-                print('This is no spaces',noSpacesAPI2)
             try:
                 noSpacesAPI2.index(user_input_matching.upper())
             except ValueError:

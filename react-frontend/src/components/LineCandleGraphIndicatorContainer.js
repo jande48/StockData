@@ -708,11 +708,14 @@ function LineCandleGraphIndicatorContainer (props) {
               keysList.push({'name':objects[i]['name'],'color':objects[i]['color']})
             }
           }
-
+          
+          
           svg.selectAll("g").selectAll(".mydotsRight").remove()
           svg.selectAll("g").selectAll(".mylabelsRight").remove()
           const size = 10
   
+          
+
           const mydotsRight = svg.append("g")
             .selectAll("g")
             .data(keysList)
@@ -721,7 +724,9 @@ function LineCandleGraphIndicatorContainer (props) {
           mydotsRight.append("rect")
             .attr('id','mydotsRight')
             .attr("x", width - margin.right - 50)
-            .attr("y", function(d,i){ return height - margin.bottom - 7 - i*10}) // 100 is where the first dot appears. 25 is the distance between dots
+            .attr("y", function(d,i){ 
+              return height - margin.bottom - 7 - i*10})
+               // 100 is where the first dot appears. 25 is the distance between dots
             .attr("width",size)
             .attr("height", size/2)
             .style("fill", function(d){return d['color']})

@@ -49,7 +49,6 @@ function ForumComponent (props) {
         const response = res.data;
         props.addFormDataDisplay(response)
         response.map( (el, index) => (
-        console.log('we got here 1'),
         createStockPriceLineChart(stockChartNode[index],el.chartData),
         createVolumeBarChart(volumeNode[index],el.chartData)
         ))
@@ -533,6 +532,15 @@ function ForumComponent (props) {
             keysList.push({'name':objects[i]['name'],'color':objects[i]['color']})
           }
         }
+        var rsiAlreadyInList = false
+        for (var i=0; i < keysList.length; i++){
+          if (rsiAlreadyInList && keysList[i]['name'] == 'rsi') {
+            keysList.splice(i,1)
+            break
+          } else if (keysList[i]['name'] == 'rsi'){
+            rsiAlreadyInList = true
+          }
+        }
         svg.selectAll("g").selectAll(".mydotsRight").remove()
         svg.selectAll("g").selectAll(".mylabelsRight").remove()
         const size = 10
@@ -788,7 +796,7 @@ function ForumComponent (props) {
          </React.Fragment>: ''}
          <Header inverted as='h5'>
           <Header.Subheader>{props.showComments ? <Icon inverted name="angle down" onClick={handleShowCommentsChange}></Icon> : <Icon inverted name="angle up" onClick={handleShowCommentsChange}></Icon>}Comments: {!showReply ?  <Button inverted color='green' floated='right' content='Reply' onClick={handleShowReplyChange}/> : ''}</Header.Subheader> </Header>
-        { props.showComments ? (el.replies != 'null' && el.replies != 'undefined') ? 
+        { props.showComments ? (el.replies != null && el.replies != 'undefined') ? 
         el.replies.map( (replyEl) => (
           <Header as='h5' inverted>
             <Header.Subheader>{replyEl.userWhoReplied} - {replyEl.dateReplied}</Header.Subheader>
@@ -812,7 +820,7 @@ function ForumComponent (props) {
           />
         {props.replyLoading ? <Form.Button loading size='medium' floated='right'/> : <Form.Button inverted color='green' floated='right' content='Reply' onClick={handleReplySubmit}/>}     
         </Form></Header> : '' }
-        
+        <br/><br/>
       </Grid.Row>
     )) : '' : ''}
     
