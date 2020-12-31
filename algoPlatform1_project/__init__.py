@@ -12,7 +12,9 @@ application = app = Flask(__name__)
 
 app.config['SECRET_KEY'] = os.environ.get('AlgoPlatformSecretKey')
 
-ENV = 'prod'
+ENV = 'dev'
+
+# This content security policy allows access to these scripts through talisman
 csp = {
     'default-src': [
         '\'self\'',
@@ -50,7 +52,7 @@ app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASSWORD_STONKTA')
 
 mail = Mail(app)
 
-
+# Flask Blueprints are used to import views/routes from separate modules
 from algoPlatform1_project.users.routes import users
 app.register_blueprint(users)
 from algoPlatform1_project.posts.routes import posts

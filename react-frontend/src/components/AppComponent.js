@@ -34,15 +34,15 @@ function AppComponent () {
   return (
     <Provider store={store}>
       {/* celled */}
-        <Grid inverted> 
+        <Grid inverted padded='horizontally'> 
           <Grid.Column width = {4} inverted>
-            <Grid.Row stretched color='black'>
+            <Grid.Row color='black'>
               <SelectTickerContainer /><br/>
               <SelectDatesFromMenuContainer /><br/>
               <SelectCustomDatesContainer /><br/>
               <SelectLineOrCandleContainer /><br/>
-              <Grid.Row color='black' inverted stretched>
-              <Accordion inverted stretched fitted color='black'>
+              <Grid.Row color='black'inverted>
+              <Accordion inverted color='black'>
                 <Accordion.Title
                   inverted
                   active={activePopularAccodian === 0}

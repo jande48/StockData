@@ -9,6 +9,11 @@ body {
   background-color: #1b1c1d;
 }
 
+.fullWidth {
+  width: 100% !important;
+  margin: 0em 0em !important;
+}
+
 .lightGrayBackground {
   background-color: #3d3e3f;
   border-radius: 10px;

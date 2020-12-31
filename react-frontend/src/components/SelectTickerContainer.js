@@ -2,14 +2,20 @@ import React, {useState, useRef, useCallback} from 'react'
 import { connect } from 'react-redux'
 import { addCompanyName, addTicker, displayEMA, fetchCompInfoData, fetchCompInfoDataRequest, fetchCompanyNameFromTicker, fetchStockData } from '../redux'
 import { Input, Form, Icon, Button, Grid, Search, Label, Header} from "semantic-ui-react"
-
+import withImportantStyle from 'react-with-important-style';
 import _ from 'lodash'
 import './css/selectTickerCSS.css'
 
 function SelectTickerContainer(props) {
   const [newTicker, setNewTicker] = useState('')
-  //const timeoutRef = useRef()
+  var Wrapped = withImportantStyle("div");  
+  var columnStyle = {
+    padding: "0 !important"
+  };
 
+  var segmentStyleButtons = {
+    color:"red"
+  };
   const handleSearchChange = useCallback((e, data) => {
     
     //clearTimeout(timeoutRef.current)
@@ -41,9 +47,10 @@ function SelectTickerContainer(props) {
 // color='black' stretched
   return (
     <div>
-      <Grid columns='equal' centered>
+      <Grid columns='equal' centered >
         <Grid.Row verticalAlign='top' borderless>
-          <Grid.Column borderless>
+          {/* <Grid.Column borderless>  */}
+          <Wrapped className="column" style={columnStyle}>
           <Search
               input={{ fluid: true }}
               fluid
@@ -60,9 +67,11 @@ function SelectTickerContainer(props) {
               results={props.compInfo}
               //value={props.tickers}
             inverted/>
-          </Grid.Column>
-          <Grid.Column borderless width={3}>
-            <Button icon basic inverted color='green' onClick={(e) => {
+          {/* </Grid.Column> */}
+          </Wrapped>
+          <Wrapped style={columnStyle}>
+          {/* <Grid.Column borderless width={3} className="fullWidth">  */}
+            <Button icon basic inverted color='green' floated='left'  onClick={(e) => {
                 props.addTickerDispatch(newTicker)
                 props.fetchCompanyNameFromTicker(newTicker)
               }}>
@@ -77,7 +86,8 @@ function SelectTickerContainer(props) {
                   <Icon name='arrow right' />
               </Button.Content>
             </Button> */}
-          </Grid.Column>
+          {/* </Grid.Column> */}
+          </Wrapped>
         </Grid.Row>
       </Grid>
       
