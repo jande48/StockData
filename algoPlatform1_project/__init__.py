@@ -10,7 +10,7 @@ from algoPlatform1_project.config import Config
 
 application = app = Flask(__name__)
 
-
+csp = ''
 app.config['SECRET_KEY'] = os.environ.get('AlgoPlatformSecretKey')
 
 ENV = 'prod'
@@ -19,6 +19,7 @@ if ENV == 'dev':
     app.debug = True
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('LOCAL_SQL_DB_STOCK_DATA')
 else:
+    #Talisman is used to for https and SSL for the production environment
     Talisman(app)
     app.debug = False
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('HEROKU_POSTGRES')
