@@ -48,10 +48,10 @@ function SelectTickerContainer(props) {
   return (
     <div class="fullWidth">
       {/* <Wrapped style={columnStyle}> */}
-      <Grid columns='equal' stretched>
+      <Grid stretched columns="equal">
         <Grid.Row verticalAlign='top' borderless stretched>
-          {/* <Grid.Column borderless>  */}
-          <Wrapped className="column" style={columnStyle}>
+          <Grid.Column borderless className="fullWidthColumn"> 
+          {/* <Wrapped className="column" style={columnStyle}> */}
           <Search
               input={{ fluid: true }}
               fluid
@@ -68,10 +68,10 @@ function SelectTickerContainer(props) {
               results={props.compInfo}
               //value={props.tickers}
             inverted/>
-          {/* </Grid.Column> */}
-          </Wrapped>
-          <Wrapped style={columnStyle}>
-          {/* <Grid.Column borderless width={3} className="fullWidth">  */}
+          </Grid.Column>
+          {/* </Wrapped>
+          <Wrapped style={columnStyle}> */}
+          <Grid.Column borderless width={3} className="fullWidthColumn"> 
             <Button icon basic inverted color='green' floated='left'  onClick={(e) => {
                 props.addTickerDispatch(newTicker)
                 props.fetchCompanyNameFromTicker(newTicker)
@@ -87,8 +87,8 @@ function SelectTickerContainer(props) {
                   <Icon name='arrow right' />
               </Button.Content>
             </Button> */}
-          {/* </Grid.Column> */}
-          </Wrapped>
+          </Grid.Column>
+          {/* </Wrapped> */}
         </Grid.Row>
       </Grid> 
       {/* </Wrapped> */}
