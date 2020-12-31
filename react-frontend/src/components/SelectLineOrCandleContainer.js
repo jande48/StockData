@@ -19,7 +19,7 @@ function SelectLineOrCandle(props) {
   }
 //color={displayPriceChart ? 'blue' : null}
   return (
-    <div background-color='black'>
+    <div class="fullWidth">
     <Grid columns='equal' inverted centered>
         <Grid.Row color='black' textAlign='center' stretched>
       <Form inverted stretched>

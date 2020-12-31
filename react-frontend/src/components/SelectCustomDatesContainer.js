@@ -50,7 +50,7 @@ function SelectCustomDatesContainer(props) {
 	}
 
   return (
-    <div>
+    <div class="fullWidth">
       {/* <Grid inverted>
       <Header as='h5' textAlign='center' inverted>
             --- or ---

@@ -187,7 +187,7 @@ function EarningContainer (props) {
   ) : props.earningsError ? (
     <h2><Header as='h2' textAlign='center' inverted color="#e0e1e2">Whoops. We can't get earnings info now.</Header></h2>
   ) :  (
-    <div>
+    <div class="fullWidth">
         
 
         <React.Fragment>

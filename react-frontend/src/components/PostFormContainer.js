@@ -47,7 +47,7 @@ function PostFormContainer (props) {
 
 return (
 
-<div>
+<div class="fullWidth">
   { showWarning ? 
   <Message warning>
       <Message.Header>Please <Link to="/login"><a style={{color: "green"}} href="#">login</a></Link> or <Link to="/register"><a style={{color: "green"}} href="#">sign up</a></Link> to post content</Message.Header>

@@ -46,9 +46,10 @@ function SelectTickerContainer(props) {
 
 // color='black' stretched
   return (
-    <div>
-      <Grid columns='equal' centered >
-        <Grid.Row verticalAlign='top' borderless>
+    <div class="fullWidth">
+      {/* <Wrapped style={columnStyle}> */}
+      <Grid columns='equal' stretched>
+        <Grid.Row verticalAlign='top' borderless stretched>
           {/* <Grid.Column borderless>  */}
           <Wrapped className="column" style={columnStyle}>
           <Search
@@ -89,8 +90,8 @@ function SelectTickerContainer(props) {
           {/* </Grid.Column> */}
           </Wrapped>
         </Grid.Row>
-      </Grid>
-      
+      </Grid> 
+      {/* </Wrapped> */}
     </div>
   )
 }

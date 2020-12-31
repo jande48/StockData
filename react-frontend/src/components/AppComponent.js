@@ -30,10 +30,13 @@ function AppComponent () {
   const [activeVolatilityAccodian, setVolatilityAccordion] = useState(-1)
 
   setAuthorizationToken(localStorage.jwtToken)
-
+  var w = window.innerWidth;
+  console.log(w)
   return (
+    
     <Provider store={store}>
       {/* celled */}
+      {w > 700 ? 
         <Grid inverted padded='horizontally'> 
           <Grid.Column width = {4} inverted>
             <Grid.Row color='black'>
@@ -104,7 +107,71 @@ function AppComponent () {
           </Grid.Column>
         </Grid>
         
-        
+        : 
+        <Grid inverted padded='horizontally' centered>
+          <Grid.Row color='black' centered>
+            <SelectTickerContainer /><br/>
+            <SelectDatesFromMenuContainer /><br/>
+            <SelectCustomDatesContainer /><br/>
+            <SelectLineOrCandleContainer /><br/>
+            <HeaderTickerPriceContainer /><br />
+            <LineCandleGraphIndicatorContainer /><br/>
+            <VolumeGraphContainer/><br/>
+            {/* <MomentumGraphContainer/><br /> */}
+            <ToolTipContainer/><br />
+            <Accordion inverted color='black'>
+              <Accordion.Title
+                inverted
+                active={activePopularAccodian === 0}
+                index={0}
+                borderless
+                onClick={(e,index) => {
+                    setPopularAccordion(index.index === activePopularAccodian ? -1 : index.index)
+                    }}>
+                  <Header as='h3' textAlign='left' inverted><Icon name='dropdown' />Popular</Header>
+              </Accordion.Title>
+              <Accordion.Content borderless active={activePopularAccodian === 0} >{<PopularMenuContainer />}</Accordion.Content>
+              <Accordion.Title
+                inverted
+                active={activeMomentumAccodian === 0}
+                index={0}
+                borderless
+                onClick={(e,index) => {
+                    setMomentumAccordion(index.index === activeMomentumAccodian ? -1 : index.index)
+                    }}>
+                  <Header as='h3' textAlign='left' inverted><Icon name='dropdown' />Momentum</Header>
+              </Accordion.Title>
+              <Accordion.Content borderless active={activeMomentumAccodian === 0} >{<MomentumMenuContainer />}</Accordion.Content>
+              <Accordion.Title
+                inverted
+                active={activeTrendAccodian=== 1}
+                index={1}
+                borderless
+                onClick={(e,index) => {
+                    setTrendAccordion(index.index === activeTrendAccodian ? -1 : index.index)
+                    }}>
+                  <Header as='h3' textAlign='left' inverted><Icon name='dropdown' />Trend</Header>
+              </Accordion.Title>
+              <Accordion.Content borderless active={activeTrendAccodian === 1} >{<TrendMenuContainer />}</Accordion.Content>
+              <Accordion.Title
+                inverted
+                active={activeVolatilityAccodian=== 1}
+                index={1}
+                borderless
+                onClick={(e,index) => {
+                    setVolatilityAccordion(index.index === activeVolatilityAccodian ? -1 : index.index)
+                    }}>
+                  <Header as='h3' textAlign='left' inverted><Icon name='dropdown' />Volatility</Header>
+              </Accordion.Title>
+              <Accordion.Content borderless active={activeVolatilityAccodian === 1} >{<VolatilityMenuContainer />}</Accordion.Content>
+            </Accordion>
+            <PostFormContainer/><br />
+            <CompanyFinancialsContainer/><br />
+            <EarningContainer/><br />
+          </Grid.Row>
+
+        </Grid>
+        }
       
     </Provider>
   )

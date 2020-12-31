@@ -87,7 +87,7 @@ function CompanyFinancialsContainer (props) {
   ) : props.financialsError ? (
     <h2><Header as='h2' textAlign='center' inverted color="#e0e1e2">Whoops. We can't get company info now.</Header></h2>
   ) : (typeof(props.financialsData) === 'undefined') ? '' : (props.financialsData.length < 1) ? '' : (
-    <div>
+    <div class="fullWidth">
         <React.Fragment>
             <Grid columns='equal'>
                 {/* <Grid.Row>

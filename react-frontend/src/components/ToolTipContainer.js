@@ -116,7 +116,7 @@ function ToolTipContainer (props) {
   }
 
   return  (
-    <div>
+    <div class="fullWidth">
       {props.onMouseOverTicker ? <Grid inverted columns='equal'>
         {/* <Grid.Row>
           <Grid.Column inverted>

@@ -276,7 +276,7 @@ function VolumeGraphContainer (props) {
   ) : props.error ? (
     <Header as='h2' textAlign='center' inverted color="#e0e1e2">Whoops. We can't get stock data now.</Header>
   ) :  (
-    <div>
+    <div class="fullWidth">
       <React.Fragment>
         <svg ref={showVolumeNode}></svg>
       </React.Fragment>

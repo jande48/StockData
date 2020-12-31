@@ -50,7 +50,7 @@ function SelectDatesFromMenuContainer(props) {
       }
 
   return (
-    <div>
+    <div class="fullWidth">
         <Menu widths={4} inverted>
             <Menu.Item
             name='5d'
