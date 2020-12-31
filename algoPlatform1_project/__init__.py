@@ -4,10 +4,12 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_mail import Mail
 import os
+from flask_talisman import Talisman
 from algoPlatform1_project.config import Config
 
 
 application = app = Flask(__name__)
+
 
 app.config['SECRET_KEY'] = os.environ.get('AlgoPlatformSecretKey')
 
@@ -17,6 +19,7 @@ if ENV == 'dev':
     app.debug = True
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('LOCAL_SQL_DB_STOCK_DATA')
 else:
+    Talisman(app)
     app.debug = False
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('HEROKU_POSTGRES')
 
