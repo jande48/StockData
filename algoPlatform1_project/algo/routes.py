@@ -25,6 +25,7 @@ Stock_Ticker_Lookup_key = os.environ.get('StockTickerCompanyNameAPIkey')
 from flask import Blueprint
 algo = Blueprint('algo',__name__)
 
+
 @algo.route("/get_stock_data/<ticker>/<startDate>/<endDate>", methods=['GET'])
 def get_stock_data(ticker,startDate,endDate):
 
