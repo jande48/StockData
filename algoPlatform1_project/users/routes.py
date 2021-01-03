@@ -193,7 +193,9 @@ def user_reset_request():
     payload = 'success'
     return payload
 
-
+@users.route("/test_old_index", methods=['GET'])
+def old_index():
+    return render_template("old_index.html")
 
 
 # @users.route("users/account", methods=['GET', 'POST'])

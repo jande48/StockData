@@ -33,7 +33,7 @@ function LineCandleGraphIndicatorContainer (props) {
     const margin = ({top: 15, right: 30, bottom: 20, left: 50})
 
     useEffect(() => {
-    props.addActiveNav('home')
+    props.addActiveNav('charts')
     createLoadingSpinnerChart(loadingSpinnerNode,width,height,margin)
     if (typeof(props.stockData) != 'undefined') {
       if (props.stockData.length > 1 && !props.momentumLoading && !props.loading && !props.trendLoading) {
@@ -909,6 +909,7 @@ const mapDispatchToProps = dispatch => {
     addOnMouseOverTicker: (x) => dispatch(addOnMouseOverTicker(x)),
     addDateMouseOverTicker: (x) => dispatch(addDateMouseOverTicker(x)),
     addIndexMouseOver: (x) => dispatch(addIndexMouseOver(x)),
+
   }
 }
 

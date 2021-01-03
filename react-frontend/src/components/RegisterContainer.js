@@ -58,14 +58,76 @@ function RegisterContainer (props) {
         }
         
     }
-
+    var w = window.innerWidth;
 return (
 
 <div>
   { props.isAuthenticated ? <Redirect to="/" /> : ''}
+  {w > 700 ? 
+  
   <Grid columns='equal'>
-    <Grid.Column></Grid.Column>
-    <Grid.Column width={8} className='lightGrayBackground'>
+  <Grid.Column></Grid.Column>
+  <Grid.Column width={8} className='lightGrayBackground'>
+  <Message
+    attached
+    header='Welcome!'
+    content='Please enter your info to sign up!'
+    color='green'
+  /><br/>
+  <Form inverted onSubmit={handleSubmit}>
+    <Form.Input 
+      label='Username' 
+      value={username}
+      placeholder='joe'
+      onChange={handleUsernameChange} />
+    { showEmailWarning ? 
+    <Message negative>
+      <Message.Header>That doesn't seem like a vaild email.</Message.Header>
+    </Message> : ''}
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <Form.Field
+      id='form-input-control-email'
+      control={Input}
+      label='Email'
+      placeholder='joe@schmoe.com'
+      onChange={handleEmailChange}
+    />
+    { showPasswordWarning ? 
+    <Message negative>
+      <Message.Header>Those passwords don't seem to match</Message.Header>
+    </Message> : ''}
+    { showPasswordWarning2 ? 
+    <Message negative>
+      <Message.Header>Password has to be at least 6 characters</Message.Header>
+    </Message> : ''}
+    <Form.Input 
+      label='Password' 
+      type='password'
+      value={password}
+      onChange={handlePasswordChange} />
+    <Form.Input 
+      label='Confirm Password' 
+      type='password'
+      value={password2}
+      onChange={handlePassword2Change} />
+    <Form.Button inverted color='green' floated='right' content='Sign Up' /><br/>
+  </Form>
+  <br/><br/>
+  <Message attached='bottom' warning>
+    <Icon name='help' />
+    Already signed up? <Link to="/login"><a href='#' color='green'>Login here</a></Link> instead.
+  </Message>
+  </Grid.Column>
+  <Grid.Column></Grid.Column>
+</Grid>
+  : 
+  <div class="fullWidth">
+  <Grid columns='equal'>
+    <Grid.Column width={1}></Grid.Column>
+    <Grid.Column className='lightGrayBackground'>
     <Message
       attached
       header='Welcome!'
@@ -115,8 +177,11 @@ return (
       Already signed up? <Link to="/login"><a href='#' color='green'>Login here</a></Link> instead.
     </Message>
     </Grid.Column>
-    <Grid.Column></Grid.Column>
+    <Grid.Column width={1}></Grid.Column>
   </Grid>
+  </div>
+  }
+  
   
 </div>
 

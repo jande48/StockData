@@ -5,6 +5,7 @@
     "heroku": "^7.47.3",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
+    "react-alice-carousel": "^2.2.0",
     "react-router-dom": "^5.2.0",
     "react-with-important-style": "^0.2.2",
     "redux-devtools-extension": "^2.13.8",

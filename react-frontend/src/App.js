@@ -11,6 +11,7 @@ import LogoutContainer from './components/LogoutContainer'
 import RegisterContainer from './components/RegisterContainer'
 import AccountContainer from './components/AccountContainer'
 import ResetPasswordContainer from './components/ResetPasswordContainer'
+import HomeComponent from './components/HomeComponent'
 
 
 function App () {
@@ -20,13 +21,14 @@ function App () {
       <Router>
         <NavComponent/>
         <Switch>
+          <Route path="/charts" component={AppComponent} /> 
           <Route path="/posts" component={ForumComponent} /> 
           <Route path="/login" component={LoginContainer} /> 
           <Route path="/logout" component={LogoutContainer} /> 
           <Route path="/register" component={RegisterContainer} /> 
           <Route path="/account" component={AccountContainer} /> 
           <Route path="/resetPassword" component={ResetPasswordContainer} /> 
-          <Route path="/" component={AppComponent} />
+          <Route path="/" component={HomeComponent} />
         </Switch>
         
       </Router>

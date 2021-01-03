@@ -31,7 +31,6 @@ function AppComponent () {
 
   setAuthorizationToken(localStorage.jwtToken)
   var w = window.innerWidth;
-  console.log(w)
   return (
     
     <Provider store={store}>

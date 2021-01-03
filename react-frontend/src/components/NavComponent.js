@@ -27,6 +27,15 @@ function NavComponent (props) {
             Home
             </Menu.Item>
             </Link>
+            <Link to="/charts">
+            <Menu.Item
+            name='charts'
+            active={props.activeNav === 'charts'}
+            onClick={(e,data) => handleItemClick(data)}
+            >
+            Charts
+            </Menu.Item>
+            </Link>
             <Link to="/posts">
             <Menu.Item
             name='forum'

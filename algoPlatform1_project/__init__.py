@@ -12,7 +12,7 @@ application = app = Flask(__name__)
 
 app.config['SECRET_KEY'] = os.environ.get('AlgoPlatformSecretKey')
 
-ENV = 'prod'
+ENV = 'dev'
 
 # This content security policy allows access to these scripts through talisman
 csp = {
