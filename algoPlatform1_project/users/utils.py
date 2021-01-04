@@ -20,8 +20,6 @@ def save_picture(form_picture):
     return picture_fn
 
 def send_reset_email(user):
-    print(os.environ.get('EMAIL_HOST_STONKTA'))
-    print(os.environ.get('EMAIL_PASSWORD_STONKTA'))
     token = user.get_reset_token()
     msg = Message('Password Reset Request',
                   sender='noreply@demo.com',
@@ -30,4 +28,11 @@ def send_reset_email(user):
 {url_for('users.reset_token', token=token, _external=True)}
 If you did not make this request then simply ignore this email and no changes will be made.
 '''
+    mail.send(msg)
+
+def send_contact_email(user,message):
+    msg = Message('StonkTA Message',
+                  sender='noreply@demo.com',
+                  recipients=['jacob.anderson10@gmail.com'])
+    msg.body = f'''From {user}: {message}'''
     mail.send(msg)

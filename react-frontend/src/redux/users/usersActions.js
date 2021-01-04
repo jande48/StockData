@@ -1,7 +1,7 @@
 import { USER_AUTHENTICATED, POST_RESPONSE, IS_AUTHENTICATED, ACCOUNT_UPDATED, ACTIVE_NAV, EMAIL_IN_USE, PHOTO_UPDATED, EMAIL_UPDATED, 
   PASSWORD_UPDATED, LOGIN_FAILED, PASSWORD_RESET, PAGE_NUMBER, FORM_DATA_DISPLAY, SUBMIT_POST_SUCCESS, SUBMIT_POST_LOADING, 
   SUBMIT_POST_FAILURE,INCLUDE_VOLUME_CHART, REPLY, REPLY_FAILURE, REPLY_LOADING, REPLY_SUCCESS, FETCH_POST_SUCCESS, PASSWORD_RESET_LOADING, PASSWORD_RESET_FAILURE,
-  PASSWORD_RESET_SUCCESS, SHOW_COMMENTS } from './usersTypes'
+  PASSWORD_RESET_SUCCESS, SHOW_COMMENTS, CONTACT_FAILURE, CONTACT_SUCCESS, CONTACT_LOADING } from './usersTypes'
 import axios from 'axios'
 import _ from 'lodash'
 import setAuthorizationToken from '../../utils/setAuthorizationToken'
@@ -154,6 +154,24 @@ export const addPasswordReset = (index = false) => {
       payload: index
     }
   }
+  export const addContactSuccess = (index = false ) => {
+    return {
+      type: CONTACT_SUCCESS,
+      payload: index
+    }
+  }
+  export const addContactLoading = (index = false ) => {
+    return {
+      type: CONTACT_LOADING,
+      payload: index
+    }
+  }
+  export const addContactFailure = (index = false ) => {
+    return {
+      type: CONTACT_FAILURE,
+      payload: index
+    }
+  }
   export const addShowComments = (index = false ) => {
     return {
       type: SHOW_COMMENTS,
@@ -296,11 +314,22 @@ export function fetchPasswordReset(data) {
           dispatch(addPasswordResetFailure(true))
           dispatch(addPasswordResetLoading(false))
         }
-        // const token = res.data['data'];
-        // localStorage.setItem('jwtToken',token)
-        // setAuthorizationToken(token)
-        // dispatch(addUserAuthenticated(jwt.decode(token)))
-        // {jwt.decode(token)['isAuthenticated'] ? dispatch(addIsAuthenticated(true)) : dispatch(addIsAuthenticated(false))}
+      })
+  }
+}
+export function fetchContact(data) {
+  var exportMessage = {'message': data}
+  return function (dispatch)  {
+      dispatch(addContactLoading(true))
+      axios.post('/users/send_contact_email/',exportMessage).then(res => {
+        const response = res.data
+        if (response == 'success') {
+          dispatch(addContactSuccess(true))
+          dispatch(addContactLoading(false))
+        } else {
+          dispatch(addContactFailure(true))
+          dispatch(addContactLoading(false))
+        }
       })
   }
 }

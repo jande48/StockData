@@ -27,15 +27,12 @@ def fourm():
 @posts.route("/posts/<page>",methods=['GET'])
 def return_posts(page):
     
-    
+    rows = Post.query.count()
     postLast = Post.query[-1]
-    print(postLast.id)
-    posts = Post.query[int(postLast.id-10):int(postLast.id)]
-    print(len(posts))
+    posts = Post.query[int(rows-10):int(rows)]
     export = []
     for p in posts:
         export.insert(0,{'user':str(User.query.get(p.user_id).username),'date':str(p.date_posted.month)+'/'+str(p.date_posted.day)+'/'+str(p.date_posted.year)[-2:],'content':p.content,'id':p.id,'chartData':p.chartData,'replies':p.replies})
-    print(len(export))
    #print(export)
     #print(export.reverse())
     return json.dumps(export)

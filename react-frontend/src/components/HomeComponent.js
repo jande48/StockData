@@ -9,11 +9,14 @@ import "react-alice-carousel/lib/alice-carousel.css";
 import image1 from '../images/banner-bg1.jpg' 
 import image2 from '../images/banner-bg2.jpg' 
 import image3 from '../images/banner-bg3.jpg'
+import ContactContainer from './ContactContainer'
+
 function HomeComponent () {
   
   var w = window.innerWidth;
   return (
     <div>
+      <Provider store={store}>
       { w > 700 ?
       <div>
         <AliceCarousel autoPlay autoWidth autoHeight='true' infinite animationType="fadeout" disableDotsControls disableButtonsControls autoPlayInterval='5000'>
@@ -43,7 +46,7 @@ function HomeComponent () {
 
 
         </Grid.Column>
-        <Grid.Column width={1}></Grid.Column>
+        <Grid.Column width={0.5}></Grid.Column>
         
         <Grid.Column className='lightGrayBackground' centered textAlign='center' >
           <Divider hidden />
@@ -72,16 +75,27 @@ function HomeComponent () {
             <Header.Content>About StonkTA</Header.Content>
         </Header>
 
-        <Header as='h2' inverted>
-            {/* he mission of StonkTA is to create an online community where traders can easily research equites, and start a dialogue BEFORE making a trade.
-            Let's face it. Stock trading is hard. StonkTA has the Technical Analysis tools needed to time a trade and the tools to re-consider with the feedback of other traders. */}
-            <Header.Subheader>This site was
+        <Header as='h1' inverted>
+            {/*   This site was
             developed out of frustration over the inability to easily share charts on other social platforms. People are visual creatures and the ability to see a chart, along
-            with solid due diligence, is a nicer way to read financial analysis! StonkTA was created by Jacob Anderson, an aspiring
-            US-TX based developer open to full-time or contract work. Please reach out if you have ideas on projects or ways to improve StonkTA. Thanks!  
-            </Header.Subheader>
+            with solid due diligence, is a nicer way to read financial analysis!he mission of StonkTA is to create an online community where traders can easily research equites, and start a dialogue BEFORE making a trade.
+            Let's face it. Stock trading is hard. StonkTA has the Technical Analysis tools needed to time a trade and the tools to re-consider with the feedback of other traders. */}
+            <Header.Subheader>
+            <p>Even if you're brand new to trading, you've seen a stock chart on CNBC with a simple moving average. Technical Analysis broadly refers to
+            indicators calculated from stock price and volume, that elucidate trends not obvious from the price alone.  StonkTA offers a clean inferace
+            with 26 top indicators and the ability to customize them based on your time horizon. 
+            </p><br/>
+            <p>This bull run during the COVID pademic demonstrates that even professional traders have biases that lead to losses, or at least, missed opportunites. 
+            StonkTA's Posts allow you to share your thoughts on a chart and get feedback from the community, or just browse what other traders are thinking. 
+            </p><br/>
+            <p>
+            StonkTA was created by Jacob Anderson, an aspiring US-TX based developer open to full-time or contract work. Please reach out if you have ideas 
+            on projects or ways to improve StonkTA. Thanks!  
+            </p></Header.Subheader>
           </Header>
           <br/>
+          <Divider hidden/>
+          <ContactContainer/>
         </Grid.Column>
         <Grid.Column width={2}></Grid.Column>
         </Grid.Row>
@@ -124,6 +138,7 @@ function HomeComponent () {
       </Grid>
     </div>
      }
+     </Provider>
     </div>
   )
 }

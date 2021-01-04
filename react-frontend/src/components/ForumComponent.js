@@ -5,7 +5,7 @@ import {Link} from 'react-router-dom'
 import '../App.css'
 import store from '../redux/store'
 import LineCandleFormGraphContainer from './LineCandleFormGraphContainer'
-import { Grid, Header, Menu, Segment, Label, Message, Form, Button, Icon} from "semantic-ui-react"
+import { Grid, Header, Menu, Segment, Label, Message, Form, Button, Icon, Divider} from "semantic-ui-react"
 import * as d3 from "d3"
 import axios from 'axios'
 import {
@@ -28,12 +28,13 @@ function ForumComponent (props) {
   const [reply, setReply] = useState(['','','','','','','','','',''])
   const [activeID, setActiveID] = useState(0)
   const [showReply, setShowReply] = useState([false,false,false,false,false,false,false,false,false,false])
+  var destructuredReply = [false,false,false,false,false,false,false,false,false,false]
   //const handleReplyChange = (e,data) => setReply(reply[parseInt(data.name)] = data.value)
   const [showWarning, setShowWarning] = useState({'activeID':-1,'warning':false})
   const stockChartNode = [useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null)];
   const volumeNode = [useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null)];
   const handleShowCommentsChange = (e,data) => props.addShowComments(!props.showComments)
-  const handleShowReplyChange = (e,data) => setShowReply(!showReply)
+  //const handleShowReplyChange = (e,data) => setShowReply(!showReply)
   const height = 220;
   const width = 700;
   const margin = ({top: 15, right: 20, bottom: 20, left: 50})
@@ -751,6 +752,17 @@ function ForumComponent (props) {
     return svg.node();
   }
   
+  function handleShowReplyChange (e,data) {
+    console.log(data.name)
+    console.log(typeof(data.name))
+    console.log(destructuredReply)
+    console.log(destructuredReply[0])
+    console.log(parseInt(data.name))
+    destructuredReply[parseInt(data.name)] = true
+    console.log(destructuredReply)
+    setShowReply(destructuredReply)
+  }
+
   function handleReplyChange (e,data) {
     setActiveID(parseInt(data.name))
     setReply(data.value)
@@ -772,8 +784,8 @@ function ForumComponent (props) {
     
   }
   var w = window.innerWidth;
-     //{props.showComments ? <Button size='mini' inverted borderless onClick={handleShowCommentsChange}><Button.Content><Icon name="angle down"></Icon></Button.Content></Button> : <Button size='mini' inverted borderless onClick={handleShowCommentsChange}><Button.Content><Icon name="angle up"></Icon></Button.Content></Button>}
-//<Button size='mini' inverted><Button.Content><Icon name="arrow down"></Icon></Button.Content></Button>
+
+  console.log(destructuredReply)
   return (
     <div>
       { w > 700 ? 
@@ -783,8 +795,10 @@ function ForumComponent (props) {
       <Grid.Column width={14}>
 
       {typeof(props.formDataDisplay) != 'undefined' ? props.formDataDisplay.length > 0 ? props.formDataDisplay.map( (el, index) => (
+      
       <Grid.Row color={'#242525'}>
         <Grid borderless inverted>
+          <Divider hidden/>
           <Grid.Column><Header as='h3' inverted>{el.chartData.tickers}</Header></Grid.Column>
           <Grid.Column floated='right' width='5'><Header as='h4' floated='right' inverted><Header.Subheader>{el.user} - {el.date}</Header.Subheader></Header></Grid.Column>
         </Grid>
@@ -813,7 +827,7 @@ function ForumComponent (props) {
             <Message.Header>Please <Link to="/login"><a style={{color: "green"}} href="#">login</a></Link> or <Link to="/register"><a style={{color: "green"}} href="#">sign up</a></Link> to post content</Message.Header>
         </Message>
         : ''}
-        {showReply ? 
+        {showReply[index] ? 
         <Header>
         <Form inverted>
           <Form.Input
@@ -823,9 +837,14 @@ function ForumComponent (props) {
             onChange={handleReplyChange}
           />
         {props.replyLoading ? <Form.Button loading size='medium' floated='right'/> : <Form.Button inverted color='green' floated='right' content='Reply' onClick={handleReplySubmit}/>}     
-        </Form></Header> : '' }
-        <br/><br/>
+        </Form></Header> : <Form.Button inverted color='green' floated='right' name={index} content='Reply' onClick={handleShowReplyChange}/> }
+        <Divider hidden/>
+        <Divider hidden />
+        <Divider hidden />
+        <Divider hidden />
       </Grid.Row>
+     
+      
     )) : '' : ''}
     
     </Grid.Column>

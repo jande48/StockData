@@ -6,7 +6,7 @@ from algoPlatform1_project import db, bcrypt, app
 from algoPlatform1_project.models import User, Post
 from algoPlatform1_project.users.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
                                    RequestResetForm, ResetPasswordForm)
-from algoPlatform1_project.users.utils import save_picture, send_reset_email
+from algoPlatform1_project.users.utils import save_picture, send_reset_email, send_contact_email
 from flask import Blueprint
 import jwt, os
 
@@ -66,8 +66,9 @@ def user_auth():
 @users.route("/users/login/", methods=['GET','POST'])
 def user_login():
     JSON_sent = request.get_json()
-    if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
+    # if current_user.is_authenticated:
+    #     print('we go to is authen')
+    #     return redirect(url_for('main.home'))
     user = User.query.filter_by(email=JSON_sent['email']).first()
     if user and bcrypt.check_password_hash(user.password, JSON_sent['password']):
         login_user(user)
@@ -190,6 +191,18 @@ def user_reset_request():
     JSON_sent = request.get_json()
     user = User.query.filter_by(email=str(JSON_sent['email'])).first()
     send_reset_email(user)
+    payload = 'success'
+    return payload
+
+
+@users.route("/users/send_contact_email/", methods=['GET', 'POST'])
+def contact_email():
+    JSON_sent = request.get_json()
+    print(JSON_sent)
+    if current_user.is_authenticated:
+        send_contact_email(current_user.email,JSON_sent['message'])
+    else:
+        send_contact_email(' no user ',JSON_sent['message'])
     payload = 'success'
     return payload
 
