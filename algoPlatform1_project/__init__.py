@@ -33,7 +33,7 @@ if ENV == 'dev':
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('LOCAL_SQL_DB_STOCK_DATA')
 else:
     #Talisman is used to for https and SSL for the production environment
-    Talisman(app, content_security_policy=csp)
+    #Talisman(app, content_security_policy=csp)
     app.debug = False
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('HEROKU_POSTGRES')
 
