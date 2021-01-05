@@ -1,7 +1,7 @@
 import { USER_AUTHENTICATED, POST_RESPONSE, IS_AUTHENTICATED, ACTIVE_NAV, EMAIL_IN_USE, PHOTO_UPDATED, EMAIL_UPDATED, PASSWORD_UPDATED,
   LOGIN_FAILED, PASSWORD_RESET, PAGE_NUMBER, FORM_DATA_DISPLAY, SUBMIT_POST_SUCCESS, SUBMIT_POST_LOADING, SUBMIT_POST_FAILURE,
   INCLUDE_VOLUME_CHART, REPLY, REPLY_FAILURE, REPLY_LOADING, REPLY_SUCCESS, FETCH_POST_SUCCESS, PASSWORD_RESET_LOADING, PASSWORD_RESET_FAILURE,
-  PASSWORD_RESET_SUCCESS, SHOW_COMMENTS, CONTACT_FAILURE, CONTACT_SUCCESS, CONTACT_LOADING} from './usersTypes'
+  PASSWORD_RESET_SUCCESS, SHOW_COMMENTS, CONTACT_FAILURE, CONTACT_SUCCESS, CONTACT_LOADING, FETCH_POST_LOADING, FETCH_POST_FAILURE, DISABLE_NEXT} from './usersTypes'
 
 const initialState = {
     isAuthenticated: false,
@@ -25,6 +25,8 @@ const initialState = {
     replySuccess: false,
     replyFailure: false,
     fetchPostSuccess: false,
+    fetchPostLoading: false,
+    fetchPostFailure: false,
     passwordResetLoading: false,
     passwordResetSuccess: false,
     passwordResetFailure: false,
@@ -32,6 +34,7 @@ const initialState = {
     contactSuccess: false,
     contactFailure: false,
     showComments: true,
+    disableNext: false,
   }
 
 
@@ -149,6 +152,10 @@ switch (action.type) {
     case SHOW_COMMENTS: return {
       ...state,
       showComments: action.payload
+    }
+    case DISABLE_NEXT: return {
+      ...state,
+      disableNext: action.payload
     }
     default: return state
     }

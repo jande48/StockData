@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react'
 import { Provider,connect } from 'react-redux'
-import { fetchPosts, createNewReply, addActiveNav, addFetchPostSuccess, addFormDataDisplay, addShowComments } from '../redux'
+import { fetchPosts, createNewReply, addActiveNav, addFetchPostSuccess, addFormDataDisplay, addShowComments, addFetchPostLoading, 
+  addFetchPostFailure, addPageNumber, addDisableNext } from '../redux'
 import {Link} from 'react-router-dom'
 import '../App.css'
 import store from '../redux/store'
@@ -29,20 +30,24 @@ function ForumComponent (props) {
   const [activeID, setActiveID] = useState(0)
   const [showReply, setShowReply] = useState([false,false,false,false,false,false,false,false,false,false])
   var destructuredReply = [false,false,false,false,false,false,false,false,false,false]
+  const [showComments, setShowComments] = useState([true,true,true,true,true,true,true,true,true,true])
+  var destructuredComments = [true,true,true,true,true,true,true,true,true,true]
   //const handleReplyChange = (e,data) => setReply(reply[parseInt(data.name)] = data.value)
   const [showWarning, setShowWarning] = useState({'activeID':-1,'warning':false})
   const stockChartNode = [useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null)];
   const volumeNode = [useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null)];
-  const handleShowCommentsChange = (e,data) => props.addShowComments(!props.showComments)
+  //const handleShowCommentsChange = (e,data) => props.addShowComments(!props.showComments)
   //const handleShowReplyChange = (e,data) => setShowReply(!showReply)
   const height = 220;
   const width = 700;
   const margin = ({top: 15, right: 20, bottom: 20, left: 50})
   const [pageNumber, setPageNumber] = useState(0)
-  const [showComments, setShowComments] = useState(true)
+  //const [showComments, setShowComments] = useState(true)
   
   useEffect(() => {
     props.addActiveNav('forum')
+    if (!props.replyLoading) {
+    props.addFetchPostLoading(true)
     axios({
       method: 'get',
       url: "/posts/"+props.pageNumber,
@@ -53,21 +58,19 @@ function ForumComponent (props) {
         createStockPriceLineChart(stockChartNode[index],el.chartData),
         createVolumeBarChart(volumeNode[index],el.chartData)
         ))
+        props.addFetchPostLoading(false)
     })
-    // if (typeof(props.formDataDisplay) != 'undefined' && props.formDataDisplay.length > 0 ) {
-    //   props.formDataDisplay.map( (el, index) => (
-    //       console.log('we got here 1'),
-    //       createStockPriceLineChart(stockChartNode[index],el.chartData),
-    //       createVolumeBarChart(volumeNode[index],el.chartData)
-    //       ))
-    //   console.log('we got here 2')
-    //   }
     
-    
-    
-  },[props.pageNumber,props.replySuccess])
-
+  }
   
+    
+  },[props.pageNumber,props.replySuccess,props.replyLoading])
+
+  if (props.formDataDisplay.length < 10) {
+    props.addDisableNext(true)
+  } else {
+    props.addDisableNext(false)
+  }
 
   function createStockPriceLineChart(stockPriceLineChartNode, d) {
 
@@ -753,14 +756,21 @@ function ForumComponent (props) {
   }
   
   function handleShowReplyChange (e,data) {
-    console.log(data.name)
-    console.log(typeof(data.name))
-    console.log(destructuredReply)
-    console.log(destructuredReply[0])
-    console.log(parseInt(data.name))
     destructuredReply[parseInt(data.name)] = true
-    console.log(destructuredReply)
     setShowReply(destructuredReply)
+  }
+
+  function handleShowCommentsChange (e,data) {
+    destructuredComments[parseInt(data.value)] = !destructuredComments[parseInt(data.value)]
+    setShowComments(destructuredComments)
+  }
+
+  function handleNextChange (e,data) {
+    props.addPageNumber(props.pageNumber + 1)
+  }
+
+  function handlePreviousChange (e,data) {
+    props.addPageNumber(props.pageNumber -1)
   }
 
   function handleReplyChange (e,data) {
@@ -773,7 +783,7 @@ function ForumComponent (props) {
 
       const payload = {
         'reply': reply,
-        'id': activeID,
+        'id': (activeID),
       }
 
       props.createNewReply(payload)
@@ -783,9 +793,11 @@ function ForumComponent (props) {
     }
     
   }
+
+  
   var w = window.innerWidth;
 
-  console.log(destructuredReply)
+
   return (
     <div>
       { w > 700 ? 
@@ -793,8 +805,14 @@ function ForumComponent (props) {
       
       <Grid.Column></Grid.Column>
       <Grid.Column width={14}>
-
-      {typeof(props.formDataDisplay) != 'undefined' ? props.formDataDisplay.length > 0 ? props.formDataDisplay.map( (el, index) => (
+        <Grid.Row>
+          {props.fetchPostLoading ? <Button loading color='green' floated='left' content='Previous' />: props.pageNumber == 1 ? <Button disabled color='green' floated='left' content='Previous' /> : <Button color='green' floated='left' content='Previous' onClick={handlePreviousChange} />}
+          {props.fetchPostLoading ? <Button loading color='green' floated='right' content='Next' />: props.disableNext ? <Button disabled color='green' floated='right' content='Next'/> : <Button color='green' floated='right' content='Next' onClick={handleNextChange}/>}
+        </Grid.Row>
+        <Divider hidden/>
+        <Divider hidden />
+        <Divider hidden />
+      {typeof(props.formDataDisplay) != 'undefined' ? props.formDataDisplay.length > 0 ? !props.fetchPostLoading ? props.formDataDisplay.map( (el, index) => (
       
       <Grid.Row color={'#242525'}>
         <Grid borderless inverted>
@@ -813,15 +831,15 @@ function ForumComponent (props) {
             <svg ref={volumeNode[index]}></svg>
          </React.Fragment>: ''}
          <Header inverted as='h5'>
-          <Header.Subheader>{props.showComments ? <Icon inverted name="angle down" onClick={handleShowCommentsChange}></Icon> : <Icon inverted name="angle up" onClick={handleShowCommentsChange}></Icon>}Comments: {!showReply ?  <Button inverted color='green' floated='right' content='Reply' onClick={handleShowReplyChange}/> : ''}</Header.Subheader> </Header>
-        { props.showComments ? (el.replies != null && el.replies != 'undefined') ? 
+          <Header.Subheader>{showComments[index] ? <Icon inverted name="angle down" value={index} onClick={handleShowCommentsChange}></Icon> : <Icon inverted value={index} name="angle up" onClick={handleShowCommentsChange}></Icon>}Comments: {!showReply ?  <Button inverted color='green' floated='right' content='Reply' onClick={handleShowReplyChange}/> : ''}</Header.Subheader> </Header>
+        { showComments[index] ? (el.replies != null && el.replies != 'undefined') ? 
         el.replies.map( (replyEl) => (
           <Header as='h5' inverted>
             <Header.Subheader>{replyEl.userWhoReplied} - {replyEl.dateReplied}</Header.Subheader>
             <Header.Content>{replyEl.reply}</Header.Content>
           </Header>
         ))
-        : '' : ''}
+        : '' : '' }
         { (showWarning['activeID'] == el.id && showWarning['warning']) ? 
         <Message warning>
             <Message.Header>Please <Link to="/login"><a style={{color: "green"}} href="#">login</a></Link> or <Link to="/register"><a style={{color: "green"}} href="#">sign up</a></Link> to post content</Message.Header>
@@ -836,7 +854,7 @@ function ForumComponent (props) {
             value={activeID == el.id ? reply : ''}
             onChange={handleReplyChange}
           />
-        {props.replyLoading ? <Form.Button loading size='medium' floated='right'/> : <Form.Button inverted color='green' floated='right' content='Reply' onClick={handleReplySubmit}/>}     
+        {props.replyLoading || props.fetchPostLoading ? <Form.Button loading size='medium' floated='right'/> : <Form.Button inverted color='green' floated='right' content='Reply' onClick={handleReplySubmit}/>}     
         </Form></Header> : <Form.Button inverted color='green' floated='right' name={index} content='Reply' onClick={handleShowReplyChange}/> }
         <Divider hidden/>
         <Divider hidden />
@@ -845,8 +863,11 @@ function ForumComponent (props) {
       </Grid.Row>
      
       
-    )) : '' : ''}
-    
+    )) : '' : '' : '' }
+    <Grid.Row>
+          {props.pageNumber == 1 ? <Button disabled color='green' floated='left' content='Previous' /> : <Button color='green' floated='left' content='Previous' onClick={handlePreviousChange} />}
+          <Button color='green' floated='right' content='Next' onClick={handleNextChange}/>
+    </Grid.Row>
     </Grid.Column>
     <Grid.Column></Grid.Column>
     </Grid>
@@ -928,6 +949,9 @@ const mapStateToProps = state => {
       replyFailure: state.usersFromRootReducer.replyFailure,
       fetchPostSuccess: state.usersFromRootReducer.fetchPostSuccess,
       showComments: state.usersFromRootReducer.showComments,
+      replyLoading: state.usersFromRootReducer.replyLoading,
+      fetchPostLoading: state.usersFromRootReducer.fetchPostLoading,
+      disableNext: state.usersFromRootReducer.disableNext,
     }
   }
   
@@ -940,6 +964,10 @@ return {
     addFetchPostSuccess: (x) => dispatch(addFetchPostSuccess(x)),
     addFormDataDisplay: (x) => dispatch(addFormDataDisplay(x)),
     addShowComments: (x) => dispatch(addShowComments(x)),
+    addFetchPostLoading: (x) => dispatch(addFetchPostLoading(x)),
+    addFetchPostFailure: (x) => dispatch(addFetchPostFailure(x)),
+    addPageNumber: (x) => dispatch(addPageNumber(x)),
+    addDisableNext: (x) => dispatch(addDisableNext(x)),
     
 }
 }
