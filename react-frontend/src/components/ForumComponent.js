@@ -865,8 +865,8 @@ function ForumComponent (props) {
       
     )) : '' : '' : '' }
     <Grid.Row>
-          {props.pageNumber == 1 ? <Button disabled color='green' floated='left' content='Previous' /> : <Button color='green' floated='left' content='Previous' onClick={handlePreviousChange} />}
-          <Button color='green' floated='right' content='Next' onClick={handleNextChange}/>
+          {props.fetchPostLoading ? <Button loading color='green' floated='left' content='Previous' />: props.pageNumber == 1 ? <Button disabled color='green' floated='left' content='Previous' /> : <Button color='green' floated='left' content='Previous' onClick={handlePreviousChange} />}
+          {props.fetchPostLoading ? <Button loading color='green' floated='right' content='Next' />: props.disableNext ? <Button disabled color='green' floated='right' content='Next'/> : <Button color='green' floated='right' content='Next' onClick={handleNextChange}/>}
     </Grid.Row>
     </Grid.Column>
     <Grid.Column></Grid.Column>
@@ -939,8 +939,8 @@ function ForumComponent (props) {
           
         )) : '' : '' : '' }
         <Grid.Row>
-              {props.pageNumber == 1 ? <Button disabled color='green' floated='left' content='Previous' /> : <Button color='green' floated='left' content='Previous' onClick={handlePreviousChange} />}
-              <Button color='green' floated='right' content='Next' onClick={handleNextChange}/>
+          {props.fetchPostLoading ? <Button loading color='green' floated='left' content='Previous' />: props.pageNumber == 1 ? <Button disabled color='green' floated='left' content='Previous' /> : <Button color='green' floated='left' content='Previous' onClick={handlePreviousChange} />}
+          {props.fetchPostLoading ? <Button loading color='green' floated='right' content='Next' />: props.disableNext ? <Button disabled color='green' floated='right' content='Next'/> : <Button color='green' floated='right' content='Next' onClick={handleNextChange}/>}
         </Grid.Row>
         </Grid.Column>
         </Grid>
