@@ -135,6 +135,36 @@ function HomeComponent () {
           <br/>
           <Link to="/posts"><Button color='green' content='Go to Posts'/></Link>
         </Grid.Row>
+        <Grid.Row>
+        <Grid.Column className='lightGrayBackground'>
+        <Header as='h2' inverted centered textAlign='center'>
+          <br/>
+            <Header.Content>About StonkTA</Header.Content>
+        </Header>
+
+        <Header as='h1' inverted>
+            {/*   This site was
+            developed out of frustration over the inability to easily share charts on other social platforms. People are visual creatures and the ability to see a chart, along
+            with solid due diligence, is a nicer way to read financial analysis!he mission of StonkTA is to create an online community where traders can easily research equites, and start a dialogue BEFORE making a trade.
+            Let's face it. Stock trading is hard. StonkTA has the Technical Analysis tools needed to time a trade and the tools to re-consider with the feedback of other traders. */}
+            <Header.Subheader>
+            <p>Even if you're brand new to trading, you've seen a stock chart on CNBC with a simple moving average. Technical Analysis broadly refers to
+            indicators calculated from stock price and volume, that elucidate trends not obvious from the price alone.  StonkTA offers a clean inferace
+            with 26 top indicators and the ability to customize them based on your time horizon. 
+            </p><br/>
+            <p>This bull run during the COVID pademic demonstrates that even professional traders have biases that lead to losses, or at least, missed opportunites. 
+            StonkTA's Posts allow you to share your thoughts on a chart and get feedback from the community, or just browse what other traders are thinking. 
+            </p><br/>
+            <p>
+            StonkTA was created by Jacob Anderson, an aspiring US-TX based developer open to full-time or contract work. Please reach out if you have ideas 
+            on projects or ways to improve StonkTA. Thanks!  
+            </p></Header.Subheader>
+          </Header>
+          <br/>
+          <Divider hidden/>
+          <ContactContainer/>
+        </Grid.Column>
+        </Grid.Row>
       </Grid>
     </div>
      }
