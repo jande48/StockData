@@ -891,7 +891,7 @@ function ForumComponent (props) {
             <Grid.Column><Header as='h3' inverted>{el.chartData.tickers}</Header></Grid.Column>
             <Grid.Column floated='right' width='5'><Header as='h4' floated='right' inverted><Header.Subheader>{el.user} - {el.date}</Header.Subheader></Header></Grid.Column>
           </Grid>
-          <Header as='h4' inverted>{el.content}</Header>
+          <Header as='h1' inverted>{el.content}</Header>
           {/* <Header as='h3' inverted>
             <Header.Content>{el.chartData.tickers} <Header.Subheader>{el.user} - {el.date}</Header.Subheader></Header.Content>
             <Header.Content>{el.content}</Header.Content></Header> */}
@@ -905,10 +905,13 @@ function ForumComponent (props) {
             <Header.Subheader>{showComments[index] ? <Icon inverted name="angle down" value={index} onClick={handleShowCommentsChange}></Icon> : <Icon inverted value={index} name="angle up" onClick={handleShowCommentsChange}></Icon>}Comments: {!showReply ?  <Button inverted color='green' floated='right' content='Reply' onClick={handleShowReplyChange}/> : ''}</Header.Subheader> </Header>
           { showComments[index] ? (el.replies != null && el.replies != 'undefined') ? 
           el.replies.map( (replyEl) => (
-            <Header as='h5' inverted>
+            <React.Fragment>
+            <Header as='h2' inverted>
+              
               <Header.Subheader>{replyEl.userWhoReplied} - {replyEl.dateReplied}</Header.Subheader>
               <Header.Content>{replyEl.reply}</Header.Content>
             </Header>
+            </React.Fragment>
           ))
           : '' : '' }
           { (showWarning['activeID'] == el.id && showWarning['warning']) ? 

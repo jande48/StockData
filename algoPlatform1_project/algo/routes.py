@@ -325,9 +325,20 @@ def get_fianancial_data(ticker):
 
 @algo.route("/get_earnings_data/<ticker>", methods=['GET'])
 def get_earnings_data(ticker):
-    stock = Stock(ticker, token=IEX_api_key)
-    earnings = stock.get_earnings(last=4)
+    
+    url = Request("https://financialmodelingprep.com/api/v3/earnings-surpises/"+ticker+"?apikey="+Stock_Ticker_Lookup_key)
+    response = urlopen(url,data=None,timeout=2)
+    companyFinModPrep = json.loads(response.read().decode("utf-8"))
+    earnings = []
+    i = 0
+    for x in companyFinModPrep:
+        if i < 4:
+            earnings.append({'fiscalPeriod':companyFinModPrep[i]['date'],'consensusEPS':companyFinModPrep[i]['estimatedEarning'],'actualEPS':companyFinModPrep[i]['actualEarningResult']})
+            i += 1
+    #stock = Stock(ticker, token=IEX_api_key)
+    #earnings = stock.get_earnings()
     return(json.dumps(earnings))
+  
 
 @algo.route("/calculate_Volatility_Indicators/", methods=['GET','POST'])
 def calculate_Volitality_Indicators():
