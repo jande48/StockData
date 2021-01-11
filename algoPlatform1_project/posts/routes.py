@@ -77,9 +77,9 @@ def new_post():
         post = Post(content=content,author=current_user,chartData=json.loads(chartData))
         db.session.add(post)
         db.session.commit()
-        response = {'type':'success'}
+        response = {'type' : 'success'}
         return response
-    response = {'type':'failure'}
+    response = {'type' : 'failure'}
     return response
 
 
@@ -121,18 +121,3 @@ def delete_post(post_id):
     db.session.commit()
     flash('Your post has been deleted!', 'success')
     return redirect(url_for('posts.fourm'))
-
-
-
-
-
-
-# form = PostForm()
-# if form.validate_on_submit():
-#     post = Post(title=form.title.data, content=form.content.data, author=current_user, charData=form.chartDataJSON.data)
-#     db.session.add(post)
-#     db.session.commit()
-#     flash('Your post has been created!', 'success')
-#     return redirect(url_for('posts.fourm'))
-# return render_template('create_post.html', title='New Post',
-#                        form=form, legend='New Post')

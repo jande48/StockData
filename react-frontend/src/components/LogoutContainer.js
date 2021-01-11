@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { Form, Message, Header, Input } from 'semantic-ui-react'
 import { fetchLogout } from '../redux'
 import { Redirect } from "react-router-dom";
 import '../App.css'

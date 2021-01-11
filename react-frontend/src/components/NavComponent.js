@@ -7,16 +7,11 @@ import { Menu} from "semantic-ui-react"
 import { addActiveNav } from '../redux'
 
 function NavComponent (props) {
-  const [activeItem, setActiveItem] = useState('home')
   function handleItemClick (data){ 
-    setActiveItem(data.name)
     props.addActiveNav(data.name)
 }
 
-//    <Provider store={store}>
   return (
-
-
         <Menu inverted pointing>
             <Link to="/">
             <Menu.Item
@@ -88,11 +83,7 @@ function NavComponent (props) {
             </Link>
             </Menu>
         }
-            
         </Menu>
-        
-      
-
   )
 }
 const mapStateToProps = state => {

@@ -17,7 +17,7 @@ from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError
 
 
-
+# Use environmental variables for the IEX cloud and finanial modeling prep for API calls
 IEX_secret_api_key = os.environ.get('IEX_CLOUD_SECRET_API_KEY')
 IEX_api_key =  os.environ.get('IEX_CLOUD_API_KEY') 
 Stock_Ticker_Lookup_key = os.environ.get('StockTickerCompanyNameAPIkey')
@@ -25,18 +25,24 @@ Stock_Ticker_Lookup_key = os.environ.get('StockTickerCompanyNameAPIkey')
 from flask import Blueprint
 algo = Blueprint('algo',__name__)
 
-
+# get stock data GET api to retrieve stock data based on a stock ticker and start and end data
 @algo.route("/get_stock_data/<ticker>/<startDate>/<endDate>", methods=['GET'])
 def get_stock_data(ticker,startDate,endDate):
 
+    # Managing the date format has been a challenge due to sending Javascript and Python date objects via JSON
+    # I've chosen to send dates as MM-DD-YYY string and then create date objects in python on the backend and JS 
+    # on the frontend
     startDateForAPItemp = startDate.split('-')
     startDateForAPI = datetime(int(startDateForAPItemp[0]),int(startDateForAPItemp[1]),int(startDateForAPItemp[2])) - timedelta(days=90)
     
+    # the API call prefers to choose a date that aligns with a stock market trading period (i.e. M-F),
+    # therefore Saturday and Sundays are changed to the previous Friday
     if startDateForAPI.weekday() == 5:
         startDateForAPI += timedelta(days=2)
     elif startDateForAPI.weekday() == 6:
         startDateForAPI += timedelta(days=1)
 
+    # The same logic applies to the end date.
     endDateForAPItemp = endDate.split('-')
     endDateForAPI = datetime(int(endDateForAPItemp[0]),int(endDateForAPItemp[1]),int(endDateForAPItemp[2]))
 
@@ -49,171 +55,58 @@ def get_stock_data(ticker,startDate,endDate):
     elif endDateForAPI.weekday() == 6:
         endDateForAPI -= timedelta(days=2)
 
+    # the data returned by IEXcloud api is nested where the outer dictionary has nested dictionary based on date
+    # This flatten_json function creates a signal dictionary where date is a key/value pair along with the corresponding stock data
+    # This flattened format is better for providing a flattened array to D3.js
     def flatten_json(stockData):
         out = []
         for i in stockData:
             out2 = {}
-            out2['date']=i
+            out2['date'] = i
             for j in stockData[i]:
                 out2[j] = stockData[i][j]
             out.append(out2) 
         return out
 
+    # make the API to IEXcloud, using Addison Lynch's IEXfinance python package
     historicalData = get_historical_data(ticker, start=startDateForAPI.date(), end=endDateForAPI.date(), token=IEX_api_key)
     Historical_Data = flatten_json(historicalData)
 
+    # using pandas for clean data manipulation using dataframes
     df = pd.DataFrame(Historical_Data)
     df = ta.utils.dropna(df)
 
-    # if ticker in sp500List:
-    #     # start by seeing if there's data in the database for the start and end date
-    #     queriedStartDate = sp_OHLC_data.query.filter_by(date=str(startDateForAPI.date())).first()
-    #     print(str(startDateForAPI.date()))
-    #     queriedEndDate = sp_OHLC_data.query.filter_by(date=str(endDateForAPI.date())).first()
-    #     print(str(endDateForAPI.date()))
-    #     # First we'll see if neither the start and end date have data, ie we need a full api call and commit it to the db
-    #     if (getattr(queriedStartDate,ticker)) is None and (getattr(queriedEndDate,ticker)) is None:
-    #         print('This API thinking that there is no data at the starting or ending date.  Change line 62')
-    #         dataFromAPI = get_historical_data(ticker, start=startDateForAPI.date(), end=endDateForAPI.date(), token=IEX_api_key)
-    #         flattendDataFromAPI = flatten_json(dataFromAPI)
-
-    #         initialIndex = int(queriedStartDate.id)
-    #         for i in range(len(flattendDataFromAPI)):
-    #             #dateHyphenSplit =  flattendDataFromAPI[i]['date'].split('-')
-    #             #flattendDataFromAPI[i]['date'] = str(int(dateHyphenSplit[0]))+'-'+str(int(dateHyphenSplit[1]))+'-'+str(int(dateHyphenSplit[2]))
-    #             dataRow = sp_OHLC_data.query.filter_by(date=flattendDataFromAPI[i]['date']).first()
-    #             setattr(dataRow,str(ticker),str(flattendDataFromAPI[i]))
-    #             db.session.commit()
-    #             initialIndex += 1
-
-    #     # next we'll see if just the start date doesn't have data, ie we need to partially fill out the db on the earlier dates
-    #     if (getattr(queriedStartDate,ticker)) is None and (getattr(queriedEndDate,ticker)) is not None:
-    #         print('This API thinking that there is no data at the starting date.')
-    #         index = getattr(queriedStartDate,'id')
-    #         endingIndex = getattr(queriedEndDate,'id')
-    #         trigger = True
-    #         while trigger and index < endingIndex:
-    #             dataRow = sp_OHLC_data.query.filter_by(id=index).first()
-    #             if (getattr(dataRow,ticker)) is not None:
-    #                 endingIndex = index - 1
-    #                 trigger = False
-    #             index += 1
-
-    #         endingDateTemp = sp_OHLC_data.query.filter_by(id=endingIndex).first()
-    #         endingDate = getattr(endingDateTemp,'date')
-
-    #         dataFromAPI = get_historical_data(ticker, start=startDateForAPI.date(), end=endingDate, token=IEX_api_key)
-    #         flattendDataFromAPI = flatten_json(dataFromAPI)
-            
-    #         for i in range(len(flattendDataFromAPI)):
-    #             #dateHyphenSplit =  flattendDataFromAPI[i]['date'].split('-')
-    #             #flattendDataFromAPI[i]['date'] = str(int(dateHyphenSplit[0]))+'-'+str(int(dateHyphenSplit[1]))+'-'+str(int(dateHyphenSplit[2]))
-    #             dataRow = sp_OHLC_data.query.filter_by(date=flattendDataFromAPI[i]['date']).first()
-    #             setattr(dataRow,str(ticker),str(flattendDataFromAPI[i]))
-    #             db.session.commit()
-    #             #initialIndex += 1
-
-    #     # next we'll see if just the end date doesn't have data, ie we need to partially fill out the db on the later dates
-    #     if (getattr(queriedStartDate,ticker)) is not None and (getattr(queriedEndDate,ticker)) is None:
-    #         print('This API thinking that there is no data at the ending date.')
-    #         index = getattr(queriedStartDate,'id')
-    #         endingIndex = getattr(queriedEndDate,'id')
-    #         trigger = True
-    #         while trigger and index < endingIndex:
-    #             index += 1
-    #             dataRow = sp_OHLC_data.query.filter_by(id=index).first()
-    #             if (getattr(dataRow,ticker)) is None:
-    #                 trigger = False
-
-    #         startingDateTemp = sp_OHLC_data.query.filter_by(id=index).first()
-    #         startingDate = getattr(startingDateTemp,'date')
-    #         dataFromAPI = get_historical_data(ticker, start=startingDate, end=endDateForAPI.date(), token=IEX_api_key)
-    #         flattendDataFromAPI = flatten_json(dataFromAPI)
-
-    #         for i in range(len(flattendDataFromAPI)):
-    #             #dateHyphenSplit =  flattendDataFromAPI[i]['date'].split('-')
-    #             #flattendDataFromAPI[i]['date'] = str(int(dateHyphenSplit[0]))+'-'+str(int(dateHyphenSplit[1]))+'-'+str(int(dateHyphenSplit[2]))
-    #             dataRow = sp_OHLC_data.query.filter_by(date=flattendDataFromAPI[i]['date']).first()
-    #             setattr(dataRow,str(ticker),str(flattendDataFromAPI[i]))
-    #             db.session.commit()
-    #             #initialIndex += 1
-
-        
-    #     # now that all of the requested data is in the database, we simply query it back out. 
-    #     out = []
-    #     startingIndexOutput = getattr(queriedStartDate,'id')
-    #     endingIndexOutput = getattr(queriedEndDate,'id')
-    #     i = startingIndexOutput
-    #     while i < (endingIndexOutput + 1):
-    #         dataRow = sp_OHLC_data.query.filter_by(id=i).first()
-    #         if isinstance(getattr(dataRow,ticker), str):
-    #             dataRowJSON = ast.literal_eval(getattr(dataRow,ticker))
-    #             out.append(dataRowJSON)
-    #         i += 1
-        
-    # # or if the ticker is not in the SP 500 we query the api for this full data
-    # else:
-    #     out2 = get_historical_data(ticker, start=startDateForAPI.date(), end=endDateForAPI.date(), token=IEX_api_key)
-    #     out = flatten_json(out2)
-
-    # # Now we make the pandas dataframe with the database data
-    # df = pd.DataFrame(out)
-    
-    # This is only used if you have to delete the database re initialize it was api data
-    # def initiallyCommitData(data,tickerName):
-    
-    #     for i in range(len(data)):
-    #         dateForDB = data[i]['date']
-    #         dateTemp =  data[i]['date'].split('-')
-            
-    #         data[i]['date'] = str(int(dateTemp[0]))+'-'+str(int(dateTemp[1]))+'-'+str(int(dateTemp[2]))
-    #         # data[i]['date'] = datetime.fromisoformat(data[i]['date']).timestamp() 
-    #         addedData = sp_OHLC_data(date=dateForDB,AAPL=str(data[i]))
-    #         db.session.add(addedData)
-    #         db.session.commit()
-    # historicalData = get_historical_data(ticker, start=startDateForAPI.date(), end=endDateForAPI.date(), token=IEX_api_key)
-    # Historical_Data = flatten_json(historicalData)
-    # initiallyCommitData(Historical_Data,'AAPL')
-
-    # df = pd.DataFrame(Historical_Data)
-    # df = ta.utils.dropna(df)
-
-
-
-    # we add the RSI indicator to show it on the initial momentum chart
+    # we add the RSI indicator, regardless, to show on the initial charts
     indicator_RSI = RSIIndicator(close=df["close"],n=10)
     df['rsi'] = indicator_RSI.rsi()
     df = ta.utils.dropna(df)
     return (json.dumps(df.to_dict('records')))
 
-    
-    
-    
 
-
-
-
+# The get_ticker_company_name api is designing for user-chosen search bar. It used multi-threading because
+# financialmodelingprep requires api calls based on equites, mutual funds, indices, ect. and therefore,
+# these apis calls are perform asynchoronous (synchonous calls takes about 10 secs which would be unacceptable for most users)
+# Then this function uses RegEx to search and find the closest match to the user-input
 @algo.route("/get_ticker_company_name/<user_input>", methods=['GET'])
 def get_ticker_company_name(user_input):
 
-
+    # process a single ID
     def process_id(id):
-        """process a single ID"""
         url = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange="+id+"&apikey="+Stock_Ticker_Lookup_key)
         response = urlopen(url,data=None,timeout=0.5)
         data = response.read().decode("utf-8")
-        
         return data
+
+    # process a number of ids, storing the results in a dict
     def process_range(id_range, store=None):
-        """process a number of ids, storing the results in a dict"""
         if store is None:
             store = {}
         for id in id_range:
             store[id] = json.loads(process_id(id))
         return store
     
+    # process the id range in a specified number of threads
     def threaded_process_range(nthreads, id_range):
-        """process the id range in a specified number of threads"""
         store = {}
         threads = []
         # create the threads
@@ -228,6 +121,7 @@ def get_ticker_company_name(user_input):
         [ t.join() for t in threads ]
         return store
 
+    # These are the list of separate api calls classified by Financial Modeling Prep
     threaded_results = threaded_process_range(6,['NASDAQ','NYSE','AMEX','INDEX','MUTUAL_FUND','ETF'])
 
     trigger = 0
@@ -238,29 +132,7 @@ def get_ticker_company_name(user_input):
     if len(threaded_results) == 0:
         threaded_results = threaded_process_range(6,['NASDAQ','NYSE','AMEX','INDEX','MUTUAL_FUND','ETF'])
 
-    #https://stackoverflow.com/questions/3640359/regular-expressions-search-in-list
-    
-    # urlNASDAQ = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange=NASDAQ&apikey="+Stock_Ticker_Lookup_key)
-    # responseNASDAQ = urlopen(urlNASDAQ)
-    # dataNASDAQ = responseNASDAQ.read().decode("utf-8")
-    # urlNYSE = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange=NYSE&apikey="+Stock_Ticker_Lookup_key)
-    # responseNYSE = urlopen(urlNYSE)
-    # dataNYSE = responseNYSE.read().decode("utf-8")
-    # urlAMEX = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange=AMEX&apikey="+Stock_Ticker_Lookup_key)
-    # responseAMEX = urlopen(urlAMEX)
-    # dataAMEX = responseAMEX.read().decode("utf-8")
-    # urlINDEX = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange=INDEX&apikey="+Stock_Ticker_Lookup_key)
-    # responseINDEX = urlopen(urlINDEX)
-    # dataINDEX = responseINDEX.read().decode("utf-8")
-    # urlMUTUAL_FUND = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange=MUTUAL_FUND&apikey="+Stock_Ticker_Lookup_key)
-    # responseMUTUAL_FUND = urlopen(urlMUTUAL_FUND)
-    # dataMUTUAL_FUND = responseMUTUAL_FUND.read().decode("utf-8")
-    # urlETF = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange=ETF&apikey="+Stock_Ticker_Lookup_key)
-    # responseETF = urlopen(urlETF)
-    # dataETF = responseETF.read().decode("utf-8")
-    # dataset = [json.loads(dataNASDAQ),json.loads(dataNYSE),json.loads(dataAMEX),json.loads(dataINDEX),json.loads(dataMUTUAL_FUND),json.loads(dataETF)]
-    # #print(dataset)
-    #time.sleep(1)
+    # Based on the results of the API calls create a flatten array based on matches with RegEx
     out = []
     
     dataset = []
@@ -269,12 +141,14 @@ def get_ticker_company_name(user_input):
         if ids[i] in threaded_results:
             dataset.append(threaded_results[ids[i]])
 
+    # if the user includes a space, it is replaced with an underscore, which is how Financial Modeling Prep addresses spaces
     user_input_matching = user_input.replace("_","")
 
     for i in range(len(dataset)):
         for j in range(len(dataset[i])):
 
             if dataset[i][j]['name'] is not None:
+                # compare upper case company name API results with user-input
                 noSpacesAPI =re.sub(r'\W+', '',dataset[i][j]['name'] )
                 noSpacesAPI2 = noSpacesAPI.upper()
             try:
@@ -286,6 +160,8 @@ def get_ticker_company_name(user_input):
                 out.append(dataset[i][j])
 
             if dataset[i][j]['symbol'] is not None:
+                # compare upper case ticker API results with user-input, because this allows the user to 
+                # enter either a company name or a ticker
                 noSpacesAPIsym =re.sub(r'\W+', '',dataset[i][j]['symbol'] )
                 noSpacesAPIsym2 = noSpacesAPIsym.upper()
             try:
@@ -299,30 +175,33 @@ def get_ticker_company_name(user_input):
     out.sort(key = lambda out: out['startingStrIndex']) 
     return json.dumps(out)
 
+# Once the ticker is chosen, company info is populated via a IEX cloud api call
 @algo.route("/get_company_name_from_ticker/<ticker>", methods=['GET'])
 def get_company_name_from_ticker(ticker):
     stock = Stock(ticker, token=IEX_api_key)
     company = stock.get_company()
     return company['companyName']
 
+# The table of most relevant financial data (i.e. dividen, CEO) is called based on ticker. Some indicators are fetched from 
+# Financial Modeling Prep and some are retrieved from IEX cloud. These are combined into a single object
 @algo.route("/get_financial_data/<ticker>", methods=['GET'])
 def get_fianancial_data(ticker):
 
+    # get financial data from IEX cloud
     stock = Stock(ticker, token=IEX_api_key)
     financials = stock.get_financials()
     companyIEX = stock.get_company()
+
+    # get financial data from Financial Modeling Prep and append it to the IEX result
     url = Request("https://financialmodelingprep.com/api/v3/profile/"+ticker+"?apikey="+Stock_Ticker_Lookup_key)
     response = urlopen(url,data=None,timeout=2)
     companyFinModPrep = json.loads(response.read().decode("utf-8"))
-    # def divideByMillion(financialParameter,newFinancials):
-    #     newFinancials[0][financialParameter] = newFinancials[0][financialParameter]/1000000
-
-    # financialParameters = ('grossProfit','operatingRevenue','totalRevenue','totalAssets','totalLiabilities','totalCash','netIncome','cashFlow','totalDebt','shortTermDebt','longTermDebt')
     financials.append(companyIEX)
     financials.append(companyFinModPrep[0])
 
     return (json.dumps(financials))
 
+# API to get company quarterly earning over the past four quarters from Financial Modeling Prep, using urllib python package
 @algo.route("/get_earnings_data/<ticker>", methods=['GET'])
 def get_earnings_data(ticker):
     
@@ -339,7 +218,8 @@ def get_earnings_data(ticker):
     #earnings = stock.get_earnings()
     return(json.dumps(earnings))
   
-
+# recieve JSON data from the frontend and if an indicator is checked, then calculate this indicator 
+# and create a resulting JSON to then graph
 @algo.route("/calculate_Volatility_Indicators/", methods=['GET','POST'])
 def calculate_Volitality_Indicators():
     JSON_sent = request.get_json()
@@ -517,7 +397,8 @@ def calculate_Volitality_Indicators():
     #print('The printed df in Trend', df)
     return (json.dumps(df.to_dict('records')))
 
-
+# recieve JSON data from the frontend and if an indicator is checked, then calculate this indicator 
+# and create a resulting JSON to then graph
 @algo.route("/calculate_Trend_Indicators/", methods=['GET','POST'])
 def calculate_Trend_Indicators():
     JSON_sent = request.get_json()
@@ -844,6 +725,8 @@ def calculate_Trend_Indicators():
         df = pd.DataFrame([])
         return (json.dumps(df.to_dict('records')))
 
+# recieve JSON data from the frontend and if an indicator is checked, then calculate this indicator 
+# and create a resulting JSON to then graph
 @algo.route("/calculate_Momentum_Indicators/", methods=['GET','POST'])
 def calculate_Momentum_Indicators():
     

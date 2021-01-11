@@ -2,27 +2,12 @@ import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import { addPercentChange, addSplicedStartDate, addStockPriceForPercentChange, addEndDateForPercentChange, addSplicedIndexStockData, 
   addActiveNav, addOnMouseOverTicker, addDateMouseOverTicker, addIndexMouseOver } from '../redux'
-import {Header, Grid} from 'semantic-ui-react'
+import {Header} from 'semantic-ui-react'
 import { createLoadingSpinnerChart } from './charts/loadingSpinner.js'
 import '../App.css'
 import 'react-datepicker/dist/react-datepicker.css'
 import * as d3 from "d3"
-
-import {
-    select,
-    csv,
-    scaleLinear,
-    scaleBand,
-    scaleTime,
-    extent,
-    axisLeft,
-    axisBottom,
-    line,
-    curveBasis,
-    transition,
-    curveLinear,
-  } from 'd3';
-import { DATE_MOUSE_OVER_TICKER } from '../redux/tickers/tickerTypes'
+import {select, scaleLinear, scaleBand, line, curveLinear} from 'd3';
 
 function LineCandleGraphIndicatorContainer (props) {
 
@@ -45,13 +30,7 @@ function LineCandleGraphIndicatorContainer (props) {
         props.nForBBUpper,props.ndevBBUpper,props.displayBBLower,props.nForBBLower,props.ndevBBLower,props.displayKeltnerC,
         props.nForKeltnerC,props.volatilityData,props.momentumData])
 
-    function convertDatesToString(initialDate) {
-		const convertedDate = String(initialDate.getFullYear())+"-"+String(initialDate.getMonth() + 1)+"-"+String(initialDate.getDate())
-		return convertedDate
-	  }
-
   function createStockPriceLineChart(stockPriceLineChartNode, Initialdata) {
-      //const Initialdata = props.stockData
 
       function sliceDataStartDate(data) {
         var startingIndex = 0
@@ -65,7 +44,6 @@ function LineCandleGraphIndicatorContainer (props) {
           var dateOffset = (24*60*60*1000) * 1; 
           startingDate.setTime(startingDate.getTime()-dateOffset)
         }
-        //console.log(startingDate.getTime())
         for (var i = 0; i < data.length; i++) {
           var dateSplit = data[i]['date'].split("-")
           var indexDate = new Date(parseInt(dateSplit[0]),(parseInt(dateSplit[1])-1),parseInt(dateSplit[2]))
@@ -84,12 +62,9 @@ function LineCandleGraphIndicatorContainer (props) {
       }
 
       const data = sliceDataStartDate(Initialdata)
-      const InitialtrendData = props.trendData
-      const trendData = sliceDataStartDate(InitialtrendData)
-      const InitialVolatilityData = props.volatilityData
-      const volatilityData = sliceDataStartDate(InitialVolatilityData)
-      const InitialMomentumData = props.momentumData
-      const momentumData = sliceDataStartDate(InitialMomentumData)
+      const trendData = sliceDataStartDate(props.trendData)
+      const volatilityData = sliceDataStartDate(props.volatilityData)
+      const momentumData = sliceDataStartDate(props.momentumData)
       
       function findMixMaxObjects(objects,leftOrRight) {
           var min = objects[0]['dataInd'][0]['close']
@@ -118,7 +93,6 @@ function LineCandleGraphIndicatorContainer (props) {
           if (min == 0 && max == 0) {
             max = 80
           }
-          //console.log(min,max)
           return [min,max]
         }
 
@@ -197,17 +171,13 @@ function LineCandleGraphIndicatorContainer (props) {
       const vineg = new Indicator('vineg',"#e6ab02",trendData,props.displayVINEG,'axisRight')
       const trix = new Indicator('trix',"#a6761d",trendData,props.displayTRIX,'axisRight')
       const mi = new Indicator('mi',"#666666",trendData,props.displayMI,'axisRight')
-      //const cci = new Indicator('cci',"#1b9e77",trendData,props.displayCCI,'axisRight')
       const dpo = new Indicator('dpo',"#1b9e77",trendData,props.displayDPO,'axisRight')
-      // ["#7fc97f","#beaed4","#fdc086","#ffff99","#386cb0","#f0027f","#bf5b17","#666666"]
       const bbsma = new Indicator('bbsma',"#7fc97f",volatilityData,props.displayBBSMA,'axisLeft')
       const atr = new Indicator('atr',"#beaed4",volatilityData,props.displayATR,'axisRight')
       const BBupper = new Indicator('BBupper',"#fdc086",volatilityData,props.displayBBUpper,'axisLeft')
       const BBlower = new Indicator('BBlower',"#ffff99",volatilityData,props.displayBBLower,'axisLeft')
       const KeltnerC = new Indicator('keltnerC',"#386cb0",volatilityData,props.displayKeltnerC,'axisLeft')
-
       const rsi = new Indicator('rsi',"#1f77b4",momentumData,props.displayRSI,'axisRight');
-      //const macd = new Indicator('macd',"#ff7f0e",trendData,props.displayMACD,'axisRight')
       const tsi = new Indicator('tsi',"#2ca02c",momentumData,props.displayTSI,'axisRight')
       const uo = new Indicator('uo',"#d62728",momentumData,props.displayUO,'axisRight')
       const stoch = new Indicator('stoch',"#9467bd",momentumData,props.displaySTOCH,'axisRight')
@@ -234,9 +204,7 @@ function LineCandleGraphIndicatorContainer (props) {
   
       var y = scaleLinear()
           .domain(findMixMaxObjects(objectList,'axisLeft'))
-          //.domain([d3.min(data, d => d.low), d3.max(data, d => d.high)])
           .rangeRound([height - margin.bottom, margin.top])
-              //d3.min(data, d => d.low), d3.max(data, d => d.high
 
       var yRight = scaleLinear()
           .domain(findMixMaxObjects(objectList,'axisRight'))
@@ -245,14 +213,11 @@ function LineCandleGraphIndicatorContainer (props) {
       const xAxis = g => g
           .attr("transform", `translate(0,${height - margin.bottom})`)
           .attr('class','axisWhite')
-          .call(d3.axisBottom(x)   //.ticks(Math.round((data.length-1)/7))
-              //.tickValues(d3.range(parseDate(data[0].date), parseDate(data[data.length - 1].date),((data.length-1)*86400000/10)).map( d => d.date))
+          .call(d3.axisBottom(x)  
               .tickValues(d3.utcMonday
                   .every(data.length > 2 ? (data.length > 250 ? 8 : (data.length > 150 ? 4 : (data.length > 80 ? 2 : 1))) : 1)
                   .range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
               .tickFormat(d3.utcFormat("%-m/%-d")))
-          //.call(g => g.select(".domain").remove())
-
 
       svg.append("text")
           .attr("class", "axisWhite")
@@ -270,7 +235,6 @@ function LineCandleGraphIndicatorContainer (props) {
           .join("g")
       
       const invisibleRectForTooltip = svg.append("g")
-          // .attr("stroke", "black")
           .selectAll("g")
           .attr("id","invisibleTooltip")
           .data(data)
@@ -302,11 +266,6 @@ function LineCandleGraphIndicatorContainer (props) {
             d3.select(this).style('opacity','0')
             props.addOnMouseOverTicker(false)
           })
-      // var mousePerLine = tooltip.selectAll('.mouse-per-line')
-      //     .data(data)
-      //     .enter()
-      //     .append("g")
-      //     .attr("class", "mouse-per-line");
 
       tooltip.append("text")
           .attr("text-anchor", "middle")
@@ -316,29 +275,8 @@ function LineCandleGraphIndicatorContainer (props) {
           .attr('y',height)
           .style("opacity", '0')
           .text(function(d) {
-            //console.log(d)
-            //console.log(d.close)
             return d.close
           })
-      // const tooltip = svg.append("text")
-      //     .attr("class", "axisWhite")
-      //     .attr("id","tooltip")
-      //     .attr("text-anchor", "middle")
-      //     .attr("font-size",'50px')
-      //     .style('fill','white')
-      //     .attr('x',margin.left+(width/2))
-      //     .attr('y',height)
-      //     .style("opacity", 1)
-      //     .text(function(d) { 
-      //       console.log(d)
-      //       if (typeof(d) != 'undefined' && typeof(d.close) != 'undefined'){
-              
-      //         return d.close;
-      //       }
-      //        })
-          // .join("text")
-
-          
 
       const yAxis = g => g
           .attr("transform", `translate(${margin.left},0)`)
@@ -349,8 +287,6 @@ function LineCandleGraphIndicatorContainer (props) {
           .call(g => g.selectAll(".tick line").clone()
               .attr("stroke-opacity", 0)
               .attr("x2", width - margin.left - margin.right))
-          //.call(g => g.select(".domain").remove())
-      
 
       svg.attr("viewBox", [0, 0, width, height])
   
@@ -363,18 +299,7 @@ function LineCandleGraphIndicatorContainer (props) {
       
 
       if (props.displayLine) {
-          
-          // svg.selectAll("g").selectAll(".candleStick").remove()
-          // svg.on("mouseover", function() { 
-          //   console.log('mouseover',d3.svg.mouse(this))
-          // }).on("mousemove", function() {
-          //   console.log('mousemove');
-          //   var x = d3.mouse(this)[0];
-          //   hoverLine.attr("x1", x).attr("x2", x).style("opacity", 1);
-          // }).on("mouseout", function() {
-          //   console.log('mouseout');
-          //   hoverLine.style("opacity", 1e-6);
-          // });
+         
           const g = svg.append("g")
               .attr("stroke-linecap", "round")
               .attr("stroke", "#e0e1e2")
@@ -382,73 +307,11 @@ function LineCandleGraphIndicatorContainer (props) {
               .data(data)
               .join("g")
               
-              // .on("mouseover", function(e,data){
-              //   svg.selectAll("#tooltip")
-              //     .text(data.close)
-              //     .style("opacity", 1)
-      
-              //   // Get current event info
-              //   console.log(e);
-              //   console.log(data)
-                
-              //   Get x & y co-ordinates
-              //   console.log(d3.mouse(this));
-              // })
-              // .on("mousemove", function(){
-              //   d3.selectAll("#tooltip")
-              //     .text(data)
-              //     .style("opacity", "1");
-              //   // svg.selectAll("#tooltip")
-              //   //   .text(data)
-              //   //   .style("opacity", 1)
-      
-              //   // Get current event info
-                
-              //   // Get x & y co-ordinates
-              //   //console.log(d3.mouse(this));
-              // })
-              // .on("mouseout", function(){
-              //   d3.selectAll("#tooltip")
-              //     .style("opacity", "0");
-              // })
-              //.attr("transform", data => `translate(${(x(parseDate(data.date))+x.bandwidth()/2)},0)`);
-  
           const lineGenerator = line()
               .x(d => (x(parseDate(d.date))+x.bandwidth()/2))
               .y(d => y(d.close))
               .curve(curveLinear);
 
-          // const Tooltip = svg.append("g")
-          //     .style("opacity", 0)
-          //     .attr("class", "tooltip")
-          //     .style("background-color", "white")
-          //     .style("border", "solid")
-          //     .style("border-width", "2px")
-          //     .style("border-radius", "5px")
-          //     .style("padding", "5px")
-              
-          //     // Three function that change the tooltip when user hover / move / leave a cell
-          // var mouseover = function(d) {
-          //   Tooltip
-          //     .style("opacity", 1)
-          //     .html("The exact value of<br>this cell is: " + d.close)
-          //     .style("left", (svg.mouse(this)[0]+70) + "px")
-          //     .style("top", (svg.mouse(this)[1]) + "px")
-          //   d3.select(this)
-          //     .style("stroke", "black")
-          //     .style("opacity", 1)
-          // }
-          // var mousemove = function(d) {
-          //   Tooltip
-              
-          // }
-          // var mouseleave = function(d) {
-          //   Tooltip
-          //     .style("opacity", 0)
-          //   d3.select(this)
-          //     .style("stroke", "none")
-          //     .style("opacity", 0.8)
-          // }
           g.append('path')
               .attr('class', 'line-path')
               .attr('d', lineGenerator(data))
@@ -456,124 +319,15 @@ function LineCandleGraphIndicatorContainer (props) {
               .attr('fill','none')
               .attr('stroke-width',1)
               .attr('stroke-linecap','round')
-              .on('mousemove',function(e){
-                  //var m = d3.svg.mouse(this);
-                  //console.log(e)
-                  //d3.select('#tooltip').selectAll('text').style('opacity', 1).text(d)
+              // .on('mousemove',function(e){
                   
-                // console.log(d3.select(this).attr('d'))
-                // tooltip.selectAll("text")
-                //   .style("opacity", '0')
-              }
-                  )
+              // }
+              //     )
               .on('mouseout',function(){
                 d3.select('#tooltip').selectAll('text').style('opacity', 0)
               }
                   )
-              // .on("mouseover", function(e,d){
-              //   // svg.selectAll("#tooltip")
-              //   //   .text(data.close)
-              //   //   .style("opacity", 1)
-      
-              //   // // Get current event info
-              //   // console.log(e);
-              //   // console.log(data)
-                
-              //   // Get x & y co-ordinates
-              //   //console.log(d3.mouse(this));
-              // })
-              // .on("mousemove", function(e,d){
-              //   svg.selectAll("#tooltip")
-              //     // .text(d.close)
-              //     // .style("opacity", 1)
-      
-              //   // Get current event info
-              //   console.log(e);
-              //   console.log(d)
-                
-              //   // Get x & y co-ordinates
-              //   //console.log(d3.mouse(this));
-              // })
-              // .on("mouseout", function(){
-              //   svg.selectAll("#tooltip")
-              //     .style("opacity", 0)
-              // })
-            // var mouseG = svg.append("g")
-            //   .attr("class", "mouse-over-effects");
-        
-            // mouseG.append("path") // this is the black vertical line to follow mouse
-            //   .attr("class", "mouse-line")
-            //   .style("stroke", "white")
-            //   .style("stroke-width", "1px")
-            //   .style("opacity", "0");
-
-            // var mousePerLine = mouseG.selectAll('.mouse-per-line')
-            //   .append("g")
-            //   .attr("class", "mouse-per-line");
-        
-            // mousePerLine.append("circle")
-            //   .attr("r", 7)
-            //   .style("stroke", 'white')
-            //   .style("fill", "none")
-            //   .style("stroke-width", "1px")
-            //   .style("opacity", "0");
-
-            // mousePerLine.append("text")
-            //   .attr("transform", "translate(10,3)");
-
-            // mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
-            //   .attr('width', width) // can't catch mouse events on a g element
-            //   .attr('height', height)
-            //   .attr('fill', 'none')
-            //   .attr('pointer-events', 'all')
-            //   .on('mouseout', function() { // on mouse out hide line, circles and text
-            //     d3.select(".mouse-line")
-            //       .style("opacity", "0");
-            //     d3.selectAll(".mouse-per-line circle")
-            //       .style("opacity", "0");
-            //     d3.selectAll(".mouse-per-line text")
-            //       .style("opacity", "0");
-            //   })
-            //   .on('mouseover', function() { // on mouse in show line, circles and text
-            //     d3.select(".mouse-line")
-            //       .style("opacity", "1");
-            //     d3.selectAll(".mouse-per-line circle")
-            //       .style("opacity", "1");
-            //     d3.selectAll(".mouse-per-line text")
-            //       .style("opacity", "1");
-            //   })
-            //   .on('mousemove', function() { // mouse moving over canvas
-
-            //     d3.select(".mouse-line")
-            //       .style("opacity", "1");
-            //     d3.selectAll(".mouse-per-line circle")
-            //       .style("opacity", "1");
-            //     d3.selectAll(".mouse-per-line text")
-            //       .style("opacity", "1");
-            //       })
-
-
-
-
-          
-
-
-
-
-
-
-          
-          
-          
-
-          
-
-
-
-
-
-
-
+              
 
       }else{
           svg.selectAll("g").selectAll(".lineChart").remove()
@@ -608,21 +362,17 @@ function LineCandleGraphIndicatorContainer (props) {
       const adxline = adx.d3line
       const adxpline = adxp.d3line
       const adxnline = adxn.d3line
-      // const bbsmaline = bbsma.d3line
       const viposline = vipos.d3line
       const vinegline = vineg.d3line
       const trixline = trix.d3line
       const miline = mi.d3line
-      //const cciline = cci.d3line
       const dpoline = dpo.d3line
       const atrline = atr.d3line
       const bbsmaline = bbsma.d3line
       const BBupperline = BBupper.d3line
       const BBlowerline = BBlower.d3line
       const keltnerCline = KeltnerC.d3line
-
       const rsiline = rsi.d3line
-      //const macdline = macd.d3line
       const tsiline = tsi.d3line
       const uoline = uo.d3line
       const stochline = stoch.d3line
@@ -651,7 +401,6 @@ function LineCandleGraphIndicatorContainer (props) {
               .call(g => g.selectAll(".tick line").clone()
                   .attr("stroke-opacity", 0)
                   .attr("x2", width - margin.left - margin.right+50))
-              //.call(g => g.select(".domain").remove())
         
           svg.append("g")
               .attr('fill',macd.color)
@@ -667,15 +416,12 @@ function LineCandleGraphIndicatorContainer (props) {
           }
           svg.selectAll("g").selectAll(".mydotsLeft").remove()
           svg.selectAll("g").selectAll(".mylabelsLeft").remove()
-          //svg.selectAll("mydotsLeft").remove()
-          //svg.selectAll("mylabelsLeft").remove()
           const size = 10
-          //svg.selectAll("mydotsLeft")
           const mydotsLeft = svg.append("g")
             .selectAll("g")
             .data(keysList)
             .join('g')
-            //.enter()
+
           mydotsLeft.append("rect")
               .attr('id','mydotsLeft')
               .attr("x", margin.left + 5)
@@ -713,9 +459,6 @@ function LineCandleGraphIndicatorContainer (props) {
           svg.selectAll("g").selectAll(".mydotsRight").remove()
           svg.selectAll("g").selectAll(".mylabelsRight").remove()
           const size = 10
-  
-          
-
           const mydotsRight = svg.append("g")
             .selectAll("g")
             .data(keysList)
@@ -754,26 +497,9 @@ function LineCandleGraphIndicatorContainer (props) {
       return svg.node()
       }
 
-  // function calcPercentChange() {
-  //     var exportDefault = 0
-  //     if (typeof(props.stockData) != 'undefined'){
-  //     if (props.stockData.length > 2) {
-  //         const percentChange = ((props.stockData[props.stockData.length -1]['close'] - props.stockData[props.stockData.length -2]['close'])/props.stockData[props.stockData.length -1]['close'])*100
-  //         const percentChangeFormatted = percentChange.toFixed(2)
-  //         return percentChangeFormatted
 
-  //     }else{
-  //         return exportDefault
-  //     }}
-  // }
   var endDateVar = 'Jacob'
   var endDateVar2 = ''
-
-  // if (typeof(props.endDateForPercentChange) != 'undefined') {
-  //   endDateVar = props.endDateForPercentChange
-  //   endDateVar2 = String(endDateVar.getFullYear())+"-"+String(endDateVar.getMonth())+"-"+String(endDateVar.getDay())
-  // }
-  
 
   function getIndex(data,date) {
     data.forEach(function (el, i) {
@@ -866,9 +592,6 @@ const mapStateToProps = state => {
     displayTSI: state.momentumFromRootReducer.displayTSI,
     rForTSI: state.momentumFromRootReducer.rForTSI,
     sForTSI: state.momentumFromRootReducer.sForTSI,
-    //displayMACD: state.trendFromRootReducer.displayMACD,
-    //nSlowForMACD: state.trendFromRootReducer.nSlowForMACD,
-    //nFastForMACD: state.trendFromRootReducer.nFastForMACD,
     sForUO: state.momentumFromRootReducer.sForUO,
     mForUO: state.momentumFromRootReducer.mForUO,
     lenForUO: state.momentumFromRootReducer.lenForUO,

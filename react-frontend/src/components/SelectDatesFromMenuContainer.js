@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { connect } from 'react-redux'
 import { addEndDate, addStartDate } from '../redux'
-import {  Menu, Grid} from "semantic-ui-react"
+import {  Menu } from "semantic-ui-react"
 import { fetchStockData } from '../redux'
 
 

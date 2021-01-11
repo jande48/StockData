@@ -1,26 +1,17 @@
 import React, {useState, useEffect, useRef} from 'react'
-import { Provider,connect } from 'react-redux'
+import { connect } from 'react-redux'
 import { fetchPosts, createNewReply, addActiveNav, addFetchPostSuccess, addFormDataDisplay, addShowComments, addFetchPostLoading, 
   addFetchPostFailure, addPageNumber, addDisableNext } from '../redux'
 import {Link} from 'react-router-dom'
 import '../App.css'
-import store from '../redux/store'
-import LineCandleFormGraphContainer from './LineCandleFormGraphContainer'
-import { Grid, Header, Menu, Segment, Label, Message, Form, Button, Icon, Divider} from "semantic-ui-react"
+import { Grid, Header, Message, Form, Button, Icon, Divider} from "semantic-ui-react"
 import * as d3 from "d3"
 import axios from 'axios'
 import {
     select,
-    csv,
     scaleLinear,
     scaleBand,
-    scaleTime,
-    extent,
-    axisLeft,
-    axisBottom,
     line,
-    curveBasis,
-    transition,
     curveLinear,
   } from 'd3';
 
@@ -32,17 +23,9 @@ function ForumComponent (props) {
   var destructuredReply = [false,false,false,false,false,false,false,false,false,false]
   const [showComments, setShowComments] = useState([true,true,true,true,true,true,true,true,true,true])
   var destructuredComments = [true,true,true,true,true,true,true,true,true,true]
-  //const handleReplyChange = (e,data) => setReply(reply[parseInt(data.name)] = data.value)
   const [showWarning, setShowWarning] = useState({'activeID':-1,'warning':false})
   const stockChartNode = [useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null)];
   const volumeNode = [useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null)];
-  //const handleShowCommentsChange = (e,data) => props.addShowComments(!props.showComments)
-  //const handleShowReplyChange = (e,data) => setShowReply(!showReply)
-  const height = 220;
-  const width = 700;
-  const margin = ({top: 15, right: 20, bottom: 20, left: 50})
-  const [pageNumber, setPageNumber] = useState(0)
-  //const [showComments, setShowComments] = useState(true)
   
   useEffect(() => {
     props.addActiveNav('forum')
@@ -102,12 +85,9 @@ function ForumComponent (props) {
     }
 
     const data = sliceDataStartDate(d.stockData)
-    const InitialtrendData = d.trend.trendData
-    const trendData = sliceDataStartDate(InitialtrendData)
-    const InitialVolatilityData = d.volatility.volatilityData
-    const volatilityData = sliceDataStartDate(InitialVolatilityData)
-    const InitialMomentumData = d.momentum.momentumData
-    const momentumData = sliceDataStartDate(InitialMomentumData)
+    const trendData = sliceDataStartDate(d.trend.trendData)
+    const volatilityData = sliceDataStartDate(d.volatility.volatilityData)
+    const momentumData = sliceDataStartDate(d.momentum.momentumData)
     
     function findMixMaxObjects(objects,leftOrRight) {
         var min = objects[0]['dataInd'][0]['close']
@@ -215,16 +195,13 @@ function ForumComponent (props) {
     const vineg = new Indicator('vineg',"#e6ab02",trendData,d.trend.displayVINEG,'axisRight')
     const trix = new Indicator('trix',"#a6761d",trendData,d.trend.displayTRIX,'axisRight')
     const mi = new Indicator('mi',"#666666",trendData,d.trend.displayMI,'axisRight')
-    //const cci = new Indicator('cci',"#1b9e77",trendData,props.displayCCI,'axisRight')
     const dpo = new Indicator('dpo',"#1b9e77",trendData,d.trend.displayDPO,'axisRight')
-    // ["#7fc97f","#beaed4","#fdc086","#ffff99","#386cb0","#f0027f","#bf5b17","#666666"]
     const bbsma = new Indicator('bbsma',"#7fc97f",volatilityData,d.volatility.displayBBSMA,'axisLeft')
     const atr = new Indicator('atr',"#beaed4",volatilityData,d.volatility.displayATR,'axisRight')
     const BBupper = new Indicator('BBupper',"#fdc086",volatilityData,d.volatility.displayBBUpper,'axisLeft')
     const BBlower = new Indicator('BBlower',"#ffff99",volatilityData,d.volatility.displayBBLower,'axisLeft')
     const KeltnerC = new Indicator('keltnerC',"#386cb0",volatilityData,d.volatility.displayKeltnerC,'axisLeft')
     const rsi = new Indicator('rsi',"#1f77b4",momentumData,d.momentum.displayRSI,'axisRight');
-    //const macd = new Indicator('macd',"#ff7f0e",trendData,props.displayMACD,'axisRight')
     const tsi = new Indicator('tsi',"#2ca02c",momentumData,d.momentum.displayTSI,'axisRight')
     const uo = new Indicator('uo',"#d62728",momentumData,d.momentum.displayUO,'axisRight')
     const stoch = new Indicator('stoch',"#9467bd",momentumData,d.momentum.displaySTOCH,'axisRight')
@@ -253,9 +230,7 @@ function ForumComponent (props) {
 
     var y = scaleLinear()
         .domain(findMixMaxObjects(objectList,'axisLeft'))
-        //.domain([d3.min(data, d => d.low), d3.max(data, d => d.high)])
         .rangeRound([height - margin.bottom, margin.top])
-            //d3.min(data, d => d.low), d3.max(data, d => d.high
 
     var yRight = scaleLinear()
         .domain(findMixMaxObjects(objectList,'axisRight'))
@@ -264,14 +239,11 @@ function ForumComponent (props) {
     const xAxis = g => g
         .attr("transform", `translate(0,${height - margin.bottom})`)
         .attr('class','axisWhite')
-        .call(d3.axisBottom(x)   //.ticks(Math.round((data.length-1)/7))
-            //.tickValues(d3.range(parseDate(data[0].date), parseDate(data[data.length - 1].date),((data.length-1)*86400000/10)).map( d => d.date))
+        .call(d3.axisBottom(x)  
             .tickValues(d3.utcMonday
                 .every(data.length > 2 ? (data.length > 250 ? 8 : (data.length > 150 ? 4 : (data.length > 80 ? 2 : 1))) : 1)
                 .range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
             .tickFormat(d3.utcFormat("%-m/%-d")))
-        //.call(g => g.select(".domain").remove())
-
 
     svg.append("text")
         .attr("class", "axisWhite")
@@ -289,7 +261,6 @@ function ForumComponent (props) {
         .join("g")
     
     const invisibleRectForTooltip = svg.append("g")
-        // .attr("stroke", "black")
         .selectAll("g")
         .attr("id","invisibleTooltip")
         .data(data)
@@ -304,61 +275,6 @@ function ForumComponent (props) {
         .attr("fill", 'green')
         .style("opacity",'0')
         .attr('transform',d=>(`translate(${x.bandwidth()},${height - margin.top}) rotate(180)`))
-        // .on('mouseover',function(event,d){
-        //   d3.select(this).style('opacity','0.5')
-        //   var endingDateSplit = d.date.split('-')
-        //   var dateFromSplit = new Date(parseInt(endingDateSplit[0]),parseInt(endingDateSplit[1]),parseInt(endingDateSplit[2]))
-        //   props.addEndDateForPercentChange(dateFromSplit)
-        //   props.addStockPriceForPercentChange(d.close)
-        //   props.addOnMouseOverTicker(true)
-        //   props.addDateMouseOverTicker(d.date)
-        //   // const newI = props.stockData.findIndex(function(d){ return props.dateMouseOverTicker == d.date})
-        //   // const e = invisibleRectForTooltip.nodes();
-        //   // const i = e.indexOf(this);
-        //   // //console.log(newI)
-        //   props.addIndexMouseOver(i)
-        // })
-        // .on('mouseout',function(e,d){
-        //   d3.select(this).style('opacity','0')
-        //   props.addOnMouseOverTicker(false)
-        // })
-    // var mousePerLine = tooltip.selectAll('.mouse-per-line')
-    //     .data(data)
-    //     .enter()
-    //     .append("g")
-    //     .attr("class", "mouse-per-line");
-
-    // tooltip.append("text")
-    //     .attr("text-anchor", "middle")
-    //     .attr("font-size",'50px')
-    //     .style('fill','white')
-    //     .attr('x',margin.left+(width/2))
-    //     .attr('y',height)
-    //     .style("opacity", '0')
-    //     .text(function(d) {
-    //       //console.log(d)
-    //       //console.log(d.close)
-    //       return d.close
-    //     })
-    // const tooltip = svg.append("text")
-    //     .attr("class", "axisWhite")
-    //     .attr("id","tooltip")
-    //     .attr("text-anchor", "middle")
-    //     .attr("font-size",'50px')
-    //     .style('fill','white')
-    //     .attr('x',margin.left+(width/2))
-    //     .attr('y',height)
-    //     .style("opacity", 1)
-    //     .text(function(d) { 
-    //       console.log(d)
-    //       if (typeof(d) != 'undefined' && typeof(d.close) != 'undefined'){
-            
-    //         return d.close;
-    //       }
-    //        })
-        // .join("text")
-
-        
 
     const yAxis = g => g
         .attr("transform", `translate(${margin.left},0)`)
@@ -369,8 +285,6 @@ function ForumComponent (props) {
         .call(g => g.selectAll(".tick line").clone()
             .attr("stroke-opacity", 0)
             .attr("x2", width - margin.left - margin.right))
-        //.call(g => g.select(".domain").remove())
-    
 
     svg.attr("viewBox", [0, 0, width, height])
 
@@ -380,8 +294,6 @@ function ForumComponent (props) {
     svg.append("g")
         .call(yAxis);
     
-    
-
     if (d.charts.displayLine) {
 
         const g = svg.append("g")
@@ -437,12 +349,10 @@ function ForumComponent (props) {
     const adxline = adx.d3line
     const adxpline = adxp.d3line
     const adxnline = adxn.d3line
-    // const bbsmaline = bbsma.d3line
     const viposline = vipos.d3line
     const vinegline = vineg.d3line
     const trixline = trix.d3line
     const miline = mi.d3line
-    //const cciline = cci.d3line
     const dpoline = dpo.d3line
     const atrline = atr.d3line
     const bbsmaline = bbsma.d3line
@@ -451,7 +361,6 @@ function ForumComponent (props) {
     const keltnerCline = KeltnerC.d3line
     
     const rsiline = rsi.d3line
-    //const macdline = macd.d3line
     const tsiline = tsi.d3line
     const uoline = uo.d3line
     const stochline = stoch.d3line
@@ -821,9 +730,6 @@ function ForumComponent (props) {
           <Grid.Column floated='right' width='5'><Header as='h4' floated='right' inverted><Header.Subheader>{el.user} - {el.date}</Header.Subheader></Header></Grid.Column>
         </Grid>
         <Header as='h4' inverted>{el.content}</Header>
-        {/* <Header as='h3' inverted>
-          <Header.Content>{el.chartData.tickers} <Header.Subheader>{el.user} - {el.date}</Header.Subheader></Header.Content>
-          <Header.Content>{el.content}</Header.Content></Header> */}
           <React.Fragment>
             <svg ref={stockChartNode[index]}></svg>
          </React.Fragment>
@@ -892,9 +798,6 @@ function ForumComponent (props) {
             <Grid.Column floated='right' width='5'><Header as='h4' floated='right' inverted><Header.Subheader>{el.user} - {el.date}</Header.Subheader></Header></Grid.Column>
           </Grid>
           <Header as='h1' inverted>{el.content}</Header>
-          {/* <Header as='h3' inverted>
-            <Header.Content>{el.chartData.tickers} <Header.Subheader>{el.user} - {el.date}</Header.Subheader></Header.Content>
-            <Header.Content>{el.content}</Header.Content></Header> */}
             <React.Fragment>
               <svg ref={stockChartNode[index]}></svg>
           </React.Fragment>
@@ -972,7 +875,6 @@ const mapStateToProps = state => {
   
 const mapDispatchToProps = dispatch => {
 return {
-    //requestAPIstockData: (APIstring) => dispatch(requestAPIstockData(APIstring)),
     fetchPosts: (page) => dispatch(fetchPosts(page)),
     createNewReply: (reply) => dispatch(createNewReply(reply)),
     addActiveNav: (x) => dispatch(addActiveNav(x)),
@@ -991,83 +893,3 @@ return {
     mapStateToProps,
     mapDispatchToProps
   )(ForumComponent)
-// async function fetchPostThenMakeCharts() {
-    //   props.fetchPosts(props.pageNumber)
-    //   return new Promise ((resolve, reject) => {
-    //     var wait = setInterval(function(){
-    //       if (props.fetchPostSuccess){
-    //         clearInterval(wait)
-    //         resolve()
-    //       }
-    //     },2)
-
-    //     setTimeout(function (){
-    //       if (props.fetchPostSuccess){
-    //         resolve()}
-    //     },2000)
-    //   })      
-    // }
-
-    // fetchPostThenMakeCharts().then(
-    //   function(value) {props.formDataDisplay.map( (el, index) => (
-    //     createStockPriceLineChart(stockChartNode[index],el.chartData),
-    //     createVolumeBarChart(volumeNode[index],el.chartData)
-    //     ))},
-    //   function(error) {console.log(error)}
-      
-    //   // {(typeof(props.formDataDisplay) != 'undefined' && props.formDataDisplay.length > 0 ) ? }
-      
-    // )
-    // // if (props.pageNumber != pageNumber){
-    // // props.addActiveNav('forum')
-    // // props.fetchPosts(props.pageNumber)
-    // // setPageNumber(props.pageNumber)}
-    // <Grid.Column>
-
-    //   {typeof(props.formDataDisplay) != 'undefined' ? props.formDataDisplay.length > 0 ? props.formDataDisplay.map( (el, index) => (
-    //   <Grid.Row color={'#242525'}>
-    //     <Grid borderless inverted>
-    //       <Grid.Column><Header as='h3' inverted>{el.chartData.tickers}</Header></Grid.Column>
-    //       <Grid.Column floated='right' width='5'><Header as='h4' floated='right' inverted><Header.Subheader>{el.user} - {el.date}</Header.Subheader></Header></Grid.Column>
-    //     </Grid>
-    //     <Header as='h4' inverted>{el.content}</Header>
-
-    //       <React.Fragment>
-    //         <svg ref={stockChartNode[index]}></svg>
-    //      </React.Fragment>
-    //      {el.chartData['includeVolume'] ? <React.Fragment>
-    //         <svg ref={volumeNode[index]}></svg>
-    //      </React.Fragment>: ''}
-    //      <Header inverted as='h5'>
-    //       <Header.Subheader>{props.showComments ? <Icon inverted name="angle down" onClick={handleShowCommentsChange}></Icon> : <Icon inverted name="angle up" onClick={handleShowCommentsChange}></Icon>}Comments: {!showReply ?  <Button inverted color='green' floated='right' content='Reply' onClick={handleShowReplyChange}/> : ''}</Header.Subheader> </Header>
-    //     { props.showComments ? (el.replies != null && el.replies != 'undefined') ? 
-    //     el.replies.map( (replyEl) => (
-    //       <Header as='h5' inverted>
-    //         <Header.Subheader>{replyEl.userWhoReplied} - {replyEl.dateReplied}</Header.Subheader>
-    //         <Header.Content>{replyEl.reply}</Header.Content>
-    //       </Header>
-    //     ))
-    //     : '' : ''}
-    //     { (showWarning['activeID'] == el.id && showWarning['warning']) ? 
-    //     <Message warning>
-    //         <Message.Header>Please <Link to="/login"><a style={{color: "green"}} href="#">login</a></Link> or <Link to="/register"><a style={{color: "green"}} href="#">sign up</a></Link> to post content</Message.Header>
-    //     </Message>
-    //     : ''}
-    //     {showReply ? 
-    //     <Header>
-    //     <Form inverted>
-    //       <Form.Input
-    //         placeholder="What's your opinion of this chart?"
-    //         name={el.id}
-    //         value={activeID == el.id ? reply : ''}
-    //         onChange={handleReplyChange}
-    //       />
-    //     {props.replyLoading ? <Form.Button loading size='medium' floated='right'/> : <Form.Button inverted color='green' floated='right' content='Reply' onClick={handleReplySubmit}/>}     
-    //     </Form></Header> : '' }
-    //     <br/><br/>
-    //   </Grid.Row>
-      
-
-    // )) : '' : ''}
-    
-    // </Grid.Column>

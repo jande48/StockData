@@ -13,7 +13,6 @@ import jwt, os
 app.config['SECRET_KEY'] = os.environ.get('AlgoPlatformSecretKey')
 users = Blueprint('users',__name__)
 
-
 @users.route("/register", methods=['GET','POST'])
 def register():
     if current_user.is_authenticated:
@@ -66,9 +65,6 @@ def user_auth():
 @users.route("/users/login/", methods=['GET','POST'])
 def user_login():
     JSON_sent = request.get_json()
-    # if current_user.is_authenticated:
-    #     print('we go to is authen')
-    #     return redirect(url_for('main.home'))
     user = User.query.filter_by(email=JSON_sent['email']).first()
     if user and bcrypt.check_password_hash(user.password, JSON_sent['password']):
         login_user(user)
@@ -96,7 +92,6 @@ def user_logout():
     
 @users.route("/users/register/", methods=['GET','POST'])
 def users_register():
-
     JSON_sent = request.get_json()
     userCheck = User.query.filter_by(email=JSON_sent['email']).first()
     if userCheck:
@@ -105,8 +100,8 @@ def users_register():
             'registerSuccess': False,
         }
         return jwt.encode(
-        payload,
-        app.config['SECRET_KEY']
+            payload,
+            app.config['SECRET_KEY']
         )
     hashed_password = bcrypt.generate_password_hash(JSON_sent['password']).decode('utf-8')
     user = User(username=JSON_sent['username'], email=JSON_sent['email'], password=hashed_password)
@@ -122,8 +117,8 @@ def users_register():
                    'image_file': user.image_file}
         }
     return jwt.encode(
-    payload,
-    app.config['SECRET_KEY']
+        payload,
+        app.config['SECRET_KEY']
     )
 
 @users.route("/users/updatePhoto/", methods=['POST'])
@@ -135,14 +130,14 @@ def users_update_photo():
         current_user.image_file = picture_file
         db.session.commit()
         payload = {
-        'isAuthenticated': True,
-        'username': current_user.username,
-        'email': current_user.email,
-        'image_file': current_user.image_file
+            'isAuthenticated': True,
+            'username': current_user.username,
+            'email': current_user.email,
+            'image_file': current_user.image_file
         }
         return jwt.encode(
-        payload,
-        app.config['SECRET_KEY']
+            payload,
+            app.config['SECRET_KEY']
         )
 @users.route("/users/updateAccount/", methods=['POST'])
 @login_required
@@ -157,10 +152,6 @@ def users_update_account():
         'updatePassword': False,
         'usernameTaken': False,
         }
-    # if 'file' in JSON_sent.keys():
-    #     print(JSON_sent['file'])
-    #     picture_file = save_picture(JSON_sent['file'])
-    #     current_user.image_file = picture_file
     user = User.query.filter_by(email=JSON_sent['email']).first()
 
     if JSON_sent['email'] != '':
@@ -210,27 +201,6 @@ def contact_email():
 def old_index():
     return render_template("old_index.html")
 
-
-# @users.route("users/account", methods=['GET', 'POST'])
-# @login_required
-# def users_account():
-#     form = UpdateAccountForm()
-#     if form.validate_on_submit():
-#         if form.picture.data:
-#             picture_file = save_picture(form.picture.data)
-#             current_user.image_file = picture_file
-#         current_user.username = form.username.data
-#         current_user.email = form.email.data
-#         db.session.commit()
-#         flash('Your account has been updated!', 'success')
-#         return redirect(url_for('users.account'))
-#     elif request.method == 'GET':
-#         form.username.data = current_user.username
-#         form.email.data = current_user.email
-#     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
-#     return render_template('account.html', title='Account',
-#                            image_file=image_file, form=form)
-
 @users.route("/logout")
 def logout():
     logout_user()
@@ -279,7 +249,6 @@ def reset_request():
         flash('An email has been sent with instructions to reset your password.', 'info')
         return redirect(url_for('users.login'))
     return render_template('reset_request.html', title='Reset Password', form=form)
-
 
 @users.route("/reset_password/<token>", methods=['GET', 'POST'])
 def reset_token(token):

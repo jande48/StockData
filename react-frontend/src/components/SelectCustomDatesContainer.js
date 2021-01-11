@@ -13,13 +13,6 @@ function SelectCustomDatesContainer(props) {
   var newDate = currentDateInit.setTime(currentDateInit.getTime() - (24*60*60*1000) * 182);
   const [startDate, setStartDate] = useState(currentDateInit);
   const [endDate, setEndDate] = useState(new Date())
-  // var currentDate = new Date();
-	// var dateOffset = (24*60*60*1000) * 182; 
-	// var newDate = currentDate.setTime(currentDate.getTime() - dateOffset);
-  // const [startDate, setStartDate] = useState(currentDate);
-  // const [endDate, setEndDate] = useState(new Date())
-  // var currentDate2 = new Date();
-  // const maxDateAllowed = currentDate2.setTime(currentDate.getTime() - (24*60*60*1000) * 365);
   function convertDatesToString(initialDate) {
 		const convertedDate = String(initialDate.getFullYear())+"-"+String(initialDate.getMonth() + 1)+"-"+String(initialDate.getDate())
 		return convertedDate
@@ -33,9 +26,6 @@ function SelectCustomDatesContainer(props) {
       setStartDate(date)
       props.addStartDateDispatch(date)
 		}
-		// getAndSetStockData(ticker,date,endDate)
-		// getAndSetFinancials(ticker);
-		// getAndSetEarnings(ticker);
   }
   
   function handleEndDateClick(date) {
@@ -44,32 +34,11 @@ function SelectCustomDatesContainer(props) {
       props.addEndDateDispatch(date)
       props.addEndDateForPercentChange(date)
 		}
-		// getAndSetStockData(ticker,date,endDate)
-		// getAndSetFinancials(ticker);
-		// getAndSetEarnings(ticker);
 	}
 
   return (
     <div class="fullWidth">
-      {/* <Grid inverted>
-      <Header as='h5' textAlign='center' inverted>
-            --- or ---
-            {/* <Header.Content textAlign='center'></Header.Content> */}
-      {/*} </Header>
-      </Grid>
-      <Header as='h5' textAlign='center' inverted>
-            --- or ---
-            <Header.Content textAlign='center'></Header.Content> 
-      </Header> */}
       <Grid columns='equal' inverted>
-        {/* <Grid.Row color='black' textAlign='center' stretched>
-          <Grid.Column>
-          <Header as='h5' textAlign='center' inverted>
-            <Header.Content textAlign='center' inverted>-- or --</Header.Content>
-          </Header>
-          </Grid.Column>
-          
-        </Grid.Row> */}
         <Grid.Row stretched color='black'>
           <Grid.Column width={4}>
             <Header as='h5' inverted textAlign='center'>Start:</Header>
@@ -81,7 +50,6 @@ function SelectCustomDatesContainer(props) {
             maxDate={new Date()} 
             onChange={date => handleStartDateClick(date)}
             placeholderText='MM/DD/YYYY'
-            //isClearable
             showYearDropdown
             scrollableMonthYearDropdown 
             inverted/>
@@ -103,25 +71,6 @@ function SelectCustomDatesContainer(props) {
             inverted />
           </Grid.Column>
       </Grid>
-      
-      {/* <br/>Start:
-      <DatePicker 
-          selected={startDate} 
-          maxDate={new Date()} 
-          onChange={date => handleStartDateClick(date)}
-          placeholderText='MM/DD/YYYY'
-          isClearable
-          showYearDropdown
-          scrollableMonthYearDropdown />
-      <br/>End:
-      <DatePicker 
-          selected={endDate} 
-          maxDate={new Date()} 
-          onChange={date => handleEndDateClick(date)}
-          placeholderText='MM/DD/YYYY'
-          isClearable
-          showYearDropdown
-          scrollableMonthYearDropdown /> */}
     </div>
   )
 }

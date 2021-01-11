@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import { Form, Message, Header, Checkbox, Grid } from 'semantic-ui-react'
+import { Form, Message, Header } from 'semantic-ui-react'
 import { addIncludeVolumeChart } from '../redux'
 import {Link} from 'react-router-dom'
 import { fetchUserAuth, createNewPost, addSubmitPostFailure, addSubmitPostSuccess } from '../redux'
 import '../App.css'
-import setAuthorizationToken from '../utils/setAuthorizationToken'
-import { addIsAuthenticated } from '../redux/users/usersActions'
 
 function PostFormContainer (props) {
     const [title, setTitle] = useState('');
@@ -22,7 +20,6 @@ function PostFormContainer (props) {
       props.addSubmitPostSuccess(false)
     },[])
 
-    //setAuthorizationToken(localStorage.jwtToken)
     function handleIncludeVolume() {
       props.addIncludeVolumeChart(!props.includeVolumeChart)
     }
@@ -65,13 +62,6 @@ return (
   : ''}
   <Header inverted as='h3'>Share this chart and your insights: </Header>
   <Form inverted onSubmit={handleSubmit}>
-
-    {/* <Form.Input
-      placeholder='Title'
-      name='title'
-      value={title}
-      onChange={handleTitleChange}
-    /> */}
     <Form.TextArea
       placeholder="What's your opinion of this chart?"
       name='content'

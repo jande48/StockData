@@ -3,30 +3,14 @@ import { connect } from 'react-redux'
 import {Header, Grid, Button} from 'semantic-ui-react'
 import { fetchFinancialsData } from '../redux'
 import '../App.css'
-import * as d3 from 'd3'
-import {
-    select,
-    csv,
-    scaleLinear,
-    scaleBand,
-    scaleTime,
-    extent,
-    axisLeft,
-    axisBottom,
-    line,
-    curveBasis,
-    curveLinear
-  } from 'd3';
+
 
 function CompanyFinancialsContainer (props) {
 
     useEffect(() => {
-
         props.fetchFinancialsData(String(props.tickers))
+    }, [props.tickers])
 
-        }, [props.tickers])
-
-    const [displayMoreText, setDisplayMoreText] = useState(false)
 
     var description = ''
     var ceo = ''
@@ -39,11 +23,9 @@ function CompanyFinancialsContainer (props) {
     var totalLiabilities = 0
     var totalCash = 0
     var netIncome = 0
-    var RD = 0
     var cashFlow =0
     var totalDebt = 0
-    var shortTermDebt = 0
-    var longTermDebt = 0
+
     if (typeof(props.financialsData) != 'undefined' && typeof(props.financialsData[0]) != 'undefined' && typeof(props.financialsData[1]) != 'undefined' && typeof(props.financialsData[2]) != 'undefined') {
         if (props.financialsData.length > 1) {
             ceo = props.financialsData[1]['CEO']
@@ -58,19 +40,6 @@ function CompanyFinancialsContainer (props) {
             netIncome = props.financialsData[0]['netIncome']
             totalDebt = props.financialsData[0]['totalDebt']
             cashFlow = props.financialsData[0]['cashFlow']
-            // typeof(props.financialsData[1]['CEO']) != 'undefined' ? ceo = props.financialsData[1]['CEO'] : ''
-            // typeof(props.financialsData[2]['mktCap']) != 'undefined' ? mktCap = props.financialsData[2]['mktCap'] : ''
-            // typeof(props.financialsData[1]['description']) != 'undefined' ? dividend = props.financialsData[2]['lastDiv'] : ''
-            // typeof(props.financialsData[1]['description']) != 'undefined' ? description = props.financialsData[1]['description'] : ''
-            // typeof(props.financialsData[0]['grossProfit']) != 'undefined' ? grossProfit = props.financialsData[0]['grossProfit'] : ''
-            // typeof(props.financialsData[0]['operatingRevenue']) != 'undefined' ? operatingRevenue = props.financialsData[0]['operatingRevenue'] : ''
-            // typeof(props.financialsData[0]['totalRevenue']) != 'undefined' ? totalRevenue = props.financialsData[0]['totalRevenue'] : ''
-            // typeof(props.financialsData[0]['totalAssets']) != 'undefined' ? totalAssets = props.financialsData[0]['totalAssets'] : ''
-            // typeof(props.financialsData[0]['totalLiabilities']) != 'undefined' ? totalLiabilities = props.financialsData[0]['totalLiabilities'] : ''
-            // typeof(props.financialsData[0]['totalCash']) != 'undefined' ? totalCash = props.financialsData[0]['totalCash'] : ''
-            // typeof(props.financialsData[0]['netIncome']) != 'undefined' ? netIncome = props.financialsData[0]['netIncome'] : ''
-            // typeof(props.financialsData[0]['totalDebt']) != 'undefined' ? totalDebt = props.financialsData[0]['totalDebt'] : ''
-            // typeof(props.financialsData[0]['cashFlow']) != 'undefined' ? cashFlow = props.financialsData[0]['cashFlow'] : ''
         }
     }
 
@@ -81,12 +50,10 @@ function CompanyFinancialsContainer (props) {
     }
     
     return props.financialsLoading ? ( 
-
-
         <Header as='h3' inverted color="#e0e1e2" textAlign='center'>Loading Company Info</Header>
-  ) : props.financialsError ? (
+    ) : props.financialsError ? (
     <h2><Header as='h2' textAlign='center' inverted color="#e0e1e2">Whoops. We can't get company info now.</Header></h2>
-  ) : (typeof(props.financialsData) === 'undefined') ? '' : (props.financialsData.length < 1) ? '' : (
+    ) : (typeof(props.financialsData) === 'undefined') ? '' : (props.financialsData.length < 1) ? '' : (
     <div class="fullWidth">
         <React.Fragment>
             <Grid columns='equal'>
@@ -140,7 +107,6 @@ function CompanyFinancialsContainer (props) {
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
-            
         </React.Fragment>
     </div>
   )

@@ -2,23 +2,11 @@ import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import { addPercentChange, addSplicedStartDate, addStockPriceForPercentChange, addEndDateForPercentChange, addSplicedIndexStockData, 
   addActiveNav, addOnMouseOverTicker, addDateMouseOverTicker, addIndexMouseOver } from '../redux'
-import {Header, Grid} from 'semantic-ui-react'
+import {Header} from 'semantic-ui-react'
 import { createLoadingSpinnerChart } from './charts/loadingSpinner.js'
 import '../App.css'
 import * as d3 from 'd3'
-import {
-    select,
-    csv,
-    scaleLinear,
-    scaleBand,
-    scaleTime,
-    extent,
-    axisLeft,
-    axisBottom,
-    line,
-    curveBasis,
-    curveLinear
-  } from 'd3';
+import {select, scaleLinear, scaleBand} from 'd3';
 
 function VolumeGraphContainer (props) {
   const showVolumeNode = useRef(null);

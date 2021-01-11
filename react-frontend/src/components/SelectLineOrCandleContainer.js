@@ -17,7 +17,7 @@ function SelectLineOrCandle(props) {
         props.addLineCandleDispatch(false)
       }
   }
-//color={displayPriceChart ? 'blue' : null}
+
   return (
     <div class="fullWidth">
     <Grid columns='equal' inverted centered>
@@ -38,13 +38,6 @@ function SelectLineOrCandle(props) {
   )
 }
 
-// const mapStateToProps = state => {
-//   return {
-//     startDate: state.datesFromRootReducer.startDate,
-//     endDate: state.datesFromRootReducer.endDate
-//   }
-// }
-
 const mapDispatchToProps = dispatch => {
   return {
     addLineCandleDispatch: display => dispatch(addLineChart(display))
@@ -52,7 +45,6 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(
-  // mapStateToProps,
   null,
   mapDispatchToProps
 )(SelectLineOrCandle)

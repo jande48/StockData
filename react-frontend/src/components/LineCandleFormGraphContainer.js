@@ -1,29 +1,15 @@
 import React, { useEffect, useRef } from 'react'
-import { connect } from 'react-redux'
-import { addPercentChange, addSplicedStartDate, addStockPriceForPercentChange, addEndDateForPercentChange, addSplicedIndexStockData, 
-  addActiveNav, addOnMouseOverTicker, addDateMouseOverTicker, addIndexMouseOver } from '../redux'
-import {Header, Grid} from 'semantic-ui-react'
 import { createLoadingSpinnerChart } from './charts/loadingSpinner.js'
 import '../App.css'
 import 'react-datepicker/dist/react-datepicker.css'
-
 import * as d3 from "d3"
-
 import {
     select,
-    csv,
     scaleLinear,
     scaleBand,
-    scaleTime,
-    extent,
-    axisLeft,
-    axisBottom,
     line,
-    curveBasis,
-    transition,
     curveLinear,
   } from 'd3';
-import { DATE_MOUSE_OVER_TICKER } from '../redux/tickers/tickerTypes'
 
 function LineCandleFormGraphContainer (d) {
 
@@ -59,7 +45,6 @@ function LineCandleFormGraphContainer (d) {
           var dateOffset = (24*60*60*1000) * 1; 
           startingDate.setTime(startingDate.getTime()-dateOffset)
         }
-        //console.log(startingDate.getTime())
         for (var i = 0; i < data.length; i++) {
           var dateSplit = data[i]['date'].split("-")
           var indexDate = new Date(parseInt(dateSplit[0]),(parseInt(dateSplit[1])-1),parseInt(dateSplit[2]))
@@ -187,9 +172,7 @@ function LineCandleFormGraphContainer (d) {
       const vineg = new Indicator('vineg',"#e6ab02",trendData,d.trend.displayVINEG,'axisRight')
       const trix = new Indicator('trix',"#a6761d",trendData,d.trend.displayTRIX,'axisRight')
       const mi = new Indicator('mi',"#666666",trendData,d.trend.displayMI,'axisRight')
-      //const cci = new Indicator('cci',"#1b9e77",trendData,props.displayCCI,'axisRight')
       const dpo = new Indicator('dpo',"#1b9e77",trendData,d.trend.displayDPO,'axisRight')
-      // ["#7fc97f","#beaed4","#fdc086","#ffff99","#386cb0","#f0027f","#bf5b17","#666666"]
       const bbsma = new Indicator('bbsma',"#7fc97f",volatilityData,d.volatility.displayBBSMA,'axisLeft')
       const atr = new Indicator('atr',"#beaed4",volatilityData,d.volatility.displayATR,'axisRight')
       const BBupper = new Indicator('BBupper',"#fdc086",volatilityData,d.volatility.displayBBUpper,'axisLeft')
@@ -197,7 +180,6 @@ function LineCandleFormGraphContainer (d) {
       const KeltnerC = new Indicator('keltnerC',"#386cb0",volatilityData,d.volatility.displayKeltnerC,'axisLeft')
 
       const rsi = new Indicator('rsi',"#1f77b4",momentumData,d.momentum.displayRSI,'axisRight');
-      //const macd = new Indicator('macd',"#ff7f0e",trendData,props.displayMACD,'axisRight')
       const tsi = new Indicator('tsi',"#2ca02c",momentumData,d.momentum.displayTSI,'axisRight')
       const uo = new Indicator('uo',"#d62728",momentumData,d.momentum.displayUO,'axisRight')
       const stoch = new Indicator('stoch',"#9467bd",momentumData,d.momentum.displaySTOCH,'axisRight')
@@ -223,9 +205,7 @@ function LineCandleFormGraphContainer (d) {
   
       var y = scaleLinear()
           .domain(findMixMaxObjects(objectList,'axisLeft'))
-          //.domain([d3.min(data, d => d.low), d3.max(data, d => d.high)])
           .rangeRound([height - margin.bottom, margin.top])
-              //d3.min(data, d => d.low), d3.max(data, d => d.high
 
       var yRight = scaleLinear()
           .domain(findMixMaxObjects(objectList,'axisRight'))
@@ -234,14 +214,11 @@ function LineCandleFormGraphContainer (d) {
       const xAxis = g => g
           .attr("transform", `translate(0,${height - margin.bottom})`)
           .attr('class','axisWhite')
-          .call(d3.axisBottom(x)   //.ticks(Math.round((data.length-1)/7))
-              //.tickValues(d3.range(parseDate(data[0].date), parseDate(data[data.length - 1].date),((data.length-1)*86400000/10)).map( d => d.date))
+          .call(d3.axisBottom(x)   
               .tickValues(d3.utcMonday
                   .every(data.length > 2 ? (data.length > 250 ? 8 : (data.length > 150 ? 4 : (data.length > 80 ? 2 : 1))) : 1)
                   .range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
               .tickFormat(d3.utcFormat("%-m/%-d")))
-          //.call(g => g.select(".domain").remove())
-
 
       svg.append("text")
           .attr("class", "axisWhite")
@@ -259,7 +236,6 @@ function LineCandleFormGraphContainer (d) {
           .join("g")
       
       const invisibleRectForTooltip = svg.append("g")
-          // .attr("stroke", "black")
           .selectAll("g")
           .attr("id","invisibleTooltip")
           .data(data)
@@ -274,61 +250,6 @@ function LineCandleFormGraphContainer (d) {
           .attr("fill", 'green')
           .style("opacity",'0')
           .attr('transform',d=>(`translate(${x.bandwidth()},${height - margin.top}) rotate(180)`))
-          // .on('mouseover',function(event,d){
-          //   d3.select(this).style('opacity','0.5')
-          //   var endingDateSplit = d.date.split('-')
-          //   var dateFromSplit = new Date(parseInt(endingDateSplit[0]),parseInt(endingDateSplit[1]),parseInt(endingDateSplit[2]))
-          //   props.addEndDateForPercentChange(dateFromSplit)
-          //   props.addStockPriceForPercentChange(d.close)
-          //   props.addOnMouseOverTicker(true)
-          //   props.addDateMouseOverTicker(d.date)
-          //   // const newI = props.stockData.findIndex(function(d){ return props.dateMouseOverTicker == d.date})
-          //   // const e = invisibleRectForTooltip.nodes();
-          //   // const i = e.indexOf(this);
-          //   // //console.log(newI)
-          //   props.addIndexMouseOver(i)
-          // })
-          // .on('mouseout',function(e,d){
-          //   d3.select(this).style('opacity','0')
-          //   props.addOnMouseOverTicker(false)
-          // })
-      // var mousePerLine = tooltip.selectAll('.mouse-per-line')
-      //     .data(data)
-      //     .enter()
-      //     .append("g")
-      //     .attr("class", "mouse-per-line");
-
-      // tooltip.append("text")
-      //     .attr("text-anchor", "middle")
-      //     .attr("font-size",'50px')
-      //     .style('fill','white')
-      //     .attr('x',margin.left+(width/2))
-      //     .attr('y',height)
-      //     .style("opacity", '0')
-      //     .text(function(d) {
-      //       //console.log(d)
-      //       //console.log(d.close)
-      //       return d.close
-      //     })
-      // const tooltip = svg.append("text")
-      //     .attr("class", "axisWhite")
-      //     .attr("id","tooltip")
-      //     .attr("text-anchor", "middle")
-      //     .attr("font-size",'50px')
-      //     .style('fill','white')
-      //     .attr('x',margin.left+(width/2))
-      //     .attr('y',height)
-      //     .style("opacity", 1)
-      //     .text(function(d) { 
-      //       console.log(d)
-      //       if (typeof(d) != 'undefined' && typeof(d.close) != 'undefined'){
-              
-      //         return d.close;
-      //       }
-      //        })
-          // .join("text")
-
-          
 
       const yAxis = g => g
           .attr("transform", `translate(${margin.left},0)`)
@@ -339,8 +260,6 @@ function LineCandleFormGraphContainer (d) {
           .call(g => g.selectAll(".tick line").clone()
               .attr("stroke-opacity", 0)
               .attr("x2", width - margin.left - margin.right))
-          //.call(g => g.select(".domain").remove())
-      
 
       svg.attr("viewBox", [0, 0, width, height])
   
@@ -407,12 +326,10 @@ function LineCandleFormGraphContainer (d) {
       const adxline = adx.d3line
       const adxpline = adxp.d3line
       const adxnline = adxn.d3line
-      // const bbsmaline = bbsma.d3line
       const viposline = vipos.d3line
       const vinegline = vineg.d3line
       const trixline = trix.d3line
       const miline = mi.d3line
-      //const cciline = cci.d3line
       const dpoline = dpo.d3line
       const atrline = atr.d3line
       const bbsmaline = bbsma.d3line
@@ -421,7 +338,6 @@ function LineCandleFormGraphContainer (d) {
       const keltnerCline = KeltnerC.d3line
       
       const rsiline = rsi.d3line
-      //const macdline = macd.d3line
       const tsiline = tsi.d3line
       const uoline = uo.d3line
       const stochline = stoch.d3line
@@ -449,7 +365,6 @@ function LineCandleFormGraphContainer (d) {
               .call(g => g.selectAll(".tick line").clone()
                   .attr("stroke-opacity", 0)
                   .attr("x2", width - margin.left - margin.right+50))
-              //.call(g => g.select(".domain").remove())
         
           svg.append("g")
               .attr('fill',macd.color)
@@ -465,15 +380,12 @@ function LineCandleFormGraphContainer (d) {
           }
           svg.selectAll("g").selectAll(".mydotsLeft").remove()
           svg.selectAll("g").selectAll(".mylabelsLeft").remove()
-          //svg.selectAll("mydotsLeft").remove()
-          //svg.selectAll("mylabelsLeft").remove()
           const size = 10
-          //svg.selectAll("mydotsLeft")
           const mydotsLeft = svg.append("g")
             .selectAll("g")
             .data(keysList)
             .join('g')
-            //.enter()
+
           mydotsLeft.append("rect")
               .attr('id','mydotsLeft')
               .attr("x", margin.left + 5)
@@ -546,18 +458,6 @@ function LineCandleFormGraphContainer (d) {
       return svg.node()
       }
 
-  var endDateVar = 'Jacob'
-  var endDateVar2 = ''
-
-  function getIndex(data,date) {
-    data.forEach(function (el, i) {
-      
-      if (el['date']==date){
-        return i
-      }
-    })
-    return (data.length -1)
-  }
 
   return  (
     <div>
@@ -567,84 +467,6 @@ function LineCandleFormGraphContainer (d) {
     </div>
   )
 }
-
-// const mapStateToProps = state => {
-//   return {
-//     tickers: state.tickersFromRootReducer.tickers,
-//     startDate: state.datesFromRootReducer.startDate,
-//     endDate: state.datesFromRootReducer.endDate,
-//     dateMouseOverTicker: state.tickersFromRootReducer.dateMouseOverTicker,
-//     stockData: state.stockDataFromRootReducer.stockData,
-//     loading: state.stockDataFromRootReducer.loading,
-//     trendLoading: state.trendFromRootReducer.trendLoading,
-//     momentumLoading: state.momentumFromRootReducer.momentumLoading,
-//     error: state.stockDataFromRootReducer.error,
-//     errorMessage: state.stockDataFromRootReducer.errorMessage,
-//     fetchStockData: state.stockDataFromRootReducer.fetchStockData,
-//     displayLine: state.chartsFromRootReducer.displayLine,
-//     displaySMA: state.trendFromRootReducer.displaySMA,
-//     nForSMA: state.trendFromRootReducer.nForSMA,
-//     displayEMA: state.trendFromRootReducer.displayEMA,
-//     nForEMA: state.trendFromRootReducer.nForEMA,
-//     displayMACD: state.trendFromRootReducer.displayMACD,
-//     nSlowForMACD: state.trendFromRootReducer.nSlowForMACD,
-//     nFastForMACD: state.trendFromRootReducer.nFastForMACD,
-//     trendData: state.trendFromRootReducer.trendData,
-//     compName: state.tickersFromRootReducer.name,
-//     percentChange: state.tickersFromRootReducer.percentChange,
-//     displayMACDsignal: state.trendFromRootReducer.displayMACDsignal,
-//     nSlowForMACDsignal: state.trendFromRootReducer.nSlowForMACDsignal,
-//     nFastForMACDsignal: state.trendFromRootReducer.nFastForMACDsignal,
-//     nSignForMACDsignal: state.trendFromRootReducer.nSignForMACDsignal,
-//     displayADX: state.trendFromRootReducer.displayADX,
-//     nForADX: state.trendFromRootReducer.nForADX,
-//     displayADXP: state.trendFromRootReducer.displayADXP,
-//     nForADXP: state.trendFromRootReducer.nForADXP,
-//     displayADXN: state.trendFromRootReducer.displayADXN,
-//     nForADXN: state.trendFromRootReducer.nForADXN,
-//     displayVIPOS: state.trendFromRootReducer.displayVIPOS,
-//     nForVIPOS: state.trendFromRootReducer.nForVIPOS,
-//     displayVINEG: state.trendFromRootReducer.displayVINEG,
-//     nForVINEG: state.trendFromRootReducer.nForVINEG,
-//     displayTRIX: state.trendFromRootReducer.displayTRIX,
-//     nForTRIX: state.trendFromRootReducer.nForTRIX,
-//     displayMI: state.trendFromRootReducer.displayMI,
-//     nForMI: state.trendFromRootReducer.nForMI,
-//     n2ForMI: state.trendFromRootReducer.n2ForMI,
-//     displayDPO: state.trendFromRootReducer.displayDPO,
-//     nForDPO: state.trendFromRootReducer.nForDPO,
-//     financials: state.stockDataFromRootReducer.financialsData,
-//     displayATR: state.volatilityFromtRootReducer.displayATR,
-//     nForATR: state.volatilityFromtRootReducer.nForATR,
-//     displayBBSMA: state.volatilityFromtRootReducer.displayBBSMA,
-//     nForBBSMA: state.volatilityFromtRootReducer.nForBBSMA,
-//     displayBBUpper: state.volatilityFromtRootReducer.displayBBUpper,
-//     nForBBUpper: state.volatilityFromtRootReducer.nForBBUpper,
-//     ndevBBUpper: state.volatilityFromtRootReducer.ndevForBBUpper,
-//     displayBBLower: state.volatilityFromtRootReducer.displayBBLower,
-//     nForBBLower: state.volatilityFromtRootReducer.nForBBLower,
-//     ndevBBLower: state.volatilityFromtRootReducer.ndevForBBLower,
-//     displayKeltnerC: state.volatilityFromtRootReducer.displayKeltnerC,
-//     nForKeltnerC: state.volatilityFromtRootReducer.nForKeltnerC,
-//     volatilityData: state.volatilityFromtRootReducer.volatilityData,
-//     onMouseOverTicker: state.tickersFromRootReducer.onMouseOverTicker,
-//     dateMouseOverTicker: state.tickersFromRootReducer.dateMouseOverTicker,
-//   }
-// }
-
-// const mapDispatchToProps = dispatch => {
-//   return {
-//     addPercentChange: (percentChange) => dispatch(addPercentChange(percentChange)),
-//     addSplicedStartDate: (startingDate) => dispatch(addSplicedStartDate(startingDate)),
-//     addStockPriceForPercentChange: (stockPrice) => dispatch(addStockPriceForPercentChange(stockPrice)),
-//     addEndDateForPercentChange: (endingDate) => dispatch(addEndDateForPercentChange(endingDate)),
-//     addSplicedIndexStockData: (index) => dispatch(addSplicedIndexStockData(index)),
-//     addActiveNav: (x) => dispatch(addActiveNav(x)),
-//     addOnMouseOverTicker: (x) => dispatch(addOnMouseOverTicker(x)),
-//     addDateMouseOverTicker: (x) => dispatch(addDateMouseOverTicker(x)),
-//     addIndexMouseOver: (x) => dispatch(addIndexMouseOver(x)),
-//   }
-// }
 
 export default LineCandleFormGraphContainer
 

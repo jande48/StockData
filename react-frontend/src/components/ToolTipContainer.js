@@ -1,13 +1,10 @@
 import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import { addSplicedStartDate, addStockPriceForPercentChange, addEndDateForPercentChange, addSplicedIndexStockData, 
-  addActiveNav, addOnMouseOverTicker, addDateMouseOverTicker } from '../redux'
+   addOnMouseOverTicker, addDateMouseOverTicker } from '../redux'
 import {Header, Grid} from 'semantic-ui-react'
-import { createLoadingSpinnerChart } from './charts/loadingSpinner.js'
 import '../App.css'
 import 'react-datepicker/dist/react-datepicker.css'
-import * as d3 from "d3"
-
 
 
 function ToolTipContainer (props) {
@@ -26,15 +23,11 @@ function ToolTipContainer (props) {
   function makeDisplayList(objectsTrend,objectsMom,objectsVol) {
     var arrayOuter = []
     var arrayInner = []
-    // console.log(props.splicedIndexStockData)
-    // console.log(props.indexMouseOver)
-    // console.log(props.indexMouseOver+props.splicedIndexStockData)
     function checkDate(date) {
       return date['date'] == props.dateMouseOverTicker;
     }
     var indexAdded = props.stockData.findIndex(checkDate)
 
-    //var indexAdded = props.splicedIndexStockData+props.indexMouseOver
     var index = 0
     if (typeof(props.stockData[indexAdded]) != 'undefined' && typeof(props.momentumData[indexAdded]) != 'undefined') {
       arrayInner.push({'name':'Date','data':props.stockData[indexAdded]['date']})
@@ -94,74 +87,13 @@ function ToolTipContainer (props) {
             props.nForBBUpper,props.ndevBBUpper,props.displayBBLower,props.nForBBLower,props.ndevBBLower,props.displayKeltnerC,
             props.nForKeltnerC,props.volatilityData,props.indexMouseOver,props.splicedIndexStockData])
 
-    function convertDatesToString(initialDate) {
-		const convertedDate = String(initialDate.getFullYear())+"-"+String(initialDate.getMonth() + 1)+"-"+String(initialDate.getDate())
-		return convertedDate
-	  }
     
-    
-  function splitDate(date){
-      var dateSplit = date.split("-")
-      var formattedDate = String(parseInt(dateSplit[1])-1)+"/"+String(parseInt(dateSplit[2]))+"/"+String(parseInt(dateSplit[0]))
-      return formattedDate
-  }
-  function getIndex(data,date) {
-    
-    for (let [index, val] of data.entries()) {
-        if (val['date'] === date) {
-            return index
-        }   
-    }
-    return (data.length -1)
-  }
+
 
   return  (
     <div class="fullWidth">
       {props.onMouseOverTicker ? <Grid inverted columns='equal'>
-        {/* <Grid.Row>
-          <Grid.Column inverted>
-            <Header inverted as="h5"><Header.Content></Header.Content>
-                <Header.Subheader> 
-                    {props.onMouseOverTicker ? !props.loading ? !props.error ? "Date " + String(splitDate(props.dateMouseOverTicker)) : "" : "" : ""}
-                </Header.Subheader>
-            </Header>
-          </Grid.Column>
-          <Grid.Column inverted>
-            <Header inverted as="h5"><Header.Content></Header.Content>
-                <Header.Subheader> 
-                    {props.onMouseOverTicker ? !props.loading ? !props.error ? "Open " + String(props.stockData[0]['open'].toFixed(2)) : "" : "" : ""}
-                </Header.Subheader>
-            </Header>
-          </Grid.Column>
-          <Grid.Column inverted>
-            <Header inverted as="h5"><Header.Content></Header.Content>
-                <Header.Subheader> 
-                    {props.onMouseOverTicker ? !props.loading ? !props.error ? "High " + String(props.stockData[0]['high'].toFixed(2)) : "" : "" : ""}
-                </Header.Subheader>
-            </Header>
-          </Grid.Column>
-          <Grid.Column inverted>
-            <Header inverted as="h5"><Header.Content></Header.Content>
-                <Header.Subheader> 
-                    {props.onMouseOverTicker ? !props.loading ? !props.error ? "Low " + String(props.stockData[0]['low'].toFixed(2)) : "" : "" : ""}
-                </Header.Subheader>
-            </Header>
-          </Grid.Column>
-          <Grid.Column inverted>
-            <Header inverted as="h5"><Header.Content></Header.Content>
-                <Header.Subheader> 
-                    {props.onMouseOverTicker ? !props.loading ? !props.error ? "Close " + String(props.stockData[0]['close'].toFixed(2)) : "" : "" : ""}
-                </Header.Subheader>
-            </Header>
-          </Grid.Column>
-          <Grid.Column inverted>
-            <Header inverted as="h5"><Header.Content></Header.Content>
-                <Header.Subheader> 
-                    {props.onMouseOverTicker ? !props.loading ? !props.error ? "Volume " + String(props.stockData[0]['volume']) : "" : "" : ""}
-                </Header.Subheader>
-            </Header>
-          </Grid.Column>
-        </Grid.Row> */}
+        
         {typeof(objects) != 'undefined' ? objects.map(el => (
           <Grid.Row inverted>
             {el.map( elInner => (

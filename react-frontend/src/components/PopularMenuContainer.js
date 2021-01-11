@@ -7,7 +7,6 @@ import { fetchMomentumData } from '../redux';
 import { fetchTrendData } from '../redux';
 import MACDcontentPanel from './accordion/momentum/MACDcontentpanel'
 import RSIcontentPanel from './accordion/momentum/RSIcontentpanel'
-//import CCIcontentPanel from './accordion/trend/CCIcontentpanel'
 
 function PopularMenuContainer(props) {
     
@@ -38,15 +37,11 @@ function PopularMenuContainer(props) {
             const ADXp = {'displayADX':props.displayADX,'nForADX':props.nForADX}
             const ADXPp = {'displayADXP':props.displayADXP,'nForADXP':props.nForADXP}
             const ADXNp = {'displayADXN':props.displayADXN,'nForADXN':props.nForADXN}
-            // const BBSMAp = {'displayBBSMA':props.displayBBSMA, 'nForBBSMA':props.nForBBSMA, 'nDevForBBSMA': props.nDevForBBSMA}
             const VIPOSp = {'displayVIPOS':props.displayVIPOS,'nForVIPOS':props.nForVIPOS}
             const VINEGp = {'displayVINEG':props.displayVINEG,'nForVINEG':props.nForVINEG}
             const TRIXp = {'displayTRIX':props.displayTRIX,'nForTRIX':props.nForTRIX}
             const MIp = {'displayMI':props.displayMI,'nForMI':props.nForMI,'n2ForMI':props.n2ForMI}
-            //const CCIp = {'displayCCI':props.displayCCI,'nForCCI':props.nForCCI,'cForCCI':props.cForCCI}
             const DPOp = {'displayDPO':props.displayDPO,'nForDPO':props.nForDPO}
-        
-            //props.fetchStockData(String(props.tickers+"/"+convertDatesToString(props.startDate)+"/"+convertDatesToString(props.endDate)))
             props.fetchTrendData(JSON.stringify([props.stockData,SMAp,EMAp,MACDp,MACDsignalp,ADXp,ADXPp,ADXNp,VIPOSp,VINEGp,TRIXp,MIp, DPOp]))
             
       
@@ -280,9 +275,6 @@ const mapStateToProps = state => {
     displayTSI: state.momentumFromRootReducer.displayTSI,
     rForTSI: state.momentumFromRootReducer.rForTSI,
     sForTSI: state.momentumFromRootReducer.sForTSI,
-    //displayMACD: state.trendFromRootReducer.displayMACD,
-    //nSlowForMACD: state.trendFromRootReducer.nSlowForMACD,
-    //nFastForMACD: state.trendFromRootReducer.nFastForMACD,
     sForUO: state.momentumFromRootReducer.sForUO,
     mForUO: state.momentumFromRootReducer.mForUO,
     lenForUO: state.momentumFromRootReducer.lenForUO,

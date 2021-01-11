@@ -10,14 +10,12 @@ import setAuthorizationToken from '../utils/setAuthorizationToken'
 
 function AccountContainer (props) {
     const [email, setEmail] = useState('')
-    //const [file, setFile] = useState('')
     const [oldPassword, setOldPassword] = useState('')
     const [newPassword1, setNewPassword1] = useState('')
     const [newPassword2, setNewPassword2] = useState('')
     const [showPasswordInequal, setShowPasswordInequal] = useState(false)
     const [showPasswordLength, setShowPasswordLength] = useState(false)
     const [showEmailWarning, setShowEmailWarning] = useState(false)
-    //const handleEmailChange = (e, data) => setEmail(data.value)
     const fileInputRef = createRef()
     
     useEffect(() => {
@@ -58,6 +56,7 @@ function AccountContainer (props) {
         setNewPassword2(data.value)
       }
     }
+    
     function handleFileChange (e, data) {
       if (typeof(e) != 'undefined') {
         //setFile(e.target.files[0])

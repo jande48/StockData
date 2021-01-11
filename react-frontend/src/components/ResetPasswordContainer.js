@@ -11,13 +11,9 @@ import { dispatch } from 'd3';
 
 function ResetPasswordContainer (props) {
     const [email, setEmail] = useState('');
-    // const [password, setPassword] = useState('')
-    // const [rememberMe, setRememberMe] = useState(false)
     const [showEmailWarning, setShowEmailWarning] = useState(false)
     const handleEmailChange = (e, data) => setEmail(data.value)
-    // const handlePasswordChange = (e, data) => setPassword(data.value)
-    // const handleRememberMeChange = (e, data) => setRememberMe(!rememberMe) 
-    
+
     useEffect(() => {
       checkEmail()
       props.addPasswordResetFailure(false)
@@ -50,7 +46,6 @@ return (
   <Grid columns='equal'>
     <Grid.Column></Grid.Column>
     <Grid.Column width={8} className='lightGrayBackground'>
-    {/* <Header inverted as='h3'>Please enter your email and password: </Header> */}
     { props.passwordReset ? <Message
       attached
       color='green'
@@ -78,24 +73,8 @@ return (
         placeholder='joe@schmoe.com'
         onChange={handleEmailChange}
       />
-      {/* <Form.Input 
-        label='Password' 
-        type='password'
-        value={password}
-        onChange={handlePasswordChange} />
-      <Form.Field>
-      <Checkbox label='Remember me' onChange={handleRememberMeChange}/>
-      </Form.Field> */}
       {props.passwordResetLoading ? <Form.Button loading inverted color='green' floated='right' content='Email Password Reset' /> : <Form.Button inverted color='green' floated='right' content='Email Password Reset' />}
       
-      {/* { props.loginFailed ? 
-      <Message negative>
-        <Message.Header>Incorrect email or password. Would you like to <a href="/reset_request.html">Reset Password</a></Message.Header>
-      </Message> : ''} */}
-      {/* <Message attached='bottom' warning>
-      <Icon name='help' />
-      Already signed up?<a href='#'>Login here</a>instead.
-      </Message> */}
       <br/>
       
 
@@ -116,9 +95,6 @@ const mapStateToProps = state => {
       passwordResetFailure: state.usersFromRootReducer.passwordResetFailure,
       passwordResetLoading: state.usersFromRootReducer.passwordResetLoading,
       passwordResetSuccess: state.usersFromRootReducer.passwordResetSuccess,
-
-      
-
     }
   }
   
@@ -128,8 +104,7 @@ const mapStateToProps = state => {
       addPasswordResetFailure: (x) => dispatch(addPasswordResetFailure(x)),
       addPasswordResetLoading: (x) => dispatch(addPasswordResetLoading(x)),
       addPasswordResetSuccess: (x) => dispatch(addPasswordResetSuccess(x)),
-      //createNewPost: (data) => dispatch(createNewPost(data)),
-
+      
     }
   }
   

@@ -97,7 +97,6 @@ function AppComponent () {
             <HeaderTickerPriceContainer /><br />
             <LineCandleGraphIndicatorContainer /><br/>
             <VolumeGraphContainer/><br/>
-            {/* <MomentumGraphContainer/><br /> */}
             <ToolTipContainer/><br />
             <PostFormContainer/><br />
             <CompanyFinancialsContainer/><br />
@@ -116,7 +115,6 @@ function AppComponent () {
             <HeaderTickerPriceContainer /><br />
             <LineCandleGraphIndicatorContainer /><br/>
             <VolumeGraphContainer/><br/>
-            {/* <MomentumGraphContainer/><br /> */}
             <ToolTipContainer/><br />
             <Accordion inverted color='black'>
               <Accordion.Title

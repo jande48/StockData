@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import { Form, Message, Header, Input, Grid, Checkbox, Icon } from 'semantic-ui-react'
+import { Form, Message, Input, Grid, Checkbox} from 'semantic-ui-react'
 import { fetchLogin, addActiveNav } from '../redux'
 import { Redirect, Link } from "react-router-dom";
 import '../App.css'
-import setAuthorizationToken from '../utils/setAuthorizationToken'
-
-
 
 function LoginContainer (props) {
     const [email, setEmail] = useState('');
@@ -50,7 +47,6 @@ return (
   <Grid columns='equal'>
     <Grid.Column></Grid.Column>
     <Grid.Column width={8} className='lightGrayBackground'>
-    {/* <Header inverted as='h3'>Please enter your email and password: </Header> */}
     <Message
       attached
       color='green'
@@ -95,7 +91,6 @@ return (
    <Grid columns='equal'>
     <Grid.Column width={1}></Grid.Column>
     <Grid.Column className='lightGrayBackground'>
-    {/* <Header inverted as='h3'>Please enter your email and password: </Header> */}
     <Message
       attached
       color='green'
@@ -153,9 +148,7 @@ const mapStateToProps = state => {
   const mapDispatchToProps = dispatch => {
     return {
       fetchLogin: (x) => dispatch(fetchLogin(x)),
-      addActiveNav: (x) => dispatch(addActiveNav(x)),
-      //createNewPost: (data) => dispatch(createNewPost(data)),
-
+      addActiveNav: (x) => dispatch(addActiveNav(x))
     }
   }
   

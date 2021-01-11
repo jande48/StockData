@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import { addPercentChange, addSplicedStartDate, addStockPriceForPercentChange, addEndDateForPercentChange, addSplicedIndexStockData, 
   addActiveNav, addOnMouseOverTicker, addDateMouseOverTicker, addIndexMouseOver } from '../redux'
-import {Header, Grid} from 'semantic-ui-react'
+import {Header} from 'semantic-ui-react'
 import { createLoadingSpinnerChart } from './charts/loadingSpinner.js'
 import '../App.css'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -10,19 +10,11 @@ import * as d3 from "d3"
 
 import {
     select,
-    csv,
     scaleLinear,
     scaleBand,
-    scaleTime,
-    extent,
-    axisLeft,
-    axisBottom,
     line,
-    curveBasis,
-    transition,
     curveLinear,
   } from 'd3';
-import { DATE_MOUSE_OVER_TICKER } from '../redux/tickers/tickerTypes'
 
 function LineCandleGraphContainer (props) {
 
@@ -45,13 +37,8 @@ function LineCandleGraphContainer (props) {
         props.nForBBUpper,props.ndevBBUpper,props.displayBBLower,props.nForBBLower,props.ndevBBLower,props.displayKeltnerC,
         props.nForKeltnerC,props.volatilityData])
 
-    function convertDatesToString(initialDate) {
-		const convertedDate = String(initialDate.getFullYear())+"-"+String(initialDate.getMonth() + 1)+"-"+String(initialDate.getDate())
-		return convertedDate
-	  }
 
   function createStockPriceLineChart(stockPriceLineChartNode, Initialdata) {
-      //const Initialdata = props.stockData
 
       function sliceDataStartDate(data) {
         var startingIndex = 0
@@ -65,7 +52,6 @@ function LineCandleGraphContainer (props) {
           var dateOffset = (24*60*60*1000) * 1; 
           startingDate.setTime(startingDate.getTime()-dateOffset)
         }
-        //console.log(startingDate.getTime())
         for (var i = 0; i < data.length; i++) {
           var dateSplit = data[i]['date'].split("-")
           var indexDate = new Date(parseInt(dateSplit[0]),(parseInt(dateSplit[1])-1),parseInt(dateSplit[2]))
@@ -195,9 +181,7 @@ function LineCandleGraphContainer (props) {
       const vineg = new Indicator('vineg',"#e6ab02",trendData,props.displayVINEG,'axisRight')
       const trix = new Indicator('trix',"#a6761d",trendData,props.displayTRIX,'axisRight')
       const mi = new Indicator('mi',"#666666",trendData,props.displayMI,'axisRight')
-      //const cci = new Indicator('cci',"#1b9e77",trendData,props.displayCCI,'axisRight')
       const dpo = new Indicator('dpo',"#1b9e77",trendData,props.displayDPO,'axisRight')
-      // ["#7fc97f","#beaed4","#fdc086","#ffff99","#386cb0","#f0027f","#bf5b17","#666666"]
       const bbsma = new Indicator('bbsma',"#7fc97f",volatilityData,props.displayBBSMA,'axisLeft')
       const atr = new Indicator('atr',"#beaed4",volatilityData,props.displayATR,'axisRight')
       const BBupper = new Indicator('BBupper',"#fdc086",volatilityData,props.displayBBUpper,'axisLeft')
@@ -221,9 +205,7 @@ function LineCandleGraphContainer (props) {
   
       var y = scaleLinear()
           .domain(findMixMaxObjects(objectList,'axisLeft'))
-          //.domain([d3.min(data, d => d.low), d3.max(data, d => d.high)])
           .rangeRound([height - margin.bottom, margin.top])
-              //d3.min(data, d => d.low), d3.max(data, d => d.high
 
       var yRight = scaleLinear()
           .domain(findMixMaxObjects(objectList,'axisRight'))
@@ -232,14 +214,11 @@ function LineCandleGraphContainer (props) {
       const xAxis = g => g
           .attr("transform", `translate(0,${height - margin.bottom})`)
           .attr('class','axisWhite')
-          .call(d3.axisBottom(x)   //.ticks(Math.round((data.length-1)/7))
-              //.tickValues(d3.range(parseDate(data[0].date), parseDate(data[data.length - 1].date),((data.length-1)*86400000/10)).map( d => d.date))
+          .call(d3.axisBottom(x) 
               .tickValues(d3.utcMonday
                   .every(data.length > 2 ? (data.length > 250 ? 8 : (data.length > 150 ? 4 : (data.length > 80 ? 2 : 1))) : 1)
                   .range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
               .tickFormat(d3.utcFormat("%-m/%-d")))
-          //.call(g => g.select(".domain").remove())
-
 
       svg.append("text")
           .attr("class", "axisWhite")
@@ -257,7 +236,6 @@ function LineCandleGraphContainer (props) {
           .join("g")
       
       const invisibleRectForTooltip = svg.append("g")
-          // .attr("stroke", "black")
           .selectAll("g")
           .attr("id","invisibleTooltip")
           .data(data)
@@ -289,11 +267,6 @@ function LineCandleGraphContainer (props) {
             d3.select(this).style('opacity','0')
             props.addOnMouseOverTicker(false)
           })
-      // var mousePerLine = tooltip.selectAll('.mouse-per-line')
-      //     .data(data)
-      //     .enter()
-      //     .append("g")
-      //     .attr("class", "mouse-per-line");
 
       tooltip.append("text")
           .attr("text-anchor", "middle")
@@ -303,30 +276,9 @@ function LineCandleGraphContainer (props) {
           .attr('y',height)
           .style("opacity", '0')
           .text(function(d) {
-            //console.log(d)
-            //console.log(d.close)
             return d.close
           })
-      // const tooltip = svg.append("text")
-      //     .attr("class", "axisWhite")
-      //     .attr("id","tooltip")
-      //     .attr("text-anchor", "middle")
-      //     .attr("font-size",'50px')
-      //     .style('fill','white')
-      //     .attr('x',margin.left+(width/2))
-      //     .attr('y',height)
-      //     .style("opacity", 1)
-      //     .text(function(d) { 
-      //       console.log(d)
-      //       if (typeof(d) != 'undefined' && typeof(d.close) != 'undefined'){
-              
-      //         return d.close;
-      //       }
-      //        })
-          // .join("text")
-
-          
-
+     
       const yAxis = g => g
           .attr("transform", `translate(${margin.left},0)`)
           .attr('class','axisWhite')
@@ -336,7 +288,6 @@ function LineCandleGraphContainer (props) {
           .call(g => g.selectAll(".tick line").clone()
               .attr("stroke-opacity", 0)
               .attr("x2", width - margin.left - margin.right))
-          //.call(g => g.select(".domain").remove())
       
 
       svg.attr("viewBox", [0, 0, width, height])
@@ -595,12 +546,10 @@ function LineCandleGraphContainer (props) {
       const adxline = adx.d3line
       const adxpline = adxp.d3line
       const adxnline = adxn.d3line
-      // const bbsmaline = bbsma.d3line
       const viposline = vipos.d3line
       const vinegline = vineg.d3line
       const trixline = trix.d3line
       const miline = mi.d3line
-      //const cciline = cci.d3line
       const dpoline = dpo.d3line
       const atrline = atr.d3line
       const bbsmaline = bbsma.d3line
@@ -725,26 +674,9 @@ function LineCandleGraphContainer (props) {
       return svg.node()
       }
 
-  // function calcPercentChange() {
-  //     var exportDefault = 0
-  //     if (typeof(props.stockData) != 'undefined'){
-  //     if (props.stockData.length > 2) {
-  //         const percentChange = ((props.stockData[props.stockData.length -1]['close'] - props.stockData[props.stockData.length -2]['close'])/props.stockData[props.stockData.length -1]['close'])*100
-  //         const percentChangeFormatted = percentChange.toFixed(2)
-  //         return percentChangeFormatted
 
-  //     }else{
-  //         return exportDefault
-  //     }}
-  // }
   var endDateVar = 'Jacob'
   var endDateVar2 = ''
-
-  // if (typeof(props.endDateForPercentChange) != 'undefined') {
-  //   endDateVar = props.endDateForPercentChange
-  //   endDateVar2 = String(endDateVar.getFullYear())+"-"+String(endDateVar.getMonth())+"-"+String(endDateVar.getDay())
-  // }
-  
 
   function getIndex(data,date) {
     data.forEach(function (el, i) {

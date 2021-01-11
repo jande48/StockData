@@ -1,11 +1,10 @@
-from flask import Flask, render_template, url_for
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_mail import Mail
 import os
 from flask_talisman import Talisman
-from algoPlatform1_project.config import Config
 
 
 application = app = Flask(__name__)
@@ -33,19 +32,27 @@ if ENV == 'dev':
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('LOCAL_SQL_DB_STOCK_DATA')
 else:
     #Talisman is used to for https and SSL for the production environment
-    #Talisman(app, content_security_policy=csp)
+    Talisman(app, content_security_policy=csp)
     app.debug = False
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('HEROKU_POSTGRES')
 
+# Avoid the SQLAlchemy tracking modification to minimize text and time at startup
 app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False
+
 db = SQLAlchemy(app)
+
+# us Bcrypt to hash password before committing them to the db
 bcrypt = Bcrypt(app)
+
+# Flask's login manager tool to facilitate user signin and as one of several checks for user auth
 login_manager = LoginManager(app)
 login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info'
+
+# Using a free gmail smtp server for contact and password reset
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 465 #465
-app.config['MAIL_USE_TLS'] = False #True
+app.config['MAIL_PORT'] = 465 
+app.config['MAIL_USE_TLS'] = False 
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_HOST_STONKTA')
 app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASSWORD_STONKTA')

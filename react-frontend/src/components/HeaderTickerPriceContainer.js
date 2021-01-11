@@ -1,13 +1,10 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { addPercentChange, addStockPriceForPercentChange } from '../redux'
+import { addPercentChange } from '../redux'
 import {Header, Grid, Label} from 'semantic-ui-react'
 import '../App.css'
 
-
-
 function HeaderTickerPriceContainer (props) {
-
 
     useEffect(() => {
     var endingStockPrice = props.stockPriceForPercentChange 
@@ -56,7 +53,6 @@ function HeaderTickerPriceContainer (props) {
           <Grid.Row stretched>
             <Grid.Column>
                 <h2 style={{color: "#1b1c1d"}}>A</h2>
-              {/* <Header as='h2' textAlign='left' inverted color="#e0e1e2"> { typeof(props.stockData) === 'undefined' ? 'A' : (props.stockData.length > 0 ?  props.compName + ' - '+ props.tickers + ' ($' + props.stockData[props.stockData.length-1]['close'] + ')' : '')}</Header> */}
             </Grid.Column>
             <Grid.Column color='black'>
                 <Header as='h2' textAlign='right' color={(props.percentChange > 0) ? 'green' : 'red'}>{((props.percentChange==0) ? '' : (props.percentChange > 0) ? '+' + String(props.percentChange) + '%': String(props.percentChange)+'%')}
@@ -115,7 +111,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     addPercentChange: (percentChange) => dispatch(addPercentChange(percentChange)),
-    //addStockPriceForPercentChange: (stockPrice) => dispatch(addStockPriceForPercentChange(stockPrice))
   }
 }
 

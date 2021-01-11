@@ -1,8 +1,8 @@
-import React, {useState} from 'react'
+import React from 'react'
 import { Provider } from 'react-redux'
 import '../App.css'
 import store from '../redux/store'
-import { Grid, Accordion, Header, Icon, Button, Divider} from "semantic-ui-react"
+import { Grid, Header, Icon, Button, Divider} from "semantic-ui-react"
 import AliceCarousel from 'react-alice-carousel';
 import {Link} from 'react-router-dom'
 import "react-alice-carousel/lib/alice-carousel.css";
@@ -51,9 +51,6 @@ function HomeComponent () {
         <Grid.Column className='lightGrayBackground' centered textAlign='center' >
           <Divider hidden />
           <Link to="/posts"><Icon name="comment outline" color="green" size="huge"></Icon></Link>
-          {/* <Button size='massive' inverted color='green'>
-            <Button.Content><Icon name="chart line" color="green"></Icon></Button.Content>
-          </Button> */}
           <Header as='h2' inverted>
             <Header.Content>Connect with Traders</Header.Content>
             <br/><br/>
@@ -131,7 +128,6 @@ function HomeComponent () {
             <br/><br/>
             <Header.Subheader>Join the conversation on what other trading are seeing</Header.Subheader>  
           </Header>
-          
           <br/>
           <Link to="/posts"><Button color='green' content='Go to Posts'/></Link>
         </Grid.Row>

@@ -1,12 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { connect } from 'react-redux'
-import {Link} from 'react-router-dom'
-import { Form, Message, Header, Input, Grid, Icon } from 'semantic-ui-react'
+import { Form, Message} from 'semantic-ui-react'
 import { fetchContact } from '../redux'
-import { Redirect } from "react-router-dom";
 import '../App.css'
-import { add } from 'lodash'
-
 
 function ContactContainer (props) {
 

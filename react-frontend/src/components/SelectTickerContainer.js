@@ -1,24 +1,14 @@
-import React, {useState, useRef, useCallback} from 'react'
+import React, {useState, useCallback} from 'react'
 import { connect } from 'react-redux'
-import { addCompanyName, addTicker, displayEMA, fetchCompInfoData, fetchCompInfoDataRequest, fetchCompanyNameFromTicker, fetchStockData } from '../redux'
-import { Input, Form, Icon, Button, Grid, Search, Label, Header} from "semantic-ui-react"
-import withImportantStyle from 'react-with-important-style';
-import _ from 'lodash'
+import { addCompanyName, addTicker, fetchCompInfoData, fetchCompInfoDataRequest, fetchCompanyNameFromTicker } from '../redux'
+import {Icon, Button, Grid, Search, Label, Header} from "semantic-ui-react"
 import './css/selectTickerCSS.css'
 
 function SelectTickerContainer(props) {
   const [newTicker, setNewTicker] = useState('')
-  var Wrapped = withImportantStyle("div");  
-  var columnStyle = {
-    padding: "0 !important"
-  };
-
-  var segmentStyleButtons = {
-    color:"red"
-  };
+  
   const handleSearchChange = useCallback((e, data) => {
-    
-    //clearTimeout(timeoutRef.current)
+
     let re = new RegExp('^[a-z0-9]+$')
     var regex_user_input = data.value.replace(/\W/g, '_').toUpperCase();
     fetchCompInfoDataRequest(regex_user_input)
@@ -43,15 +33,11 @@ function SelectTickerContainer(props) {
     )
   }
 
-
-// color='black' stretched
   return (
     <div class="fullWidth">
-      {/* <Wrapped style={columnStyle}> */}
       <Grid stretched columns="equal">
         <Grid.Row verticalAlign='top' borderless stretched>
           <Grid.Column borderless className="fullWidthColumn"> 
-          {/* <Wrapped className="column" style={columnStyle}> */}
           <Search
               input={{ fluid: true }}
               fluid
@@ -59,18 +45,14 @@ function SelectTickerContainer(props) {
               onResultSelect={(e, data) =>{
                 props.addCompanyName(data.result.name)
                 props.addTickerDispatch(data.result.symbol)
-                
                 }
               }
               placeholder='Search company or ticker'
               onSearchChange={handleSearchChange}
               resultRenderer={resultRenderer}
               results={props.compInfo}
-              //value={props.tickers}
             inverted/>
           </Grid.Column>
-          {/* </Wrapped>
-          <Wrapped style={columnStyle}> */}
           <Grid.Column borderless width={3} className="fullWidthColumn"> 
             <Button icon basic inverted color='green' floated='left'  onClick={(e) => {
                 props.addTickerDispatch(newTicker)
@@ -78,20 +60,9 @@ function SelectTickerContainer(props) {
               }}>
                 <Icon name='arrow right' />
             </Button>
-            {/* <Button color='green' animated onClick={(e) => {
-                props.addTickerDispatch(newTicker)
-                props.fetchCompanyNameFromTicker(newTicker)
-              }}>
-              <Button.Content visible>Go!</Button.Content>
-              <Button.Content hidden>
-                  <Icon name='arrow right' />
-              </Button.Content>
-            </Button> */}
           </Grid.Column>
-          {/* </Wrapped> */}
         </Grid.Row>
       </Grid> 
-      {/* </Wrapped> */}
     </div>
   )
 }
@@ -120,67 +91,3 @@ export default connect(
   mapDispatchToProps
 )(SelectTickerContainer)
 
-
-
-
-{/* <Form> */}
-        {/* <Grid container columns='equal' inverted centered> */}
-        {/* <Grid.Row color='black' textAlign='center' stretched> */}
-        // <Form inverted stretched>
-        // <Form.Field inverted inline>
-        // <Form.Search
-        //       loading={props.loading}
-        //       onResultSelect={(e, data) =>{
-        //         props.addCompanyName(data.result.name)
-        //         props.addTickerDispatch(data.result.symbol)
-        //         }
-        //       }
-        //       placeholder='Search company or ticker'
-        //       onSearchChange={handleSearchChange}
-        //       resultRenderer={resultRenderer}
-        //       results={props.compInfo}
-        //       //value={newTicker}
-        //     inverted/>
-        //     <Form.Button color='green' animated onClick={(e) => {
-        //       props.addTickerDispatch(newTicker)
-        //       props.fetchCompanyNameFromTicker(newTicker)
-        //     }}>
-        //       <Form.Button.Content visible>Go!</Form.Button.Content>
-        //       <Form.Button.Content hidden>
-        //           <Icon name='arrow right' />
-        //       </Form.Button.Content>
-        //     </Form.Button>
-        // </Form.Field>
-        // </Form>
-        {/* </Grid.Row> */}
-          {/* <Grid.Row stretched color='black'> */}
-          {/* <Grid.Column color='black' className='noPadding'>
-            <Search
-              fluid
-              loading={props.loading}
-              onResultSelect={(e, data) =>{
-                props.addCompanyName(data.result.name)
-                props.addTickerDispatch(data.result.symbol)
-                }
-              }
-              placeholder='Search company or ticker'
-              onSearchChange={handleSearchChange}
-              resultRenderer={resultRenderer}
-              results={props.compInfo}
-              //value={newTicker}
-            inverted/>
-          </Grid.Column>
-          <Grid.Column color='black' width={4}>
-            <Button floated='left' color='green' animated onClick={(e) => {
-              props.addTickerDispatch(newTicker)
-              props.fetchCompanyNameFromTicker(newTicker)
-            }}>
-              <Button.Content visible>Go!</Button.Content>
-              <Button.Content hidden>
-                  <Icon name='arrow right' />
-              </Button.Content>
-            </Button>
-          </Grid.Column> */}
-          {/* </Grid.Row> */}
-        {/* </Grid> */}
-    {/* </Form> */}

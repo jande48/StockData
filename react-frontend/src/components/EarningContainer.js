@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import {Header, Grid, Button} from 'semantic-ui-react'
+import {Header, Grid} from 'semantic-ui-react'
 import { fetchEarningsData } from '../redux'
 import '../App.css'
 import * as d3 from 'd3'
@@ -29,9 +29,6 @@ function EarningContainer (props) {
 
 
     function createEarningsChart(data) {
-        // https://www.youtube.com/watch?v=UDDGcgxficY 
-        // stopped video at 3:41
-        // https://observablehq.com/d/8974f775c6a0ae5d
 
         function findMinMax(FinData) {
             var min = FinData[0]['actualEPS']
@@ -60,9 +57,6 @@ function EarningContainer (props) {
         const svg = select(earningsChartNode.current);
         svg.selectAll("g").remove()
         const margin = ({top: 30, right: 20, bottom: 50, left: 40})
-        const parseDate = d3.utcParse("%Y-%m-%d")
-        const xLabel = 'Fiscal Period';
-        const yLabel = 'Earnings Per Share'
         const width = 700;
         const height = 220;
         svg.attr("viewBox", [0, 0, width, height])
@@ -71,18 +65,11 @@ function EarningContainer (props) {
     
         const yScale = scaleLinear()
             .domain(findMinMax(data))
-            //.domain([(d3.min(data,d => Math.min(d.consensusEPS,d.actualEPS))-d3.min(data,d => Math.min(d.consensusEPS,d.actualEPS))/5),d3.max(data,d => Math.max(d.consensusEPS,d.actualEPS))])
             .range([innerHeight,0])
-    
-        const yAxis = d3.axisLeft(yScale)
             
-    
         const xScale = scaleBand()
             .domain(data.map(d => d.fiscalPeriod))
             .range([0,innerWidth])
-            
-        
-        const xAxis = d3.axisBottom(xScale)
             
         const gActual = svg.append('g')
             .attr('transform',`translate(${margin.left},${margin.top})`);
@@ -111,11 +98,10 @@ function EarningContainer (props) {
     
         g.append('g').call(d3.axisLeft(yScale))
             .attr("class", "axisWhite")
-            //.select(".domain").remove();
+            
         g.append('g').call(d3.axisBottom(xScale))
             .attr("class", "axisWhite")
             .attr('transform',`translate(0,${innerHeight})`)
-            //.select(".domain").remove();
     
         g.selectAll('circle')
             .data(data)
@@ -188,8 +174,6 @@ function EarningContainer (props) {
     <h2><Header as='h2' textAlign='center' inverted color="#e0e1e2">Whoops. We can't get earnings info now.</Header></h2>
   ) :  (
     <div class="fullWidth">
-        
-
         <React.Fragment>
             <Grid columns='equal'>
                 <Grid.Row>
