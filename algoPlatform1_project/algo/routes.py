@@ -1,42 +1,48 @@
-from flask import render_template, url_for, jsonify, flash, redirect, request
-from algoPlatform1_project import app, db
-import os, json, ast, re
+from flask import Blueprint
+from flask import request
+import os
+import json
+import re
 from datetime import datetime, timedelta
 from threading import Thread
-import pyEX as p
 import pandas as pd
 from iexfinance.stocks import get_historical_data, Stock
-import ta, time
-from ta.volatility import BollingerBands
-from ta.momentum import RSIIndicator, TSIIndicator, uo, stoch, stoch_signal, wr, ao, kama, roc
-from ta.trend import sma_indicator, ema_indicator, macd, macd_signal, macd_diff, adx, adx_pos, adx_neg, vortex_indicator_pos, vortex_indicator_neg, trix, mass_index, cci, dpo, kst, kst_sig, ichimoku_conversion_line, ichimoku_base_line, aroon_down, aroon_up, psar_up, psar_down
-from ta.volatility import average_true_range, bollinger_mavg, bollinger_hband, bollinger_lband, bollinger_wband, bollinger_pband, bollinger_hband_indicator, bollinger_lband_indicator, keltner_channel_mband, keltner_channel_hband, keltner_channel_lband, keltner_channel_wband, keltner_channel_pband, keltner_channel_hband_indicator, keltner_channel_lband_indicator, donchian_channel_hband, donchian_channel_lband, donchian_channel_mband, donchian_channel_wband, donchian_channel_pband 
-from algoPlatform1_project.models import User, Post, Watchlist, sp_OHLC_data, sp500List
-from flask_login import login_user, current_user, logout_user, login_required
+import ta
+import time
+from ta.momentum import RSIIndicator, TSIIndicator, uo, stoch, \
+    stoch_signal, wr, ao, kama, roc
+from ta.trend import sma_indicator, ema_indicator, macd, macd_signal, \
+    adx, adx_pos, adx_neg, vortex_indicator_pos, vortex_indicator_neg, \
+    trix, mass_index, dpo
+from ta.volatility import average_true_range, bollinger_mavg, \
+    keltner_channel_mband, bollinger_hband, bollinger_lband
 from urllib.request import urlopen, Request
-from urllib.error import URLError, HTTPError
 
-
-# Use environmental variables for the IEX cloud and finanial modeling prep for API calls
+# Use environmental variables for the IEX cloud and finanial modeling prep
 IEX_secret_api_key = os.environ.get('IEX_CLOUD_SECRET_API_KEY')
-IEX_api_key =  os.environ.get('IEX_CLOUD_API_KEY') 
+IEX_api_key = os.environ.get('IEX_CLOUD_API_KEY')
 Stock_Ticker_Lookup_key = os.environ.get('StockTickerCompanyNameAPIkey')
 
-from flask import Blueprint
-algo = Blueprint('algo',__name__)
+algo = Blueprint('algo', __name__)
 
-# get stock data GET api to retrieve stock data based on a stock ticker and start and end data
+# get stock data GET api to retrieve stock data based on a stock ticker
+
+
 @algo.route("/get_stock_data/<ticker>/<startDate>/<endDate>", methods=['GET'])
-def get_stock_data(ticker,startDate,endDate):
+def get_stock_data(ticker, startDate, endDate):
 
-    # Managing the date format has been a challenge due to sending Javascript and Python date objects via JSON
-    # I've chosen to send dates as MM-DD-YYY string and then create date objects in python on the backend and JS 
+    # Managing the date format has been a challenge due to sending Javascript
+    # and Python date objects via JSON I've chosen to send dates as MM-DD-YYY
+    # string and then create date objects in python on the backend and JS
     # on the frontend
     startDateForAPItemp = startDate.split('-')
-    startDateForAPI = datetime(int(startDateForAPItemp[0]),int(startDateForAPItemp[1]),int(startDateForAPItemp[2])) - timedelta(days=90)
-    
-    # the API call prefers to choose a date that aligns with a stock market trading period (i.e. M-F),
-    # therefore Saturday and Sundays are changed to the previous Friday
+    startDateForAPI = datetime(int(startDateForAPItemp[0]),
+                               int(startDateForAPItemp[1]),
+                               int(startDateForAPItemp[2])) - timedelta(days=90)
+
+    # the API call prefers to choose a date that aligns with a stock market
+    # trading period (i.e. M-F), therefore Saturday and Sundays are changed
+    # to the previous Friday
     if startDateForAPI.weekday() == 5:
         startDateForAPI += timedelta(days=2)
     elif startDateForAPI.weekday() == 6:
@@ -44,7 +50,9 @@ def get_stock_data(ticker,startDate,endDate):
 
     # The same logic applies to the end date.
     endDateForAPItemp = endDate.split('-')
-    endDateForAPI = datetime(int(endDateForAPItemp[0]),int(endDateForAPItemp[1]),int(endDateForAPItemp[2]))
+    endDateForAPI = datetime(int(endDateForAPItemp[0]),
+                             int(endDateForAPItemp[1]),
+                             int(endDateForAPItemp[2]))
 
     currentTime = datetime.utcnow()
     if str(currentTime.date()) == str(endDateForAPI.date()):
@@ -65,11 +73,12 @@ def get_stock_data(ticker,startDate,endDate):
             out2['date'] = i
             for j in stockData[i]:
                 out2[j] = stockData[i][j]
-            out.append(out2) 
+            out.append(out2)
         return out
 
     # make the API to IEXcloud, using Addison Lynch's IEXfinance python package
-    historicalData = get_historical_data(ticker, start=startDateForAPI.date(), end=endDateForAPI.date(), token=IEX_api_key)
+    historicalData = get_historical_data(ticker, start=startDateForAPI.date(),
+                                         end=endDateForAPI.date(), token=IEX_api_key)
     Historical_Data = flatten_json(historicalData)
 
     # using pandas for clean data manipulation using dataframes
@@ -77,7 +86,7 @@ def get_stock_data(ticker,startDate,endDate):
     df = ta.utils.dropna(df)
 
     # we add the RSI indicator, regardless, to show on the initial charts
-    indicator_RSI = RSIIndicator(close=df["close"],n=10)
+    indicator_RSI = RSIIndicator(close=df["close"], n=10)
     df['rsi'] = indicator_RSI.rsi()
     df = ta.utils.dropna(df)
     return (json.dumps(df.to_dict('records')))
@@ -92,8 +101,9 @@ def get_ticker_company_name(user_input):
 
     # process a single ID
     def process_id(id):
-        url = Request("https://financialmodelingprep.com/api/v3/search?query="+user_input+"&limit=5&exchange="+id+"&apikey="+Stock_Ticker_Lookup_key)
-        response = urlopen(url,data=None,timeout=0.5)
+        url = Request("https://financialmodelingprep.com/api/v3/search?query=" +
+                      user_input+"&limit=5&exchange="+id+"&apikey="+Stock_Ticker_Lookup_key)
+        response = urlopen(url, data=None, timeout=0.5)
         data = response.read().decode("utf-8")
         return data
 
@@ -104,7 +114,7 @@ def get_ticker_company_name(user_input):
         for id in id_range:
             store[id] = json.loads(process_id(id))
         return store
-    
+
     # process the id range in a specified number of threads
     def threaded_process_range(nthreads, id_range):
         store = {}
@@ -112,78 +122,86 @@ def get_ticker_company_name(user_input):
         # create the threads
         for i in range(nthreads):
             ids = id_range[i::nthreads]
-            t = Thread(target=process_range, args=(ids,store))
+            t = Thread(target=process_range, args=(ids, store))
             threads.append(t)
 
         # start the threads
-        [ t.start() for t in threads ]
+        [t.start() for t in threads]
         # wait for the threads to finish
-        [ t.join() for t in threads ]
+        [t.join() for t in threads]
         return store
 
     # These are the list of separate api calls classified by Financial Modeling Prep
-    threaded_results = threaded_process_range(6,['NASDAQ','NYSE','AMEX','INDEX','MUTUAL_FUND','ETF'])
+    threaded_results = threaded_process_range(
+        6, ['NASDAQ', 'NYSE', 'AMEX', 'INDEX', 'MUTUAL_FUND', 'ETF'])
 
     trigger = 0
     while trigger < 8 and len(threaded_results) == 0:
         time.sleep(0.1)
         trigger += 1
-    
+
     if len(threaded_results) == 0:
-        threaded_results = threaded_process_range(6,['NASDAQ','NYSE','AMEX','INDEX','MUTUAL_FUND','ETF'])
+        threaded_results = threaded_process_range(
+            6, ['NASDAQ', 'NYSE', 'AMEX', 'INDEX', 'MUTUAL_FUND', 'ETF'])
 
     # Based on the results of the API calls create a flatten array based on matches with RegEx
     out = []
-    
+
     dataset = []
-    ids = ['NASDAQ','NYSE','AMEX','INDEX','MUTUAL_FUND','ETF']
+    ids = ['NASDAQ', 'NYSE', 'AMEX', 'INDEX', 'MUTUAL_FUND', 'ETF']
     for i in range(len(ids)):
         if ids[i] in threaded_results:
             dataset.append(threaded_results[ids[i]])
 
     # if the user includes a space, it is replaced with an underscore, which is how Financial Modeling Prep addresses spaces
-    user_input_matching = user_input.replace("_","")
+    user_input_matching = user_input.replace("_", "")
 
     for i in range(len(dataset)):
         for j in range(len(dataset[i])):
 
             if dataset[i][j]['name'] is not None:
                 # compare upper case company name API results with user-input
-                noSpacesAPI =re.sub(r'\W+', '',dataset[i][j]['name'] )
+                noSpacesAPI = re.sub(r'\W+', '', dataset[i][j]['name'])
                 noSpacesAPI2 = noSpacesAPI.upper()
             try:
                 noSpacesAPI2.index(user_input_matching.upper())
             except ValueError:
                 print("Not found!")
             else:
-                dataset[i][j]['startingStrIndex'] = noSpacesAPI2.index(user_input_matching.upper()) 
+                dataset[i][j]['startingStrIndex'] = noSpacesAPI2.index(
+                    user_input_matching.upper())
                 out.append(dataset[i][j])
 
             if dataset[i][j]['symbol'] is not None:
-                # compare upper case ticker API results with user-input, because this allows the user to 
+                # compare upper case ticker API results with user-input, because this allows the user to
                 # enter either a company name or a ticker
-                noSpacesAPIsym =re.sub(r'\W+', '',dataset[i][j]['symbol'] )
+                noSpacesAPIsym = re.sub(r'\W+', '', dataset[i][j]['symbol'])
                 noSpacesAPIsym2 = noSpacesAPIsym.upper()
             try:
                 noSpacesAPIsym2.index(user_input_matching.upper())
             except ValueError:
                 print("Not found!")
             else:
-                dataset[i][j]['startingStrIndex'] = noSpacesAPIsym2.index(user_input_matching.upper()) 
+                dataset[i][j]['startingStrIndex'] = noSpacesAPIsym2.index(
+                    user_input_matching.upper())
                 out.append(dataset[i][j])
-        
-    out.sort(key = lambda out: out['startingStrIndex']) 
+
+    out.sort(key=lambda out: out['startingStrIndex'])
     return json.dumps(out)
 
 # Once the ticker is chosen, company info is populated via a IEX cloud api call
+
+
 @algo.route("/get_company_name_from_ticker/<ticker>", methods=['GET'])
 def get_company_name_from_ticker(ticker):
     stock = Stock(ticker, token=IEX_api_key)
     company = stock.get_company()
     return company['companyName']
 
-# The table of most relevant financial data (i.e. dividen, CEO) is called based on ticker. Some indicators are fetched from 
+# The table of most relevant financial data (i.e. dividen, CEO) is called based on ticker. Some indicators are fetched from
 # Financial Modeling Prep and some are retrieved from IEX cloud. These are combined into a single object
+
+
 @algo.route("/get_financial_data/<ticker>", methods=['GET'])
 def get_fianancial_data(ticker):
 
@@ -193,8 +211,9 @@ def get_fianancial_data(ticker):
     companyIEX = stock.get_company()
 
     # get financial data from Financial Modeling Prep and append it to the IEX result
-    url = Request("https://financialmodelingprep.com/api/v3/profile/"+ticker+"?apikey="+Stock_Ticker_Lookup_key)
-    response = urlopen(url,data=None,timeout=2)
+    url = Request("https://financialmodelingprep.com/api/v3/profile/" +
+                  ticker+"?apikey="+Stock_Ticker_Lookup_key)
+    response = urlopen(url, data=None, timeout=2)
     companyFinModPrep = json.loads(response.read().decode("utf-8"))
     financials.append(companyIEX)
     financials.append(companyFinModPrep[0])
@@ -202,621 +221,203 @@ def get_fianancial_data(ticker):
     return (json.dumps(financials))
 
 # API to get company quarterly earning over the past four quarters from Financial Modeling Prep, using urllib python package
+
+
 @algo.route("/get_earnings_data/<ticker>", methods=['GET'])
 def get_earnings_data(ticker):
-    
-    url = Request("https://financialmodelingprep.com/api/v3/earnings-surpises/"+ticker+"?apikey="+Stock_Ticker_Lookup_key)
-    response = urlopen(url,data=None,timeout=2)
+
+    url = Request("https://financialmodelingprep.com/api/v3/earnings-surpises/" +
+                  ticker+"?apikey="+Stock_Ticker_Lookup_key)
+    response = urlopen(url, data=None, timeout=2)
     companyFinModPrep = json.loads(response.read().decode("utf-8"))
     earnings = []
     i = 0
     for x in companyFinModPrep:
         if i < 4:
-            earnings.append({'fiscalPeriod':companyFinModPrep[i]['date'],'consensusEPS':companyFinModPrep[i]['estimatedEarning'],'actualEPS':companyFinModPrep[i]['actualEarningResult']})
+            earnings.append({'fiscalPeriod': companyFinModPrep[i]['date'], 'consensusEPS': companyFinModPrep[i]
+                             ['estimatedEarning'], 'actualEPS': companyFinModPrep[i]['actualEarningResult']})
             i += 1
-    #stock = Stock(ticker, token=IEX_api_key)
-    #earnings = stock.get_earnings()
     return(json.dumps(earnings))
-  
-# recieve JSON data from the frontend and if an indicator is checked, then calculate this indicator 
+
+# recieve JSON data from the frontend and if an indicator is checked, then calculate this indicator
 # and create a resulting JSON to then graph
-@algo.route("/calculate_Volatility_Indicators/", methods=['GET','POST'])
+
+
+@algo.route("/calculate_Volatility_Indicators/", methods=['GET', 'POST'])
 def calculate_Volitality_Indicators():
     JSON_sent = request.get_json()
     df = pd.DataFrame(JSON_sent[0])
 
-    # Average True Range
-    ATRchecked = JSON_sent[1]['displayATR']
-    nForATR = JSON_sent[1]['nForATR']
+    _, atr, bbsma, bbupper, bblower, keltnerC = JSON_sent
 
-    if ATRchecked:
-        indicator_ATR = average_true_range(high=df['high'],low=df['low'],close=df['close'],n=nForATR)
+    # Average True Range
+    if atr['displayATR']:
+        indicator_ATR = average_true_range(
+            high=df['high'], low=df['low'], close=df['close'], n=atr['nForATR'])
         df['atr'] = indicator_ATR
 
     # # Bollinger Band SMA
-    BBSMAchecked = JSON_sent[2]['displayBBSMA']
-    nForBBSMA = JSON_sent[2]['nForBBSMA']
-    #nDev = JSON_sent[2]['ndevBBSMA']
-
-    if BBSMAchecked:
-        indicator_BBSMA = bollinger_mavg(close=df['close'],n=nForBBSMA)
+    if bbsma['displayBBSMA']:
+        indicator_BBSMA = bollinger_mavg(close=df['close'], n=bbsma['nForBBSMA'])
         df['bbsma'] = indicator_BBSMA
 
     # # Bollinger Band Upper
-    BBUpperChecked = JSON_sent[3]['displayBBUpper']
-    nForBBUpper = JSON_sent[3]['nForBBUpper']
-    ndevBBUpper = JSON_sent[3]['ndevBBUpper']
-
-    if BBUpperChecked:
-        indicator_BBUpper = bollinger_hband(close=df['close'],n=nForBBUpper,ndev=ndevBBUpper)
+    if bbupper['displayBBUpper']:
+        indicator_BBUpper = bollinger_hband(
+            close=df['close'], n=bbupper['nForBBUpper'], ndev=bbupper['ndevBBUpper'])
         df['BBupper'] = indicator_BBUpper
-
+    
     # # Bollinger Band Lower
-    BBLowerChecked = JSON_sent[4]['displayBBLower']
-    nForBBLower = JSON_sent[4]['nForBBLower']
-    ndevBBLower = JSON_sent[4]['ndevBBLower']
-
-    if BBLowerChecked:
-        indicator_BBLower = bollinger_lband(close=df['close'],n=nForBBLower,ndev=ndevBBLower)
-        df['BBlower'] = indicator_BBLower 
-
-    # # Bollinger Channal Band Width
-    # BBCBWchecked = JSON_sent[5]['displayBBCBW']
-    # nForBBCBW = JSON_sent[5]['nForBBCBW']
-    # ndevBBCBW = JSON_sent[5]['ndevBBCBW']
-
-    # if BBCBWchecked:
-    #     indicator_BBCBW = bollinger_wband(close=df['close'],n=nForBBCBW,ndev=ndevBBCBW)
-    #     df['BBCBW'] = indicator_BBCBW 
-
-    # # Bollinger Channal Percentage Band
-    # BBCPBchecked = JSON_sent[6]['displayBBCPB']
-    # nForBBCPB = JSON_sent[6]['nForBBCPB']
-    # ndevBBCPB = JSON_sent[6]['ndevBBCPB']
-
-    # if BBCPBchecked:
-    #     indicator_BBCPB = bollinger_pband(close=df['close'],n=nForBBCPB,ndev=ndevBBCPB)
-    #     df['BBCPB'] = indicator_BBCPB 
-
-    # # Bollinger High Band Indicator
-    # BBHBIchecked = JSON_sent[7]['displayBBHBI']
-    # nForBBHBI = JSON_sent[7]['nForBBHBI']
-    # ndevBBHBI = JSON_sent[7]['ndevBBHBI']
-
-    # if BBHBIchecked:
-    #     indicator_BBHBI = bollinger_hband_indicator(close=df['close'],n=nForBBHBI,ndev=ndevBBHBI)
-    #     df['BBHBI'] = indicator_BBHBI 
-
-    # # Bollinger Low Band Indicator
-    # BBLBIchecked = JSON_sent[8]['displayBBLBI']
-    # nForBBLBI = JSON_sent[8]['nForBBLBI']
-    # ndevBBLBI = JSON_sent[8]['ndevBBLBI']
-
-    # if BBLBIchecked:
-    #     indicator_BBLBI = bollinger_lband_indicator(close=df['close'],n=nForBBLBI,ndev=ndevBBLBI)
-    #     df['BBLBI'] = indicator_BBLBI 
+    if bblower['displayBBLower']:
+        indicator_BBLower = bollinger_lband(
+            close=df['close'], n=bblower['nForBBLower'], ndev=bblower['ndevBBLower'])
+        df['BBlower'] = indicator_BBLower
 
     # # Keltner Channel Central
-    KeltnerCchecked = JSON_sent[5]['displayKeltnerC']
-    nForKeltnerC = JSON_sent[5]['nForKeltnerC']
-
-    if KeltnerCchecked:
-        indicator_keltnerC = keltner_channel_mband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerC)
+    if keltnerC['displayKeltnerC']:
+        indicator_keltnerC = keltner_channel_mband(
+            high=df['high'], low=df['low'], close=df['close'], n=keltnerC['nForKeltnerC'])
         df['keltnerC'] = indicator_keltnerC
 
-    # # Keltner Channel High
-    # KeltnerHchecked = JSON_sent[10]['displayKeltnerH']
-    # nForKeltnerH = JSON_sent[10]['nForKeltnerH']
-
-    # if KeltnerHchecked:
-    #     indicator_keltnerH = keltner_channel_hband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerH)
-    #     df['keltnerH'] = indicator_keltnerH
-
-    # # Keltner Channel Low
-    # KeltnerLchecked = JSON_sent[11]['displayKeltnerL']
-    # nForKeltnerL = JSON_sent[11]['nForKeltnerL']
-
-    # if KeltnerLchecked:
-    #     indicator_keltnerL = keltner_channel_lband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerL)
-    #     df['keltnerL'] = indicator_keltnerL
-
-    # # Keltner Channel Band Width
-    # KeltnerBWchecked = JSON_sent[12]['displayKeltnerBW']
-    # nForKeltnerBW = JSON_sent[12]['nForKeltnerBW']
-
-    # if KeltnerBWchecked:
-    #     indicator_keltnerBW = keltner_channel_wband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerBW)
-    #     df['keltnerBW'] = indicator_keltnerBW
-
-    # # Keltner Channel Percentage Band
-    # KeltnerPBchecked = JSON_sent[13]['displayKeltnerPB']
-    # nForKeltnerPB = JSON_sent[13]['nForKeltnerPB']
-
-    # if KeltnerPBchecked:
-    #     indicator_keltnerPB = keltner_channel_pband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerPB)
-    #     df['keltnerPB'] = indicator_keltnerPB
-
-    # # Keltner Channel High Band
-    # KeltnerHBchecked = JSON_sent[14]['displayKeltnerHB']
-    # nForKeltnerHB = JSON_sent[14]['nForKeltnerHB']
-
-    # if KeltnerHBchecked:
-    #     indicator_keltnerHB = keltner_channel_hband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerHB)
-    #     df['keltnerHB'] = indicator_keltnerHB
-
-    # # Keltner Channel Low Band
-    # KeltnerLBchecked = JSON_sent[15]['displayKeltnerLB']
-    # nForKeltnerLB = JSON_sent[15]['nForKeltnerLB']
-
-    # if KeltnerLBchecked:
-    #     indicator_keltnerLB = keltner_channel_lband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerLB)
-    #     df['keltnerLB'] = indicator_keltnerLB
-
-    # # Donchian Channel High Band
-    # DonchianHBchecked = JSON_sent[16]['displayDonchianHB']
-    # nForDonchianHB = JSON_sent[16]['nForDonchianHB']
-
-    # if DonchianHBchecked:
-    #     indicator_donchianHB = donchian_channel_hband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianHB)
-    #     df['donchianHB'] = indicator_donchianHB
-
-    # # Donchian Channel Low Band
-    # DonchianHBchecked = JSON_sent[17]['displayDonchianHB']
-    # nForDonchianHB = JSON_sent[17]['nForDonchianHB']
-
-    # if DonchianLBchecked:
-    #     indicator_donchianLB = donchian_channel_lband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianLB)
-    #     df['donchianLB'] = indicator_donchianLB
-
-    # # Donchian Channel Mid Band
-    # DonchianMBchecked = JSON_sent[18]['displayDonchianMB']
-    # nForDonchianMB = JSON_sent[18]['nForDonchianMB']
-
-    # if DonchianMBchecked:
-    #     indicator_donchianMB = donchian_channel_mband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianMB)
-    #     df['donchianMB'] = indicator_donchianMB
-
-    # # Donchian Channel Band Width
-    # DonchianBWchecked = JSON_sent[19]['displayDonchianBW']
-    # nForDonchianBW = JSON_sent[19]['nForDonchianBW']
-
-    # if DonchianBWchecked:
-    #     indicator_donchianBW = donchian_channel_wband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianBW)
-    #     df['donchianBW'] = indicator_donchianBW
-
-    # # Donchian Channel Percentage Band
-    # DonchianPBchecked = JSON_sent[20]['displayDonchianPB']
-    # nForDonchianPB = JSON_sent[20]['nForDonchianPB']
-
-    # if DonchianPBchecked:
-    #     indicator_donchianPB = donchian_channel_pband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianPB)
-    #     df['donchianPB'] = indicator_donchianPB
-
     df.fillna(0, inplace=True)
-    #export_df = df.drop(columns=['open', 'high', 'low', 'close', 'volume'])
-    #print('The printed df in Trend', df)
+
     return (json.dumps(df.to_dict('records')))
 
-# recieve JSON data from the frontend and if an indicator is checked, then calculate this indicator 
+# recieve JSON data from the frontend and if an indicator is checked, then calculate this indicator
 # and create a resulting JSON to then graph
-@algo.route("/calculate_Trend_Indicators/", methods=['GET','POST'])
+
+
+@algo.route("/calculate_Trend_Indicators/", methods=['GET', 'POST'])
 def calculate_Trend_Indicators():
     JSON_sent = request.get_json()
-    if len(JSON_sent[0])>0:
+    if len(JSON_sent[0]) > 0:
         df = pd.DataFrame(JSON_sent[0])
 
-        # Simple Moving Average 
-        SMAchecked = JSON_sent[1]['displaySMA']
-        nForSMA = JSON_sent[1]['nForSMA']
+        _, sma, ema, macd, macdSignal, adxDict, adxPos, adxNeg, VIpos, VIneg, trixDict, mi, dpoDict = JSON_sent
 
-        # Exponential Moving Average (EMA)
-        EMAchecked = JSON_sent[2]['displayEMA']
-        nForEMA = JSON_sent[2]['nForEMA']
-
-        # MACD
-        MACDchecked = JSON_sent[3]['displayMACD']
-        nslowForMACD = JSON_sent[3]['nSlowForMACD']
-        nfastForMACD = JSON_sent[3]['nFastForMACD']
-
-        # # MACD Signal 
-        MACDsignalChecked = JSON_sent[4]['displayMACDsignal']
-        nslowForMACDsignal = JSON_sent[4]['nSlowForMACDsignal']
-        nfastForMACDsignal = JSON_sent[4]['nFastForMACDsignal']
-        nsignForMACDsignal = JSON_sent[4]['nSignForMACDsignal']
-
-        # Average Directional Movement Index
-        ADXchecked = JSON_sent[5]['displayADX']
-        nForADX = JSON_sent[5]['nForADX']
-        
-        # # Average Directional Movement Index Positive (ADX)
-        ADXpositiveChecked = JSON_sent[6]['displayADXP']
-        nForADXpositive = JSON_sent[6]['nForADXP']
-
-        # # Average Directional Movement Index Negative 
-        ADXnegativeChecked = JSON_sent[7]['displayADXN']
-        nForADXnegative = JSON_sent[7]['nForADXN']
-
-        # # Bollinger Band SMA
-        # BBSMAchecked = JSON_sent[8]['displayBBSMA']
-        # nForBBSMA = JSON_sent[8]['nForBBSMA']
-        # nDev = JSON_sent[8]['ndevBBSMA']
-
-        # # Vortex Indicator Positive
-        VIpositiveChecked = JSON_sent[8]['displayVIPOS']
-        nForVIpositive = JSON_sent[8]['nForVIPOS']
-
-        # # Vortex Indicator Negative
-        VInegativeChecked = JSON_sent[9]['displayVINEG']
-        nForVInegative = JSON_sent[9]['nForVINEG']
-
-        # # TRIX
-        TRIXchecked = JSON_sent[10]['displayTRIX']
-        nForTRIX = JSON_sent[10]['nForTRIX']
-
-        # # Mass Index
-        MassIndexchecked = JSON_sent[11]['displayMI']
-        nForMassIndex = JSON_sent[11]['nForMI']
-        n2ForMassIndex = JSON_sent[11]['n2ForMI']
-
-        # # Commodity Channel Index 
-        # CCIchecked = JSON_sent[12]['displayCCI']
-        # nForCCI = JSON_sent[12]['nForCCI']
-        # cForCCI = float(JSON_sent[12]['cForCCI'])
-        #print('The N for CCI', nForCCI)
-        #print('The C for CCI', cForCCI)
-
-        # # Detrended Price Oscillator (DPO)
-        DPOchecked = JSON_sent[12]['displayDPO']
-        nForDPO = JSON_sent[12]['nForDPO']
-
-    # # Tenkan-sen (Conversion Line)
-    # IchimokuChecked = JSON_sent[14]['displayIchimoku']
-    # n1ForIchimoku = JSON_sent[14]['n1ForIchimoku']
-    # n2ForIchimoku = JSON_sent[14]['n2ForIchimoku']
-    # visualForIchimoku = JSON_sent[14]['visualForIchimoku']
-
-    # # Aroon up Indicator
-    # AIupChecked = JSON_sent[15]['AIupChecked']
-    # nForAIup = JSON_sent[15]['nForAIup']
-
-    # # Aroon down Indicator
-    # AIdownChecked = JSON_sent[16]['AIdownChecked']
-    # nForAIdown = JSON_sent[16]['nForAIdown']
-
-        if SMAchecked:
-            indicator_sma = sma_indicator(close=df['close'],n=nForSMA)
+        if sma['displaySMA']:
+            indicator_sma = sma_indicator(close=df['close'], n=sma['nForSMA'])
             df['sma'] = indicator_sma
 
-        if EMAchecked:
-            indicator_ema = ema_indicator(close=df['close'],n=nForEMA)
+        if ema['displayEMA']:
+            indicator_ema = ema_indicator(close=df['close'], n=ema['nForEMA'])
             df['ema'] = indicator_ema
-        
-        if MACDchecked:
-            indicator_macd = macd(close=df['close'],n_slow=nslowForMACD,n_fast=nfastForMACD)
+
+        if macd['displayMACD']:
+            indicator_macd = macd(
+                close=df['close'], n_slow=macd['nSlowForMACD'], n_fast=macd['nFastForMACD'])
             df['macd'] = indicator_macd
 
-        if MACDsignalChecked:
-            indicator_macdSignal = macd_signal(close=df['close'],n_slow=nslowForMACDsignal,n_fast=nfastForMACDsignal,n_sign=nsignForMACDsignal)
+        if macdSignal['displayMACDsignal']:
+            indicator_macdSignal = macd_signal(
+                close=df['close'], n_slow=macdSignal['nSlowForMACDsignal'], 
+                n_fast=macdSignal['nFastForMACDsignal'], n_sign=macdSignal['nSignForMACDsignal'])
             df['macds'] = indicator_macdSignal
-    
-        if ADXchecked:
-            indicator_ADX = adx(high=df['high'],low=df['low'],close=df['close'],n=nForADX)
+
+        if adxDict['displayADX']:
+            indicator_ADX = adx(
+                high=df['high'], low=df['low'], close=df['close'],
+                n=adxDict['nForADX'])
             df['adx'] = indicator_ADX
 
-        if ADXpositiveChecked:
-            indicator_ADXpositive = adx_pos(high=df['high'],low=df['low'],close=df['close'],n=nForADXpositive)
+        if adxPos['displayADXP']:
+            indicator_ADXpositive = adx_pos(
+                high=df['high'], low=df['low'], close=df['close'],
+                n=adxPos['nForADXP'])
             df['adxp'] = indicator_ADXpositive
-    
-        if ADXnegativeChecked:
-            indicator_ADXnegative = adx_neg(high=df['high'],low=df['low'],close=df['close'],n=nForADXnegative)
+
+        if adxNeg['displayADXN']:
+            indicator_ADXnegative = adx_neg(
+                high=df['high'], low=df['low'], close=df['close'], 
+                n=adxNeg['nForADXN'])
             df['adxn'] = indicator_ADXnegative
 
-        # if BBSMAchecked:
-        #     indicator_BBSMA = bollinger_mavg(close=df['close'],n=nForBBSMA)
-        #     df['bbsma'] = indicator_BBSMA
-
-        if VIpositiveChecked:
-            indicator_VIpositive = vortex_indicator_pos(high=df['high'],low=df['low'],close=df['close'],n=nForVIpositive)
+        if VIpos['displayVIPOS']:
+            indicator_VIpositive = vortex_indicator_pos(
+                high=df['high'], low=df['low'], close=df['close'], 
+                n=VIpos['nForVIPOS'])
             df['vipos'] = indicator_VIpositive
 
-        if VInegativeChecked:
-            indicator_VInegative = vortex_indicator_neg(high=df['high'],low=df['low'],close=df['close'],n=nForVInegative)
+        if VIneg['displayVINEG']:
+            indicator_VInegative = vortex_indicator_neg(
+                high=df['high'], low=df['low'], close=df['close'], n=VIneg['nForVINEG'])
             df['vineg'] = indicator_VInegative
 
-        if TRIXchecked:
-            indicator_TRIX = trix(close=df['close'],n=nForTRIX)
+        
+        if trixDict['displayTRIX']:
+            indicator_TRIX = trix(close=df['close'], n=trixDict['nForTRIX'])
             df['trix'] = indicator_TRIX
 
-        if MassIndexchecked:
-            indicator_MassIndex = mass_index(high=df['high'],low=df['low'],n=nForMassIndex,n2=n2ForMassIndex)
+        if mi['displayMI']:
+            indicator_MassIndex = mass_index(
+                high=df['high'], low=df['low'], n=mi['nForMI'], n2=mi['n2ForMI'])
             df['mi'] = indicator_MassIndex
 
-        # if CCIchecked:
-        #     indicator_cci = cci(high=df['high'],low=df['low'],close=['close'],n=nForCCI,c=cForCCI)
-        #     df['cci'] = indicator_cci
-
-        if DPOchecked:
-            indicator_dpo = dpo(close=df['close'],n=nForDPO)
+        if dpoDict['displayDPO']:
+            indicator_dpo = dpo(close=df['close'], n=dpoDict['nForDPO'])
             df['dpo'] = indicator_dpo
 
-    # if IchimokuChecked:
-    #     indicator_ichimoku = ichimoku_conversion_line(high=df['high'],low=df['low'],n1=n1ForIchimoku,n2=n2ForIchimoku,visual=visualForIchimoku)
-    #     df['ichimoku'] = indicator_ichimoku
-
-    # if AIupChecked:
-    #     indicator_AIup = aroon_up(close=df['close'],n=nForAIup)
-    #     df['AIup'] = indicator_AIup
-
-    # if AIdownChecked:
-    #     indicator_AIdown = aroon_down(close=df['close'],n=nForAIdown)    
-    #     df['AIdown'] = indicator_AIdown
-
-    
-    # # Average True Range
-    # ATRchecked = JSON_sent[17]['displayATR']
-    # nForATR = JSON_sent[17]['nForATR']
-
-    # if ATRchecked:
-    #     indicator_ATR = average_true_range(high=df['high'],low=df['low'],close=df['close'],n=nForATR)
-    #     df['atr'] = indicator_ATR
-
-    # # Bollinger Band SMA
-    # BBSMAchecked = JSON_sent[18]['displayBBSMA']
-    # nForBBSMA = JSON_sent[18]['nForBBSMA']
-    # nDev = JSON_sent[18]['ndevBBSMA']
-
-
-
-    # # Bollinger Band Upper
-    # BBUpperChecked = JSON_sent[19]['displayBBUpper']
-    # nForBBUpper = JSON_sent[19]['nForBBUpper']
-    # ndevBBUpper = JSON_sent[19]['ndevBBUpper']
-
-    # if BBUpperChecked:
-    #     indicator_BBUpper = bollinger_hband(close=df['close'],n=nForBBUpper,ndev=ndevBBUpper)
-    #     df['BBupper'] = indicator_BBUpper
-
-    # # Bollinger Band Lower
-    # BBLowerChecked = JSON_sent[20]['displayBBLower']
-    # nForBBLower = JSON_sent[20]['nForBBLower']
-    # ndevBBLower = JSON_sent[20]['ndevBBLower']
-
-    # if BBLowerChecked:
-    #     indicator_BBLower = bollinger_lband(close=df['close'],n=nForBBLower,ndev=ndevBBLower)
-    #     df['BBlower'] = indicator_BBLower 
-
-    # # Bollinger Channal Band Width
-    # BBCBWchecked = JSON_sent[21]['displayBBCBW']
-    # nForBBCBW = JSON_sent[21]['nForBBCBW']
-    # ndevBBCBW = JSON_sent[21]['ndevBBCBW']
-
-    # if BBCBWchecked:
-    #     indicator_BBCBW = bollinger_wband(close=df['close'],n=nForBBCBW,ndev=ndevBBCBW)
-    #     df['BBCBW'] = indicator_BBCBW 
-
-    # # Bollinger Channal Percentage Band
-    # BBCPBchecked = JSON_sent[22]['displayBBCPB']
-    # nForBBCPB = JSON_sent[22]['nForBBCPB']
-    # ndevBBCPB = JSON_sent[22]['ndevBBCPB']
-
-    # if BBCPBchecked:
-    #     indicator_BBCPB = bollinger_pband(close=df['close'],n=nForBBCPB,ndev=ndevBBCPB)
-    #     df['BBCPB'] = indicator_BBCPB 
-
-    # # Bollinger High Band Indicator
-    # BBHBIchecked = JSON_sent[23]['displayBBHBI']
-    # nForBBHBI = JSON_sent[23]['nForBBHBI']
-    # ndevBBHBI = JSON_sent[23]['ndevBBHBI']
-
-    # if BBHBIchecked:
-    #     indicator_BBHBI = bollinger_hband_indicator(close=df['close'],n=nForBBHBI,ndev=ndevBBHBI)
-    #     df['BBHBI'] = indicator_BBHBI 
-
-    # # Bollinger Low Band Indicator
-    # BBLBIchecked = JSON_sent[24]['displayBBLBI']
-    # nForBBLBI = JSON_sent[24]['nForBBLBI']
-    # ndevBBLBI = JSON_sent[24]['ndevBBLBI']
-
-    # if BBLBIchecked:
-    #     indicator_BBLBI = bollinger_lband_indicator(close=df['close'],n=nForBBLBI,ndev=ndevBBLBI)
-    #     df['BBLBI'] = indicator_BBLBI 
-
-    # # Keltner Channel Central
-    # KeltnerCchecked = JSON_sent[25]['displayKeltnerC']
-    # nForKeltnerC = JSON_sent[25]['nForKeltnerC']
-
-    # if KeltnerCchecked:
-    #     indicator_keltnerC = keltner_channel_mband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerC)
-    #     df['keltnerC'] = indicator_keltnerC
-
-    # # Keltner Channel High
-    # KeltnerHchecked = JSON_sent[26]['displayKeltnerH']
-    # nForKeltnerH = JSON_sent[26]['nForKeltnerH']
-
-    # if KeltnerHchecked:
-    #     indicator_keltnerH = keltner_channel_hband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerH)
-    #     df['keltnerH'] = indicator_keltnerH
-
-    # # Keltner Channel Low
-    # KeltnerLchecked = JSON_sent[27]['displayKeltnerL']
-    # nForKeltnerL = JSON_sent[27]['nForKeltnerL']
-
-    # if KeltnerLchecked:
-    #     indicator_keltnerL = keltner_channel_lband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerL)
-    #     df['keltnerL'] = indicator_keltnerL
-
-    # # Keltner Channel Band Width
-    # KeltnerBWchecked = JSON_sent[28]['displayKeltnerBW']
-    # nForKeltnerBW = JSON_sent[28]['nForKeltnerBW']
-
-    # if KeltnerBWchecked:
-    #     indicator_keltnerBW = keltner_channel_wband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerBW)
-    #     df['keltnerBW'] = indicator_keltnerBW
-
-    # # Keltner Channel Percentage Band
-    # KeltnerPBchecked = JSON_sent[29]['displayKeltnerPB']
-    # nForKeltnerPB = JSON_sent[29]['nForKeltnerPB']
-
-    # if KeltnerPBchecked:
-    #     indicator_keltnerPB = keltner_channel_pband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerPB)
-    #     df['keltnerPB'] = indicator_keltnerPB
-
-    # # Keltner Channel High Band
-    # KeltnerHBchecked = JSON_sent[30]['displayKeltnerHB']
-    # nForKeltnerHB = JSON_sent[30]['nForKeltnerHB']
-
-    # if KeltnerHBchecked:
-    #     indicator_keltnerHB = keltner_channel_hband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerHB)
-    #     df['keltnerHB'] = indicator_keltnerHB
-
-    # # Keltner Channel Low Band
-    # KeltnerLBchecked = JSON_sent[31]['displayKeltnerLB']
-    # nForKeltnerLB = JSON_sent[31]['nForKeltnerLB']
-
-    # if KeltnerLBchecked:
-    #     indicator_keltnerLB = keltner_channel_lband(high=df['high'],low=df['low'],close=df['close'],n=nForKeltnerLB)
-    #     df['keltnerLB'] = indicator_keltnerLB
-
-    # # Donchian Channel High Band
-    # DonchianHBchecked = JSON_sent[32]['displayDonchianHB']
-    # nForDonchianHB = JSON_sent[32]['nForDonchianHB']
-
-    # if DonchianHBchecked:
-    #     indicator_donchianHB = donchian_channel_hband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianHB)
-    #     df['donchianHB'] = indicator_donchianHB
-
-    # # Donchian Channel Low Band
-    # DonchianLBchecked = JSON_sent[33]['displayDonchianLB']
-    # nForDonchianLB = JSON_sent[33]['nForDonchianLB']
-
-    # if DonchianLBchecked:
-    #     indicator_donchianLB = donchian_channel_lband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianLB)
-    #     df['donchianLB'] = indicator_donchianLB
-
-    # # Donchian Channel Mid Band
-    # DonchianMBchecked = JSON_sent[34]['displayDonchianMB']
-    # nForDonchianMB = JSON_sent[34]['nForDonchianMB']
-
-    # if DonchianMBchecked:
-    #     indicator_donchianMB = donchian_channel_mband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianMB)
-    #     df['donchianMB'] = indicator_donchianMB
-
-    # # Donchian Channel Band Width
-    # DonchianBWchecked = JSON_sent[35]['displayDonchianBW']
-    # nForDonchianBW = JSON_sent[35]['nForDonchianBW']
-
-    # if DonchianBWchecked:
-    #     indicator_donchianBW = donchian_channel_wband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianBW)
-    #     df['donchianBW'] = indicator_donchianBW
-
-    # # Donchian Channel Percentage Band
-    # DonchianPBchecked = JSON_sent[36]['displayDonchianPB']
-    # nForDonchianPB = JSON_sent[36]['nForDonchianPB']
-
-    # if DonchianPBchecked:
-    #     indicator_donchianPB = donchian_channel_pband(high=df['high'],low=df['low'],close=df['close'],n=nForDonchianPB)
-    #     df['donchianPB'] = indicator_donchianPB
-
         df.fillna(0, inplace=True)
-        #export_df = df.drop(columns=['open', 'high', 'low', 'close', 'volume'])
-        #print('The printed df in Trend', df)
+
         return (json.dumps(df.to_dict('records')))
     else:
         df = pd.DataFrame([])
         return (json.dumps(df.to_dict('records')))
 
-# recieve JSON data from the frontend and if an indicator is checked, then calculate this indicator 
+# recieve JSON data from the frontend and if an indicator is checked, then calculate this indicator
 # and create a resulting JSON to then graph
-@algo.route("/calculate_Momentum_Indicators/", methods=['GET','POST'])
+
+
+@algo.route("/calculate_Momentum_Indicators/", methods=['GET', 'POST'])
 def calculate_Momentum_Indicators():
-    
-    JSON_sent = request.get_json() 
+
+    JSON_sent = request.get_json()
     df = pd.DataFrame(JSON_sent[0])
+
+    _, RSI, TSI, UO, STOCH, STOCH_SIGNAL, WR, AO, KAMA, ROC = JSON_sent
     
-    # RSI
-    nForRSI = JSON_sent[1]['N']
-    
-    # TSI
-    TSIchecked = JSON_sent[2]['displayTSI']
-    TSIr = int(JSON_sent[2]['rTSI'])
-    TSIs = int(JSON_sent[2]['sTSI'])
-
-    # # Ultimate Ossilator
-    UOchecked = JSON_sent[3]['displayUO']
-    sForUO = int(JSON_sent[3]['sForUO'])
-    mForUO = int(JSON_sent[3]['mForUO'])
-    lenForUO = int(JSON_sent[3]['lenForUO'])
-    wsForUO = float(JSON_sent[3]['wsForUO'])
-    wmForUO = float(JSON_sent[3]['wmForUO'])
-    wlForUO = float(JSON_sent[3]['wlForUO'])
-
-    # # Stochastic Oscillator
-    StochChecked = JSON_sent[4]['displaySTOCH']
-    nForStoch = int(JSON_sent[4]['nForSTOCH'])
-    dnForStoch = int(JSON_sent[4]['dnForSTOCH'])
-
-    # # Stochastic Signal
-    StochSignalChecked = JSON_sent[5]['displayStochSignal']
-    nForStochSignal = int(JSON_sent[5]['nForStochSignal'])
-    dnForStochSignal = int(JSON_sent[5]['dnForStochSignal'])
-
-    # # Williams %R
-    wrChecked = JSON_sent[6]['displayWR']
-    lbpForWR = int(JSON_sent[6]['lbpForWR'])
-
-    # # Awesome Oscillator
-    aoChecked = JSON_sent[7]['displayAO']
-    sForAO = JSON_sent[7]['sForAO']
-    lenForAO = JSON_sent[7]['lenForAO']
-
-    # # Kaufman's Adaptive Moving Average (KAMA)
-    kamaChecked = JSON_sent[8]['displayKama']
-    nForKama = JSON_sent[8]['nForKama']
-    pow1ForKama = JSON_sent[8]['pow1ForKama']
-    pow2ForKama = JSON_sent[8]['pow2ForKama']
-
-    # # Rate of Change (ROC)
-    ROCChecked = JSON_sent[9]['displayROC']
-    nForROC = JSON_sent[9]['nForROC']
-
-    indicator_RSI = RSIIndicator(close=df["close"], n=nForRSI)
+    indicator_RSI = RSIIndicator(close=df["close"], n=RSI['N'])
     df['rsi'] = indicator_RSI.rsi()
-    
-    if TSIchecked:
-        indicator_TSI = TSIIndicator(close=df["close"], r=TSIr, s=TSIs)
+
+    if TSI['displayTSI']:
+        indicator_TSI = TSIIndicator(close=df["close"], r=TSI['rTSI'], s=TSI['sTSI'])
         df['tsi'] = indicator_TSI.tsi()
-    
-    if UOchecked:
-        indicator_UO = uo(high=df['high'],low=df['low'],close=df['close'],s=sForUO,m=mForUO,len=lenForUO,ws=wsForUO,wm=wmForUO,wl=wlForUO)
+
+    if UO['displayUO']:
+        indicator_UO = uo(high=df['high'], low=df['low'], close=df['close'],
+                          s=UO['sForUO'], m=UO['mForUO'], len=UO['lenForUO'], ws=UO['wsForUO'], wm=UO['wmForUO'], wl=UO['wlForUO'])
         df['uo'] = indicator_UO
-    
-    if StochChecked:
-        indicator_Stoch = stoch(high=df['high'],low=df['low'],close=df['close'],n=nForStoch,d_n=dnForStoch)
+
+    if STOCH['displaySTOCH']:
+        indicator_Stoch = stoch(
+            high=df['high'], low=df['low'], close=df['close'], n=STOCH['nForSTOCH'], d_n=STOCH['dnForSTOCH'])
         df['stoch'] = indicator_Stoch
-    
-    if StochSignalChecked:
-        indicator_StochSignal = stoch_signal(high=df['high'],low=df['low'],close=df['close'],n=nForStochSignal,d_n=dnForStochSignal)
+
+
+    if STOCH_SIGNAL['displayStochSignal']:
+        indicator_StochSignal = stoch_signal(
+            high=df['high'], low=df['low'], close=df['close'], n=STOCH_SIGNAL['nForStochSignal'], d_n=STOCH_SIGNAL['dnForStochSignal'])
         df['stoch_signal'] = indicator_StochSignal
 
-    if wrChecked:
-        indicator_wr = wr(high=df['high'],low=df['low'],close=df['close'],lbp=lbpForWR)
+    if WR['displayWR']:
+        indicator_wr = wr(high=df['high'], low=df['low'],
+                          close=df['close'], lbp=WR['lbpForWR'])
         df['wr'] = indicator_wr
-    
-    if aoChecked:
-        indicator_ao = ao(high=df['high'],low=df['low'],s=sForAO,len=lenForAO)
+
+    if AO['displayAO']:
+        indicator_ao = ao(
+            high=df['high'], low=df['low'], s=AO['sForAO'], len=AO['lenForAO'])
         df['ao'] = indicator_ao
 
-    if kamaChecked:
-        indicator_kama = kama(close=df['close'],n=nForKama,pow1=pow1ForKama,pow2=pow2ForKama)
+    if KAMA['displayKama']:
+        indicator_kama = kama(
+            close=df['close'], n=KAMA['nForKama'], pow1=KAMA['pow1ForKama'], pow2=KAMA['pow2ForKama'])
         df['kama'] = indicator_kama
 
-    if ROCChecked:
-        indicator_roc = roc(close=df['close'],n=nForROC)
+    if ROC['displayROC']:
+        indicator_roc = roc(close=df['close'], n=ROC['nForROC'])
         df['roc'] = indicator_roc
-    
+
     df.fillna(0, inplace=True)
     export_df = df.drop(columns=['open', 'high', 'low', 'close', 'volume'])
     return (json.dumps(export_df.to_dict('records')))
-
-
-

@@ -4,35 +4,40 @@ from flask_login import current_user, login_required
 from algoPlatform1_project import db, app
 from algoPlatform1_project.models import Post, User
 from algoPlatform1_project.posts.forms import PostForm
-import jwt, os, json
+import os
+import json
 import datetime
 from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy import desc
 
 app.config['SECRET_KEY'] = os.environ.get('AlgoPlatformSecretKey')
-posts = Blueprint('posts',__name__)
-
+posts = Blueprint('posts', __name__)
 
 
 @posts.route("/fourm")
 def fourm():
     page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
-    
+    posts = Post.query.order_by(
+        Post.date_posted.desc()).paginate(page=page, per_page=10)
+
     # def print_result(n):
     #     return print(str(n['content']))
 
     # result = map(print_result,posts)
     return render_template('fourm.html', posts=posts, active='fourm')
 
-@posts.route("/posts/<page>",methods=['GET'])
-def return_posts(page):   
+
+@posts.route("/posts/<page>", methods=['GET'])
+def return_posts(page):
     rows = Post.query.count()
-    posts = Post.query.filter(Post.id > (rows-(10*int(page))), Post.id < (rows-(10*int(page))+11)).order_by(desc(Post.date_posted))
+    posts = Post.query.filter(Post.id > (rows-(10*int(page))), Post.id <
+                              (rows-(10*int(page))+11)).order_by(desc(Post.date_posted))
     export = []
     for p in posts:
-        export.append({'user':str(User.query.get(p.user_id).username),'date':str(p.date_posted.month)+'/'+str(p.date_posted.day)+'/'+str(p.date_posted.year)[-2:],'content':p.content,'id':p.id,'chartData':p.chartData,'replies':p.replies})
+        export.append({'user': str(User.query.get(p.user_id).username), 'date': str(p.date_posted.month)+'/'+str(p.date_posted.day) +
+                       '/'+str(p.date_posted.year)[-2:], 'content': p.content, 'id': p.id, 'chartData': p.chartData, 'replies': p.replies})
     return json.dumps(export)
+
 
 @posts.route("/post/reply/", methods=['GET', 'POST'])
 @login_required
@@ -45,27 +50,29 @@ def new_reply():
         year = currentDate.year
         year = year - 2000
         if currentReplies is None:
-            postToReply.replies = [{'reply':req_data['reply'],'userWhoReplied':current_user.username,'dateReplied':str(currentDate.month)+'/'+str(currentDate.day)+'/'+str(year)}]
+            postToReply.replies = [{'reply': req_data['reply'], 'userWhoReplied':current_user.username, 'dateReplied':str(
+                currentDate.month)+'/'+str(currentDate.day)+'/'+str(year)}]
             db.session.add(postToReply)
             db.session.commit()
         else:
             addNewReply = postToReply.replies
-            addNewReply.insert(0,{'reply':req_data['reply'],'userWhoReplied':current_user.username,'dateReplied':str(currentDate.month)+'/'+str(currentDate.day)+'/'+str(year)})
+            addNewReply.insert(0, {'reply': req_data['reply'], 'userWhoReplied': current_user.username, 'dateReplied': str(
+                currentDate.month)+'/'+str(currentDate.day)+'/'+str(year)})
             postToReply.replies = addNewReply
             flag_modified(postToReply, 'replies')
-            #db.session.add(postToReply)
-            #db.session.flush()
+            # db.session.add(postToReply)
+            # db.session.flush()
             db.session.commit()
-        response = {'type':'success'}
+        response = {'type': 'success'}
         return response
-    response = {'type':'failure'}
+    response = {'type': 'failure'}
     return response
 
 
 #postToReply.replies = json.dumps(json.loads(postToReply.replies).append({'reply':req_data['reply']}))
-#db.session.add(postToReply)
-#db.session.commit()
-#print(postToReply.replies.append({'test':'test'}))
+# db.session.add(postToReply)
+# db.session.commit()
+# print(postToReply.replies.append({'test':'test'}))
 @posts.route("/post/new/", methods=['GET', 'POST'])
 @login_required
 def new_post():
@@ -74,15 +81,14 @@ def new_post():
         #title = req_data['title']
         content = req_data['content']
         chartData = req_data['chartData']
-        post = Post(content=content,author=current_user,chartData=json.loads(chartData))
+        post = Post(content=content, author=current_user,
+                    chartData=json.loads(chartData))
         db.session.add(post)
         db.session.commit()
-        response = {'type' : 'success'}
+        response = {'type': 'success'}
         return response
-    response = {'type' : 'failure'}
+    response = {'type': 'failure'}
     return response
-
-
 
 
 @posts.route("/post/<int:post_id>")

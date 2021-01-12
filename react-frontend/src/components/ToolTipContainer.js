@@ -9,16 +9,38 @@ import 'react-datepicker/dist/react-datepicker.css'
 
 function ToolTipContainer (props) {
 
-   const objectListTrend = [{'display':props.displaySMA,'data':'sma'},{'display':props.displayEMA,'data':'ema'},{'display':props.displayADX,'data':'adx'},{'display':props.displayADXN,'data':'adxn'},
-  {'display':props.displayADXP,'data':'adxp'},{'display':props.displayDPO,'data':'dpo'},{'display':props.displayMI,'data':'mi'},{'display':props.displayTRIX,'data':'trix'},
-  {'display':props.displayVINEG,'data':'vineg'},{'display':props.displayVIPOS,'data':'vipos'},{'display':props.displayMACDsignal,'data':'macds'},{'display':props.displayMACD,'data':'macd'}]
-  
-  const objectListMomentum = [{'display':props.displayAO,'data':'ao'},{'display':props.displayKama,'data':'kama'},{'display':props.displayROC,'data':'roc'},
-  {'display':props.displayRSI,'data':'rsi'},{'display':props.displaySTOCH,'data':'stoch'},{'display':props.displayStochSignal,'data':'stoch_signal'},
-  {'display':props.displayTSI,'data':'tsi'},{'display':props.displayUO,'data':'uo'},{'display':props.displayWR,'data':'wr'}]
+  function makeObjectList(objectDisplay,objectData) {
+    var out = []
+    for (var i = 0; i < objectDisplay.length; i++) {
+      out.push({'display':objectDisplay[i],'data':objectData[i]})
+    }
+    return out
+  }
 
-  const objectListVolatility = [{'display':props.displayATR,'data':'atr'},{'display':props.displayBBLower,'data':'BBlower'},{'display':props.displayBBSMA,'data':'bbsma'},
-  {'display':props.displayBBUpper,'data':'BBupper'},{'display':props.displayKeltnerC,'data':'keltnerC'}]
+  const objectDisplayTrend = [props.displaySMA,props.displayEMA,props.displayADX,
+    props.displayADXN,props.displayADXP,props.displayDPO,props.displayMI,
+    props.displayTRIX,props.displayVINEG,props.displayVIPOS,props.displayMACDsignal,
+    props.displayMACD]
+  const objectDataTrend = ['sma','ema','adx','adxn','adxp','dpo','mi','trix','vineg','vipos','macds','macd']
+
+  const objectListTrend = makeObjectList(objectDisplayTrend,objectDataTrend)
+
+  const objectDisplayMomentum = [props.displayAO,props.displayKama,props.displayROC,
+    props.displayRSI,props.displaySTOCH,props.displayStochSignal,props.displayTSI,
+    props.displayUO,props.displayWR]
+
+  const objectDataMomentum = ['ao','kama','roc','rsi','stoch','stoch_signal','tsi','uo','wr']
+
+  const objectListMomentum = makeObjectList(objectDisplayMomentum,objectDataMomentum)
+
+  const objectDisplayVolatility = [props.displayATR,props.displayBBLower,props.displayBBSMA,
+    props.displayBBUpper,props.displayKeltnerC]
+
+  const objectDataVolatility = ['atr','BBlower','bbsma','BBupper','keltnerC']
+
+  const objectListVolatility = makeObjectList(objectDisplayVolatility,objectDataVolatility)
+  // const objectListVolatility = [{'display':props.displayATR,'data':'atr'},{'display':props.displayBBLower,'data':'BBlower'},{'display':props.displayBBSMA,'data':'bbsma'},
+  // {'display':props.displayBBUpper,'data':'BBupper'},{'display':props.displayKeltnerC,'data':'keltnerC'}]
 
   function makeDisplayList(objectsTrend,objectsMom,objectsVol) {
     var arrayOuter = []
@@ -92,11 +114,12 @@ function ToolTipContainer (props) {
 
   return  (
     <div class="fullWidth">
-      {props.onMouseOverTicker ? <Grid inverted columns='equal'>
+      <Grid inverted columns='equal'>
+        {typeof(objects) != 'undefined' ? props.onMouseOverTicker ? 
         
-        {typeof(objects) != 'undefined' ? objects.map(el => (
-          <Grid.Row inverted>
-            {el.map( elInner => (
+          objects.map(el => (
+            <Grid.Row inverted>
+              {el.map( elInner => (
               <Grid.Column inverted>
                 <Header inverted as="h5"><Header.Content></Header.Content>
                   <Header.Subheader>
@@ -106,11 +129,27 @@ function ToolTipContainer (props) {
               </Grid.Column>
               )
             )}
-          </Grid.Row>
-        )) : ''}
-        </Grid> : ''}
-      
-      
+            </Grid.Row>
+          ))
+        
+        : 
+          objects.map(el => (
+            <Grid.Row inverted>
+              {el.map( elInner => (
+              <Grid.Column inverted>
+                <Header inverted as="h5"><Header.Content></Header.Content>
+                  <Header.Subheader>
+                  {typeof(elInner['data']) !='undefined' ? typeof(elInner['data']) == 'string' ? String(elInner['name'])+": " : String(elInner['name'])+": " : ''}
+                  </Header.Subheader>
+                </Header>
+              </Grid.Column>
+              )
+            )}
+            </Grid.Row>
+          ))
+        : '' }
+      </Grid>
+
         
     </div>
   )
