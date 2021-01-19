@@ -293,7 +293,7 @@ def calculate_Trend_Indicators():
     if len(JSON_sent[0]) > 0:
         df = pd.DataFrame(JSON_sent[0])
 
-        _, sma, ema, macd, macdSignal, adxDict, adxPos, adxNeg, VIpos, VIneg, trixDict, mi, dpoDict = JSON_sent
+        _, sma, ema, macdDict, macdSignal, adxDict, adxPos, adxNeg, VIpos, VIneg, trixDict, mi, dpoDict = JSON_sent
 
         if sma['displaySMA']:
             indicator_sma = sma_indicator(close=df['close'], n=sma['nForSMA'])
@@ -303,9 +303,9 @@ def calculate_Trend_Indicators():
             indicator_ema = ema_indicator(close=df['close'], n=ema['nForEMA'])
             df['ema'] = indicator_ema
 
-        if macd['displayMACD']:
+        if macdDict['displayMACD']:
             indicator_macd = macd(
-                close=df['close'], n_slow=macd['nSlowForMACD'], n_fast=macd['nFastForMACD'])
+                close=df['close'], n_slow=macdDict['nSlowForMACD'], n_fast=macdDict['nFastForMACD'])
             df['macd'] = indicator_macd
 
         if macdSignal['displayMACDsignal']:
