@@ -1,3 +1,6 @@
 node_modules
 .vscode
 __pycache__
+react-frontend/node_modules
+.elasticbeanstalk
+.eslintrc.json
