@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { fetchPosts, createNewReply, addActiveNav, addFetchPostSuccess, addFormDataDisplay, addShowComments, addFetchPostLoading, 
   addFetchPostFailure, addPageNumber, addDisableNext } from '../redux'
 import {Link} from 'react-router-dom'
+import { createLoadingSpinnerChart } from './charts/loadingSpinner.js'
 import '../App.css'
 import { Grid, Header, Message, Form, Button, Icon, Divider} from "semantic-ui-react"
 import * as d3 from "d3"
@@ -26,28 +27,69 @@ function ForumComponent (props) {
   const [showWarning, setShowWarning] = useState({'activeID':-1,'warning':false})
   const stockChartNode = [useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null)];
   const volumeNode = [useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null)];
+  const loadingSpinnerNode = useRef(null);
+  const height = 220;
+  const width = 700;
+  const margin = ({top: 15, right: 30, bottom: 20, left: 50})
+  const loadingSpinnerNodeVolume = useRef(null);
+  const heightVolume = 103;
+  const widthVolume = 700;
+  const marginVolume = ({top: 10, right: 30, bottom: 38, left: 50})
+  const [grpahStatus, setGraphStatus] = useState(0)
   
+
   useEffect(() => {
     props.addActiveNav('forum')
+    //props.addFetchPostLoading(true)
+    createLoadingSpinnerChart(loadingSpinnerNode,width,height,margin)
+    createLoadingSpinnerChart(loadingSpinnerNodeVolume,widthVolume,heightVolume,marginVolume)
     if (!props.replyLoading) {
-    props.addFetchPostLoading(true)
+    
     axios({
       method: 'get',
       url: "/posts/"+props.pageNumber,
     }).then(res => {
         const response = res.data;
         props.addFormDataDisplay(response)
-        response.map( (el, index) => (
-        createStockPriceLineChart(stockChartNode[index],el.chartData),
-        createVolumeBarChart(volumeNode[index],el.chartData)
-        ))
-        props.addFetchPostLoading(false)
+        setGraphStatus(1)
+        // response.map( (el, index) => (
+        // createStockPriceLineChart(stockChartNode[index],el.chartData),
+        // createVolumeBarChart(volumeNode[index],el.chartData,response.length,index)
+        // ))
+        
     })
+    
     
   }
   
-    
+  
   },[props.pageNumber,props.replySuccess,props.replyLoading])
+
+  const createChartsPromise = (index, data) => {
+    createStockPriceLineChart(stockChartNode[index],data)
+    createVolumeBarChart(volumeNode[index],data)
+    return Promise.resolve('ok')
+  }
+
+  const asyncCreateCharts = async (index, data) => {
+    return createChartsPromise(index,data)
+  }
+
+  if (grpahStatus != 2 && props.formDataDisplay.length > 0 && props.formDataDisplay != 'undefined') {
+    const createCharts = async () => {
+      return Promise.all(props.formDataDisplay.map( (el,index) => (
+        asyncCreateCharts(index, el.chartData)
+      )))
+    }
+
+    createChartsPromise().then(data => {
+      setGraphStatus(2)
+    })
+    // props.formDataDisplay.map( (el, index) => (
+    //   el.chartData  
+    // ))
+
+  }
 
   if (props.formDataDisplay.length < 10) {
     props.addDisableNext(true)
@@ -644,23 +686,9 @@ function ForumComponent (props) {
         .attr("fill", 'green')
         .style("opacity",'0')
         .attr('transform',d=>(`translate(${x.bandwidth()},${height - margin.top}) rotate(180)`))
-        // .on('mouseover',function(event,d){
-        //   d3.select(this).style('opacity','0.5')
-        //   var endingDateSplit = d.date.split('-')
-        //   var dateFromSplit = new Date(parseInt(endingDateSplit[0]),parseInt(endingDateSplit[1]),parseInt(endingDateSplit[2]))
-        //   props.addEndDateForPercentChange(dateFromSplit)
-        //   props.addStockPriceForPercentChange(d.close)
-        //   props.addOnMouseOverTicker(true)
-        //   props.addDateMouseOverTicker(d.date)
-        //   const e = invisibleRectForTooltip.nodes();
-        //   const i = e.indexOf(this);
-        //   props.addIndexMouseOver(i)
-        // })
-        // .on('mouseout',function(e,d){
-        //   d3.select(this).style('opacity','0')
-        //   props.addOnMouseOverTicker(false)
-        // })
+        
 
+        
     return svg.node();
   }
   
@@ -721,7 +749,8 @@ function ForumComponent (props) {
         <Divider hidden/>
         <Divider hidden />
         <Divider hidden />
-      {typeof(props.formDataDisplay) != 'undefined' ? props.formDataDisplay.length > 0 ? !props.fetchPostLoading ? props.formDataDisplay.map( (el, index) => (
+      { grpahStatus==0 ? console.log(0) : grpahStatus==1 ? console.log(1) : grpahStatus==2 ? console.log(2) : ''}
+      {/* {typeof(props.formDataDisplay) != 'undefined' ? props.formDataDisplay.length > 0 ? !props.fetchPostLoading && grpahStatus==2 ? props.formDataDisplay.map( (el, index) => (
       
       <Grid.Row color={'#242525'}>
         <Grid borderless inverted>
@@ -769,7 +798,12 @@ function ForumComponent (props) {
       </Grid.Row>
      
       
-    )) : '' : '' : '' }
+    )) :  '' : '' : ''} */}
+    {/* {props.fetchPostLoading ?
+    <React.Fragment>
+      <svg ref={loadingSpinnerNode}></svg>
+    </React.Fragment>
+    : '' } */}
     <Grid.Row>
           {props.fetchPostLoading ? <Button loading color='green' floated='left' content='Previous' />: props.pageNumber == 1 ? <Button disabled color='green' floated='left' content='Previous' /> : <Button color='green' floated='left' content='Previous' onClick={handlePreviousChange} />}
           {props.fetchPostLoading ? <Button loading color='green' floated='right' content='Next' />: props.disableNext ? <Button disabled color='green' floated='right' content='Next'/> : <Button color='green' floated='right' content='Next' onClick={handleNextChange}/>}
@@ -841,6 +875,11 @@ function ForumComponent (props) {
         
           
         )) : '' : '' : '' }
+        {props.fetchPostLoading ?
+        <React.Fragment>
+          <svg ref={loadingSpinnerNode}></svg>
+        </React.Fragment>
+        :''}
         <Grid.Row>
           {props.fetchPostLoading ? <Button loading color='green' floated='left' content='Previous' />: props.pageNumber == 1 ? <Button disabled color='green' floated='left' content='Previous' /> : <Button color='green' floated='left' content='Previous' onClick={handlePreviousChange} />}
           {props.fetchPostLoading ? <Button loading color='green' floated='right' content='Next' />: props.disableNext ? <Button disabled color='green' floated='right' content='Next'/> : <Button color='green' floated='right' content='Next' onClick={handleNextChange}/>}

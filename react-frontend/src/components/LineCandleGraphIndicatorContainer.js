@@ -498,18 +498,18 @@ function LineCandleGraphIndicatorContainer (props) {
       }
 
 
-  var endDateVar = 'Jacob'
-  var endDateVar2 = ''
+  // var endDateVar = 'Jacob'
+  // var endDateVar2 = ''
 
-  function getIndex(data,date) {
-    data.forEach(function (el, i) {
+  // function getIndex(data,date) {
+  //   data.forEach(function (el, i) {
       
-      if (el['date']==date){
-        return i
-      }
-    })
-    return (data.length -1)
-  }
+  //     if (el['date']==date){
+  //       return i
+  //     }
+  //   })
+  //   return (data.length -1)
+  // }
 
   return  props.loading ? (
     <React.Fragment>

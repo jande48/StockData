@@ -125,6 +125,10 @@ switch (action.type) {
       ...state,
       fetchPostSuccess: action.payload
     }
+    case FETCH_POST_LOADING: return {
+      ...state,
+      fetchPostLoading: action.payload
+    }
     case PASSWORD_RESET_LOADING: return {
       ...state,
       passwordResetLoading: action.payload
