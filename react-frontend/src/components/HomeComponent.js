@@ -2,13 +2,14 @@ import React from 'react'
 import { Provider } from 'react-redux'
 import '../App.css'
 import store from '../redux/store'
-import { Grid, Header, Icon, Button, Divider} from "semantic-ui-react"
+import { Grid, Header, Icon, Button, Divider, Image} from "semantic-ui-react"
 import AliceCarousel from 'react-alice-carousel';
 import {Link} from 'react-router-dom'
 import "react-alice-carousel/lib/alice-carousel.css";
 import image1 from '../images/banner-bg1.jpg' 
 import image2 from '../images/banner-bg2.jpg' 
 import image3 from '../images/banner-bg3.jpg'
+import image4 from '../images/banner-bg4.jpg'
 import ContactContainer from './ContactContainer'
 
 function HomeComponent () {
@@ -19,11 +20,16 @@ function HomeComponent () {
       <Provider store={store}>
       { w > 700 ?
       <div>
-        <AliceCarousel autoPlay autoWidth autoHeight='true' infinite animationType="fadeout" disableDotsControls disableButtonsControls autoPlayInterval='5000'>
+        <div class="containerHeaderImage">
+          <img src={image4} alt="Spot trends before your next trade" class="imageHeaderImage"></img>
+          <div class="centeredHeaderImage">Spot trends before your next trade</div>
+        </div>
+        {/* <Image src={image4} alt='Spot trends before your next trade' fluid /> */}
+        {/* <AliceCarousel autoPlay autoWidth autoHeight='true' infinite animationType="fadeout" disableDotsControls disableButtonsControls autoPlayInterval='5000'>
             <img src={image1} className='sliderimg'/>
             <img src={image2} className='sliderimg'/>
             <img src={image3} className='sliderimg'/>
-        </AliceCarousel>
+        </AliceCarousel> */}
 
         
         
@@ -102,7 +108,10 @@ function HomeComponent () {
         </div>
       :
       <div>
-      <img src={image1} class="center-fit"/>
+      <div class="containerHeaderImage">
+          <img src={image4} alt="Spot trends before your next trade" class="imageHeaderImage"></img>
+          <div class="centeredHeaderImageMobile">Spot trends before your next trade</div>
+      </div>
       <Grid>
         <Grid.Row className='lightGrayBackground' centered textAlign='center' >
           <br/>

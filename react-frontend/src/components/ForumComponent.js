@@ -31,18 +31,11 @@ function ForumComponent (props) {
   const height = 220;
   const width = 700;
   const margin = ({top: 15, right: 30, bottom: 20, left: 50})
-  const loadingSpinnerNodeVolume = useRef(null);
-  const heightVolume = 103;
-  const widthVolume = 700;
-  const marginVolume = ({top: 10, right: 30, bottom: 38, left: 50})
-  const [grpahStatus, setGraphStatus] = useState(0)
-  
+
 
   useEffect(() => {
     props.addActiveNav('forum')
-    //props.addFetchPostLoading(true)
     createLoadingSpinnerChart(loadingSpinnerNode,width,height,margin)
-    createLoadingSpinnerChart(loadingSpinnerNodeVolume,widthVolume,heightVolume,marginVolume)
     if (!props.replyLoading) {
     
     axios({
@@ -51,51 +44,202 @@ function ForumComponent (props) {
     }).then(res => {
         const response = res.data;
         props.addFormDataDisplay(response)
-        setGraphStatus(1)
-        // response.map( (el, index) => (
-        // createStockPriceLineChart(stockChartNode[index],el.chartData),
-        // createVolumeBarChart(volumeNode[index],el.chartData,response.length,index)
-        // ))
-        
+        response.map( (el, index) => (
+        createStockPriceLineChart(stockChartNode[index],el.chartData),
+        createVolumeBarChart(volumeNode[index],el.chartData,response.length,index)
+        ))
     })
-    
-    
   }
   
   
   },[props.pageNumber,props.replySuccess,props.replyLoading])
-
-  const createChartsPromise = (index, data) => {
-    createStockPriceLineChart(stockChartNode[index],data)
-    createVolumeBarChart(volumeNode[index],data)
-    return Promise.resolve('ok')
-  }
-
-  const asyncCreateCharts = async (index, data) => {
-    return createChartsPromise(index,data)
-  }
-
-  if (grpahStatus != 2 && props.formDataDisplay.length > 0 && props.formDataDisplay != 'undefined') {
-    const createCharts = async () => {
-      return Promise.all(props.formDataDisplay.map( (el,index) => (
-        asyncCreateCharts(index, el.chartData)
-      )))
-    }
-
-    createChartsPromise().then(data => {
-      setGraphStatus(2)
-    })
-    // props.formDataDisplay.map( (el, index) => (
-    //   el.chartData  
-    // ))
-
-  }
 
   if (props.formDataDisplay.length < 10) {
     props.addDisableNext(true)
   } else {
     props.addDisableNext(false)
   }
+
+  // function createLoadingSpinnerChart(loadingSpinnerNode, width, height, margin) {
+  //   const data = [{'date':'2020-07-29'},{'date':'2020-07-30'},{'date':'2020-07-31'},{'date':'2020-08-02'},{'date':'2020-08-03'}]
+  //   const parseDate = d3.utcParse("%Y-%m-%d")
+  //   const svg = select(loadingSpinnerNode.current);
+  //     svg.selectAll("g").remove()
+  
+  //     const x = scaleBand()
+  //       .range([margin.left, width - margin.right])
+  //       .padding(0.2)
+
+  //     var y = scaleLinear()
+  //         //.domain(findMixMaxObjects(objectList,'axisLeft'))
+  //         //.domain([d3.min(data, d => d.low), d3.max(data, d => d.high)])
+  //         .rangeRound([height - margin.bottom, margin.top])
+  //             //d3.min(data, d => d.low), d3.max(data, d => d.high
+
+  //     const xAxis = g => g
+  //         .attr("transform", `translate(0,${height - margin.bottom})`)
+  //         .attr('class','axisWhite')
+  //         .call(d3.axisBottom(x)
+  //           .tickValues(d3.utcMonday
+  //             .every(data.length > 2 ? (data.length > 250 ? 8 : (data.length > 150 ? 4 : (data.length > 80 ? 2 : 1))) : 1)
+  //           .range(parseDate(data[0].date), parseDate(data[data.length - 1].date)))
+  //         .tickFormat(d3.utcFormat("")))
+
+  //     const yAxis = g => g
+  //         .attr("transform", `translate(${margin.left},0)`)
+  //         .attr('class','axisWhite')
+  //         .call(d3.axisLeft(y))
+  //         .call(g => g.selectAll(".tick line").remove())
+  //         .call(g => g.selectAll("text").remove())
+  //         //     .attr("stroke-opacity", 0)
+  //         //     .attr("x2", width - margin.left - margin.right))
+  //         //.call(g => g.select(".domain").remove())
+      
+  //     svg.attr("viewBox", [0, 0, width, height])
+
+  //     svg.append("g")
+  //         .call(xAxis);
+          
+  //     svg.append("g")
+  //         .call(yAxis)
+          
+  //     // svg.append('g')
+  //     //     .attr("stroke-linecap", "round")
+  //     //     .attr("stroke",  '#1b1c1d')
+  //     //     .selectAll("g")
+  //     //     .data(data)
+  //     //     .join("g")
+  //     // main circle
+  //     const CX = (width) / 2;
+  //     const CY = (height-margin.bottom-margin.top) / 2;
+  //     const R = 12;
+  //     // little circles
+  //     const r = 1.2;
+
+  //     // degree - radian conversion
+  //     function radian(degree) {
+  //       return degree * Math.PI / 180;
+  //     }
+  //     // parametric equation of a circle is : x=cx+r*cos(t) and y=cy+r*sin(t)
+  //     function xSpinner(radian) {
+  //       return CX + R * Math.cos(radian);
+  //     }
+  //     function ySpinner(radian) {
+  //       return CY + R * Math.sin(radian);
+  //     }
+
+  //     // root svg
+  //     // const svg = d3
+  //     //   .select("body")
+  //     //   .append("svg")
+  //     //   .attr("width", margin.width)
+  //     //   .attr("height", margin.height)
+  //     //   .style("background-color", "lightblue")
+  //     //   .append("g")
+  //     //   .attr("transform", "translate(" + margin.left + "," + margin.left + ")");
+
+  //     // g and rect are useless : just for showing element g
+  //     // const justForShowing_g = svg
+  //     //   .append("rect")
+  //     //   .style("fill", "lightgrey")
+  //     //   .attr("width", WIDTH)
+  //     //   .attr("height", HEIGHT);
+
+  //     // main circle : just for explanation purpose
+  //     // uncomment if needed
+  //     /*
+  //     const mainCircle = svg
+  //       .append("circle")
+  //       .attr("id", "main")
+  //       .attr("cx", CX)
+  //       .attr("cy", CY)
+  //       .attr("r", R)
+  //       .style("stroke", "red")
+  //       .style("fill", "none");
+  //     */
+
+  //     // little circles
+  //     // 10 equal sectors for 10 points on the main circle
+  //     const SECTORS = 10; // number of sectors
+  //     const SECTOR = 360 / SECTORS; // sector in degree: each equal
+  //     let anglesList = [];
+
+  //     for (let index = 0; index < SECTORS; index++) {
+  //       anglesList.push(radian(index * SECTOR));
+  //     }
+  //     const MAX = anglesList[SECTORS - 1];
+
+  //     // opacity
+  //     function getOpacity(datum) {
+  //       return Number((datum / MAX).toFixed(1));
+  //     }
+
+  //     // little circle radius
+  //     function getRadius(datum) {
+  //       return Number(r + r * (datum / MAX).toFixed(1));
+  //     }
+
+  //     function update(dataset) {
+  //       let littleCircle = svg.selectAll("#little").data(dataset);
+  //       // const g = svg.append("g")
+  //       //   .selectAll("g")
+  //       //   .data(dataset)
+  //       //   .join("g")
+
+  //       // UPDATE
+  //       // Update old elements as needed.
+
+  //       littleCircle
+  //         .attr("r", function(d) {
+  //           return getRadius(d);
+  //         })
+  //         .style("opacity", function(d) {
+  //           return getOpacity(d);
+  //         });
+
+  //       // ENTER
+  //       // Create new elements as needed.
+  //       littleCircle
+  //         .enter()
+  //         .append("circle")
+  //         .attr("id", "little")
+  //         .attr("fill", "green")
+  //         .attr("cx", function(d) {
+  //           return xSpinner(d);
+  //         })
+  //         .attr("cy", function(d) {
+  //           return ySpinner(d);
+  //         })
+  //         .attr("r", function(d) {
+  //           return getRadius(d);
+  //         })
+  //         .style("opacity", function(d) {
+  //           return getOpacity(d);
+  //         });
+
+  //         // EXIT
+  //       // Remove old elements as needed.
+  //       //littleCircle.exit().remove();
+      
+        
+  //     }
+
+  //     update(anglesList);
+
+  //     function arrayRotate(arr, count) {
+  //       count -= arr.length * Math.floor(count / arr.length);
+  //       arr.push.apply(arr, arr.splice(0, count));
+  //       return arr;
+  //     }
+
+  //     // cyclic circular permutation
+  //     d3.interval(function() {
+  //       anglesList = arrayRotate(anglesList.slice(), -1);
+  //       update(anglesList);
+  //     }, 350);
+
+  //   return svg.node();
+  // }
 
   function createStockPriceLineChart(stockPriceLineChartNode, d) {
 
@@ -734,7 +878,6 @@ function ForumComponent (props) {
   
   var w = window.innerWidth;
 
-
   return (
     <div>
       { w > 700 ? 
@@ -749,22 +892,32 @@ function ForumComponent (props) {
         <Divider hidden/>
         <Divider hidden />
         <Divider hidden />
-      { grpahStatus==0 ? console.log(0) : grpahStatus==1 ? console.log(1) : grpahStatus==2 ? console.log(2) : ''}
-      {/* {typeof(props.formDataDisplay) != 'undefined' ? props.formDataDisplay.length > 0 ? !props.fetchPostLoading && grpahStatus==2 ? props.formDataDisplay.map( (el, index) => (
+        {typeof(props.formDataDisplay) == 'undefined' || props.formDataDisplay.length < 1 || props.fetchPostLoading ?
+        <React.Fragment>
+          <svg ref={loadingSpinnerNode}></svg>
+        </React.Fragment>
+        : ''}
+        
+
+
+    {typeof(props.formDataDisplay) != 'undefined' ? props.formDataDisplay.length > 0 ? !props.fetchPostLoading ? props.formDataDisplay.map( (el, index) => (
       
-      <Grid.Row color={'#242525'}>
+      <Grid.Row>
         <Grid borderless inverted>
           <Divider hidden/>
           <Grid.Column><Header as='h3' inverted>{el.chartData.tickers}</Header></Grid.Column>
           <Grid.Column floated='right' width='5'><Header as='h4' floated='right' inverted><Header.Subheader>{el.user} - {el.date}</Header.Subheader></Header></Grid.Column>
         </Grid>
-        <Header as='h4' inverted>{el.content}</Header>
-          <React.Fragment>
-            <svg ref={stockChartNode[index]}></svg>
-         </React.Fragment>
-         {el.chartData['includeVolume'] ? <React.Fragment>
+        <Header as='h2' inverted><Header.Subheader>{el.content}</Header.Subheader></Header>
+        <React.Fragment>
+          <svg ref={stockChartNode[index]}></svg>
+        </React.Fragment>
+          
+         {el.chartData['includeVolume'] ? 
+         <React.Fragment>
             <svg ref={volumeNode[index]}></svg>
-         </React.Fragment>: ''}
+         </React.Fragment>
+         : ''}
          <Header inverted as='h5'>
           <Header.Subheader>{showComments[index] ? <Icon inverted name="angle down" value={index} onClick={handleShowCommentsChange}></Icon> : <Icon inverted value={index} name="angle up" onClick={handleShowCommentsChange}></Icon>}Comments: {!showReply ?  <Button inverted color='green' floated='right' content='Reply' onClick={handleShowReplyChange}/> : ''}</Header.Subheader> </Header>
         { showComments[index] ? (el.replies != null && el.replies != 'undefined') ? 
@@ -795,15 +948,29 @@ function ForumComponent (props) {
         <Divider hidden />
         <Divider hidden />
         <Divider hidden />
+        
       </Grid.Row>
+  
+   
+          
+       
+   
      
       
-    )) :  '' : '' : ''} */}
-    {/* {props.fetchPostLoading ?
+    )) :  
     <React.Fragment>
       <svg ref={loadingSpinnerNode}></svg>
     </React.Fragment>
-    : '' } */}
+    : 
+    <React.Fragment>
+      <svg ref={loadingSpinnerNode}></svg>
+    </React.Fragment>
+    : 
+    <React.Fragment>
+      <svg ref={loadingSpinnerNode}></svg>
+    </React.Fragment>
+    } 
+
     <Grid.Row>
           {props.fetchPostLoading ? <Button loading color='green' floated='left' content='Previous' />: props.pageNumber == 1 ? <Button disabled color='green' floated='left' content='Previous' /> : <Button color='green' floated='left' content='Previous' onClick={handlePreviousChange} />}
           {props.fetchPostLoading ? <Button loading color='green' floated='right' content='Next' />: props.disableNext ? <Button disabled color='green' floated='right' content='Next'/> : <Button color='green' floated='right' content='Next' onClick={handleNextChange}/>}
@@ -815,7 +982,7 @@ function ForumComponent (props) {
       : 
       <div class="fullWidth">
         <Grid columns='equal'>
-        <Grid.Column width={14}>
+        <Grid.Column>
         <Grid.Row>
           {props.fetchPostLoading ? <Button loading color='green' floated='left' content='Previous' />: props.pageNumber == 1 ? <Button disabled color='green' floated='left' content='Previous' /> : <Button color='green' floated='left' content='Previous' onClick={handlePreviousChange} />}
           {props.fetchPostLoading ? <Button loading color='green' floated='right' content='Next' />: props.disableNext ? <Button disabled color='green' floated='right' content='Next'/> : <Button color='green' floated='right' content='Next' onClick={handleNextChange}/>}
@@ -831,7 +998,7 @@ function ForumComponent (props) {
             <Grid.Column><Header as='h3' inverted>{el.chartData.tickers}</Header></Grid.Column>
             <Grid.Column floated='right' width='5'><Header as='h4' floated='right' inverted><Header.Subheader>{el.user} - {el.date}</Header.Subheader></Header></Grid.Column>
           </Grid>
-          <Header as='h1' inverted>{el.content}</Header>
+          <Header as='h5' inverted><Header.Subheader>{el.content}</Header.Subheader></Header>
             <React.Fragment>
               <svg ref={stockChartNode[index]}></svg>
           </React.Fragment>
@@ -843,7 +1010,7 @@ function ForumComponent (props) {
           { showComments[index] ? (el.replies != null && el.replies != 'undefined') ? 
           el.replies.map( (replyEl) => (
             <React.Fragment>
-            <Header as='h2' inverted>
+            <Header as='h5' inverted>
               
               <Header.Subheader>{replyEl.userWhoReplied} - {replyEl.dateReplied}</Header.Subheader>
               <Header.Content>{replyEl.reply}</Header.Content>
@@ -874,7 +1041,20 @@ function ForumComponent (props) {
         </Grid.Row>
         
           
-        )) : '' : '' : '' }
+        )) : 
+        <React.Fragment>
+          <svg ref={loadingSpinnerNode}></svg>
+        </React.Fragment>
+        : 
+        <React.Fragment>
+          <svg ref={loadingSpinnerNode}></svg>
+        </React.Fragment>
+        : 
+        <React.Fragment>
+          <svg ref={loadingSpinnerNode}></svg>
+        </React.Fragment>
+        }
+        
         {props.fetchPostLoading ?
         <React.Fragment>
           <svg ref={loadingSpinnerNode}></svg>
