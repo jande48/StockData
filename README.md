@@ -5,7 +5,7 @@ Stock trading is hard and StonkTA creates an easy way to visualize charts and pr
 The backend is written in Flask (located in StockData/algoPlatform1_project) using blueprints to connect routes and models. 
 The User and Post data are stored in an Postgresql database
 
-Stock data is pull from IEX cloud and Financial Modeling Preo API's.
+Stock data is pull from IEX cloud and Financial Modeling Prep API's.
 
 The Frontend is a single react app with react-router to directing towards various components. Semantic-UI-react was used to style
 most components with CSS updated where needed.
