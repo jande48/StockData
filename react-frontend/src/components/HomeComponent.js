@@ -9,7 +9,7 @@ import "react-alice-carousel/lib/alice-carousel.css";
 import image1 from '../images/banner-bg1.jpg' 
 import image2 from '../images/banner-bg2.jpg' 
 import image3 from '../images/banner-bg3.jpg'
-import image4 from '../images/banner-bg4.jpg'
+import image4 from '../images/banner-bg6.jpg'
 import ContactContainer from './ContactContainer'
 
 function HomeComponent () {

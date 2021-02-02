@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import {Header, Grid, Button} from 'semantic-ui-react'
 import { fetchFinancialsData } from '../redux'
