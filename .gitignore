@@ -1,4 +1,5 @@
 node_modules
+algoPlatformEnv
 .vscode
 __pycache__
 react-frontend/node_modules
