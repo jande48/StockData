@@ -12,19 +12,22 @@ function CompanyFinancialsContainer (props) {
     }, [props.tickers])
 
 
-    var description = ''
-    var ceo = ''
-    var mktCap = 0
-    var dividend = 0
-    var grossProfit = 0
-    var operatingRevenue = 0
-    var totalRevenue = 0
-    var totalAssets = 0
-    var totalLiabilities = 0
-    var totalCash = 0
-    var netIncome = 0
-    var cashFlow =0
-    var totalDebt = 0
+    let description, ceo
+    description=ceo= ''
+    let mktCap,dividend,grossProfit,operatingRevenue,totalRevenue,totalAssets,totalLiabilities,totalCash,netIncome,cashFlow,totalDebt 
+    mktCap=dividend=grossProfit=operatingRevenue= totalRevenue = totalAssets = totalLiabilities = 0
+    totalCash = netIncome = cashFlow = totalDebt = 0
+    // var mktCap = 0
+    // var dividend = 0
+    // var grossProfit = 0
+    // var operatingRevenue = 0
+    // var totalRevenue = 0
+    // var totalAssets = 0
+    // var totalLiabilities = 0
+    // var totalCash = 0
+    // var netIncome = 0
+    // var cashFlow =0
+    // var totalDebt = 0
 
     if (typeof(props.financialsData) != 'undefined' && typeof(props.financialsData[0]) != 'undefined' && typeof(props.financialsData[1]) != 'undefined' && typeof(props.financialsData[2]) != 'undefined') {
         if (props.financialsData.length > 1) {

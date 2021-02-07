@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import { Form, Message, Input, Grid, Checkbox} from 'semantic-ui-react'
+import { Form, Message, Input, Grid, Checkbox, Divider} from 'semantic-ui-react'
 import { fetchLogin, addActiveNav } from '../redux'
 import { Redirect, Link } from "react-router-dom";
 import '../App.css'
@@ -75,6 +75,8 @@ return (
       </Form.Field>
       <Link to="/resetPassword"><a href="#">Reset Password</a></Link>
       <Form.Button inverted color='green' floated='right' content='Login' />
+      <Divider hidden/>
+      <Divider hidden/>
       { props.loginFailed ? 
       <Message negative>
         <Message.Header>Incorrect email or password. Would you like to <Link to="/resetPassword"><a href="#">Reset Password?</a></Link></Message.Header>
