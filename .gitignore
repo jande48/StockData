@@ -4,3 +4,12 @@ __pycache__
 react-frontend/node_modules
 .elasticbeanstalk
 .eslintrc.json
+.dockerignore
+Dockerfile
+application.py 
+docker-compose.yml
+initalizeDB.py 
+package-lock.json 
+package.json 
+runtime.txt 
+yarn.lock 

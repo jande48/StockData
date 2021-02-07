@@ -26,8 +26,6 @@ Stock_Ticker_Lookup_key = os.environ.get('StockTickerCompanyNameAPIkey')
 algo = Blueprint('algo', __name__)
 
 # get stock data GET api to retrieve stock data based on a stock ticker
-
-
 @algo.route("/get_stock_data/<ticker>/<startDate>/<endDate>", methods=['GET'])
 def get_stock_data(ticker, startDate, endDate):
 
